@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RedditEmblemAPI.Services;
 
 namespace RedditEmblemAPI
 {
@@ -29,6 +30,7 @@ namespace RedditEmblemAPI
 
             // Add S3 to the ASP.NET Core dependency injection framework.
             services.AddAWSService<Amazon.S3.IAmazonS3>();
+            services.AddSingleton<ISheetsService, SheetsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
