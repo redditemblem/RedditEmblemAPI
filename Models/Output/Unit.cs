@@ -1,4 +1,4 @@
-﻿namespace RedditEmblemAPI.Models
+﻿namespace RedditEmblemAPI.Models.Output
 {
     public class Unit
     {

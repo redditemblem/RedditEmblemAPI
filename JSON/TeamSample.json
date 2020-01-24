@@ -1,0 +1,22 @@
+{
+  "Team": {
+    "Name": "Team Sample",
+    "WorkbookID": "10OGJGY4RcLemNcdoGVTrwoc6qJQyv5ONMK09VUyFptc"
+  },
+  "System": {
+
+  },
+  "Units": {
+    "WorksheetQuery": {
+      "Sheet": "Characters",
+      "Selection": "B1:ZZ",
+      "Orientation": "COLUMNS"
+    },
+    "UnitName": 0,
+    "SpriteURL": 1,
+    "TextFields": [ 3 ],
+    "Class": 4,
+    "Coordinates": 5,
+    "Experience": 7
+   }
+}

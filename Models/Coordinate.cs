@@ -1,6 +1,6 @@
 ﻿namespace RedditEmblemAPI.Models
 {
-    public class Coordinate
+    public struct Coordinate
     {
         public int X;
         public int Y;
