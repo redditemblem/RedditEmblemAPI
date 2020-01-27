@@ -1,6 +1,6 @@
 ﻿namespace RedditEmblemAPI.Models.Configuration
 {
-    public class Units
+    public class UnitsConfig
     {
         public WorksheetQuery WorksheetQuery;
         public int UnitName;

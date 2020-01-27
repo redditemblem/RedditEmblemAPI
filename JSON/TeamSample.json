@@ -1,7 +1,12 @@
 {
   "Team": {
     "Name": "Team Sample",
-    "WorkbookID": "10OGJGY4RcLemNcdoGVTrwoc6qJQyv5ONMK09VUyFptc"
+    "WorkbookID": "10OGJGY4RcLemNcdoGVTrwoc6qJQyv5ONMK09VUyFptc",
+    "Map": {
+      "GridSize": 32,
+      "GridSpacing": 0,
+      "HasGridLabelOffset": false
+    }
   },
   "System": {
 
@@ -10,7 +15,7 @@
     "WorksheetQuery": {
       "Sheet": "Characters",
       "Selection": "B1:ZZ",
-      "Orientation": "COLUMNS"
+      "Orientation": 2
     },
     "UnitName": 0,
     "SpriteURL": 1,

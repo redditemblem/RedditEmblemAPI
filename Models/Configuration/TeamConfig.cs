@@ -1,8 +1,9 @@
 ﻿namespace RedditEmblemAPI.Models.Configuration
 {
-    public class Team
+    public class TeamConfig
     {
         public string Name;
         public string WorkbookID;
+        public MapConfig Map;
     }
 }

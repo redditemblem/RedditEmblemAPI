@@ -2,8 +2,8 @@ namespace RedditEmblemAPI.Models.Configuration
 {
     public class JSONConfiguration
     {
-        public Team Team;
-        public System System;
-        public Units Units;
+        public TeamConfig Team;
+        public SystemConfig System;
+        public UnitsConfig Units;
     }
 }

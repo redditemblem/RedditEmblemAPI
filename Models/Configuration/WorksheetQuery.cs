@@ -1,10 +1,15 @@
-﻿namespace RedditEmblemAPI.Models.Configuration
+﻿using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource.GetRequest;
+
+namespace RedditEmblemAPI.Models.Configuration
 {
     public class WorksheetQuery
     {
         public string Sheet;
         public string Selection;
-        public string Orientation;
+
+        // ROWS = 1, COLUMNS = 2
+        public MajorDimensionEnum Orientation;
+        
 
         public override string ToString()
         {

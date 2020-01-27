@@ -2,6 +2,7 @@
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Newtonsoft.Json;
+using RedditEmblemAPI.Models;
 using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Exceptions;
 using RedditEmblemAPI.Models.Output;
@@ -15,6 +16,9 @@ namespace RedditEmblemAPI.Services
 {
     public class APIService : IAPIService
     {
+        //Constants
+        private const int INDEX_UNIT_DATA = 0;
+
         public SheetsData SheetData;
 
         public APIService()
@@ -25,7 +29,12 @@ namespace RedditEmblemAPI.Services
         public SheetsData LoadData(string teamName)
         {
             JSONConfiguration config = LoadTeamJSONConfiguration(teamName + ".json");
-            QueryGoogleSheets(config);
+
+            IList<IList<object>> unitData;
+            QueryGoogleSheets(config, out unitData);
+
+            //Process data arrays
+            ProcessUnits(unitData, config.Units);
 
             return this.SheetData;
         }
@@ -59,7 +68,7 @@ namespace RedditEmblemAPI.Services
             }
         }
     
-        private IList<IList<object>> QueryGoogleSheets(JSONConfiguration config)
+        private void QueryGoogleSheets(JSONConfiguration config, out IList<IList<object>> unitData)
         {
             var service = new SheetsService(new BaseClientService.Initializer()
             {
@@ -67,21 +76,45 @@ namespace RedditEmblemAPI.Services
                 ApiKey = Environment.GetEnvironmentVariable("APIKey")
             });
 
-            // Define request parameters.
-            GetRequest request =
-                    service.Spreadsheets.Values.Get(config.Team.WorkbookID, config.Units.WorksheetQuery.ToString());
-            request.MajorDimension = GetRequest.MajorDimensionEnum.COLUMNS; //config.Units.WorksheetQuery.Orientation;
+            // Define query parameters
+            // Units
+            GetRequest unitsRequest = service.Spreadsheets.Values.Get(config.Team.WorkbookID, config.Units.WorksheetQuery.ToString());
+            unitsRequest.MajorDimension = config.Units.WorksheetQuery.Orientation;
 
             try
             {
-                ValueRange data = request.Execute();
-                return data.Values;
+                ValueRange unitRepsonse = unitsRequest.Execute();
+                unitData = unitRepsonse.Values;
             }
             catch (Exception ex)
             {
-                throw new GoogleSheetsAccessDeniedException();
+                throw new GoogleSheetsQueryFailedException(ex);
             }
-            
+        }
+        
+        private void ProcessUnits(IList<IList<object>> data, UnitsConfig config)
+        {
+            foreach(IList<object> row in data)
+            {
+                try
+                {
+                    //Convert objects to strings
+                    IList<string> unit = row.Select(r => r.ToString()).ToList();
+
+                    Unit temp = new Unit()
+                    {
+                        Name = unit[config.UnitName],
+                        SpriteURL = unit[config.SpriteURL],
+                        Coordinates = new Coordinate(unit[config.Coordinates])
+                    };
+
+                    this.SheetData.Units.Add(temp);
+                }
+                catch(Exception ex)
+                {
+                    throw new UnitProcessingException(row[config.UnitName].ToString(), ex);
+                }
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace RedditEmblemAPI.Models.Configuration
 {
-    public class System
+    public class SystemConfig
     {
     }
 }

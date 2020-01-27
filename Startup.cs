@@ -15,6 +15,7 @@ namespace RedditEmblemAPI
     public class Startup
     {
         public const string AppS3BucketKey = "AppS3Bucket";
+        private const string AllowedOriginsPolicy = "_AllowedOriginsPolicy";
 
         public Startup(IConfiguration configuration)
         {
@@ -26,6 +27,17 @@ namespace RedditEmblemAPI
         // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
+            //Allow requests from restricted origins
+            services.AddCors(options =>
+            {
+                options.AddPolicy(AllowedOriginsPolicy,
+                builder =>
+                {
+                    builder.WithOrigins("http://127.0.0.1:8080",
+                                        "https://redditemblem.github.io/");
+                });
+            });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Add S3 to the ASP.NET Core dependency injection framework.
@@ -45,6 +57,7 @@ namespace RedditEmblemAPI
                 app.UseHsts();
             }
 
+            app.UseCors(AllowedOriginsPolicy);
             app.UseHttpsRedirection();
             app.UseMvc();
         }
