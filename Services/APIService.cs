@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource;
 
 namespace RedditEmblemAPI.Services
@@ -105,7 +106,9 @@ namespace RedditEmblemAPI.Services
                     {
                         Name = unit[config.UnitName],
                         SpriteURL = unit[config.SpriteURL],
-                        Coordinates = new Coordinate(unit[config.Coordinates])
+                        Coordinates = new Coordinate(unit[config.Coordinates]),
+                        Stats = BuildStatsDictionary(unit, config.Stats),
+                        Inventory = BuildInventory(unit, config.Inventory)
                     };
 
                     this.SheetData.Units.Add(temp);
@@ -115,6 +118,91 @@ namespace RedditEmblemAPI.Services
                     throw new UnitProcessingException(row[config.UnitName].ToString(), ex);
                 }
             }
+        }
+
+        private Dictionary<string, StatValue> BuildStatsDictionary(IList<string> unit, IList<StatConfig> config)
+        {
+            Dictionary<string, StatValue> stats = new Dictionary<string, StatValue>();
+
+            foreach(StatConfig s in config)
+            {
+                StatValue temp = new StatValue();
+
+                //Parse base value
+                int val;
+                if (!int.TryParse(unit[s.BaseValue], out val))
+                    throw new PositiveIntegerException("", unit[s.BaseValue]);
+                temp.BaseValue = val;
+
+                //Parse modifiers list
+                foreach(ModifierConfig mod in s.Modifiers)
+                {
+                    if (!int.TryParse(unit[mod.Cell], out val))
+                        throw new AnyIntegerException("", unit[mod.Cell]);
+                    temp.Modifiers.Add(mod.SourceName, val);
+                }
+
+                stats.Add(s.Name, temp);
+            }
+                
+
+            return stats;
+        }
+
+        private IList<Item> BuildInventory(IList<string> unit, InventoryConfig config)
+        {
+            Regex usesRegex = new Regex(@"\([0-9]+\)"); //match uses ex. "(5)"
+            Regex dropRegex = new Regex(@"\(D\)"); //match droppable ex. "(D)"
+            IList<Item> inventory = new List<Item>();
+
+            foreach (int slot in config.Slots)
+            {
+                string name = unit[slot];
+                if (string.IsNullOrEmpty(name))
+                {
+                    inventory.Add(null);
+                    continue;
+                }
+                    
+                bool isDroppable = false;
+                int uses = 0;
+
+                //Search for droppable syntax
+                Match dropMatch = dropRegex.Match(name);
+                if (dropMatch.Success)
+                {
+                    isDroppable = true;
+                    name = dropRegex.Replace(name, string.Empty);
+                }
+
+                //Search for uses syntax
+                Match usesMatch = usesRegex.Match(name);
+                if (usesMatch.Success)
+                {
+                    //Convert item use synatax to int
+                    string u = usesMatch.Value.ToString();
+                    u = u.Substring(1, u.Length - 2);
+                    uses = int.Parse(u);
+                    name = usesRegex.Replace(name, string.Empty);
+                }
+
+                inventory.Add(new Item() {
+                    Name =  name.Trim(),
+                    OriginalName = unit[slot],
+                    IsDroppable = isDroppable,
+                    Uses = uses
+                });
+            }
+
+            //Find the equipped item and flag it
+            if (!string.IsNullOrEmpty(unit[config.EquippedItem]))
+            {
+                Item equipped = inventory.FirstOrDefault(i => i.OriginalName == unit[config.EquippedItem]);
+                if (equipped != null)
+                    equipped.IsEquipped = true;
+            }
+            
+            return inventory;
         }
     }
 }

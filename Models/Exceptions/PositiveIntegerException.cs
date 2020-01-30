@@ -1,5 +1,4 @@
-﻿using System;
-namespace RedditEmblemAPI.Models.Exceptions
+﻿namespace RedditEmblemAPI.Models.Exceptions
 {
     public class PositiveIntegerException : IntegerException
     {

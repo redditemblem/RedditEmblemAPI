@@ -1,9 +1,13 @@
-﻿namespace RedditEmblemAPI.Models.Output
+﻿using System.Collections.Generic;
+
+namespace RedditEmblemAPI.Models.Output
 {
     public class Unit
     {
         public string Name { get; set; }
         public string SpriteURL { get; set; }
         public Coordinate Coordinates { get; set; }
+        public Dictionary<string, StatValue> Stats { get; set; }
+        public IList<Item> Inventory { get; set; }
     }
 }
