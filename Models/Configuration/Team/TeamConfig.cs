@@ -1,4 +1,4 @@
-﻿namespace RedditEmblemAPI.Models.Configuration
+﻿namespace RedditEmblemAPI.Models.Configuration.Team
 {
     public class TeamConfig
     {

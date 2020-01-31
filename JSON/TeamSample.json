@@ -5,7 +5,8 @@
     "Map": {
       "GridSize": 32,
       "GridSpacing": 0,
-      "HasGridLabelOffset": false
+      "HasHeaderTopLeft": false,
+      "HasHeaderBottomRight": false
     }
   },
   "System": {
@@ -109,5 +110,45 @@
       "EquippedItem": 27,
       "Slots": [ 28, 29, 30, 31, 32 ]
     }
+  },
+  "Items": {
+    "WorksheetQuery": {
+      "Sheet": "Items",
+      "Selection": "B2:ZZ",
+      "Orientation": 1
+    },
+    "ItemName": 0,
+    "SpriteURL": 1,
+    "Category": 2,
+    "WeaponRank": 3,
+    "UtilizedStat": 4,
+    "Uses": 5,
+    "Stats": [
+      {
+        "SourceName": "Mt",
+        "Cell": 6
+      },
+      {
+        "SourceName": "Hit",
+        "Cell": 7
+      },
+      {
+        "SourceName": "Crit",
+        "Cell": 8
+      },
+      {
+        "SourceName": "Avo",
+        "Cell": 9
+      },
+      {
+        "SourceName": "Eva",
+        "Cell": 10
+      }
+    ],
+    "Range": {
+      "Minimum": 11,
+      "Maximum": 12
+    },
+    "TextFields": [ 13,14 ]
   }
 }

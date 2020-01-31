@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output
 {
-    public class StatValue
+    public class ModifiedStatValue
     {
-        public StatValue()
+        public ModifiedStatValue()
         {
             this.Modifiers = new Dictionary<string, int>();
         }

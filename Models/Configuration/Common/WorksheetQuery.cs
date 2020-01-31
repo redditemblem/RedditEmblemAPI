@@ -1,6 +1,6 @@
 ﻿using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource.GetRequest;
 
-namespace RedditEmblemAPI.Models.Configuration
+namespace RedditEmblemAPI.Models.Configuration.Common
 {
     public class WorksheetQuery
     {

@@ -5,8 +5,8 @@ namespace RedditEmblemAPI.Models.Output
 {
     public class SheetsData
     {
-        public List<Unit> Units;
-        public List<Exception> Errors;
+        public IList<Unit> Units;
+        public IList<Exception> Errors;
 
         public SheetsData()
         {

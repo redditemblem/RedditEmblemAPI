@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RedditEmblemAPI.Models.Configuration
+namespace RedditEmblemAPI.Models.Configuration.Units
 {
     public class InventoryConfig
     {

@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using RedditEmblemAPI.Models.Configuration.Common;
+using System.Collections.Generic;
 
-namespace RedditEmblemAPI.Models.Configuration
+namespace RedditEmblemAPI.Models.Configuration.Units
 {
     public class UnitsConfig
     {
@@ -11,7 +12,7 @@ namespace RedditEmblemAPI.Models.Configuration
         public int Class;
         public int Coordinates;
         public int Experience;
-        public IList<StatConfig> Stats;
+        public IList<ModifiedNamedStatConfig> Stats;
         public InventoryConfig Inventory;
     }
 }
