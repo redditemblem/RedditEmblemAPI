@@ -3,6 +3,7 @@ using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Exceptions;
 using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Services.Helpers;
@@ -28,12 +29,13 @@ namespace RedditEmblemAPI.Services
         {
             JSONConfiguration config = LoadTeamJSONConfiguration(teamName + ".json");
 
-            IList<IList<object>> itemData, unitData;
-            QueryGoogleSheets(config, out itemData, out unitData);
+            IList<IList<object>> unitData, itemData, skillData;
+            QueryGoogleSheets(config, out unitData, out itemData, out skillData);
 
             //Process data
             IList<Item> items = ItemsHelper.Process(itemData, config.Items);
-            this.SheetData.Units = UnitsHelper.Process(unitData, config.Units, items);
+            IList<Skill> skills = SkillHelper.Process(skillData, config.Skills);
+            this.SheetData.Units = UnitsHelper.Process(unitData, config.Units, items, skills);
 
             return this.SheetData;
         }
@@ -67,38 +69,34 @@ namespace RedditEmblemAPI.Services
             }
         }
     
-        private void QueryGoogleSheets(JSONConfiguration config, out IList<IList<object>> itemData, out IList<IList<object>> unitData)
+        private void QueryGoogleSheets(JSONConfiguration config, out IList<IList<object>> unitData, out IList<IList<object>> itemData, out IList<IList<object>> skillData)
         {
-            var service = new SheetsService(new BaseClientService.Initializer()
+            SheetsService service = new SheetsService(new BaseClientService.Initializer()
             {
                 ApplicationName = "RedditEmblemAPI",
                 ApiKey = Environment.GetEnvironmentVariable("APIKey")
             });
 
-            // Define query parameters
-            // Items
-            GetRequest itemsRequest = service.Spreadsheets.Values.Get(config.Team.WorkbookID, config.Items.WorksheetQuery.ToString());
-            itemsRequest.MajorDimension = config.Items.WorksheetQuery.Orientation;
+            // Execute queries
+            unitData = ExecuteQuery(service, config.Team.WorkbookID, config.Units.WorksheetQuery);
+            itemData = ExecuteQuery(service, config.Team.WorkbookID, config.Items.WorksheetQuery);
+            skillData = ExecuteQuery(service, config.Team.WorkbookID, config.Skills.WorksheetQuery);
+        }
 
-            // Units
-            GetRequest unitsRequest = service.Spreadsheets.Values.Get(config.Team.WorkbookID, config.Units.WorksheetQuery.ToString());
-            unitsRequest.MajorDimension = config.Units.WorksheetQuery.Orientation;
-
+        private IList<IList<object>> ExecuteQuery(SheetsService service, string workbookID, WorksheetQuery query)
+        {
             try
             {
-                //Items
-                ValueRange itemsResponse = itemsRequest.Execute();
-                itemData = itemsResponse.Values;
+                GetRequest request = service.Spreadsheets.Values.Get(workbookID, query.ToString());
+                request.MajorDimension = query.Orientation;
 
-                //Units
-                ValueRange unitResponse = unitsRequest.Execute();
-                unitData = unitResponse.Values;
+                ValueRange response = request.Execute();
+                return response.Values;
             }
             catch (Exception ex)
             {
-                throw new GoogleSheetsQueryFailedException(ex);
-            }
+                throw new GoogleSheetsQueryFailedException(query.Sheet, ex);
+            } 
         }
-        
     }
 }

@@ -2,8 +2,8 @@
 {
     public class AnyIntegerException : IntegerException
     {
-        public AnyIntegerException(string cell, string actualValue)
-            : base(cell, actualValue, "a numerical value")
+        public AnyIntegerException(string Value, string actualValue)
+            : base(Value, actualValue, "a numerical value")
         { }
     }
 }

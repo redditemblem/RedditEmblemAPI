@@ -3,6 +3,6 @@
     public class NamedStatConfig
     {
         public string SourceName;
-        public int Cell;
+        public int Value;
     }
 }

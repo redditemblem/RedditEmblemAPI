@@ -8,6 +8,7 @@ namespace RedditEmblemAPI.Models.Output
         {
             this.Stats = new Dictionary<string, ModifiedStatValue>();
             this.Inventory = new List<Item>();
+            this.Skills = new List<Skill>();
         }
 
         public string Name { get; set; }
@@ -15,5 +16,6 @@ namespace RedditEmblemAPI.Models.Output
         public Coordinate Coordinates { get; set; }
         public Dictionary<string, ModifiedStatValue> Stats { get; set; }
         public IList<Item> Inventory { get; set; }
+        public IList<Skill> Skills { get; set; }
     }
 }

@@ -4,8 +4,8 @@ namespace RedditEmblemAPI.Models.Exceptions
 {
     public class GoogleSheetsQueryFailedException : Exception
     {
-        public GoogleSheetsQueryFailedException(Exception innerException)
-            : base("There was an error querying the Google Sheets API.", innerException)
+        public GoogleSheetsQueryFailedException(string sheet, Exception innerException)
+            : base(string.Format("There was an error querying the \"{0}\" sheet using the Google Sheets API.", sheet), innerException)
         { }
     }
 }

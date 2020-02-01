@@ -31,7 +31,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Cell": 42
+            "Value": 42
           }
         ]
       },
@@ -41,7 +41,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Cell": 43
+            "Value": 43
           }
         ]
       },
@@ -51,7 +51,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Cell": 46
+            "Value": 46
           }
         ]
       },
@@ -61,7 +61,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Cell": 44
+            "Value": 44
           }
         ]
       },
@@ -71,7 +71,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Cell": 47
+            "Value": 47
           }
         ]
       },
@@ -81,7 +81,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Cell": 48
+            "Value": 48
           }
         ]
       },
@@ -91,7 +91,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Cell": 45
+            "Value": 45
           }
         ]
       },
@@ -101,7 +101,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Cell": 49
+            "Value": 49
           }
         ]
       }
@@ -109,6 +109,9 @@
     "Inventory": {
       "EquippedItem": 27,
       "Slots": [ 28, 29, 30, 31, 32 ]
+    },
+    "Skills": {
+      "Slots": [ 33, 34, 35, 36, 37, 38, 39, 40 ]
     }
   },
   "Items": {
@@ -126,23 +129,23 @@
     "Stats": [
       {
         "SourceName": "Mt",
-        "Cell": 6
+        "Value": 6
       },
       {
         "SourceName": "Hit",
-        "Cell": 7
+        "Value": 7
       },
       {
         "SourceName": "Crit",
-        "Cell": 8
+        "Value": 8
       },
       {
         "SourceName": "Avo",
-        "Cell": 9
+        "Value": 9
       },
       {
         "SourceName": "Eva",
-        "Cell": 10
+        "Value": 10
       }
     ],
     "Range": {
@@ -150,5 +153,15 @@
       "Maximum": 12
     },
     "TextFields": [ 13,14 ]
+  },
+  "Skills": {
+    "WorksheetQuery": {
+      "Sheet": "Skills",
+      "Selection": "B2:ZZ",
+      "Orientation": 1
+    },
+    "SkillName": 0,
+    "SpriteURL": 1,
+    "TextFields": [ 2 ]
   }
 }
