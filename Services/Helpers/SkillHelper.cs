@@ -22,18 +22,18 @@ namespace RedditEmblemAPI.Services.Helpers
 
                     Skill temp = new Skill()
                     {
-                        Name = skill.ElementAtOrDefault<string>(config.SkillName),
-                        SpriteURL = skill.ElementAtOrDefault<string>(config.SpriteURL)
+                        Name = skill.ElementAtOrDefault(config.SkillName) ?? string.Empty,
+                        SpriteURL = skill.ElementAtOrDefault(config.SpriteURL) ?? string.Empty
                     };
 
                     foreach (int Value in config.TextFields)
-                        temp.TextFields.Add(skill.ElementAtOrDefault<string>(Value));
+                        temp.TextFields.Add(skill.ElementAtOrDefault(Value) ?? string.Empty);
 
                     skills.Add(temp);
                 }
                 catch (Exception ex)
                 {
-                    throw new SkillProcessingException(row.ElementAtOrDefault<object>(config.SkillName).ToString(), ex);
+                    throw new SkillProcessingException(row.ElementAtOrDefault(config.SkillName).ToString(), ex);
                 }
             }
 

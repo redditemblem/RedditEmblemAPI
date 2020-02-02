@@ -34,19 +34,43 @@ namespace RedditEmblemAPI.Services.Helpers
 
                     Unit temp = new Unit()
                     {
-                        Name = unit.ElementAtOrDefault<string>(config.UnitName),
-                        SpriteURL = unit.ElementAtOrDefault<string>(config.SpriteURL),
-                        Coordinates = new Coordinate(unit.ElementAtOrDefault<string>(config.Coordinates)),
+                        Name = unit.ElementAtOrDefault(config.UnitName) ?? string.Empty,
+                        SpriteURL = unit.ElementAtOrDefault(config.SpriteURL) ?? string.Empty,
+                        Coordinates = new Coordinate(unit.ElementAtOrDefault(config.Coordinates) ?? string.Empty),
                         Stats = BuildStatsDictionary(unit, config.Stats),
                         Inventory = BuildInventory(unit, config.Inventory, items),
                         Skills = BuildSkills(unit, config.Skills, skills)
                     };
 
+                    //Apply stat boosts from items
+                    //Equipped item
+                    Item eqp = temp.Inventory.FirstOrDefault(i => i != null && i.IsEquipped);
+                    if(eqp != null)
+                    {
+                        foreach(string stat in eqp.EquippedStatModifiers.Keys)
+                        {
+                            ModifiedStatValue mods = temp.Stats.GetValueOrDefault(stat);
+                            if (mods != null)
+                                mods.Modifiers.Add(string.Format("{0} ({1})", eqp.Name, "Eqp"), eqp.EquippedStatModifiers[stat]);
+                        }
+                    }
+                    
+                    //Inventory items
+                    foreach(Item inv in temp.Inventory.Where(i => i != null && !i.IsEquipped))
+                    {
+                        foreach (string stat in inv.InventoryStatModifiers.Keys)
+                        {
+                            ModifiedStatValue mods = temp.Stats.GetValueOrDefault(stat);
+                            if (mods != null)
+                                mods.Modifiers.Add(string.Format("{0} ({1})", inv.Name, "Inv"), inv.InventoryStatModifiers[stat]);
+                        }
+                    }
+
                     units.Add(temp);
                 }
                 catch (Exception ex)
                 {
-                    throw new UnitProcessingException(row.ElementAtOrDefault<object>(config.UnitName).ToString(), ex);
+                    throw new UnitProcessingException(row.ElementAtOrDefault(config.UnitName).ToString(), ex);
                 }
             }
 
@@ -63,16 +87,18 @@ namespace RedditEmblemAPI.Services.Helpers
 
                 //Parse base value
                 int val;
-                if (!int.TryParse(unit.ElementAtOrDefault<string>(s.BaseValue), out val))
-                    throw new PositiveIntegerException("", unit.ElementAtOrDefault<string>(s.BaseValue));
+                if (!int.TryParse(unit.ElementAtOrDefault(s.BaseValue), out val))
+                    throw new PositiveIntegerException("", unit.ElementAtOrDefault(s.BaseValue) ?? string.Empty);
                 temp.BaseValue = val;
 
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in s.Modifiers)
                 {
-                    if (!int.TryParse(unit.ElementAtOrDefault<string>(mod.Value), out val))
-                        throw new AnyIntegerException("", unit.ElementAtOrDefault<string>(mod.Value));
-                    temp.Modifiers.Add(mod.SourceName, val);
+                    if (!int.TryParse(unit.ElementAtOrDefault(mod.Value), out val))
+                        throw new AnyIntegerException("", unit.ElementAtOrDefault(mod.Value) ?? string.Empty);
+
+                    if(val != 0)
+                        temp.Modifiers.Add(mod.SourceName, val);
                 }
 
                 stats.Add(s.Name, temp);
@@ -87,7 +113,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             foreach (int slot in config.Slots)
             {
-                string name = unit.ElementAtOrDefault<string>(slot);
+                string name = unit.ElementAtOrDefault(slot);
                 if (string.IsNullOrEmpty(name))
                 {
                     inventory.Add(null);
@@ -122,7 +148,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     //If we find a match from the items sheet, deep clone it to the unit and paste in our values
                     Item clone = (Item)itemMatch.Clone();
-                    clone.OriginalName = unit.ElementAtOrDefault<string>(slot);
+                    clone.OriginalName = unit.ElementAtOrDefault(slot);
                     clone.IsDroppable = isDroppable;
                     clone.Uses = uses;
 
@@ -131,7 +157,7 @@ namespace RedditEmblemAPI.Services.Helpers
             }
 
             //Find the equipped item and flag it
-            Item equipped = inventory.FirstOrDefault(i => i.OriginalName == unit.ElementAtOrDefault<string>(config.EquippedItem));
+            Item equipped = inventory.FirstOrDefault(i => i.OriginalName == (unit.ElementAtOrDefault(config.EquippedItem) ?? string.Empty));
             equipped.IsEquipped = (equipped != null);
 
             return inventory;
@@ -143,7 +169,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             foreach (int slot in config.Slots)
             {
-                string name = unit.ElementAtOrDefault<string>(slot);
+                string name = unit.ElementAtOrDefault(slot);
                 if (string.IsNullOrEmpty(name))
                     continue;
 

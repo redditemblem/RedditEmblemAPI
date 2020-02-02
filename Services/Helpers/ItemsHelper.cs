@@ -28,29 +28,45 @@ namespace RedditEmblemAPI.Services.Helpers
                     IList<string> item = row.Select(r => r.ToString()).ToList();
 
                     //Skip empty values
-                    if (string.IsNullOrEmpty(item.ElementAtOrDefault<string>(config.ItemName)))
+                    if (string.IsNullOrEmpty(item.ElementAtOrDefault(config.ItemName)))
                         continue;
 
                     Item temp = new Item()
                     {
-                        Name = item.ElementAtOrDefault<string>(config.ItemName),
-                        SpriteURL = item.ElementAtOrDefault<string>(config.SpriteURL),
-                        Category = item.ElementAtOrDefault<string>(config.Category),
-                        WeaponRank = item.ElementAtOrDefault<string>(config.WeaponRank),
-                        UtilizedStat = item.ElementAtOrDefault<string>(config.UtilizedStat),
-                        MaxUses = int.Parse(item.ElementAtOrDefault<string>(config.Uses)),
+                        Name = item.ElementAtOrDefault(config.ItemName) ?? string.Empty,
+                        SpriteURL = item.ElementAtOrDefault(config.SpriteURL) ?? string.Empty,
+                        Category = item.ElementAtOrDefault(config.Category) ?? string.Empty,
+                        WeaponRank = item.ElementAtOrDefault(config.WeaponRank) ?? string.Empty,
+                        UtilizedStat = item.ElementAtOrDefault(config.UtilizedStat) ?? string.Empty,
+                        MaxUses = int.Parse(item.ElementAtOrDefault(config.Uses)),
                         Stats = BuildStatsDictionary(item, config.Stats),
-                        Range = BuildItemRange(item, config.Range)
+                        Range = BuildItemRange(item, config.Range) 
                     };
 
-                    foreach (int Value in config.TextFields)
-                        temp.TextFields.Add(item.ElementAtOrDefault<string>(Value));
+                    //Parse lists
+                    foreach(NamedStatConfig stat in config.EquippedStatModifiers)
+                    {
+                        int val;
+                        if(int.TryParse(item.ElementAtOrDefault(stat.Value), out val) && val != 0)
+                            temp.EquippedStatModifiers.Add(stat.SourceName, val);
+                    }
+
+                    foreach (NamedStatConfig stat in config.InventoryStatModifiers)
+                    {
+                        int val;
+                        if (int.TryParse(item.ElementAtOrDefault(stat.Value), out val) && val != 0)
+                            temp.InventoryStatModifiers.Add(stat.SourceName, val);
+                    }
+
+                    foreach (int loc in config.TextFields)
+                        if(!string.IsNullOrEmpty(item.ElementAtOrDefault(loc)))
+                            temp.TextFields.Add(item.ElementAtOrDefault(loc));
 
                     items.Add(temp);
                 }
                 catch (Exception ex)
                 {
-                    throw new ItemProcessingException(row.ElementAtOrDefault<object>(config.ItemName).ToString(), ex);
+                    throw new ItemProcessingException(row.ElementAtOrDefault(config.ItemName).ToString(), ex);
                 }
             }
 
@@ -65,8 +81,8 @@ namespace RedditEmblemAPI.Services.Helpers
             {
                 //Parse value
                 int val;
-                if (!int.TryParse(item.ElementAtOrDefault<string>(s.Value), out val))
-                    throw new AnyIntegerException("", item.ElementAtOrDefault<string>(s.Value));
+                if (!int.TryParse(item.ElementAtOrDefault(s.Value), out val))
+                    throw new AnyIntegerException("", item.ElementAtOrDefault(s.Value) ?? string.Empty);
                
                 stats.Add(s.SourceName, val);
             }
@@ -80,13 +96,13 @@ namespace RedditEmblemAPI.Services.Helpers
 
             //Parse minimum range value
             int val;
-            if (!int.TryParse(item.ElementAtOrDefault<string>(config.Minimum), out val) || val < 0)
-                throw new PositiveIntegerException("", item.ElementAtOrDefault<string>(config.Minimum));
+            if (!int.TryParse(item.ElementAtOrDefault(config.Minimum), out val) || val < 0)
+                throw new PositiveIntegerException("", item.ElementAtOrDefault(config.Minimum) ?? string.Empty);
             range.Minimum = val;
 
             //Parse maximum range value
-            if (!int.TryParse(item.ElementAtOrDefault<string>(config.Maximum), out val) || val < 0)
-                throw new PositiveIntegerException("", item.ElementAtOrDefault<string>(config.Maximum));
+            if (!int.TryParse(item.ElementAtOrDefault(config.Maximum), out val) || val < 0)
+                throw new PositiveIntegerException("", item.ElementAtOrDefault(config.Maximum) ?? string.Empty);
             range.Maximum = val;
 
             return range;

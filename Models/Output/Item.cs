@@ -12,6 +12,8 @@ namespace RedditEmblemAPI.Models.Output
             this.IsEquipped = false;
             this.IsDroppable = false;
             this.Stats = new Dictionary<string, int>();
+            this.EquippedStatModifiers = new Dictionary<string, int>();
+            this.InventoryStatModifiers = new Dictionary<string, int>();
             this.Range = new ItemRange();
             this.TextFields = new List<string>();
         }
@@ -28,6 +30,10 @@ namespace RedditEmblemAPI.Models.Output
         public int Uses { get; set; }
         public int MaxUses { get; set; }
         public Dictionary<string, int> Stats { get; set; }
+        [JsonIgnore]
+        public Dictionary<string, int> EquippedStatModifiers { get; set; }
+        [JsonIgnore]
+        public Dictionary<string, int> InventoryStatModifiers { get; set; }
         public ItemRange Range { get; set; }
         public IList<string> TextFields { get; set; }
 
@@ -46,6 +52,8 @@ namespace RedditEmblemAPI.Models.Output
                 Uses = this.Uses,
                 MaxUses = this.MaxUses,
                 Stats = this.Stats.ToDictionary(entry => entry.Key, entry => entry.Value),
+                EquippedStatModifiers = this.EquippedStatModifiers.ToDictionary(entry => entry.Key, entry => entry.Value),
+                InventoryStatModifiers = this.InventoryStatModifiers.ToDictionary(entry => entry.Key, entry => entry.Value),
                 Range = new ItemRange() { Minimum = this.Range.Minimum, Maximum = this.Range.Maximum },
                 TextFields = this.TextFields.ToList()
             };

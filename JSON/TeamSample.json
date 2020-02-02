@@ -36,42 +36,22 @@
         ]
       },
       {
-        "Name": "Mag",
-        "BaseValue": 13,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 43
-          }
-        ]
-      },
-      {
-        "Name": "Lck",
-        "BaseValue": 16,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 46
-          }
-        ]
-      },
-      {
-        "Name": "Skl",
-        "BaseValue": 14,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 44
-          }
-        ]
-      },
-      {
         "Name": "Def",
         "BaseValue": 17,
         "Modifiers": [
           {
             "SourceName": "Buff",
             "Value": 47
+          }
+        ]
+      },
+      {
+        "Name": "Mag",
+        "BaseValue": 13,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 43
           }
         ]
       },
@@ -86,12 +66,32 @@
         ]
       },
       {
+        "Name": "Lck",
+        "BaseValue": 16,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 46
+          }
+        ]
+      },
+      {
         "Name": "Spd",
         "BaseValue": 15,
         "Modifiers": [
           {
             "SourceName": "Buff",
             "Value": 45
+          }
+        ]
+      },
+      {
+        "Name": "Skl",
+        "BaseValue": 14,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 44
           }
         ]
       },
@@ -148,11 +148,79 @@
         "Value": 10
       }
     ],
+    "EquippedStatModifiers": [
+      {
+        "SourceName": "Str",
+        "Value": 13
+      },
+      {
+        "SourceName": "Mag",
+        "Value": 14
+      },
+      {
+        "SourceName": "Skl",
+        "Value": 15
+      },
+      {
+        "SourceName": "Spd",
+        "Value": 16
+      },
+      {
+        "SourceName": "Lck",
+        "Value": 17
+      },
+      {
+        "SourceName": "Def",
+        "Value": 18
+      },
+      {
+        "SourceName": "Res",
+        "Value": 19
+      },
+      {
+        "SourceName": "Mov",
+        "Value": 20
+      }
+    ],
+    "InventoryStatModifiers": [
+      {
+        "SourceName": "Str",
+        "Value": 21
+      },
+      {
+        "SourceName": "Mag",
+        "Value": 22
+      },
+      {
+        "SourceName": "Skl",
+        "Value": 23
+      },
+      {
+        "SourceName": "Spd",
+        "Value": 24
+      },
+      {
+        "SourceName": "Lck",
+        "Value": 25
+      },
+      {
+        "SourceName": "Def",
+        "Value": 26
+      },
+      {
+        "SourceName": "Res",
+        "Value": 27
+      },
+      {
+        "SourceName": "Mov",
+        "Value": 28
+      }
+    ],
     "Range": {
       "Minimum": 11,
       "Maximum": 12
     },
-    "TextFields": [ 13,14 ]
+    "TextFields": [ 29, 30 ]
   },
   "Skills": {
     "WorksheetQuery": {
@@ -161,7 +229,7 @@
       "Orientation": 1
     },
     "SkillName": 0,
-    "SpriteURL": 1,
+    "SpriteURL":  1,
     "TextFields": [ 2 ]
   }
 }
