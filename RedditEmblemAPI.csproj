@@ -14,7 +14,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="JSON\TeamSample.json">
+    <Content Update="JSON\Hidden\TeamSample.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Services.Helpers
 {
-    public class SkillHelper
+    public class SkillHelper : Helper
     {
         public static IList<Skill> Process(IList<IList<object>> data, SkillsConfig config)
         {
@@ -20,10 +20,14 @@ namespace RedditEmblemAPI.Services.Helpers
                     //Convert objects to strings
                     IList<string> skill = row.Select(r => r.ToString()).ToList();
 
+                    //Skip blank items
+                    if (string.IsNullOrEmpty(skill.ElementAtOrDefault(config.SkillName)))
+                        continue;
+
                     Skill temp = new Skill()
                     {
-                        Name = skill.ElementAtOrDefault(config.SkillName) ?? string.Empty,
-                        SpriteURL = skill.ElementAtOrDefault(config.SpriteURL) ?? string.Empty
+                        Name = skill.ElementAtOrDefault(config.SkillName).Trim(),
+                        SpriteURL = (skill.ElementAtOrDefault(config.SpriteURL) ?? string.Empty).Trim()
                     };
 
                     foreach (int Value in config.TextFields)

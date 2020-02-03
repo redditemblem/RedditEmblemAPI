@@ -1,4 +1,4 @@
-﻿using RedditEmblemAPI.Models;
+﻿using RedditEmblemAPI.Models.Common;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions;
@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Services.Helpers
 {
-    public static class UnitsHelper
+    public class UnitsHelper : Helper
     {
         private static Regex usesRegex = new Regex(@"\([0-9]+\)"); //match item uses (ex. "(5)")
         private static Regex dropRegex = new Regex(@"\(D\)");      //match item droppable (ex. "(D)")
@@ -36,7 +36,15 @@ namespace RedditEmblemAPI.Services.Helpers
                     {
                         Name = unit.ElementAtOrDefault(config.UnitName) ?? string.Empty,
                         SpriteURL = unit.ElementAtOrDefault(config.SpriteURL) ?? string.Empty,
+                        TextFields = BuildTextFieldList(unit, config.TextFields),
                         Coordinates = new Coordinate(unit.ElementAtOrDefault(config.Coordinates) ?? string.Empty),
+                        HP = new HP((unit.ElementAtOrDefault(config.CurrentHP) ?? string.Empty),
+                                    (unit.ElementAtOrDefault(config.MaxHP) ?? string.Empty)),
+                        Level = SafeIntParse(unit.ElementAtOrDefault(config.Level), "Level", true),
+                        Class = unit.ElementAtOrDefault(config.Class) ?? string.Empty,
+                        Affiliation = unit.ElementAtOrDefault(config.Affiliation) ?? string.Empty,
+                        Experience = SafeIntParse(unit.ElementAtOrDefault(config.Experience) ?? string.Empty, "Experience", true) % 100,
+                        Tags = BuildTagsList(unit.ElementAtOrDefault(config.Tags) ?? string.Empty),
                         Stats = BuildStatsDictionary(unit, config.Stats),
                         Inventory = BuildInventory(unit, config.Inventory, items),
                         Skills = BuildSkills(unit, config.Skills, skills)
@@ -77,6 +85,24 @@ namespace RedditEmblemAPI.Services.Helpers
             return units;
         }
 
+        private static IList<string> BuildTextFieldList(IList<string> unit, IList<int> configFields)
+        {
+            IList<string> fields = new List<string>();
+            foreach (int field in configFields)
+                if (!string.IsNullOrEmpty(unit.ElementAtOrDefault(field)))
+                    fields.Add(unit.ElementAtOrDefault(field));
+            return fields;
+        }
+
+        private static IList<string> BuildTagsList(string tagsCSV)
+        {
+            IList<string> tags = new List<string>();
+            foreach (string tag in tagsCSV.Split(','))
+                if(!string.IsNullOrEmpty(tag))
+                    tags.Add(tag.Trim());
+            return tags;
+        }
+
         private static Dictionary<string, ModifiedStatValue> BuildStatsDictionary(IList<string> unit, IList<ModifiedNamedStatConfig> config)
         {
             Dictionary<string, ModifiedStatValue> stats = new Dictionary<string, ModifiedStatValue>();
@@ -87,15 +113,15 @@ namespace RedditEmblemAPI.Services.Helpers
 
                 //Parse base value
                 int val;
-                if (!int.TryParse(unit.ElementAtOrDefault(s.BaseValue), out val))
-                    throw new PositiveIntegerException("", unit.ElementAtOrDefault(s.BaseValue) ?? string.Empty);
+                if (!int.TryParse(unit.ElementAtOrDefault(s.BaseValue), out val) || val < 0)
+                    throw new PositiveIntegerException(s.Name, unit.ElementAtOrDefault(s.BaseValue) ?? string.Empty);
                 temp.BaseValue = val;
 
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in s.Modifiers)
                 {
                     if (!int.TryParse(unit.ElementAtOrDefault(mod.Value), out val))
-                        throw new AnyIntegerException("", unit.ElementAtOrDefault(mod.Value) ?? string.Empty);
+                        throw new AnyIntegerException(string.Format("{0} {1}", s.Name, mod.SourceName), unit.ElementAtOrDefault(mod.Value) ?? string.Empty);
 
                     if(val != 0)
                         temp.Modifiers.Add(mod.SourceName, val);
@@ -144,7 +170,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
                 name = name.Trim();
                 Item itemMatch = items.FirstOrDefault(i => i.Name == name);
-                if(itemMatch != null)
+                if (itemMatch != null)
                 {
                     //If we find a match from the items sheet, deep clone it to the unit and paste in our values
                     Item clone = (Item)itemMatch.Clone();
@@ -154,6 +180,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
                     inventory.Add(clone);
                 }
+                else throw new UnmatchedItemException(name);
             }
 
             //Find the equipped item and flag it
@@ -174,8 +201,8 @@ namespace RedditEmblemAPI.Services.Helpers
                     continue;
 
                 Skill skillMatch = skills.FirstOrDefault(i => i.Name == name);
-                if (skillMatch != null)
-                    skillList.Add(skillMatch);
+                if (skillMatch != null) skillList.Add(skillMatch);
+                else throw new UnmatchedSkillException(name);
             }
 
             return skillList;

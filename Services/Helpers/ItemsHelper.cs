@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Services.Helpers
 {
-    public static class ItemsHelper
+    public class ItemsHelper : Helper
     {
         /// <summary>
         /// Parses Google Sheets data matrix to return a list of Item output objects.
@@ -27,37 +27,46 @@ namespace RedditEmblemAPI.Services.Helpers
                     //Convert objects to strings
                     IList<string> item = row.Select(r => r.ToString()).ToList();
 
-                    //Skip empty values
+                    //Skip blank items
                     if (string.IsNullOrEmpty(item.ElementAtOrDefault(config.ItemName)))
                         continue;
 
                     Item temp = new Item()
                     {
-                        Name = item.ElementAtOrDefault(config.ItemName) ?? string.Empty,
-                        SpriteURL = item.ElementAtOrDefault(config.SpriteURL) ?? string.Empty,
+                        Name = item.ElementAtOrDefault(config.ItemName).Trim(),
+                        SpriteURL = (item.ElementAtOrDefault(config.SpriteURL) ?? string.Empty).Trim(),
                         Category = item.ElementAtOrDefault(config.Category) ?? string.Empty,
                         WeaponRank = item.ElementAtOrDefault(config.WeaponRank) ?? string.Empty,
                         UtilizedStat = item.ElementAtOrDefault(config.UtilizedStat) ?? string.Empty,
-                        MaxUses = int.Parse(item.ElementAtOrDefault(config.Uses)),
+                        MaxUses = SafeIntParse(item.ElementAtOrDefault(config.Uses), "Uses", true),
                         Stats = BuildStatsDictionary(item, config.Stats),
-                        Range = BuildItemRange(item, config.Range) 
+                        Range = BuildItemRange(item, config.Range)
                     };
 
                     //Parse lists
+                    //Equipped stat modifiers
                     foreach(NamedStatConfig stat in config.EquippedStatModifiers)
                     {
                         int val;
-                        if(int.TryParse(item.ElementAtOrDefault(stat.Value), out val) && val != 0)
+                        if (!int.TryParse(item.ElementAtOrDefault(stat.Value), out val))
+                            throw new AnyIntegerException(string.Format("{0} ({1})", stat.SourceName, "Equipped"), item.ElementAtOrDefault(stat.Value) ?? string.Empty);
+
+                        if (val != 0)
                             temp.EquippedStatModifiers.Add(stat.SourceName, val);
                     }
 
+                    //Inventory stat modifiers
                     foreach (NamedStatConfig stat in config.InventoryStatModifiers)
                     {
                         int val;
-                        if (int.TryParse(item.ElementAtOrDefault(stat.Value), out val) && val != 0)
+                        if (!int.TryParse(item.ElementAtOrDefault(stat.Value), out val))
+                            throw new AnyIntegerException(string.Format("{0} ({1})", stat.SourceName, "Inventory"), item.ElementAtOrDefault(stat.Value) ?? string.Empty);
+
+                        if (val != 0)
                             temp.InventoryStatModifiers.Add(stat.SourceName, val);
                     }
 
+                    //Flavor text fields
                     foreach (int loc in config.TextFields)
                         if(!string.IsNullOrEmpty(item.ElementAtOrDefault(loc)))
                             temp.TextFields.Add(item.ElementAtOrDefault(loc));
@@ -82,7 +91,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Parse value
                 int val;
                 if (!int.TryParse(item.ElementAtOrDefault(s.Value), out val))
-                    throw new AnyIntegerException("", item.ElementAtOrDefault(s.Value) ?? string.Empty);
+                    throw new AnyIntegerException(s.SourceName, item.ElementAtOrDefault(s.Value) ?? string.Empty);
                
                 stats.Add(s.SourceName, val);
             }
@@ -97,12 +106,12 @@ namespace RedditEmblemAPI.Services.Helpers
             //Parse minimum range value
             int val;
             if (!int.TryParse(item.ElementAtOrDefault(config.Minimum), out val) || val < 0)
-                throw new PositiveIntegerException("", item.ElementAtOrDefault(config.Minimum) ?? string.Empty);
+                throw new PositiveIntegerException("Minimum Range", item.ElementAtOrDefault(config.Minimum) ?? string.Empty);
             range.Minimum = val;
 
             //Parse maximum range value
             if (!int.TryParse(item.ElementAtOrDefault(config.Maximum), out val) || val < 0)
-                throw new PositiveIntegerException("", item.ElementAtOrDefault(config.Maximum) ?? string.Empty);
+                throw new PositiveIntegerException("Maximum Range", item.ElementAtOrDefault(config.Maximum) ?? string.Empty);
             range.Maximum = val;
 
             return range;

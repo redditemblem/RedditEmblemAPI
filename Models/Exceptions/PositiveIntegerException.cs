@@ -2,8 +2,8 @@
 {
     public class PositiveIntegerException : IntegerException
     {
-        public PositiveIntegerException(string Value, string actualValue)
-            : base(Value, actualValue, "a non-zero, positive number")
+        public PositiveIntegerException(string fieldName, string actualValue)
+            : base(fieldName, actualValue, "a non-zero, positive number")
         { }
     }
 }

@@ -27,7 +27,17 @@ namespace RedditEmblemAPI.Services
 
         public SheetsData LoadData(string teamName)
         {
-            JSONConfiguration config = LoadTeamJSONConfiguration(teamName + ".json");
+            //Do a deep search for our team file
+            string filePath = "";
+            foreach (string path in Directory.EnumerateFiles("JSON", "", SearchOption.AllDirectories))
+                if (Path.GetFileNameWithoutExtension(path) == teamName)
+                {
+                    filePath = path;
+                    break;
+                }
+
+            if (string.IsNullOrEmpty(filePath)) throw new TeamConfigurationNotFoundException(teamName);
+            JSONConfiguration config = LoadTeamJSONConfiguration(filePath);
 
             IList<IList<object>> unitData, itemData, skillData;
             QueryGoogleSheets(config, out unitData, out itemData, out skillData);
@@ -44,20 +54,21 @@ namespace RedditEmblemAPI.Services
         {
             List<string> teams = new List<string>();
 
-            foreach (string fileName in Directory.EnumerateFiles("JSON").Select(Path.GetFileName))
+            //Top directory enumeration
+            foreach (string filePath in Directory.EnumerateFiles("JSON"))
             {
-                JSONConfiguration config = LoadTeamJSONConfiguration(fileName);
+                JSONConfiguration config = LoadTeamJSONConfiguration(filePath);
                 teams.Add(config.Team.Name);
             }
 
             return teams;
         }
 
-        private JSONConfiguration LoadTeamJSONConfiguration(string fileName)
+        private JSONConfiguration LoadTeamJSONConfiguration(string filePath)
         {
             try
             {
-                using (StreamReader file = File.OpenText(@"JSON\" + fileName))
+                using (StreamReader file = File.OpenText(filePath))
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     return (JSONConfiguration)serializer.Deserialize(file, typeof(JSONConfiguration));
@@ -65,7 +76,7 @@ namespace RedditEmblemAPI.Services
             }
             catch(FileNotFoundException ex)
             {
-                throw new TeamConfigurationNotFoundException(fileName);
+                throw new TeamConfigurationNotFoundException(Path.GetFileNameWithoutExtension(filePath));
             }
         }
     

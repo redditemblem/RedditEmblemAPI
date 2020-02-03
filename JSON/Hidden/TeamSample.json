@@ -21,32 +21,17 @@
     "UnitName": 0,
     "SpriteURL": 1,
     "TextFields": [ 3 ],
+    "Level": 7,
     "Class": 4,
+    "Affiliation": 9,
     "Coordinates": 5,
-    "Experience": 7,
+    "Experience": 8,
+    "CurrentHP": 11,
+    "MaxHP": 12,
+    "Tags": 10,
     "Stats": [
       {
         "Name": "Str",
-        "BaseValue": 12,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 42
-          }
-        ]
-      },
-      {
-        "Name": "Def",
-        "BaseValue": 17,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 47
-          }
-        ]
-      },
-      {
-        "Name": "Mag",
         "BaseValue": 13,
         "Modifiers": [
           {
@@ -56,7 +41,7 @@
         ]
       },
       {
-        "Name": "Res",
+        "Name": "Def",
         "BaseValue": 18,
         "Modifiers": [
           {
@@ -66,27 +51,7 @@
         ]
       },
       {
-        "Name": "Lck",
-        "BaseValue": 16,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 46
-          }
-        ]
-      },
-      {
-        "Name": "Spd",
-        "BaseValue": 15,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 45
-          }
-        ]
-      },
-      {
-        "Name": "Skl",
+        "Name": "Mag",
         "BaseValue": 14,
         "Modifiers": [
           {
@@ -96,7 +61,7 @@
         ]
       },
       {
-        "Name": "Mov",
+        "Name": "Res",
         "BaseValue": 19,
         "Modifiers": [
           {
@@ -104,14 +69,54 @@
             "Value": 49
           }
         ]
+      },
+      {
+        "Name": "Lck",
+        "BaseValue": 17,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 47
+          }
+        ]
+      },
+      {
+        "Name": "Spd",
+        "BaseValue": 16,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 46
+          }
+        ]
+      },
+      {
+        "Name": "Skl",
+        "BaseValue": 15,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 45
+          }
+        ]
+      },
+      {
+        "Name": "Mov",
+        "BaseValue": 20,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 50
+          }
+        ]
       }
     ],
     "Inventory": {
-      "EquippedItem": 27,
-      "Slots": [ 28, 29, 30, 31, 32 ]
+      "EquippedItem": 28,
+      "Slots": [ 29, 30, 31, 32, 33 ]
     },
     "Skills": {
-      "Slots": [ 33, 34, 35, 36, 37, 38, 39, 40 ]
+      "Slots": [ 34, 35, 36, 37, 38, 39, 40, 41 ]
     }
   },
   "Items": {
