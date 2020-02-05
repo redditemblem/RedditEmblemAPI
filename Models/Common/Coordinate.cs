@@ -7,7 +7,6 @@ namespace RedditEmblemAPI.Models.Common
     {
         public int X;
         public int Y;
-        public bool IsHidden { get { return this.X < 0 || this.Y < 0; } }
 
         public Coordinate(int x, int y)
         {

@@ -3,10 +3,20 @@
     "Name": "Team Sample",
     "WorkbookID": "10OGJGY4RcLemNcdoGVTrwoc6qJQyv5ONMK09VUyFptc",
     "Map": {
-      "GridSize": 32,
-      "GridSpacing": 0,
-      "HasHeaderTopLeft": false,
-      "HasHeaderBottomRight": false
+      "WorksheetQuery": {
+        "Sheet": "System Control",
+        "Selection": "B1:B",
+        "Orientation": 2
+      },
+      "MapSwitch": 0,
+      "MapURL": 2,
+      "ChapterPostLink": 1,
+      "Constants": {
+        "GridSize": 32,
+        "GridSpacing": 0,
+        "HasHeaderTopLeft": false,
+        "HasHeaderBottomRight": false
+      }
     }
   },
   "System": {

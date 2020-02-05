@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RedditEmblemAPI.Services;
+using RedditEmblemAPI.Models.Exceptions;
 using System;
 
 namespace RedditEmblemAPI.Controllers
@@ -23,6 +24,10 @@ namespace RedditEmblemAPI.Controllers
             {
                 var data = _sheetsService.LoadData(teamName);
                 return Ok(data);
+            }
+            catch(MapDataLockedException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex);
             }
             catch (Exception ex)
             {

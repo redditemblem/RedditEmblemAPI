@@ -5,13 +5,15 @@ namespace RedditEmblemAPI.Models.Output
 {
     public class SheetsData
     {
-        public IList<Unit> Units;
-        public IList<Exception> Errors;
-
         public SheetsData()
         {
             this.Units = new List<Unit>();
             this.Errors = new List<Exception>();
         }
+
+        public Map Map { get; set; }
+        public IList<Unit> Units { get; set; }
+        public IList<Exception> Errors { get; set; }
+       
     }
 }

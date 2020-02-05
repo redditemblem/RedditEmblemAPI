@@ -2,8 +2,10 @@
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Common;
 using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Configuration.Common;
+using RedditEmblemAPI.Models.Configuration.Team;
 using RedditEmblemAPI.Models.Exceptions;
 using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Services.Helpers;
@@ -39,10 +41,18 @@ namespace RedditEmblemAPI.Services
             if (string.IsNullOrEmpty(filePath)) throw new TeamConfigurationNotFoundException(teamName);
             JSONConfiguration config = LoadTeamJSONConfiguration(filePath);
 
+            string mapImageURL, chapterPostURL;
             IList<IList<object>> unitData, itemData, skillData;
-            QueryGoogleSheets(config, out unitData, out itemData, out skillData);
+            QueryGoogleSheets(config, out mapImageURL, out chapterPostURL, out unitData, out itemData, out skillData);
 
             //Process data
+            this.SheetData.Map = new Map(mapImageURL, chapterPostURL, config.Team.Map.Constants);
+            this.SheetData.Map.Tiles = new List<List<Tile>>()
+            {
+                new List<Tile>(){ new Tile() { Coordinate = new Coordinate(1,1) }, new Tile() { Coordinate = new Coordinate(2,1) }, new Tile() { Coordinate = new Coordinate(3,1) }, new Tile() { Coordinate = new Coordinate(4,1) } },
+                new List<Tile>(){ new Tile() { Coordinate = new Coordinate(1,2) }, new Tile() { Coordinate = new Coordinate(2,2) }, new Tile() { Coordinate = new Coordinate(3,2) }, new Tile() { Coordinate = new Coordinate(4,2) } }
+            };
+
             IList<Item> items = ItemsHelper.Process(itemData, config.Items);
             IList<Skill> skills = SkillHelper.Process(skillData, config.Skills);
             this.SheetData.Units = UnitsHelper.Process(unitData, config.Units, items, skills);
@@ -80,7 +90,12 @@ namespace RedditEmblemAPI.Services
             }
         }
     
-        private void QueryGoogleSheets(JSONConfiguration config, out IList<IList<object>> unitData, out IList<IList<object>> itemData, out IList<IList<object>> skillData)
+        private void QueryGoogleSheets( JSONConfiguration config,
+                                        out string mapImageURL, out string chapterPostURL, 
+                                        out IList<IList<object>> unitData,
+                                        out IList<IList<object>> itemData,
+                                        out IList<IList<object>> skillData
+                                      )
         {
             SheetsService service = new SheetsService(new BaseClientService.Initializer()
             {
@@ -89,9 +104,41 @@ namespace RedditEmblemAPI.Services
             });
 
             // Execute queries
+            ExecuteMapQuery(service, config.Team.WorkbookID, config.Team.Map, out mapImageURL, out chapterPostURL);
             unitData = ExecuteQuery(service, config.Team.WorkbookID, config.Units.WorksheetQuery);
             itemData = ExecuteQuery(service, config.Team.WorkbookID, config.Items.WorksheetQuery);
             skillData = ExecuteQuery(service, config.Team.WorkbookID, config.Skills.WorksheetQuery);
+        }
+
+        private void ExecuteMapQuery(SheetsService service, string workbookID, MapConfig config, out string mapImageURL, out string chapterPostURL)
+        {
+            try
+            {
+                GetRequest request = service.Spreadsheets.Values.Get(workbookID, config.WorksheetQuery.ToString());
+                request.MajorDimension = config.WorksheetQuery.Orientation;
+
+                ValueRange response = request.Execute();
+                IList<object> values = response.Values.FirstOrDefault();
+
+                //Check to make sure the map is not locked
+                if ((values.ElementAtOrDefault(config.MapSwitch) ?? "Off").ToString() != "On")
+                    throw new MapDataLockedException();
+
+                //Return URLs
+                mapImageURL = (values.ElementAtOrDefault(config.MapURL) ?? string.Empty).ToString();
+                if (string.IsNullOrEmpty(mapImageURL))
+                    throw new MapImageURLNotFoundException(config.WorksheetQuery.Sheet);
+                chapterPostURL = (values.ElementAtOrDefault(config.ChapterPostLink) ?? string.Empty).ToString();
+            }
+            catch(Exception ex) when (ex is MapDataLockedException || ex is MapImageURLNotFoundException)
+            {
+                //Don't wrap these exception types
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw new GoogleSheetsQueryFailedException(config.WorksheetQuery.Sheet, ex);
+            }
         }
 
         private IList<IList<object>> ExecuteQuery(SheetsService service, string workbookID, WorksheetQuery query)
