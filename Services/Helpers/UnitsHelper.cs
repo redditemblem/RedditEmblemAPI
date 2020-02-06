@@ -114,20 +114,20 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Parse base value
                 int val;
                 if (!int.TryParse(unit.ElementAtOrDefault(s.BaseValue), out val) || val < 0)
-                    throw new PositiveIntegerException(s.Name, unit.ElementAtOrDefault(s.BaseValue) ?? string.Empty);
+                    throw new PositiveIntegerException(s.SourceName, unit.ElementAtOrDefault(s.BaseValue) ?? string.Empty);
                 temp.BaseValue = val;
 
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in s.Modifiers)
                 {
                     if (!int.TryParse(unit.ElementAtOrDefault(mod.Value), out val))
-                        throw new AnyIntegerException(string.Format("{0} {1}", s.Name, mod.SourceName), unit.ElementAtOrDefault(mod.Value) ?? string.Empty);
+                        throw new AnyIntegerException(string.Format("{0} {1}", s.SourceName, mod.SourceName), unit.ElementAtOrDefault(mod.Value) ?? string.Empty);
 
                     if(val != 0)
                         temp.Modifiers.Add(mod.SourceName, val);
                 }
 
-                stats.Add(s.Name, temp);
+                stats.Add(s.SourceName, temp);
             }
 
             return stats;

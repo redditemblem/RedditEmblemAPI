@@ -1,4 +1,4 @@
-﻿using RedditEmblemAPI.Models.Configuration.Skills;
+﻿using RedditEmblemAPI.Models.Configuration.System.Skills;
 using RedditEmblemAPI.Models.Exceptions;
 using RedditEmblemAPI.Models.Output;
 using System;

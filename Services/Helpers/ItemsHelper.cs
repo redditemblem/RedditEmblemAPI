@@ -1,5 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
-using RedditEmblemAPI.Models.Configuration.Items;
+using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Exceptions;
 using RedditEmblemAPI.Models.Output;
 using System;
@@ -40,7 +40,8 @@ namespace RedditEmblemAPI.Services.Helpers
                         UtilizedStat = item.ElementAtOrDefault(config.UtilizedStat) ?? string.Empty,
                         MaxUses = SafeIntParse(item.ElementAtOrDefault(config.Uses), "Uses", true),
                         Stats = BuildStatsDictionary(item, config.Stats),
-                        Range = BuildItemRange(item, config.Range)
+                        Range = new ItemRange((item.ElementAtOrDefault(config.Range.Minimum) ?? string.Empty),
+                                              (item.ElementAtOrDefault(config.Range.Maximum) ?? string.Empty))
                     };
 
                     //Parse lists
@@ -97,24 +98,6 @@ namespace RedditEmblemAPI.Services.Helpers
             }
 
             return stats;
-        }
-    
-        private static ItemRange BuildItemRange(IList<string> item, RangeConfig config)
-        {
-            ItemRange range = new ItemRange();
-
-            //Parse minimum range value
-            int val;
-            if (!int.TryParse(item.ElementAtOrDefault(config.Minimum), out val) || val < 0)
-                throw new PositiveIntegerException("Minimum Range", item.ElementAtOrDefault(config.Minimum) ?? string.Empty);
-            range.Minimum = val;
-
-            //Parse maximum range value
-            if (!int.TryParse(item.ElementAtOrDefault(config.Maximum), out val) || val < 0)
-                throw new PositiveIntegerException("Maximum Range", item.ElementAtOrDefault(config.Maximum) ?? string.Empty);
-            range.Maximum = val;
-
-            return range;
         }
     }
 }

@@ -16,11 +16,138 @@
         "GridSpacing": 0,
         "HasHeaderTopLeft": false,
         "HasHeaderBottomRight": false
+      },
+      "Tiles": {
+        "WorksheetQuery": {
+          "Sheet": "Map Tiles",
+          "Selection": "A1:ZZ",
+          "Orientation": 1
+        }
       }
     }
   },
   "System": {
+    "Items": {
+      "WorksheetQuery": {
+        "Sheet": "Items",
+        "Selection": "B2:ZZ",
+        "Orientation": 1
+      },
+      "ItemName": 0,
+      "SpriteURL": 1,
+      "Category": 2,
+      "WeaponRank": 3,
+      "UtilizedStat": 4,
+      "Uses": 5,
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 6
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 7
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 8
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 9
+        },
+        {
+          "SourceName": "Eva",
+          "Value": 10
+        }
+      ],
+      "EquippedStatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 13
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 14
+        },
+        {
+          "SourceName": "Skl",
+          "Value": 15
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 16
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 17
+        },
+        {
+          "SourceName": "Def",
+          "Value": 18
+        },
+        {
+          "SourceName": "Res",
+          "Value": 19
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 20
+        }
+      ],
+      "InventoryStatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 21
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 22
+        },
+        {
+          "SourceName": "Skl",
+          "Value": 23
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 24
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 25
+        },
+        {
+          "SourceName": "Def",
+          "Value": 26
+        },
+        {
+          "SourceName": "Res",
+          "Value": 27
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 28
+        }
+      ],
+      "Range": {
+        "Minimum": 11,
+        "Maximum": 12
+      },
+      "TextFields": [ 29, 30 ]
+    },
+    "Skills": {
+      "WorksheetQuery": {
+        "Sheet": "Skills",
+        "Selection": "B2:ZZ",
+        "Orientation": 1
+      },
+      "SkillName": 0,
+      "SpriteURL": 1,
+      "TextFields": [ 2 ]
+    },
+    "TerrainTypes": {
 
+    }
   },
   "Units": {
     "WorksheetQuery": {
@@ -128,123 +255,5 @@
     "Skills": {
       "Slots": [ 34, 35, 36, 37, 38, 39, 40, 41 ]
     }
-  },
-  "Items": {
-    "WorksheetQuery": {
-      "Sheet": "Items",
-      "Selection": "B2:ZZ",
-      "Orientation": 1
-    },
-    "ItemName": 0,
-    "SpriteURL": 1,
-    "Category": 2,
-    "WeaponRank": 3,
-    "UtilizedStat": 4,
-    "Uses": 5,
-    "Stats": [
-      {
-        "SourceName": "Mt",
-        "Value": 6
-      },
-      {
-        "SourceName": "Hit",
-        "Value": 7
-      },
-      {
-        "SourceName": "Crit",
-        "Value": 8
-      },
-      {
-        "SourceName": "Avo",
-        "Value": 9
-      },
-      {
-        "SourceName": "Eva",
-        "Value": 10
-      }
-    ],
-    "EquippedStatModifiers": [
-      {
-        "SourceName": "Str",
-        "Value": 13
-      },
-      {
-        "SourceName": "Mag",
-        "Value": 14
-      },
-      {
-        "SourceName": "Skl",
-        "Value": 15
-      },
-      {
-        "SourceName": "Spd",
-        "Value": 16
-      },
-      {
-        "SourceName": "Lck",
-        "Value": 17
-      },
-      {
-        "SourceName": "Def",
-        "Value": 18
-      },
-      {
-        "SourceName": "Res",
-        "Value": 19
-      },
-      {
-        "SourceName": "Mov",
-        "Value": 20
-      }
-    ],
-    "InventoryStatModifiers": [
-      {
-        "SourceName": "Str",
-        "Value": 21
-      },
-      {
-        "SourceName": "Mag",
-        "Value": 22
-      },
-      {
-        "SourceName": "Skl",
-        "Value": 23
-      },
-      {
-        "SourceName": "Spd",
-        "Value": 24
-      },
-      {
-        "SourceName": "Lck",
-        "Value": 25
-      },
-      {
-        "SourceName": "Def",
-        "Value": 26
-      },
-      {
-        "SourceName": "Res",
-        "Value": 27
-      },
-      {
-        "SourceName": "Mov",
-        "Value": 28
-      }
-    ],
-    "Range": {
-      "Minimum": 11,
-      "Maximum": 12
-    },
-    "TextFields": [ 29, 30 ]
-  },
-  "Skills": {
-    "WorksheetQuery": {
-      "Sheet": "Skills",
-      "Selection": "B2:ZZ",
-      "Orientation": 1
-    },
-    "SkillName": 0,
-    "SpriteURL":  1,
-    "TextFields": [ 2 ]
   }
 }
