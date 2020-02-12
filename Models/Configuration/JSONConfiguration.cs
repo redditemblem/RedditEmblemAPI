@@ -1,7 +1,9 @@
 using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Configuration.Team;
 using RedditEmblemAPI.Models.Configuration.Units;
+using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration
 {
@@ -10,6 +12,8 @@ namespace RedditEmblemAPI.Models.Configuration
     /// </summary>
     public class JSONConfiguration
     {
+        #region RequiredFields
+
         /// <summary>
         /// Container object for team configuration.
         /// </summary>
@@ -27,5 +31,24 @@ namespace RedditEmblemAPI.Models.Configuration
         /// </summary>
         [JsonRequired]
         public UnitsConfig Units { get; set; }
+
+        #endregion
+
+        /// <summary>
+        /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
+        /// </summary>
+        /// <returns></returns>
+        public List<Query> GetQueries()
+        {
+            return new List<Query>()
+            {
+                this.Team.Map.Tiles.Query,
+                this.System.TerrainTypes.Query,
+                this.Units.Query,
+                this.System.Items.Query,
+                this.System.Skills.Query,
+                this.System.TerrainTypes.Query
+            };
+        }
     }
 }

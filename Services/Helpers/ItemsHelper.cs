@@ -13,14 +13,13 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Parses Google Sheets data matrix to return a list of Item output objects.
         /// </summary>
-        /// <param name="data">Matrix of sheet Value values representing item data</param>
-        /// <param name="config">Parsed JSON configuration mapping Values to output</param>
+        /// <param name="config">Parsed JSON configuration.</param>
         /// <returns></returns>
-        public static IList<Item> Process(IList<IList<object>> data, ItemsConfig config)
+        public static IList<Item> Process(ItemsConfig config)
         {
             IList<Item> items = new List<Item>();
 
-            foreach (IList<object> row in data)
+            foreach (IList<object> row in config.Query.Data)
             {
                 try
                 {

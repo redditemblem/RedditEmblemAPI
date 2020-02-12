@@ -12,7 +12,7 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         #region RequiredFields
 
         [JsonRequired]
-        public WorksheetQuery WorksheetQuery { get; set; }
+        public Query Query { get; set; }
 
         /// <summary>
         /// Cell index of a unit's name value.

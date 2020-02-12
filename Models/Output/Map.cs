@@ -18,14 +18,14 @@ namespace RedditEmblemAPI.Models.Output
         /// <param name="config"></param>
         /// <param name="tileData"></param>
         /// <exception cref="MapProcessingException"></exception>
-        public Map(string mapImageURL, string chapterPostURL, MapConstantsConfig config, IList<IList<object>> tileData)
+        public Map(string mapImageURL, string chapterPostURL, MapConstantsConfig config, IList<IList<object>> tileData, Dictionary<string, TerrainType> terrainTypes)
         {
             this.MapImageURL = mapImageURL;
             this.ChapterPostURL = chapterPostURL;
             this.Constants = config;
             this.Tiles = new List<List<Tile>>();
 
-            BuildTiles(tileData);
+            BuildTiles(tileData, terrainTypes);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace RedditEmblemAPI.Models.Output
         /// </summary>
         /// <param name="tileData"></param>
         /// <exception cref="MapProcessingException"></exception>
-        private void BuildTiles(IList<IList<object>> tileData)
+        private void BuildTiles(IList<IList<object>> tileData, Dictionary<string, TerrainType> terrainTypes)
         {
             int x = 1;
             int y = 1;
@@ -65,9 +65,12 @@ namespace RedditEmblemAPI.Models.Output
                     List<Tile> currentRow = new List<Tile>();
                     foreach (object tile in row)
                     {
-                        //To Do: Terrain matching
+                        //Match on tile's terrain type
+                        TerrainType type;
+                        if (!terrainTypes.TryGetValue(tile.ToString(), out type))
+                            throw new UnmatchedTileTerrainException(x, y, tile.ToString());
 
-                        currentRow.Add(new Tile(x, y));
+                        currentRow.Add(new Tile(x, y, type));
                         x++;
                     }
 

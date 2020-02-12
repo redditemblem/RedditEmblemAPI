@@ -12,7 +12,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         #region RequiredFields
 
         [JsonRequired]
-        public WorksheetQuery WorksheetQuery { get; set; }
+        public Query Query { get; set; }
 
         /// <summary>
         /// Cell index of an item's name value.

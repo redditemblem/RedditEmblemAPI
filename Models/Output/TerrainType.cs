@@ -1,4 +1,6 @@
-﻿namespace RedditEmblemAPI.Models.Output
+﻿using Newtonsoft.Json;
+
+namespace RedditEmblemAPI.Models.Output
 {
     /// <summary>
     /// Object representing a TerrainType definition in the team's system.

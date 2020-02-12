@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output
@@ -14,9 +15,14 @@ namespace RedditEmblemAPI.Models.Output
         public Map Map { get; set; }
 
         /// <summary>
-        /// Container list for data about units.
+        /// Container dictionary for data about units.
         /// </summary>
-        public IList<Unit> Units { get; set; }
+        public Dictionary<string, Unit> Units { get; set; }
+
+        /// <summary>
+        /// Container dictionary for data about terrain types.
+        /// </summary>
+        public Dictionary<string, TerrainType> TerrainTypes { get; set; }
 
         /// <summary>
         /// Container list for soft exceptions that occurred during processing.

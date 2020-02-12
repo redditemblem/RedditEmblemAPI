@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource;
+using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource.BatchGetRequest;
 
 namespace RedditEmblemAPI.Services
 {
@@ -42,14 +43,15 @@ namespace RedditEmblemAPI.Services
             JSONConfiguration config = LoadTeamJSONConfiguration(filePath);
 
             string mapImageURL, chapterPostURL;
-            IList<IList<object>> tileData, terrainTypeData, unitData, itemData, skillData;
-            QueryGoogleSheets(config, out mapImageURL, out chapterPostURL, out tileData, out terrainTypeData, out unitData, out itemData, out skillData);
+            QueryGoogleSheets(config, out mapImageURL, out chapterPostURL);
 
             //Process data
-            this.SheetData.Map = new Map(mapImageURL, chapterPostURL, config.Team.Map.Constants, tileData);
-            IList<Item> items = ItemsHelper.Process(itemData, config.System.Items);
-            IList<Skill> skills = SkillHelper.Process(skillData, config.System.Skills);
-            this.SheetData.Units = UnitsHelper.Process(unitData, config.Units, items, skills);
+            this.SheetData.TerrainTypes = TerrainTypeHelper.Process(config.System.TerrainTypes);
+            this.SheetData.Map = new Map(mapImageURL, chapterPostURL, config.Team.Map.Constants, config.Team.Map.Tiles.Query.Data, this.SheetData.TerrainTypes);
+
+            IList<Item> items = ItemsHelper.Process(config.System.Items);
+            IList<Skill> skills = SkillHelper.Process(config.System.Skills);
+            this.SheetData.Units = UnitsHelper.Process(config.Units, items, skills);
 
             return this.SheetData;
         }
@@ -84,14 +86,7 @@ namespace RedditEmblemAPI.Services
             }
         }
     
-        private void QueryGoogleSheets( JSONConfiguration config,
-                                        out string mapImageURL, out string chapterPostURL, 
-                                        out IList<IList<object>> tileData,
-                                        out IList<IList<object>> terrainTypeData,
-                                        out IList<IList<object>> unitData,
-                                        out IList<IList<object>> itemData,
-                                        out IList<IList<object>> skillData
-                                      )
+        private void QueryGoogleSheets( JSONConfiguration config, out string mapImageURL, out string chapterPostURL)
         {
             SheetsService service = new SheetsService(new BaseClientService.Initializer()
             {
@@ -101,29 +96,39 @@ namespace RedditEmblemAPI.Services
 
             // Execute queries
             ExecuteMapQuery(service, config.Team.WorkbookID, config.Team.Map, out mapImageURL, out chapterPostURL);
-            tileData = ExecuteQuery(service, config.Team.WorkbookID, config.Team.Map.Tiles.WorksheetQuery);
-            terrainTypeData = ExecuteQuery(service, config.Team.WorkbookID, config.System.TerrainTypes.WorksheetQuery);
 
-            unitData = ExecuteQuery(service, config.Team.WorkbookID, config.Units.WorksheetQuery);
-            itemData = ExecuteQuery(service, config.Team.WorkbookID, config.System.Items.WorksheetQuery);
-            skillData = ExecuteQuery(service, config.Team.WorkbookID, config.System.Skills.WorksheetQuery);
+            List<Query> queries = config.GetQueries();
+
+            ExecuteBatchQuery(service,
+                              config.Team.WorkbookID,
+                              MajorDimensionEnum.ROWS,
+                              queries.Where(q => q != null && q.Orientation == MajorDimensionEnum.ROWS).ToList()
+                             );
+
+            ExecuteBatchQuery(service,
+                              config.Team.WorkbookID,
+                              MajorDimensionEnum.COLUMNS,
+                              queries.Where(q => q != null && q.Orientation == MajorDimensionEnum.COLUMNS).ToList()
+                             );
         }
 
         /// <summary>
-        /// 
+        /// Executes queries to check the map status (on/off) and retrieve the map image URL and chapter post URL.
         /// </summary>
         /// <param name="service"></param>
         /// <param name="workbookID"></param>
         /// <param name="config"></param>
         /// <param name="mapImageURL"></param>
         /// <param name="chapterPostURL"></param>
+        /// <exception cref="MapDataLockedException"></exception>
+        /// <exception cref="MapImageURLNotFoundException"></exception>
         /// <exception cref="GoogleSheetsQueryFailedException"></exception>
         private void ExecuteMapQuery(SheetsService service, string workbookID, MapConfig config, out string mapImageURL, out string chapterPostURL)
         {
             try
             {
-                GetRequest request = service.Spreadsheets.Values.Get(workbookID, config.WorksheetQuery.ToString());
-                request.MajorDimension = config.WorksheetQuery.Orientation;
+                GetRequest request = service.Spreadsheets.Values.Get(workbookID, config.Query.ToString());
+                request.MajorDimension = Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource.GetRequest.MajorDimensionEnum.COLUMNS;// config.Query.Orientation;
 
                 ValueRange response = request.Execute();
                 if (response.Values == null)
@@ -138,7 +143,7 @@ namespace RedditEmblemAPI.Services
                 //Return URLs
                 mapImageURL = (values.ElementAtOrDefault(config.MapURL) ?? string.Empty).ToString();
                 if (string.IsNullOrEmpty(mapImageURL))
-                    throw new MapImageURLNotFoundException(config.WorksheetQuery.Sheet);
+                    throw new MapImageURLNotFoundException(config.Query.Sheet);
                 chapterPostURL = (values.ElementAtOrDefault(config.ChapterPostURL) ?? string.Empty).ToString();
             }
             catch(Exception ex) when (ex is MapDataLockedException || ex is MapImageURLNotFoundException)
@@ -148,33 +153,44 @@ namespace RedditEmblemAPI.Services
             }
             catch (Exception ex)
             {
-                throw new GoogleSheetsQueryFailedException(config.WorksheetQuery.Sheet, ex);
+                throw new GoogleSheetsQueryFailedException(config.Query.Sheet, ex);
             }
         }
 
         /// <summary>
-        /// Using the specified WorksheetQuery object, calls the Google Sheets API and returns the result. 
+        /// Using the set of specified Query objects, executes a batch query on the Google Sheets API and sets their Data values. 
         /// </summary>
         /// <param name="service"></param>
         /// <param name="workbookID"></param>
-        /// <param name="query"></param>
+        /// <param name="queries">The set of queries to be executed. All are expected to have the same <c>Orientation</c> value as <paramref name="dimension"/>.</param>
         /// <returns></returns>
         /// <exception cref="GoogleSheetsQueryFailedException"></exception>
-        private IList<IList<object>> ExecuteQuery(SheetsService service, string workbookID, WorksheetQuery query)
+        private void ExecuteBatchQuery(SheetsService service, string workbookID, MajorDimensionEnum dimension, IList<Query> queries)
         {
             try
             {
-                GetRequest request = service.Spreadsheets.Values.Get(workbookID, query.ToString());
-                request.MajorDimension = query.Orientation;
+                if (queries.Count == 0)
+                    return;
 
-                ValueRange response = request.Execute();
-                if (response.Values == null)
-                    throw new GoogleSheetsQueryReturnedNullException();
-                return response.Values;
+                BatchGetRequest request = service.Spreadsheets.Values.BatchGet(workbookID);
+                request.Ranges = queries.Select(q => q.ToString()).ToList();
+                request.MajorDimension = dimension;
+
+                BatchGetValuesResponse response = request.Execute();
+
+                int i = 0;
+                foreach (Query query in queries)
+                {
+                    if (response.ValueRanges.ElementAtOrDefault(i).Values == null)
+                        throw new GoogleSheetsQueryReturnedNullException();
+                    query.Data = response.ValueRanges.ElementAtOrDefault(i).Values;
+
+                    i++;
+                }
             }
             catch (Exception ex)
             {
-                throw new GoogleSheetsQueryFailedException(query.Sheet, ex);
+                throw new GoogleSheetsQueryFailedException(string.Join(", ", queries.Select(q => q.Sheet)), ex);
             } 
         }
     }

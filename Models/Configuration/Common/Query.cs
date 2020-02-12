@@ -1,12 +1,13 @@
 ﻿using Newtonsoft.Json;
-using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource.GetRequest;
+using System.Collections.Generic;
+using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource.BatchGetRequest;
 
 namespace RedditEmblemAPI.Models.Configuration.Common
 {
     /// <summary>
-    /// Container class for deserialized JSON <c>"WorksheetQuery"</c> object data.
+    /// Container class for deserialized JSON <c>"Query"</c> object data.
     /// </summary>
-    public class WorksheetQuery
+    public class Query
     {
         #region RequiredFields
 
@@ -39,6 +40,12 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         public MajorDimensionEnum Orientation { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// Matrix of objects returned from Google after execution of this query.
+        /// </summary>
+        public IList<IList<object>> Data { get; set; }
+
 
         /// <summary>
         /// Overridden. Returns the worksheet query in <c>Sheet!Selection</c> format for passing to the Google Sheets API.

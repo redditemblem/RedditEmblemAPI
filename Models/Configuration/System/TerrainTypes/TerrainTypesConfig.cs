@@ -11,7 +11,13 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         #region RequiredFields
 
         [JsonRequired]
-        public WorksheetQuery WorksheetQuery { get; set; }
+        public Query Query { get; set; }
+
+        /// <summary>
+        /// Cell index for the name of the terrain type.
+        /// </summary>
+        [JsonRequired]
+        public int TypeName { get; set; }
 
         #endregion
     }

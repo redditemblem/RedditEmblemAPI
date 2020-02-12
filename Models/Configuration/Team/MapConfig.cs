@@ -11,7 +11,7 @@ namespace RedditEmblemAPI.Models.Configuration.Team
         #region RequiredFields
 
         [JsonRequired]
-        public WorksheetQuery WorksheetQuery { get; set; }
+        public Query Query { get; set; }
         
         /// <summary>
         /// Cell index of the map switch value.

@@ -9,11 +9,11 @@ namespace RedditEmblemAPI.Services.Helpers
 {
     public class SkillHelper : Helper
     {
-        public static IList<Skill> Process(IList<IList<object>> data, SkillsConfig config)
+        public static IList<Skill> Process(SkillsConfig config)
         {
             IList<Skill> skills = new List<Skill>();
 
-            foreach (IList<object> row in data)
+            foreach (IList<object> row in config.Query.Data)
             {
                 try
                 {

@@ -11,7 +11,7 @@ namespace RedditEmblemAPI.Models.Configuration.Team
         #region RequiredValues
 
         [JsonRequired]
-        public WorksheetQuery WorksheetQuery { get; set; }
+        public Query Query { get; set; }
 
         #endregion
     }

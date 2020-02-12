@@ -21,16 +21,20 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="data">Matrix of sheet Value values representing unit data</param>
         /// <param name="config">Parsed JSON configuration mapping Values to output</param>
         /// <returns></returns>
-        public static IList<Unit> Process(IList<IList<object>> data, UnitsConfig config, IList<Item> items, IList<Skill> skills)
+        public static Dictionary<string, Unit> Process(UnitsConfig config, IList<Item> items, IList<Skill> skills)
         {
-            IList<Unit> units = new List<Unit>();
+            Dictionary<string, Unit> units = new Dictionary<string, Unit>();
 
-            foreach (IList<object> row in data)
+            foreach (IList<object> row in config.Query.Data)
             {
                 try
                 {
                     //Convert objects to strings
                     IList<string> unit = row.Select(r => r.ToString()).ToList();
+
+                    //Skip blank units
+                    if (string.IsNullOrEmpty(unit.ElementAtOrDefault(config.UnitName)))
+                        continue;
 
                     Unit temp = new Unit()
                     {
@@ -74,7 +78,7 @@ namespace RedditEmblemAPI.Services.Helpers
                         }
                     }
 
-                    units.Add(temp);
+                    units.Add(temp.Name, temp);
                 }
                 catch (Exception ex)
                 {

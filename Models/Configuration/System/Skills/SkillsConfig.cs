@@ -12,7 +12,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Skills
         #region RequiredFields
 
         [JsonRequired]
-        public WorksheetQuery WorksheetQuery { get; set; }
+        public Query Query { get; set; }
 
         /// <summary>
         /// Cell index of a skill's name value.

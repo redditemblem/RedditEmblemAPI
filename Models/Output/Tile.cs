@@ -13,9 +13,10 @@ namespace RedditEmblemAPI.Models.Output
         /// </summary>
         /// <param name="x">Used to initialize the Tile's coordinate in combination with <paramref name="y"/>.</param>
         /// <param name="y">Used to initialize the Tile's coordinate in combination with <paramref name="x"/>.</param>
-        public Tile(int x, int y)
+        public Tile(int x, int y, TerrainType terrainType)
         {
             this.Coordinate = new Coordinate(x, y);
+            this.Terrain = terrainType;
         }
 
         /// <summary>
@@ -43,7 +44,6 @@ namespace RedditEmblemAPI.Models.Output
         /// <summary>
         /// Returns the name of the <c>TerrainType</c> of this tile.
         /// </summary>
-        //TO DO: REMOVE THE NULL CHECK ON THIS. IT SHOULD NEVER BE NULL.
-        public string TerrainTypeName { get { return (this.Terrain == null ? string.Empty : this.Terrain.Name);  } }
+        public string TerrainTypeName { get { return this.Terrain.Name;  } }
     }
 }

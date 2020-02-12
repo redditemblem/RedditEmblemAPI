@@ -3,7 +3,7 @@
     "Name": "Team Sample",
     "WorkbookID": "10OGJGY4RcLemNcdoGVTrwoc6qJQyv5ONMK09VUyFptc",
     "Map": {
-      "WorksheetQuery": {
+      "Query": {
         "Sheet": "System Control",
         "Selection": "B1:B",
         "Orientation": 2
@@ -12,13 +12,13 @@
       "MapURL": 2,
       "ChapterPostLink": 1,
       "Constants": {
-        "GridSize": 32,
-        "GridSpacing": 0,
+        "TileSize": 32,
+        "TileSpacing": 0,
         "HasHeaderTopLeft": false,
         "HasHeaderBottomRight": false
       },
       "Tiles": {
-        "WorksheetQuery": {
+        "Query": {
           "Sheet": "Map Tiles",
           "Selection": "A1:ZZ",
           "Orientation": 1
@@ -28,7 +28,7 @@
   },
   "System": {
     "Items": {
-      "WorksheetQuery": {
+      "Query": {
         "Sheet": "Items",
         "Selection": "B2:ZZ",
         "Orientation": 1
@@ -136,7 +136,7 @@
       "TextFields": [ 29, 30 ]
     },
     "Skills": {
-      "WorksheetQuery": {
+      "Query": {
         "Sheet": "Skills",
         "Selection": "B2:ZZ",
         "Orientation": 1
@@ -146,11 +146,16 @@
       "TextFields": [ 2 ]
     },
     "TerrainTypes": {
-
+      "Query": {
+        "Sheet": "Terrain Types",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "TypeName": 0
     }
   },
   "Units": {
-    "WorksheetQuery": {
+    "Query": {
       "Sheet": "Characters",
       "Selection": "B1:ZZ",
       "Orientation": 2
@@ -168,7 +173,7 @@
     "Tags": 10,
     "Stats": [
       {
-        "Name": "Str",
+        "SourceName": "Str",
         "BaseValue": 13,
         "Modifiers": [
           {
@@ -178,7 +183,7 @@
         ]
       },
       {
-        "Name": "Def",
+        "SourceName": "Def",
         "BaseValue": 18,
         "Modifiers": [
           {
@@ -188,7 +193,7 @@
         ]
       },
       {
-        "Name": "Mag",
+        "SourceName": "Mag",
         "BaseValue": 14,
         "Modifiers": [
           {
@@ -198,7 +203,7 @@
         ]
       },
       {
-        "Name": "Res",
+        "SourceName": "Res",
         "BaseValue": 19,
         "Modifiers": [
           {
@@ -208,7 +213,7 @@
         ]
       },
       {
-        "Name": "Lck",
+        "SourceName": "Lck",
         "BaseValue": 17,
         "Modifiers": [
           {
@@ -218,7 +223,7 @@
         ]
       },
       {
-        "Name": "Spd",
+        "SourceName": "Spd",
         "BaseValue": 16,
         "Modifiers": [
           {
@@ -228,7 +233,7 @@
         ]
       },
       {
-        "Name": "Skl",
+        "SourceName": "Skl",
         "BaseValue": 15,
         "Modifiers": [
           {
@@ -238,7 +243,7 @@
         ]
       },
       {
-        "Name": "Mov",
+        "SourceName": "Mov",
         "BaseValue": 20,
         "Modifiers": [
           {
