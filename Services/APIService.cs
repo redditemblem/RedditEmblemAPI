@@ -32,7 +32,7 @@ namespace RedditEmblemAPI.Services
         {
             //Do a deep search for our team file
             string filePath = "";
-            foreach (string path in Directory.EnumerateFiles("JSON", "", SearchOption.AllDirectories))
+            foreach (string path in Directory.EnumerateFiles("JSON/TeamConfigs/Active", "", SearchOption.AllDirectories))
                 if (Path.GetFileNameWithoutExtension(path) == teamName)
                 {
                     filePath = path;
@@ -51,7 +51,7 @@ namespace RedditEmblemAPI.Services
 
             IList<Item> items = ItemsHelper.Process(config.System.Items);
             IList<Skill> skills = SkillHelper.Process(config.System.Skills);
-            this.SheetData.Units = UnitsHelper.Process(config.Units, items, skills);
+            this.SheetData.Units = UnitsHelper.Process(config.Units, items, skills, this.SheetData.Map.Tiles);
 
             return this.SheetData;
         }
@@ -61,7 +61,7 @@ namespace RedditEmblemAPI.Services
             List<string> teams = new List<string>();
 
             //Top directory enumeration
-            foreach (string filePath in Directory.EnumerateFiles("JSON"))
+            foreach (string filePath in Directory.EnumerateFiles("JSON/TeamConfigs/Active"))
             {
                 JSONConfiguration config = LoadTeamJSONConfiguration(filePath);
                 teams.Add(config.Team.Name);

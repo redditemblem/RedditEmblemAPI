@@ -15,9 +15,9 @@ namespace RedditEmblemAPI.Models.Output
         public Map Map { get; set; }
 
         /// <summary>
-        /// Container dictionary for data about units.
+        /// Container list for data about units.
         /// </summary>
-        public Dictionary<string, Unit> Units { get; set; }
+        public IList<Unit> Units { get; set; }
 
         /// <summary>
         /// Container dictionary for data about terrain types.

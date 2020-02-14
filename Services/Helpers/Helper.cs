@@ -16,5 +16,13 @@ namespace RedditEmblemAPI.Services.Helpers
                 throw new PositiveIntegerException(fieldName, number);
             return val;
         }
+
+        protected static int OptionalSafeIntParse(string number, string fieldName, bool isPositive, int defaultValueIfNull)
+        {
+            if (string.IsNullOrEmpty(number))
+                return defaultValueIfNull;
+
+            return SafeIntParse(number, fieldName, isPositive);
+        }
     }
 }

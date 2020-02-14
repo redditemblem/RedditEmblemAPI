@@ -1,4 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Exceptions;
+using System;
 
 namespace RedditEmblemAPI.Models.Output
 {
@@ -16,6 +17,11 @@ namespace RedditEmblemAPI.Models.Output
         /// The maximum number of hit points a unit has.
         /// </summary>
         public int Maximum { get; set; }
+
+        /// <summary>
+        /// The percentage of HP the unit has remaining.
+        /// </summary>
+        public decimal Percentage { get { return Math.Round((decimal)this.Current / this.Maximum, 2) * 100; } }
 
         /// <summary>
         /// Initializes the class with the passed in <paramref name="current"/> and <paramref name="maximum"/> values.

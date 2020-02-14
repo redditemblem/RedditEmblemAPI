@@ -21,9 +21,9 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="data">Matrix of sheet Value values representing unit data</param>
         /// <param name="config">Parsed JSON configuration mapping Values to output</param>
         /// <returns></returns>
-        public static Dictionary<string, Unit> Process(UnitsConfig config, IList<Item> items, IList<Skill> skills)
+        public static IList<Unit> Process(UnitsConfig config, IList<Item> items, IList<Skill> skills, List<List<Tile>> map)
         {
-            Dictionary<string, Unit> units = new Dictionary<string, Unit>();
+            IList<Unit> units = new List<Unit>();
 
             foreach (IList<object> row in config.Query.Data)
             {
@@ -40,45 +40,28 @@ namespace RedditEmblemAPI.Services.Helpers
                     {
                         Name = unit.ElementAtOrDefault(config.UnitName) ?? string.Empty,
                         SpriteURL = unit.ElementAtOrDefault(config.SpriteURL) ?? string.Empty,
-                        TextFields = BuildTextFieldList(unit, config.TextFields),
                         Coordinates = new Coordinate(unit.ElementAtOrDefault(config.Coordinates) ?? string.Empty),
+                        UnitSize = OptionalSafeIntParse(unit.ElementAtOrDefault(config.UnitSize) ?? string.Empty, "Unit Size", true, 1),
                         HP = new HP((unit.ElementAtOrDefault(config.CurrentHP) ?? string.Empty),
                                     (unit.ElementAtOrDefault(config.MaxHP) ?? string.Empty)),
                         Level = SafeIntParse(unit.ElementAtOrDefault(config.Level), "Level", true),
                         Class = unit.ElementAtOrDefault(config.Class) ?? string.Empty,
                         Affiliation = unit.ElementAtOrDefault(config.Affiliation) ?? string.Empty,
-                        Experience = SafeIntParse(unit.ElementAtOrDefault(config.Experience) ?? string.Empty, "Experience", true) % 100,
-                        Tags = BuildTagsList(unit.ElementAtOrDefault(config.Tags) ?? string.Empty),
-                        Stats = BuildStatsDictionary(unit, config.Stats),
-                        Inventory = BuildInventory(unit, config.Inventory, items),
-                        Skills = BuildSkills(unit, config.Skills, skills)
+                        Experience = SafeIntParse(unit.ElementAtOrDefault(config.Experience) ?? string.Empty, "Experience", true) % 100
                     };
 
-                    //Apply stat boosts from items
-                    //Equipped item
-                    Item eqp = temp.Inventory.FirstOrDefault(i => i != null && i.IsEquipped);
-                    if(eqp != null)
-                    {
-                        foreach(string stat in eqp.EquippedStatModifiers.Keys)
-                        {
-                            ModifiedStatValue mods = temp.Stats.GetValueOrDefault(stat);
-                            if (mods != null)
-                                mods.Modifiers.Add(string.Format("{0} ({1})", eqp.Name, "Eqp"), eqp.EquippedStatModifiers[stat]);
-                        }
-                    }
-                    
-                    //Inventory items
-                    foreach(Item inv in temp.Inventory.Where(i => i != null && !i.IsEquipped))
-                    {
-                        foreach (string stat in inv.InventoryStatModifiers.Keys)
-                        {
-                            ModifiedStatValue mods = temp.Stats.GetValueOrDefault(stat);
-                            if (mods != null)
-                                mods.Modifiers.Add(string.Format("{0} ({1})", inv.Name, "Inv"), inv.InventoryStatModifiers[stat]);
-                        }
-                    }
+                    //Add items to lists and dictionaries
+                    BuildTextFieldList(temp, unit, config.TextFields);
+                    BuildTagsList(temp, (unit.ElementAtOrDefault(config.Tags) ?? string.Empty));
+                    BuildStatsDictionary(temp, unit, config.Stats);
+                    BuildInventory(temp, unit, config.Inventory, items);
+                    BuildSkills(temp, unit, config.Skills, skills);
 
-                    units.Add(temp.Name, temp);
+                    ApplyInventoryItemModifiers(temp);
+                    AddUnitToMap(temp, map);
+                    //CalculateUnitRange();
+
+                    units.Add(temp);
                 }
                 catch (Exception ex)
                 {
@@ -89,64 +72,62 @@ namespace RedditEmblemAPI.Services.Helpers
             return units;
         }
 
-        private static IList<string> BuildTextFieldList(IList<string> unit, IList<int> configFields)
+        private static void BuildTextFieldList(Unit unit, IList<string> data, IList<int> configFields)
         {
-            IList<string> fields = new List<string>();
             foreach (int field in configFields)
-                if (!string.IsNullOrEmpty(unit.ElementAtOrDefault(field)))
-                    fields.Add(unit.ElementAtOrDefault(field));
-            return fields;
+                if (!string.IsNullOrEmpty(data.ElementAtOrDefault(field)))
+                    unit.TextFields.Add(data.ElementAtOrDefault(field));
         }
 
-        private static IList<string> BuildTagsList(string tagsCSV)
+        private static void BuildTagsList(Unit unit, string tagsCSV)
         {
-            IList<string> tags = new List<string>();
             foreach (string tag in tagsCSV.Split(','))
                 if(!string.IsNullOrEmpty(tag))
-                    tags.Add(tag.Trim());
-            return tags;
+                    unit.TextFields.Add(tag.Trim());
         }
 
-        private static Dictionary<string, ModifiedStatValue> BuildStatsDictionary(IList<string> unit, IList<ModifiedNamedStatConfig> config)
+        private static void BuildStatsDictionary(Unit unit, IList<string> data, IList<ModifiedNamedStatConfig> config)
         {
-            Dictionary<string, ModifiedStatValue> stats = new Dictionary<string, ModifiedStatValue>();
-
             foreach (ModifiedNamedStatConfig s in config)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
 
                 //Parse base value
                 int val;
-                if (!int.TryParse(unit.ElementAtOrDefault(s.BaseValue), out val) || val < 0)
-                    throw new PositiveIntegerException(s.SourceName, unit.ElementAtOrDefault(s.BaseValue) ?? string.Empty);
+                if (!int.TryParse(data.ElementAtOrDefault(s.BaseValue), out val) || val < 0)
+                    throw new PositiveIntegerException(s.SourceName, data.ElementAtOrDefault(s.BaseValue) ?? string.Empty);
                 temp.BaseValue = val;
 
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in s.Modifiers)
                 {
-                    if (!int.TryParse(unit.ElementAtOrDefault(mod.Value), out val))
-                        throw new AnyIntegerException(string.Format("{0} {1}", s.SourceName, mod.SourceName), unit.ElementAtOrDefault(mod.Value) ?? string.Empty);
+                    if (!int.TryParse(data.ElementAtOrDefault(mod.Value), out val))
+                        throw new AnyIntegerException(string.Format("{0} {1}", s.SourceName, mod.SourceName), data.ElementAtOrDefault(mod.Value) ?? string.Empty);
 
                     if(val != 0)
                         temp.Modifiers.Add(mod.SourceName, val);
                 }
 
-                stats.Add(s.SourceName, temp);
+                unit.Stats.Add(s.SourceName, temp);
             }
-
-            return stats;
         }
 
-        private static IList<Item> BuildInventory(IList<string> unit, InventoryConfig config, IList<Item> items)
+        /// <summary>
+        /// Adds <c>Item</c> objects from <paramref name="items"/> to <paramref name="unit"/>'s <c>Inventory</c> when their name matches a <paramref name="data"/> cell's value. Also flags items as droppable/equippable and parses uses.
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <param name="data"></param>
+        /// <param name="config"></param>
+        /// <param name="items"></param>
+        /// <exception cref="UnmatchedItemException"></exception>
+        private static void BuildInventory(Unit unit, IList<string> data, InventoryConfig config, IList<Item> items)
         {
-            IList<Item> inventory = new List<Item>();
-
             foreach (int slot in config.Slots)
             {
-                string name = unit.ElementAtOrDefault(slot);
+                string name = data.ElementAtOrDefault(slot);
                 if (string.IsNullOrEmpty(name))
                 {
-                    inventory.Add(null);
+                    unit.Inventory.Add(null);
                     continue;
                 }
 
@@ -178,38 +159,118 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     //If we find a match from the items sheet, deep clone it to the unit and paste in our values
                     Item clone = (Item)itemMatch.Clone();
-                    clone.OriginalName = unit.ElementAtOrDefault(slot);
+                    clone.OriginalName = data.ElementAtOrDefault(slot);
                     clone.IsDroppable = isDroppable;
                     clone.Uses = uses;
 
-                    inventory.Add(clone);
+                    unit.Inventory.Add(clone);
                 }
                 else throw new UnmatchedItemException(name);
             }
 
             //Find the equipped item and flag it
-            Item equipped = inventory.FirstOrDefault(i => i.OriginalName == (unit.ElementAtOrDefault(config.EquippedItem) ?? string.Empty));
-            equipped.IsEquipped = (equipped != null);
-
-            return inventory;
+            if (!string.IsNullOrEmpty(data.ElementAtOrDefault(config.EquippedItem)))
+            {
+                Item equipped = unit.Inventory.FirstOrDefault(i => i.OriginalName == data.ElementAt(config.EquippedItem));
+                if (equipped == null)
+                    throw new UnmatchedEquippedItemException(data.ElementAt(config.EquippedItem));
+                equipped.IsEquipped = true;
+            }
         }
 
-        private static IList<Skill> BuildSkills(IList<string> unit, SkillListConfig config, IList<Skill> skills)
+        /// <summary>
+        /// Adds <c>Skill</c> objects from <paramref name="skills"/> to <paramref name="unit"/>'s <c>Skills</c> when their name matches a <paramref name="data"/> cell's value.
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <param name="data"></param>
+        /// <param name="config"></param>
+        /// <param name="skills"></param>
+        /// <exception cref="UnmatchedSkillException"></exception>
+        private static void BuildSkills(Unit unit, IList<string> data, SkillListConfig config, IList<Skill> skills)
         {
-            IList<Skill> skillList = new List<Skill>();
-
             foreach (int slot in config.Slots)
             {
-                string name = unit.ElementAtOrDefault(slot);
+                //Skip blank cells
+                string name = data.ElementAtOrDefault(slot);
                 if (string.IsNullOrEmpty(name))
                     continue;
 
                 Skill skillMatch = skills.FirstOrDefault(i => i.Name == name);
-                if (skillMatch != null) skillList.Add(skillMatch);
-                else throw new UnmatchedSkillException(name);
+                if (skillMatch == null)
+                    throw new UnmatchedSkillException(name);
+                unit.Skills.Add(skillMatch);
+            }
+        }
+
+        private static void ApplyInventoryItemModifiers(Unit temp)
+        {
+            //Equipped item
+            Item eqp = temp.Inventory.FirstOrDefault(i => i != null && i.IsEquipped);
+            if (eqp != null)
+            {
+                foreach (string stat in eqp.EquippedStatModifiers.Keys)
+                {
+                    ModifiedStatValue mods = temp.Stats.GetValueOrDefault(stat);
+                    if (mods != null)
+                        mods.Modifiers.Add(string.Format("{0} ({1})", eqp.Name, "Eqp"), eqp.EquippedStatModifiers[stat]);
+                }
             }
 
-            return skillList;
+            //Inventory items
+            foreach (Item inv in temp.Inventory.Where(i => i != null && !i.IsEquipped))
+            {
+                foreach (string stat in inv.InventoryStatModifiers.Keys)
+                {
+                    ModifiedStatValue mods = temp.Stats.GetValueOrDefault(stat);
+                    if (mods != null)
+                        mods.Modifiers.Add(string.Format("{0} ({1})", inv.Name, "Inv"), inv.InventoryStatModifiers[stat]);
+                }
+            }
+        }
+
+        private static void AddUnitToMap(Unit unit, List<List<Tile>> map)
+        {
+            //Ignore hidden units
+            if (unit.Coordinates.X < 1 || unit.Coordinates.Y < 1)
+                return;
+
+            //Find tile corresponsing to units coordinates
+            IList<Tile> row = map.ElementAtOrDefault(unit.Coordinates.Y - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates);
+            Tile tile = row.ElementAtOrDefault(unit.Coordinates.X - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates);
+
+            //Two way bind the unit and tile objects
+            unit.AnchorTile = tile;
+            tile.Unit = unit;
+            tile.IsUnitAnchor = true;
+
+            if (unit.UnitSize > 1)
+            {
+                //Calculate origin tile for multi-tile units
+                int anchorOffset = (int)Math.Ceiling(unit.UnitSize / 2.0m) - 1;
+
+                for(int y = 0; y < unit.UnitSize; y++)
+                {
+                    for (int x = 0; x < unit.UnitSize; x++)
+                    {
+                        IList<Tile> intersectRow = map.ElementAtOrDefault(unit.Coordinates.Y + y - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates.X + x, unit.Coordinates.Y + y);
+                        Tile intersectTile = intersectRow.ElementAtOrDefault(unit.Coordinates.X + x - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates.X + x, unit.Coordinates.Y + y);
+
+                        intersectTile.Unit = unit;
+                        unit.IntersectionTiles.Add(intersectTile);
+                        if (x == anchorOffset && y == anchorOffset)
+                        {
+                            unit.OriginTile = intersectTile;
+                            intersectTile.IsUnitOrigin = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //Single tile units have their anchor and origin in the same place.
+                unit.OriginTile = tile;
+                tile.IsUnitOrigin = true;
+            }   
         }
     }
 }

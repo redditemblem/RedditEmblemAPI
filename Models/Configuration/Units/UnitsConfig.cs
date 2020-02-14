@@ -105,6 +105,11 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// </summary>
         public int Tags { get; set; } = -1;
 
+        /// <summary>
+        /// Cell index of the unit's size in number of tiles.
+        /// </summary>
+        public int UnitSize { get; set; } = -1;
+
         #endregion
     }
 }

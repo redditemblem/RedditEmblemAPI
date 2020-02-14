@@ -14,8 +14,11 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="JSON\Hidden\TeamSample.json">
+    <Content Update="JSON\TeamConfigs\Active\Hidden\TeamSample.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="JSON\TeamConfigs\Disabled\" />
   </ItemGroup>
 </Project>

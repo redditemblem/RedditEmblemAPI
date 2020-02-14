@@ -6,7 +6,7 @@ namespace RedditEmblemAPI.Models.Common
     /// <summary>
     /// Struct representing a coordinate pair on the map.
     /// </summary>
-    public struct Coordinate
+    public class Coordinate
     {
         /// <summary>
         /// The coordinate's horizontal displacement value.

@@ -36,6 +36,16 @@ namespace RedditEmblemAPI.Models.Output
         public string OccupyingUnitName { get { return (this.Unit == null ? string.Empty : this.Unit.Name); } }
 
         /// <summary>
+        /// Flag indicating if the <c>Unit</c> occupying this tile is anchored here. Units will be drawn at the anchor tile.
+        /// </summary>
+        public bool IsUnitAnchor { get; set; }
+
+        /// <summary>
+        /// Flag indicating if the <c>Unit</c> occupying this tile originates here. Units will have their range calculated from the origin tile.
+        /// </summary>
+        public bool IsUnitOrigin { get; set; }
+
+        /// <summary>
         /// The terrain type of this tile.
         /// </summary>
         [JsonIgnore]

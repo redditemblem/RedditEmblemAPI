@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Common;
+﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Common;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output
@@ -15,6 +16,7 @@ namespace RedditEmblemAPI.Models.Output
             this.Stats = new Dictionary<string, ModifiedStatValue>();
             this.Inventory = new List<Item>();
             this.Skills = new List<Skill>();
+            this.IntersectionTiles = new List<Tile>();
         }
 
         /// <summary>
@@ -81,5 +83,32 @@ namespace RedditEmblemAPI.Models.Output
         /// List of the skills the unit possesses.
         /// </summary>
         public IList<Skill> Skills { get; set; }
+
+        #region Movement_And_Range
+
+        /// <summary>
+        /// The size of the unit in grid tiles. Defaults to 1.
+        /// </summary>
+        public int UnitSize { get; set; }
+
+        /// <summary>
+        /// The <c>Tile</c> that this unit is drawn at.
+        /// </summary>
+        [JsonIgnore]
+        public Tile AnchorTile { get; set; }
+
+        /// <summary>
+        /// The <c>Tile</c> that this unit's range originates from.
+        /// </summary>
+        [JsonIgnore]
+        public Tile OriginTile { get; set; }
+
+        /// <summary>
+        /// List of <c>Tile</c>s that this unit overlaps.
+        /// </summary>
+        [JsonIgnore]
+        public IList<Tile> IntersectionTiles { get; set; }
+
+        #endregion
     }
 }
