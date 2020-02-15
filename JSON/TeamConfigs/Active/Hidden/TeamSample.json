@@ -145,6 +145,17 @@
       "SpriteURL": 1,
       "TextFields": [ 2 ]
     },
+    "Classes": {
+      "Query": {
+        "Sheet": "Classes",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "ClassName": 0,
+      "Tags": 1,
+      "MovementType": 2,
+      "TextFields": [3]
+    },
     "TerrainTypes": {
       "Query": {
         "Sheet": "Terrain Types",
@@ -165,7 +176,7 @@
     "TextFields": [ 3 ],
     "Level": 8,
     "Class": 4,
-    "Affiliation": 9,
+    "Affiliation": 10,
     "Coordinates": 5,
     "HasMoved": 6, 
     "UnitSize": 7,

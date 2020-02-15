@@ -51,7 +51,10 @@ namespace RedditEmblemAPI.Services
 
             IList<Item> items = ItemsHelper.Process(config.System.Items);
             IList<Skill> skills = SkillHelper.Process(config.System.Skills);
-            this.SheetData.Units = UnitsHelper.Process(config.Units, items, skills, this.SheetData.Map.Tiles);
+            this.SheetData.Classes = ClassHelper.Process(config.System.Classes);
+            this.SheetData.Units = UnitsHelper.Process(config.Units, items, skills, this.SheetData.Classes, this.SheetData.Map.Tiles);
+
+            RemoveUnusedObjects();
 
             return this.SheetData;
         }
@@ -97,7 +100,7 @@ namespace RedditEmblemAPI.Services
             // Execute queries
             ExecuteMapQuery(service, config.Team.WorkbookID, config.Team.Map, out mapImageURL, out chapterPostURL);
 
-            List<Query> queries = config.GetQueries();
+            List<Query> queries = config.GetBatchQueries();
 
             ExecuteBatchQuery(service,
                               config.Team.WorkbookID,
@@ -192,6 +195,19 @@ namespace RedditEmblemAPI.Services
             {
                 throw new GoogleSheetsQueryFailedException(string.Join(", ", queries.Select(q => q.Sheet)), ex);
             } 
+        }
+    
+        private void RemoveUnusedObjects()
+        {
+            //Cull unused classes
+            foreach (string key in this.SheetData.Classes.Keys.ToList())
+                if (!this.SheetData.Classes[key].Matched)
+                    this.SheetData.Classes.Remove(key);
+
+            //Cull unused terrain types
+            foreach (string key in this.SheetData.TerrainTypes.Keys.ToList())
+                if (!this.SheetData.TerrainTypes[key].Matched)
+                    this.SheetData.TerrainTypes.Remove(key);
         }
     }
 }

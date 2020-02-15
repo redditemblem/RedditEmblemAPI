@@ -18,7 +18,7 @@ namespace RedditEmblemAPI.Models.Output
         /// <param name="config"></param>
         /// <param name="tileData"></param>
         /// <exception cref="MapProcessingException"></exception>
-        public Map(string mapImageURL, string chapterPostURL, MapConstantsConfig config, IList<IList<object>> tileData, Dictionary<string, TerrainType> terrainTypes)
+        public Map(string mapImageURL, string chapterPostURL, MapConstantsConfig config, IList<IList<object>> tileData, IDictionary<string, TerrainType> terrainTypes)
         {
             this.MapImageURL = mapImageURL;
             this.ChapterPostURL = chapterPostURL;
@@ -54,7 +54,7 @@ namespace RedditEmblemAPI.Models.Output
         /// </summary>
         /// <param name="tileData"></param>
         /// <exception cref="MapProcessingException"></exception>
-        private void BuildTiles(IList<IList<object>> tileData, Dictionary<string, TerrainType> terrainTypes)
+        private void BuildTiles(IList<IList<object>> tileData, IDictionary<string, TerrainType> terrainTypes)
         {
             int x = 1;
             int y = 1;
@@ -70,6 +70,7 @@ namespace RedditEmblemAPI.Models.Output
                         if (!terrainTypes.TryGetValue(tile.ToString(), out type))
                             throw new UnmatchedTileTerrainException(x, y, tile.ToString());
 
+                        type.Matched = true;
                         currentRow.Add(new Tile(x, y, type));
                         x++;
                     }

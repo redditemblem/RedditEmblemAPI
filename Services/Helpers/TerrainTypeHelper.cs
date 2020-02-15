@@ -1,6 +1,4 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
-using RedditEmblemAPI.Models.Configuration.System.Items;
-using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
+﻿using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
 using RedditEmblemAPI.Models.Exceptions;
 using RedditEmblemAPI.Models.Output;
 using System;
@@ -16,7 +14,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         /// <param name="config">Parsed JSON configuration.</param>
         /// <returns></returns>
-        public static Dictionary<string, TerrainType> Process(TerrainTypesConfig config)
+        public static IDictionary<string, TerrainType> Process(TerrainTypesConfig config)
         {
             Dictionary<string, TerrainType> terrainTypes = new Dictionary<string, TerrainType>();
 

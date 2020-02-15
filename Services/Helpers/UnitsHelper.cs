@@ -12,6 +12,7 @@ namespace RedditEmblemAPI.Services.Helpers
 {
     public class UnitsHelper : Helper
     {
+        private static Regex unitNumberRegex = new Regex(@"\s([0-9]+$)"); //matches digits at the end of a string (ex. "Swordmaster _05_")
         private static Regex usesRegex = new Regex(@"\([0-9]+\)"); //match item uses (ex. "(5)")
         private static Regex dropRegex = new Regex(@"\(D\)");      //match item droppable (ex. "(D)")
 
@@ -21,7 +22,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="data">Matrix of sheet Value values representing unit data</param>
         /// <param name="config">Parsed JSON configuration mapping Values to output</param>
         /// <returns></returns>
-        public static IList<Unit> Process(UnitsConfig config, IList<Item> items, IList<Skill> skills, List<List<Tile>> map)
+        public static IList<Unit> Process(UnitsConfig config, IList<Item> items, IList<Skill> skills, IDictionary<string, Class> classes, List<List<Tile>> map)
         {
             IList<Unit> units = new List<Unit>();
 
@@ -42,13 +43,19 @@ namespace RedditEmblemAPI.Services.Helpers
                         SpriteURL = unit.ElementAtOrDefault(config.SpriteURL) ?? string.Empty,
                         Coordinates = new Coordinate(unit.ElementAtOrDefault(config.Coordinates) ?? string.Empty),
                         UnitSize = OptionalSafeIntParse(unit.ElementAtOrDefault(config.UnitSize) ?? string.Empty, "Unit Size", true, 1),
+                        HasMoved = ((unit.ElementAtOrDefault(config.HasMoved) ?? string.Empty) == "Yes"),
                         HP = new HP((unit.ElementAtOrDefault(config.CurrentHP) ?? string.Empty),
                                     (unit.ElementAtOrDefault(config.MaxHP) ?? string.Empty)),
                         Level = SafeIntParse(unit.ElementAtOrDefault(config.Level), "Level", true),
-                        Class = unit.ElementAtOrDefault(config.Class) ?? string.Empty,
+                        Class = (unit.ElementAtOrDefault(config.Class) ?? string.Empty).Trim(),
                         Affiliation = unit.ElementAtOrDefault(config.Affiliation) ?? string.Empty,
                         Experience = SafeIntParse(unit.ElementAtOrDefault(config.Experience) ?? string.Empty, "Experience", true) % 100
                     };
+
+                    //Find unit number
+                    Match numberMatch = unitNumberRegex.Match(temp.Name);
+                    if (numberMatch.Success)
+                        temp.UnitNumber = numberMatch.Value.Trim();
 
                     //Add items to lists and dictionaries
                     BuildTextFieldList(temp, unit, config.TextFields);
@@ -56,6 +63,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     BuildStatsDictionary(temp, unit, config.Stats);
                     BuildInventory(temp, unit, config.Inventory, items);
                     BuildSkills(temp, unit, config.Skills, skills);
+                    MatchClass(temp, classes);
 
                     ApplyInventoryItemModifiers(temp);
                     AddUnitToMap(temp, map);
@@ -83,7 +91,7 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             foreach (string tag in tagsCSV.Split(','))
                 if(!string.IsNullOrEmpty(tag))
-                    unit.TextFields.Add(tag.Trim());
+                    unit.Tags.Add(tag.Trim());
         }
 
         private static void BuildStatsDictionary(Unit unit, IList<string> data, IList<ModifiedNamedStatConfig> config)
@@ -200,6 +208,17 @@ namespace RedditEmblemAPI.Services.Helpers
                     throw new UnmatchedSkillException(name);
                 unit.Skills.Add(skillMatch);
             }
+        }
+
+        private static void MatchClass(Unit unit, IDictionary<string, Class> classes)
+        {
+            Class match;
+            if (!classes.TryGetValue(unit.Class, out match))
+                throw new UnmatchedClassException(unit.Class);
+            match.Matched = true;
+
+            //Union the unit's tags and the class's tags
+            unit.Tags = unit.Tags.Union(match.Tags).Distinct().ToList();
         }
 
         private static void ApplyInventoryItemModifiers(Unit temp)

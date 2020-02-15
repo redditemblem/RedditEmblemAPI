@@ -25,6 +25,11 @@ namespace RedditEmblemAPI.Models.Output
         public string Name { get; set; }
 
         /// <summary>
+        /// The set of units present at the end of the unit's <c>Name</c>, if any.
+        /// </summary>
+        public string UnitNumber { get; set; }
+
+        /// <summary>
         /// The sprite image URL for the unit.
         /// </summary>
         public string SpriteURL { get; set; }
@@ -85,6 +90,11 @@ namespace RedditEmblemAPI.Models.Output
         public IList<Skill> Skills { get; set; }
 
         #region Movement_And_Range
+
+        /// <summary>
+        /// Flag indicating whether or not a unit's turn has been processed.
+        /// </summary>
+        public bool HasMoved { get; set; }
 
         /// <summary>
         /// The size of the unit in grid tiles. Defaults to 1.

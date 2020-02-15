@@ -20,9 +20,14 @@ namespace RedditEmblemAPI.Models.Output
         public IList<Unit> Units { get; set; }
 
         /// <summary>
+        /// Container dictionary for data about classes.
+        /// </summary>
+        public IDictionary<string, Class> Classes { get; set; }
+
+        /// <summary>
         /// Container dictionary for data about terrain types.
         /// </summary>
-        public Dictionary<string, TerrainType> TerrainTypes { get; set; }
+        public IDictionary<string, TerrainType> TerrainTypes { get; set; }
 
         /// <summary>
         /// Container list for soft exceptions that occurred during processing.

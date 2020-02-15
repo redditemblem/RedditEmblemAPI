@@ -7,6 +7,17 @@ namespace RedditEmblemAPI.Models.Output
     /// </summary>
     public class TerrainType
     {
+        public TerrainType()
+        {
+            this.Matched = false;
+        }
+
+        /// <summary>
+        /// Flag indicating whether or not this terrain type was found on a tile. Used to minify the output JSON.
+        /// </summary>
+        [JsonIgnore]
+        public bool Matched { get; set; }
+
         /// <summary>
         /// The name of the terrain type.
         /// </summary>

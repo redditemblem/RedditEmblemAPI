@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Configuration.System.Classes;
 using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Configuration.System.Skills;
 using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
@@ -23,6 +24,12 @@ namespace RedditEmblemAPI.Models.Configuration.System
         /// </summary>
         [JsonRequired]
         public SkillsConfig Skills { get; set; }
+
+        /// <summary>
+        /// Container object for a system's class configuration.
+        /// </summary>
+        [JsonRequired]
+        public ClassesConfig Classes { get; set; }
 
         /// <summary>
         /// Container object for a system's terrain type configuration.

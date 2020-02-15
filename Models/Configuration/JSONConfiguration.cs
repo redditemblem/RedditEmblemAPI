@@ -38,7 +38,7 @@ namespace RedditEmblemAPI.Models.Configuration
         /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
         /// </summary>
         /// <returns></returns>
-        public List<Query> GetQueries()
+        public List<Query> GetBatchQueries()
         {
             return new List<Query>()
             {
@@ -47,6 +47,7 @@ namespace RedditEmblemAPI.Models.Configuration
                 this.Units.Query,
                 this.System.Items.Query,
                 this.System.Skills.Query,
+                this.System.Classes.Query,
                 this.System.TerrainTypes.Query
             };
         }
