@@ -37,6 +37,7 @@ namespace RedditEmblemAPI.Services.Helpers
                         Category = item.ElementAtOrDefault(config.Category) ?? string.Empty,
                         WeaponRank = item.ElementAtOrDefault(config.WeaponRank) ?? string.Empty,
                         UtilizedStat = item.ElementAtOrDefault(config.UtilizedStat) ?? string.Empty,
+                        DealsDamage = ((item.ElementAtOrDefault(config.DealsDamage) ?? "No").Trim() == "Yes"),
                         MaxUses = SafeIntParse(item.ElementAtOrDefault(config.Uses), "Uses", true),
                         Stats = BuildStatsDictionary(item, config.Stats),
                         Range = new ItemRange((item.ElementAtOrDefault(config.Range.Minimum) ?? string.Empty),

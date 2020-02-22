@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
+﻿using RedditEmblemAPI.Models.Configuration.Common;
+using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
 using RedditEmblemAPI.Models.Exceptions;
 using RedditEmblemAPI.Models.Output;
 using System;
@@ -31,18 +32,32 @@ namespace RedditEmblemAPI.Services.Helpers
 
                     TerrainType temp = new TerrainType()
                     {
-                        Name = type.ElementAtOrDefault(config.TypeName).Trim()
+                        Name = type.ElementAtOrDefault(config.TypeName).Trim(),
+                        BlocksItems = ((type.ElementAtOrDefault(config.BlocksItems) ?? "No").Trim() == "Yes")
                     };
+
+                    BuildMovementCostsDictionary(temp, type, config.MovementCosts);
 
                     terrainTypes.Add(temp.Name, temp);
                 }
                 catch (Exception ex)
                 {
-                    throw new ItemProcessingException(row.ElementAtOrDefault(config.TypeName).ToString(), ex);
+                    throw new TerrainTypeProcessingException(row.ElementAtOrDefault(config.TypeName).ToString(), ex);
                 }
             }
 
             return terrainTypes;
+        }
+
+        private static void BuildMovementCostsDictionary(TerrainType type, IList<string> data, IList<NamedStatConfig> configs)
+        {
+            foreach(NamedStatConfig stat in configs)
+            {
+                int val;
+                if (!int.TryParse(data.ElementAtOrDefault(stat.Value), out val))
+                    throw new AnyIntegerException(stat.SourceName, data.ElementAtOrDefault(stat.Value));
+                type.MovementCosts.Add(stat.SourceName, val);
+            }
         }
     }
 }

@@ -55,5 +55,9 @@ namespace RedditEmblemAPI.Models.Output
         /// Returns the name of the <c>TerrainType</c> of this tile.
         /// </summary>
         public string TerrainTypeName { get { return this.Terrain.Name;  } }
+
+        public int MovCount { get { return 0; } }
+        public int AtkCount { get { return 0; } }
+        public int UtilCount { get { return 0; } }
     }
 }

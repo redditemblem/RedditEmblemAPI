@@ -67,7 +67,6 @@ namespace RedditEmblemAPI.Services.Helpers
 
                     ApplyInventoryItemModifiers(temp);
                     AddUnitToMap(temp, map);
-                    //CalculateUnitRange();
 
                     units.Add(temp);
                 }
@@ -262,6 +261,8 @@ namespace RedditEmblemAPI.Services.Helpers
             tile.Unit = unit;
             tile.IsUnitAnchor = true;
 
+            unit.MovementRange.Add(new Coordinate(tile.Coordinate));
+
             if (unit.UnitSize > 1)
             {
                 //Calculate origin tile for multi-tile units
@@ -275,7 +276,9 @@ namespace RedditEmblemAPI.Services.Helpers
                         Tile intersectTile = intersectRow.ElementAtOrDefault(unit.Coordinates.X + x - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates.X + x, unit.Coordinates.Y + y);
 
                         intersectTile.Unit = unit;
-                        unit.IntersectionTiles.Add(intersectTile);
+                        if(!unit.MovementRange.Contains(intersectTile.Coordinate))
+                            unit.MovementRange.Add(intersectTile.Coordinate);
+                        
                         if (x == anchorOffset && y == anchorOffset)
                         {
                             unit.OriginTile = intersectTile;

@@ -62,6 +62,11 @@ namespace RedditEmblemAPI.Models.Output
         public string UtilizedStat { get; set; }
 
         /// <summary>
+        /// Flag indicating whether or not this item is capable of attacking.
+        /// </summary>
+        public bool DealsDamage { get; set; }
+
+        /// <summary>
         /// The number of uses the item currently has remaining.
         /// </summary>
         public int Uses { get; set; }
@@ -114,6 +119,7 @@ namespace RedditEmblemAPI.Models.Output
                 Category = this.Category,
                 WeaponRank = this.WeaponRank,
                 UtilizedStat = this.UtilizedStat,
+                DealsDamage = this.DealsDamage,
                 Uses = this.Uses,
                 MaxUses = this.MaxUses,
                 Stats = this.Stats.ToDictionary(entry => entry.Key, entry => entry.Value),

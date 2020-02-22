@@ -38,61 +38,62 @@
       "Category": 2,
       "WeaponRank": 3,
       "UtilizedStat": 4,
-      "Uses": 5,
+      "DealsDamage":  5,
+      "Uses": 6,
       "Stats": [
         {
           "SourceName": "Mt",
-          "Value": 6
-        },
-        {
-          "SourceName": "Hit",
           "Value": 7
         },
         {
-          "SourceName": "Crit",
+          "SourceName": "Hit",
           "Value": 8
         },
         {
-          "SourceName": "Avo",
+          "SourceName": "Crit",
           "Value": 9
         },
         {
-          "SourceName": "Eva",
+          "SourceName": "Avo",
           "Value": 10
+        },
+        {
+          "SourceName": "Eva",
+          "Value": 11
         }
       ],
       "EquippedStatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 13
-        },
-        {
-          "SourceName": "Mag",
           "Value": 14
         },
         {
-          "SourceName": "Skl",
+          "SourceName": "Mag",
           "Value": 15
         },
         {
-          "SourceName": "Spd",
+          "SourceName": "Skl",
           "Value": 16
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Spd",
           "Value": 17
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Lck",
           "Value": 18
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Def",
           "Value": 19
         },
         {
-          "SourceName": "Mov",
+          "SourceName": "Res",
           "Value": 20
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 21
         }
       ],
       "InventoryStatModifiers": [
@@ -102,38 +103,38 @@
         },
         {
           "SourceName": "Mag",
-          "Value": 22
-        },
-        {
-          "SourceName": "Skl",
           "Value": 23
         },
         {
-          "SourceName": "Spd",
+          "SourceName": "Skl",
           "Value": 24
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Spd",
           "Value": 25
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Lck",
           "Value": 26
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Def",
           "Value": 27
         },
         {
-          "SourceName": "Mov",
+          "SourceName": "Res",
           "Value": 28
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 29
         }
       ],
       "Range": {
-        "Minimum": 11,
-        "Maximum": 12
+        "Minimum": 12,
+        "Maximum": 13
       },
-      "TextFields": [ 29, 30 ]
+      "TextFields": [ 30, 31 ]
     },
     "Skills": {
       "Query": {
@@ -162,7 +163,22 @@
         "Selection": "A2:ZZ",
         "Orientation": 1
       },
-      "TypeName": 0
+      "TypeName": 0,
+      "MovementCosts": [
+        {
+          "SourceName": "Foot",
+          "Value": 5
+        },
+        {
+          "SourceName": "Mounted",
+          "Value": 6
+        },
+        {
+          "SourceName": "Flying",
+          "Value": 7
+        }
+      ],
+      "BlocksItems": 8
     }
   },
   "Units": {

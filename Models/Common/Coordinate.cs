@@ -19,7 +19,7 @@ namespace RedditEmblemAPI.Models.Common
         public int Y;
 
         /// <summary>
-        /// Initializes the struct with the passed in <paramref name="x"/> and <paramref name="y"/> values.
+        /// Initializes the <c>Coordinate</c> with the passed in <paramref name="x"/> and <paramref name="y"/> values.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -30,7 +30,7 @@ namespace RedditEmblemAPI.Models.Common
         }
 
         /// <summary>
-        /// Initializes the struct with the passed in <paramref name="coord"/> value in "x,y" format.
+        /// Initializes the <c>Coordinate</c> with the passed in <paramref name="coord"/> value in "x,y" format.
         /// If <paramref name="coord"/> is an empty string instead, sets both <c>X</c> and <c>Y</c> to 0.
         /// </summary>
         /// <param name="coord"></param>
@@ -53,6 +53,26 @@ namespace RedditEmblemAPI.Models.Common
                 || this.Y < 1
                )
                 throw new CoordinateFormattingException(coord);
+        }
+
+        /// <summary>
+        /// Initializes the <c>Coordinate</c> with the same x,y values as <paramref name="coord"/>.
+        /// </summary>
+        /// <param name="coord"></param>
+        public Coordinate(Coordinate coord)
+        {
+            this.X = coord.X;
+            this.Y = coord.Y;
+        }
+
+        public override bool Equals(Object obj)
+        {
+            return Equals((Coordinate)obj);
+        }
+
+        public bool Equals(Coordinate obj)
+        {
+            return this.X == obj.X && this.Y == obj.Y;
         }
     }
 }

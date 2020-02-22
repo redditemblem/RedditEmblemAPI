@@ -54,6 +54,11 @@ namespace RedditEmblemAPI.Services
             this.SheetData.Classes = ClassHelper.Process(config.System.Classes);
             this.SheetData.Units = UnitsHelper.Process(config.Units, items, skills, this.SheetData.Classes, this.SheetData.Map.Tiles);
 
+            //Calculate unit ranges
+            RangeHelper rangeHelper = new RangeHelper(this.SheetData.Units, this.SheetData.Map.Tiles);
+            rangeHelper.CalculateUnitRange();
+
+            //Clean up
             RemoveUnusedObjects();
 
             return this.SheetData;

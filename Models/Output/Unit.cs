@@ -16,7 +16,9 @@ namespace RedditEmblemAPI.Models.Output
             this.Stats = new Dictionary<string, ModifiedStatValue>();
             this.Inventory = new List<Item>();
             this.Skills = new List<Skill>();
-            this.IntersectionTiles = new List<Tile>();
+            this.MovementRange = new List<Coordinate>();
+            this.AttackRange = new List<Coordinate>();
+            this.UtilityRange = new List<Coordinate>();
         }
 
         /// <summary>
@@ -114,10 +116,19 @@ namespace RedditEmblemAPI.Models.Output
         public Tile OriginTile { get; set; }
 
         /// <summary>
-        /// List of <c>Tile</c>s that this unit overlaps.
+        /// List of tiles that the unit is capable of moving to.
         /// </summary>
-        [JsonIgnore]
-        public IList<Tile> IntersectionTiles { get; set; }
+        public IList<Coordinate> MovementRange { get; set; }
+
+        /// <summary>
+        /// List of tiles that the unit is capable of attacking.
+        /// </summary>
+        public IList<Coordinate> AttackRange { get; set; }
+
+        /// <summary>
+        /// List of tiles that the unit is capable of using a utility item on.
+        /// </summary>
+        public IList<Coordinate> UtilityRange { get; set; }
 
         #endregion
     }
