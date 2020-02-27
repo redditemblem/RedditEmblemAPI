@@ -29,15 +29,15 @@ namespace RedditEmblemAPI.Services.Helpers
                         continue;
 
                     //Calculate movement range
-                    RecurseUnitRange(unit, unit.Stats.GetValueOrDefault("Mov").FinalValue, unit.Coordinates, new List<Coordinate>());
+                    RecurseUnitRange(unit, unit.Stats.GetValueOrDefault("Mov").FinalValue, unit.OriginTile.Coordinate, new List<Coordinate>());
 
                     //Find the items with minimum and maximum attack range
                     Item minAtkRange = unit.Inventory.Where(i => i != null && i.DealsDamage && i.UtilizedStat.Length > 0).OrderBy(i => i.Range.Minimum).FirstOrDefault();
-                    Item maxAtkRange = unit.Inventory.Where(i => i != null && i.DealsDamage && i.UtilizedStat.Length > 0).OrderBy(i => i.Range.Maximum).FirstOrDefault();
+                    Item maxAtkRange = unit.Inventory.Where(i => i != null && i.DealsDamage && i.UtilizedStat.Length > 0).OrderByDescending(i => i.Range.Maximum).FirstOrDefault();
 
                     //Find the items with minimum and maximum utility range
                     Item minUtilRange = unit.Inventory.Where(i => i != null && !i.DealsDamage && i.UtilizedStat.Length > 0).OrderBy(i => i.Range.Minimum).FirstOrDefault();
-                    Item maxUtilRange = unit.Inventory.Where(i => i != null && !i.DealsDamage && i.UtilizedStat.Length > 0).OrderBy(i => i.Range.Maximum).FirstOrDefault();
+                    Item maxUtilRange = unit.Inventory.Where(i => i != null && !i.DealsDamage && i.UtilizedStat.Length > 0).OrderByDescending(i => i.Range.Maximum).FirstOrDefault();
 
                     IList<Coordinate> atkRange = new List<Coordinate>();
                     IList<Coordinate> utilRange = new List<Coordinate>();
@@ -75,13 +75,37 @@ namespace RedditEmblemAPI.Services.Helpers
         private void RecurseUnitRange(Unit unit, int remainingMov, Coordinate currCoord, List<Coordinate> visitedCoords)
         {
             //Base case
-            if (remainingMov < 0)
+            //Don't exceed the maximum range and don't go off the map
+            if (   remainingMov < 0
+                || currCoord.X < 1
+                || currCoord.Y < 1
+                || currCoord.X >= this.Tiles.First().Count
+                || currCoord.Y >= this.Tiles.Count
+               )
                 return;
 
             visitedCoords.Add(currCoord);
 
             if (!unit.MovementRange.Contains(currCoord))
                 unit.MovementRange.Add(currCoord);
+
+            //Navigate in each cardinal direction, do not repeat tiles in this path
+            //Left
+            if(!visitedCoords.Contains(new Coordinate(currCoord.X - 1, currCoord.Y)))
+                RecurseUnitRange(unit, remainingMov - 1, new Coordinate(currCoord.X - 1, currCoord.Y), visitedCoords.ToList());
+
+            //Right
+            if (!visitedCoords.Contains(new Coordinate(currCoord.X + 1, currCoord.Y)))
+                RecurseUnitRange(unit, remainingMov - 1, new Coordinate(currCoord.X + 1, currCoord.Y), visitedCoords.ToList());
+
+            //Up
+            if (!visitedCoords.Contains(new Coordinate(currCoord.X, currCoord.Y - 1)))
+                RecurseUnitRange(unit, remainingMov - 1, new Coordinate(currCoord.X, currCoord.Y - 1), visitedCoords.ToList());
+
+            //Down
+            if (!visitedCoords.Contains(new Coordinate(currCoord.X, currCoord.Y + 1)))
+                RecurseUnitRange(unit, remainingMov - 1, new Coordinate(currCoord.X, currCoord.Y + 1), visitedCoords.ToList());
+
         }
 
         private void RecurseItemRange(Unit unit, Coordinate currCoord, int remainingMinRange, int remainingMaxRange, IList<Coordinate> visitedCoords, ref IList<Coordinate> itemRange)
@@ -104,17 +128,22 @@ namespace RedditEmblemAPI.Services.Helpers
                     itemRange.Add(currCoord);
             }
 
+            //Navigate in each cardinal direction, do not repeat tiles in this path
             //Left
-            RecurseItemRange(unit, new Coordinate(currCoord.X - 1, currCoord.Y), remainingMinRange - 1, remainingMaxRange - 1, visitedCoords, ref itemRange);
+            if (!visitedCoords.Contains(new Coordinate(currCoord.X - 1, currCoord.Y)))
+                RecurseItemRange(unit, new Coordinate(currCoord.X - 1, currCoord.Y), remainingMinRange - 1, remainingMaxRange - 1, visitedCoords.ToList(), ref itemRange);
 
             //Right
-            RecurseItemRange(unit, new Coordinate(currCoord.X + 1, currCoord.Y), remainingMinRange - 1, remainingMaxRange - 1, visitedCoords, ref itemRange);
-            
+            if (!visitedCoords.Contains(new Coordinate(currCoord.X + 1, currCoord.Y)))
+                RecurseItemRange(unit, new Coordinate(currCoord.X + 1, currCoord.Y), remainingMinRange - 1, remainingMaxRange - 1, visitedCoords.ToList(), ref itemRange);
+
             //Up
-            RecurseItemRange(unit, new Coordinate(currCoord.X, currCoord.Y - 1), remainingMinRange - 1, remainingMaxRange - 1, visitedCoords, ref itemRange);
-            
+            if (!visitedCoords.Contains(new Coordinate(currCoord.X, currCoord.Y - 1)))
+                RecurseItemRange(unit, new Coordinate(currCoord.X, currCoord.Y - 1), remainingMinRange - 1, remainingMaxRange - 1, visitedCoords.ToList(), ref itemRange);
+
             //Down
-            RecurseItemRange(unit, new Coordinate(currCoord.X, currCoord.Y + 1), remainingMinRange - 1, remainingMaxRange - 1, visitedCoords, ref itemRange);
+            if (!visitedCoords.Contains(new Coordinate(currCoord.X, currCoord.Y + 1)))
+                RecurseItemRange(unit, new Coordinate(currCoord.X, currCoord.Y + 1), remainingMinRange - 1, remainingMaxRange - 1, visitedCoords.ToList(), ref itemRange);
         }
 
         private Tile FetchTileByCoord(Coordinate coord)

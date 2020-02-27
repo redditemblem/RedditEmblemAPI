@@ -27,7 +27,7 @@ namespace RedditEmblemAPI.Models.Output
         public string Name { get; set; }
 
         /// <summary>
-        /// The set of units present at the end of the unit's <c>Name</c>, if any.
+        /// The set of digits present at the end of the unit's <c>Name</c>, if any.
         /// </summary>
         public string UnitNumber { get; set; }
 

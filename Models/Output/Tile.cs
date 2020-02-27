@@ -33,7 +33,8 @@ namespace RedditEmblemAPI.Models.Output
         /// <summary>
         /// Returns the name of the <c>Unit</c> on this tile. If <c>Unit</c> is null, returns an empty string.
         /// </summary>
-        public string OccupyingUnitName { get { return (this.Unit == null ? string.Empty : this.Unit.Name); } }
+        [JsonProperty]
+        private string OccupyingUnitName { get { return (this.Unit == null ? string.Empty : this.Unit.Name); } }
 
         /// <summary>
         /// Flag indicating if the <c>Unit</c> occupying this tile is anchored here. Units will be drawn at the anchor tile.
@@ -54,10 +55,25 @@ namespace RedditEmblemAPI.Models.Output
         /// <summary>
         /// Returns the name of the <c>TerrainType</c> of this tile.
         /// </summary>
-        public string TerrainTypeName { get { return this.Terrain.Name;  } }
+        [JsonProperty]
+        private string TerrainTypeName { get { return this.Terrain.Name;  } }
 
-        public int MovCount { get { return 0; } }
-        public int AtkCount { get { return 0; } }
-        public int UtilCount { get { return 0; } }
+        /// <summary>
+        /// Just for serialization purposes. The number of units with displayed movement on this tile.
+        /// </summary>
+        [JsonProperty]
+        private int MovCount { get { return 0; } }
+
+        /// <summary>
+        /// Just for serialization purposes. The number of units with displayed attack range on this tile.
+        /// </summary>
+        [JsonProperty]
+        private int AtkCount { get { return 0; } }
+
+        /// <summary>
+        /// Just for serialization purposes. The number of units with displayed utility range on this tile.
+        /// </summary>
+        [JsonProperty]
+        private int UtilCount { get { return 0; } }
     }
 }
