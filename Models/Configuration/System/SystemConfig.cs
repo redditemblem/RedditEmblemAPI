@@ -38,5 +38,14 @@ namespace RedditEmblemAPI.Models.Configuration.System
         public TerrainTypesConfig TerrainTypes { get; set; }
 
         #endregion
+
+        #region Optional Fields
+
+        /// <summary>
+        /// Container object for a system's currency configuration.
+        /// </summary>
+        public CurrencyConstsConfig Currency { get; set; }
+
+        #endregion
     }
 }

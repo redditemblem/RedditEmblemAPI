@@ -46,17 +46,20 @@ namespace RedditEmblemAPI.Services
             QueryGoogleSheets(config, out mapImageURL, out chapterPostURL);
 
             //Process data
-            this.SheetData.TerrainTypes = TerrainTypeHelper.Process(config.System.TerrainTypes);
-            this.SheetData.Map = new Map(mapImageURL, chapterPostURL, config.Team.Map.Constants, config.Team.Map.Tiles.Query.Data, this.SheetData.TerrainTypes);
+            this.SheetData.System.TerrainTypes = TerrainTypeHelper.Process(config.System.TerrainTypes);
+            this.SheetData.Map = new Map(mapImageURL, chapterPostURL, config.Team.Map.Constants, config.Team.Map.Tiles.Query.Data, this.SheetData.System.TerrainTypes);
 
             IList<Item> items = ItemsHelper.Process(config.System.Items);
             IList<Skill> skills = SkillHelper.Process(config.System.Skills);
-            this.SheetData.Classes = ClassHelper.Process(config.System.Classes);
-            this.SheetData.Units = UnitsHelper.Process(config.Units, items, skills, this.SheetData.Classes, this.SheetData.Map.Tiles);
+            this.SheetData.System.Classes = ClassHelper.Process(config.System.Classes);
+            this.SheetData.Units = UnitsHelper.Process(config.Units, items, skills, this.SheetData.System.Classes, this.SheetData.Map.Tiles);
 
             //Calculate unit ranges
             RangeHelper rangeHelper = new RangeHelper(this.SheetData.Units, this.SheetData.Map.Tiles);
             rangeHelper.CalculateUnitRange();
+
+            //Copy constants
+            this.SheetData.System.Currency = config.System.Currency;
 
             //Clean up
             RemoveUnusedObjects();
@@ -205,14 +208,14 @@ namespace RedditEmblemAPI.Services
         private void RemoveUnusedObjects()
         {
             //Cull unused classes
-            foreach (string key in this.SheetData.Classes.Keys.ToList())
-                if (!this.SheetData.Classes[key].Matched)
-                    this.SheetData.Classes.Remove(key);
+            foreach (string key in this.SheetData.System.Classes.Keys.ToList())
+                if (!this.SheetData.System.Classes[key].Matched)
+                    this.SheetData.System.Classes.Remove(key);
 
             //Cull unused terrain types
-            foreach (string key in this.SheetData.TerrainTypes.Keys.ToList())
-                if (!this.SheetData.TerrainTypes[key].Matched)
-                    this.SheetData.TerrainTypes.Remove(key);
+            foreach (string key in this.SheetData.System.TerrainTypes.Keys.ToList())
+                if (!this.SheetData.System.TerrainTypes[key].Matched)
+                    this.SheetData.System.TerrainTypes.Remove(key);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
+using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.Units
@@ -39,10 +40,10 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public int Level { get; set; }
 
         /// <summary>
-        /// Cell index of a unit's class name value.
+        /// List of cell indexes for unit's class name values.
         /// </summary>
         [JsonRequired]
-        public int Class { get; set; }
+        public IList<int> Classes { get; set; }
 
         /// <summary>
         /// Cell index of a unit's affiliation value.
@@ -67,6 +68,12 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// </summary>
         [JsonRequired]
         public int MaxHP { get; set; }
+
+        /// <summary>
+        /// List of equations to calculate unit combat stats.
+        /// </summary>
+        [JsonRequired]
+        public IList<CalculatedStatConfig> CalculatedStats { get; set; }
 
         /// <summary>
         /// List of modified named stat configurations.
@@ -94,6 +101,11 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// List of cell indexes for a unit's text fields.
         /// </summary>
         public IList<int> TextFields { get; set; } = new List<int>();
+
+        /// <summary>
+        /// Cell index of the unit's held currency amount.
+        /// </summary>
+        public int HeldCurrency { get; set; } = -1;
 
         /// <summary>
         /// Cell index of a unit's movement flag value.

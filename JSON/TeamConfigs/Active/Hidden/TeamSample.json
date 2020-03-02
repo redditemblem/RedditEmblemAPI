@@ -27,6 +27,11 @@
     }
   },
   "System": {
+    "Currency": {
+      "CurrencyIcon": "G",
+      "IsIconLeftAligned": false,
+      "IncludeSpace": true
+    },
     "Items": {
       "Query": {
         "Sheet": "Items",
@@ -38,7 +43,7 @@
       "Category": 2,
       "WeaponRank": 3,
       "UtilizedStat": 4,
-      "DealsDamage":  5,
+      "DealsDamage": 5,
       "Uses": 6,
       "Stats": [
         {
@@ -155,7 +160,7 @@
       "ClassName": 0,
       "Tags": 1,
       "MovementType": 2,
-      "TextFields": [3]
+      "TextFields": [ 3 ]
     },
     "TerrainTypes": {
       "Query": {
@@ -191,78 +196,37 @@
     "SpriteURL": 1,
     "TextFields": [ 3 ],
     "Level": 8,
-    "Class": 4,
-    "Affiliation": 10,
-    "Coordinates": 5,
-    "HasMoved": 6, 
-    "UnitSize": 7,
-    "Experience": 9,
-    "CurrentHP": 12,
-    "MaxHP": 13,
-    "Tags": 11,
+    "Classes": [ 4, 5 ],
+    "Affiliation": 12,
+    "Coordinates": 6,
+    "HasMoved": 7,
+    "UnitSize": 8,
+    "Experience": 10,
+    "HeldCurrency": 11,
+    "CurrentHP": 14,
+    "MaxHP": 15,
+    "Tags": 13,
+    "CalculatedStats": [
+      {
+        "SourceName": "Atk",
+        "Equation": "2*{UnitStat[Str]}"
+      },
+      {
+        "SourceName": "Crit",
+        "Equation": ""
+      },
+      {
+        "SourceName": "Hit",
+        "Equation": ""
+      },
+      {
+        "SourceName": "Avo",
+        "Equation": ""
+      }
+    ],
     "Stats": [
       {
         "SourceName": "Str",
-        "BaseValue": 14,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 44
-          }
-        ]
-      },
-      {
-        "SourceName": "Def",
-        "BaseValue": 19,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 49
-          }
-        ]
-      },
-      {
-        "SourceName": "Mag",
-        "BaseValue": 15,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 45
-          }
-        ]
-      },
-      {
-        "SourceName": "Res",
-        "BaseValue": 20,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 50
-          }
-        ]
-      },
-      {
-        "SourceName": "Lck",
-        "BaseValue": 18,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 48
-          }
-        ]
-      },
-      {
-        "SourceName": "Spd",
-        "BaseValue": 17,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 47
-          }
-        ]
-      },
-      {
-        "SourceName": "Skl",
         "BaseValue": 16,
         "Modifiers": [
           {
@@ -272,7 +236,7 @@
         ]
       },
       {
-        "SourceName": "Mov",
+        "SourceName": "Def",
         "BaseValue": 21,
         "Modifiers": [
           {
@@ -280,14 +244,74 @@
             "Value": 51
           }
         ]
+      },
+      {
+        "SourceName": "Mag",
+        "BaseValue": 17,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 47
+          }
+        ]
+      },
+      {
+        "SourceName": "Res",
+        "BaseValue": 22,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 52
+          }
+        ]
+      },
+      {
+        "SourceName": "Lck",
+        "BaseValue": 20,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 50
+          }
+        ]
+      },
+      {
+        "SourceName": "Spd",
+        "BaseValue": 19,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 49
+          }
+        ]
+      },
+      {
+        "SourceName": "Skl",
+        "BaseValue": 18,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 48
+          }
+        ]
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 23,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 53
+          }
+        ]
       }
     ],
     "Inventory": {
-      "EquippedItem": 29,
-      "Slots": [ 30, 31, 32, 33, 34 ]
+      "EquippedItem": 31,
+      "Slots": [ 32, 33, 34, 35, 36 ]
     },
     "Skills": {
-      "Slots": [ 35, 36, 37, 38, 39, 40, 41, 42 ]
+      "Slots": [ 37, 38, 39, 40, 41, 42, 43, 44 ]
     }
   }
 }

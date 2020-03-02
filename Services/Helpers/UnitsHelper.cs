@@ -1,6 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Common;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
+using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
 using RedditEmblemAPI.Models.Exceptions;
 using RedditEmblemAPI.Models.Output;
 using System;
@@ -15,6 +16,8 @@ namespace RedditEmblemAPI.Services.Helpers
         private static Regex unitNumberRegex = new Regex(@"\s([0-9]+$)"); //matches digits at the end of a string (ex. "Swordmaster _05_")
         private static Regex usesRegex = new Regex(@"\([0-9]+\)"); //match item uses (ex. "(5)")
         private static Regex dropRegex = new Regex(@"\(D\)");      //match item droppable (ex. "(D)")
+
+        private static Regex unitStatRegex = new Regex(@"{UnitStat\[([A-Za-z]+)\]}"); //match unit stat name
 
         /// <summary>
         /// Parses Google Sheets data matrix to return a list of Unit output objects.
@@ -47,9 +50,9 @@ namespace RedditEmblemAPI.Services.Helpers
                         HP = new HP((unit.ElementAtOrDefault(config.CurrentHP) ?? string.Empty),
                                     (unit.ElementAtOrDefault(config.MaxHP) ?? string.Empty)),
                         Level = SafeIntParse(unit.ElementAtOrDefault(config.Level), "Level", true),
-                        Class = (unit.ElementAtOrDefault(config.Class) ?? string.Empty).Trim(),
                         Affiliation = unit.ElementAtOrDefault(config.Affiliation) ?? string.Empty,
-                        Experience = SafeIntParse(unit.ElementAtOrDefault(config.Experience) ?? string.Empty, "Experience", true) % 100
+                        Experience = SafeIntParse(unit.ElementAtOrDefault(config.Experience) ?? string.Empty, "Experience", true) % 100,
+                        HeldCurrency = SafeIntParse(unit.ElementAtOrDefault(config.HeldCurrency) ?? "-1", "Currency", false)
                     };
 
                     //Find unit number
@@ -63,9 +66,10 @@ namespace RedditEmblemAPI.Services.Helpers
                     BuildStatsDictionary(temp, unit, config.Stats);
                     BuildInventory(temp, unit, config.Inventory, items);
                     BuildSkills(temp, unit, config.Skills, skills);
-                    MatchClass(temp, classes);
+                    BuildClassesList(temp, unit, config.Classes, classes);
 
                     ApplyInventoryItemModifiers(temp);
+                    CalculateCombatStats(temp, config.CalculatedStats);
                     AddUnitToMap(temp, map);
 
                     units.Add(temp);
@@ -86,6 +90,25 @@ namespace RedditEmblemAPI.Services.Helpers
                     unit.TextFields.Add(data.ElementAtOrDefault(field));
         }
 
+        private static void BuildClassesList(Unit unit, IList<string> data, IList<int> configFields, IDictionary<string, Class> classes)
+        {
+            foreach (int field in configFields)
+            {
+                if (!string.IsNullOrEmpty(data.ElementAtOrDefault(field)))
+                {
+                    Class match;
+                    if (!classes.TryGetValue(data.ElementAt(field), out match))
+                        throw new UnmatchedClassException(data.ElementAt(field));
+
+                    match.Matched = true;
+                    unit.ClassList.Add(match);
+
+                    //Append class tags to unit's tags
+                    unit.Tags = unit.Tags.Union(match.Tags).Distinct().ToList();
+                }
+            }
+        }
+        
         private static void BuildTagsList(Unit unit, string tagsCSV)
         {
             foreach (string tag in tagsCSV.Split(','))
@@ -209,17 +232,6 @@ namespace RedditEmblemAPI.Services.Helpers
             }
         }
 
-        private static void MatchClass(Unit unit, IDictionary<string, Class> classes)
-        {
-            Class match;
-            if (!classes.TryGetValue(unit.Class, out match))
-                throw new UnmatchedClassException(unit.Class);
-            match.Matched = true;
-
-            //Union the unit's tags and the class's tags
-            unit.Tags = unit.Tags.Union(match.Tags).Distinct().ToList();
-        }
-
         private static void ApplyInventoryItemModifiers(Unit temp)
         {
             //Equipped item
@@ -243,6 +255,34 @@ namespace RedditEmblemAPI.Services.Helpers
                     if (mods != null)
                         mods.Modifiers.Add(string.Format("{0} ({1})", inv.Name, "Inv"), inv.InventoryStatModifiers[stat]);
                 }
+            }
+        }
+
+        private static void CalculateCombatStats(Unit temp, IList<CalculatedStatConfig> stats)
+        {
+            foreach(CalculatedStatConfig stat in stats)
+            {
+                string equation = stat.Equation;
+
+                //{UnitStat[...]}
+                //Replaced by values from the unit.Stats list
+                MatchCollection unitStatMatches = unitStatRegex.Matches(equation);
+                if (unitStatMatches.Count > 0)
+                {
+                    foreach(Match match in unitStatMatches)
+                        equation = equation.Substring(0, match.Index) + temp.Stats[match.Groups[1].Value].FinalValue + equation.Substring(match.Index + match.Length);
+                }
+
+                //Replace weapon values
+                Item equipped = temp.Inventory.SingleOrDefault(i => i != null && i.IsEquipped);
+                equation = equation.Replace("{WeaponUtilStat}", (equipped != null ? temp.Stats[equipped.UtilizedStat].FinalValue : 0).ToString());
+                //equation = equation.Replace("{WeaponStat}", (equipped != null ? equipped.Stats["Mt"] : 0).ToString())
+
+                //TO DO: Write a proper error for this
+                if (equation.Contains("{") || equation.Contains("}"))
+                    throw new Exception();
+
+                temp.CalculatedStats.Add(stat.SourceName, 0);
             }
         }
 

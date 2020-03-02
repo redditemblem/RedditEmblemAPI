@@ -10,7 +10,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         #region RequiredFields
 
         /// <summary>
-        /// Name of the stat value. (ex. "Atk")
+        /// Name of the stat value. (ex. "Str")
         /// </summary>
         [JsonRequired]
         public string SourceName { get; set; }

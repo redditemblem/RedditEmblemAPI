@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Common;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output
 {
@@ -12,7 +13,9 @@ namespace RedditEmblemAPI.Models.Output
         public Unit()
         {
             this.TextFields = new List<string>();
+            this.ClassList = new List<Class>();
             this.Tags = new List<string>();
+            this.CalculatedStats = new Dictionary<string, int>();
             this.Stats = new Dictionary<string, ModifiedStatValue>();
             this.Inventory = new List<Item>();
             this.Skills = new List<Skill>();
@@ -52,9 +55,16 @@ namespace RedditEmblemAPI.Models.Output
         public int Level { get; set; }
 
         /// <summary>
-        /// The unit's class.
+        /// A list of the unit's classes.
         /// </summary>
-        public string Class { get; set; }
+        [JsonIgnore]
+        public IList<Class> ClassList { get; set; }
+
+        /// <summary>
+        /// Only for JSON serialization. A list of the unit's classes.
+        /// </summary>
+        [JsonProperty]
+        private IList<string> Classes { get { return this.ClassList.Select(c => c.Name).ToList();  } }
 
         /// <summary>
         /// The unit's affiliation.
@@ -67,6 +77,11 @@ namespace RedditEmblemAPI.Models.Output
         public int Experience { get; set; }
 
         /// <summary>
+        /// The amount of currency the unit has in their wallet.
+        /// </summary>
+        public int HeldCurrency { get; set; }
+
+        /// <summary>
         /// Container object for HP values.
         /// </summary>
         public HP HP { get; set; }
@@ -75,6 +90,11 @@ namespace RedditEmblemAPI.Models.Output
         /// List of the unit's tags.
         /// </summary>
         public IList<string> Tags { get; set; }
+
+        /// <summary>
+        /// Collection of the unit's calculated combat stats.
+        /// </summary>
+        public Dictionary<string, int> CalculatedStats { get; set; }
 
         /// <summary>
         /// Collection of the unit's stat values.
