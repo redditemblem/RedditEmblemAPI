@@ -14,8 +14,8 @@
       "Constants": {
         "TileSize": 32,
         "TileSpacing": 0,
-        "HasHeaderTopLeft": false,
-        "HasHeaderBottomRight": false
+        "HasHeaderTopLeft": true,
+        "HasHeaderBottomRight": true
       },
       "Tiles": {
         "Query": {
@@ -213,15 +213,15 @@
       },
       {
         "SourceName": "Crit",
-        "Equation": ""
+        "Equation": "100"
       },
       {
         "SourceName": "Hit",
-        "Equation": ""
+        "Equation": "100"
       },
       {
         "SourceName": "Avo",
-        "Equation": ""
+        "Equation": "100"
       }
     ],
     "Stats": [

@@ -2,6 +2,9 @@
 using RedditEmblemAPI.Models.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Net;
 
 namespace RedditEmblemAPI.Models.Output
 {
@@ -34,6 +37,16 @@ namespace RedditEmblemAPI.Models.Output
         public string MapImageURL { get; set; }
 
         /// <summary>
+        /// The height of the map image in pixels.
+        /// </summary>
+        public int MapImageHeight { get; private set; }
+
+        /// <summary>
+        /// The width of the map image in pixels.
+        /// </summary>
+        public int MapImageWidth { get; private set; }
+
+        /// <summary>
         /// The URL of the chapter post on Reddit.
         /// </summary>
         public string ChapterPostURL { get; set; }
@@ -58,10 +71,22 @@ namespace RedditEmblemAPI.Models.Output
         {
             int x = 1;
             int y = 1;
+
+            int mapHeight;
+            int mapWidth;
+
             try
             {
+                GetMapDimensions(out mapHeight, out mapWidth);
+
+                if (tileData.Count != mapHeight)
+                    throw new UnexpectedMapHeightException(tileData.Count, mapHeight);
+
                 foreach (IList<object> row in tileData)
                 {
+                    if (row.Count != mapWidth)
+                        throw new UnexpectedMapWidthException(row.Count, mapWidth);
+
                     List<Tile> currentRow = new List<Tile>();
                     foreach (object tile in row)
                     {
@@ -85,6 +110,37 @@ namespace RedditEmblemAPI.Models.Output
                 throw new MapProcessingException(ex);
             }
             
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tileHeight">The height of the map in # of tiles.</param>
+        /// <param name="tileWidth">The width of the map in # of tiles.</param>
+        private void GetMapDimensions(out int tileHeight, out int tileWidth)
+        {
+            byte[] imageData = new WebClient().DownloadData(this.MapImageURL);
+            using (MemoryStream imgStream = new MemoryStream(imageData))
+            using (Image img = Image.FromStream(imgStream))
+            {
+                this.MapImageHeight = img.Height;
+                this.MapImageWidth = img.Width;
+            }
+
+            tileHeight = (int)Math.Floor((decimal)this.MapImageHeight / (this.Constants.TileSize + this.Constants.TileSpacing));
+            tileWidth = (int)Math.Floor((decimal)this.MapImageWidth / (this.Constants.TileSize + this.Constants.TileSpacing));
+
+            if (this.Constants.HasHeaderTopLeft)
+            {
+                tileHeight -= 1;
+                tileWidth -= 1;
+            }
+
+            if (this.Constants.HasHeaderBottomRight)
+            {
+                tileHeight -= 1;
+                tileWidth -= 1;
+            }
         }
     }
 }

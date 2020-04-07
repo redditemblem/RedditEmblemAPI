@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Common;
+﻿using NCalc;
+using RedditEmblemAPI.Models.Common;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
@@ -18,6 +19,7 @@ namespace RedditEmblemAPI.Services.Helpers
         private static Regex dropRegex = new Regex(@"\(D\)");      //match item droppable (ex. "(D)")
 
         private static Regex unitStatRegex = new Regex(@"{UnitStat\[([A-Za-z]+)\]}"); //match unit stat name
+        private static Regex weaponStatRegex = new Regex(@"{WeaponStat[A-Za-z]+]}"); //match weapon stat name
 
         /// <summary>
         /// Parses Google Sheets data matrix to return a list of Unit output objects.
@@ -273,16 +275,24 @@ namespace RedditEmblemAPI.Services.Helpers
                         equation = equation.Substring(0, match.Index) + temp.Stats[match.Groups[1].Value].FinalValue + equation.Substring(match.Index + match.Length);
                 }
 
-                //Replace weapon values
+                //{WeaponUtilStat}
                 Item equipped = temp.Inventory.SingleOrDefault(i => i != null && i.IsEquipped);
                 equation = equation.Replace("{WeaponUtilStat}", (equipped != null ? temp.Stats[equipped.UtilizedStat].FinalValue : 0).ToString());
-                //equation = equation.Replace("{WeaponStat}", (equipped != null ? equipped.Stats["Mt"] : 0).ToString())
 
-                //TO DO: Write a proper error for this
+                //{WeaponStat[...]}
+                MatchCollection weaponStatMatches = weaponStatRegex.Matches(equation);
+                if (weaponStatMatches.Count > 0)
+                {
+                    foreach (Match match in weaponStatMatches)
+                        equation = equation.Substring(0, match.Index) + (equipped != null ? equipped.Stats[match.Groups[1].Value] : 0) + equation.Substring(match.Index + match.Length);
+                }
+
+                //Throw an error if anything remains unparsed
                 if (equation.Contains("{") || equation.Contains("}"))
-                    throw new Exception();
+                    throw new Exception("The equation \"" + stat.Equation + "\" contains an unrecognized variable.");
 
-                temp.CalculatedStats.Add(stat.SourceName, 0);
+                Expression expression = new Expression(equation);
+                temp.CalculatedStats.Add(stat.SourceName, (int)expression.Evaluate());
             }
         }
 
