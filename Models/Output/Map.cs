@@ -1,8 +1,8 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Team;
 using RedditEmblemAPI.Models.Exceptions;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Net;
 
@@ -119,9 +119,11 @@ namespace RedditEmblemAPI.Models.Output
         /// <param name="tileWidth">The width of the map in # of tiles.</param>
         private void GetMapDimensions(out int tileHeight, out int tileWidth)
         {
+   
             byte[] imageData = new WebClient().DownloadData(this.MapImageURL);
             using (MemoryStream imgStream = new MemoryStream(imageData))
-            using (Image img = Image.FromStream(imgStream))
+            using (SKManagedStream inputStream = new SKManagedStream(imgStream))
+            using (SKBitmap img = SKBitmap.Decode(inputStream))
             {
                 this.MapImageHeight = img.Height;
                 this.MapImageWidth = img.Width;
