@@ -18,7 +18,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Skills
         /// Cell index of a skill's name value.
         /// </summary>
         [JsonRequired]
-        public int SkillName { get; set; }
+        public int Name { get; set; }
 
         #endregion
 

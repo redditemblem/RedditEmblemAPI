@@ -18,7 +18,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Classes
         /// Cell index of a class's name value.
         /// </summary>
         [JsonRequired]
-        public int ClassName { get; set; }
+        public int Name { get; set; }
 
         /// <summary>
         /// Cell index of a class's movement type value.

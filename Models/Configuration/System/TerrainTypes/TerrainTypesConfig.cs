@@ -18,7 +18,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         /// Cell index for the name of the terrain type.
         /// </summary>
         [JsonRequired]
-        public int TypeName { get; set; }
+        public int Name { get; set; }
 
         /// <summary>
         /// List of cell indexes for terrain type movement costs.

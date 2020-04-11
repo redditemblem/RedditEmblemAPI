@@ -18,7 +18,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// Cell index of an item's name value.
         /// </summary>
         [JsonRequired]
-        public int ItemName { get; set; }
+        public int Name { get; set; }
 
         /// <summary>
         /// Cell index of an item's category value.

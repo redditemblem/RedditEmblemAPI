@@ -10,7 +10,6 @@ namespace RedditEmblemAPI.Models.Output
     {
         public SheetsData()
         {
-            this.System = new System();
         }
 
         /// <summary>
@@ -21,7 +20,7 @@ namespace RedditEmblemAPI.Models.Output
         /// <summary>
         /// Container object for data about the system.
         /// </summary>
-        public System System { get; set; }
+        public SystemData System { get; set; }
 
         /// <summary>
         /// Container list for data about units.

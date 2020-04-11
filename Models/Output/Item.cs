@@ -1,4 +1,8 @@
 ﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Configuration.Common;
+using RedditEmblemAPI.Models.Configuration.System.Items;
+using RedditEmblemAPI.Models.Exceptions;
+using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +12,13 @@ namespace RedditEmblemAPI.Models.Output
     /// <summary>
     /// Object representing a Item definition in the team's system. 
     /// </summary>
-    public class Item : ICloneable
+    public class Item
     {
-        public Item()
-        {
-            this.IsEquipped = false;
-            this.IsDroppable = false;
-            this.Stats = new Dictionary<string, int>();
-            this.EquippedStatModifiers = new Dictionary<string, int>();
-            this.InventoryStatModifiers = new Dictionary<string, int>();
-            this.TextFields = new List<string>();
-        }
+        /// <summary>
+        /// Flag indicating whether or not this item was found on a unit. Used to minify the output JSON.
+        /// </summary>
+        [JsonIgnore]
+        public bool Matched { get; set; }
 
         /// <summary>
         /// The item's name. 
@@ -26,25 +26,9 @@ namespace RedditEmblemAPI.Models.Output
         public string Name { get; set; }
 
         /// <summary>
-        /// The original name of the item pulled from raw Unit data.
-        /// </summary>
-        [JsonIgnore]
-        public string OriginalName { get; set; }
-
-        /// <summary>
         /// The sprite image URL for the item.
         /// </summary>
         public string SpriteURL { get; set; }
-
-        /// <summary>
-        /// Flag indicating if this is the unit's currently equipped item.
-        /// </summary>
-        public bool IsEquipped { get; set; }
-
-        /// <summary>
-        /// Flag indicating if this item will be dropped upon unit defeat.
-        /// </summary>
-        public bool IsDroppable { get; set; }
 
         /// <summary>
         /// The item's category. (ex. Sword)
@@ -65,11 +49,6 @@ namespace RedditEmblemAPI.Models.Output
         /// Flag indicating whether or not this item is capable of attacking.
         /// </summary>
         public bool DealsDamage { get; set; }
-
-        /// <summary>
-        /// The number of uses the item currently has remaining.
-        /// </summary>
-        public int Uses { get; set; }
 
         /// <summary>
         /// The maximum number of uses the item has. For items with single or infinite uses, this value is 0.
@@ -104,30 +83,55 @@ namespace RedditEmblemAPI.Models.Output
         public IList<string> TextFields { get; set; }
 
         /// <summary>
-        /// Returns a deep clone of the calling <c>Item</c> object.
+        /// Constructor.
         /// </summary>
-        /// <returns></returns>
-        public object Clone()
+        /// <param name="config"></param>
+        /// <param name="data"></param>
+        /// <exception cref="AnyIntegerException"></exception>
+        public Item(ItemsConfig config, IList<string> data)
         {
-            return new Item()
+            this.Name = data.ElementAtOrDefault(config.Name).Trim();
+            this.SpriteURL = data.ElementAtOrDefault<string>(config.SpriteURL).Trim();
+            this.Category = data.ElementAtOrDefault<string>(config.Category);
+            this.WeaponRank = data.ElementAtOrDefault<string>(config.WeaponRank);
+            this.UtilizedStat = data.ElementAtOrDefault<string>(config.UtilizedStat);
+            this.DealsDamage = ((data.ElementAtOrDefault(config.DealsDamage) ?? "No").Trim() == "Yes");
+            this.MaxUses = ParseHelper.SafeIntParse(data.ElementAtOrDefault(config.Uses), "Uses", true);
+            this.Range = new ItemRange(data.ElementAtOrDefault<string>(config.Range.Minimum),
+                                       data.ElementAtOrDefault<string>(config.Range.Maximum));
+            this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
+
+            this.Stats = new Dictionary<string, int>();
+            foreach (NamedStatConfig s in config.Stats)
             {
-                Name = this.Name,
-                OriginalName = this.OriginalName,
-                SpriteURL = this.SpriteURL,
-                IsEquipped = this.IsEquipped,
-                IsDroppable = this.IsDroppable,
-                Category = this.Category,
-                WeaponRank = this.WeaponRank,
-                UtilizedStat = this.UtilizedStat,
-                DealsDamage = this.DealsDamage,
-                Uses = this.Uses,
-                MaxUses = this.MaxUses,
-                Stats = this.Stats.ToDictionary(entry => entry.Key, entry => entry.Value),
-                EquippedStatModifiers = this.EquippedStatModifiers.ToDictionary(entry => entry.Key, entry => entry.Value),
-                InventoryStatModifiers = this.InventoryStatModifiers.ToDictionary(entry => entry.Key, entry => entry.Value),
-                Range = new ItemRange(this.Range.Minimum, this.Range.Maximum),
-                TextFields = this.TextFields.ToList()
-            };
+                int val;
+                if (!int.TryParse(data.ElementAtOrDefault(s.Value), out val))
+                    throw new AnyIntegerException(s.SourceName, data.ElementAtOrDefault<string>(s.Value));
+
+                this.Stats.Add(s.SourceName, val);
+            }
+
+            this.EquippedStatModifiers = new Dictionary<string, int>();
+            foreach (NamedStatConfig stat in config.EquippedStatModifiers)
+            {
+                int val;
+                if (!int.TryParse(data.ElementAtOrDefault(stat.Value), out val))
+                    throw new AnyIntegerException(string.Format("{0} ({1})", stat.SourceName, "Equipped"), data.ElementAtOrDefault<string>(stat.Value));
+
+                if (val != 0)
+                    this.EquippedStatModifiers.Add(stat.SourceName, val);
+            }
+
+            this.InventoryStatModifiers = new Dictionary<string, int>();
+            foreach (NamedStatConfig stat in config.InventoryStatModifiers)
+            {
+                int val;
+                if (!int.TryParse(data.ElementAtOrDefault(stat.Value), out val))
+                    throw new AnyIntegerException(string.Format("{0} ({1})", stat.SourceName, "Inventory"), data.ElementAtOrDefault<string>(stat.Value));
+
+                if (val != 0)
+                    this.InventoryStatModifiers.Add(stat.SourceName, val);
+            }
         }
     }
 }

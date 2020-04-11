@@ -1,5 +1,9 @@
 ﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Configuration.Common;
+using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
+using RedditEmblemAPI.Models.Exceptions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output
 {
@@ -8,14 +12,6 @@ namespace RedditEmblemAPI.Models.Output
     /// </summary>
     public class TerrainType
     {
-        public TerrainType()
-        {
-            this.Matched = false;
-            this.BlocksItems = false;
-
-            this.MovementCosts = new Dictionary<string, int>();
-        }
-
         /// <summary>
         /// Flag indicating whether or not this terrain type was found on a tile. Used to minify the output JSON.
         /// </summary>
@@ -38,5 +34,25 @@ namespace RedditEmblemAPI.Models.Output
         /// </summary>
         [JsonIgnore]
         public bool BlocksItems { get; set; }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <exception cref="AnyIntegerException"></exception>
+        public TerrainType(TerrainTypesConfig config, IList<string> data)
+        {
+            this.Matched = false;
+            this.Name = data.ElementAtOrDefault(config.Name).Trim();
+            this.BlocksItems = ((data.ElementAtOrDefault(config.BlocksItems) ?? "No").Trim() == "Yes");
+
+            this.MovementCosts = new Dictionary<string, int>();
+            foreach (NamedStatConfig stat in config.MovementCosts)
+            {
+                int val;
+                if (!int.TryParse(data.ElementAtOrDefault(stat.Value), out val))
+                    throw new AnyIntegerException(stat.SourceName, data.ElementAtOrDefault(stat.Value));
+                this.MovementCosts.Add(stat.SourceName, val);
+            }
+        }
     }
 }

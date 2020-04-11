@@ -32,12 +32,12 @@ namespace RedditEmblemAPI.Services.Helpers
                     RecurseUnitRange(unit, unit.Stats.GetValueOrDefault("Mov").FinalValue, unit.OriginTile.Coordinate, new List<Coordinate>());
 
                     //Find the items with minimum and maximum attack range
-                    Item minAtkRange = unit.Inventory.Where(i => i != null && i.DealsDamage && i.UtilizedStat.Length > 0).OrderBy(i => i.Range.Minimum).FirstOrDefault();
-                    Item maxAtkRange = unit.Inventory.Where(i => i != null && i.DealsDamage && i.UtilizedStat.Length > 0).OrderByDescending(i => i.Range.Maximum).FirstOrDefault();
+                    UnitHeldItem minAtkRange = unit.Inventory.Where(i => i != null && i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderBy(i => i.Item.Range.Minimum).FirstOrDefault();
+                    UnitHeldItem maxAtkRange = unit.Inventory.Where(i => i != null && i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderByDescending(i => i.Item.Range.Maximum).FirstOrDefault();
 
                     //Find the items with minimum and maximum utility range
-                    Item minUtilRange = unit.Inventory.Where(i => i != null && !i.DealsDamage && i.UtilizedStat.Length > 0).OrderBy(i => i.Range.Minimum).FirstOrDefault();
-                    Item maxUtilRange = unit.Inventory.Where(i => i != null && !i.DealsDamage && i.UtilizedStat.Length > 0).OrderByDescending(i => i.Range.Maximum).FirstOrDefault();
+                    UnitHeldItem minUtilRange = unit.Inventory.Where(i => i != null && !i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderBy(i => i.Item.Range.Minimum).FirstOrDefault();
+                    UnitHeldItem maxUtilRange = unit.Inventory.Where(i => i != null && !i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderByDescending(i => i.Item.Range.Maximum).FirstOrDefault();
 
                     IList<Coordinate> atkRange = new List<Coordinate>();
                     IList<Coordinate> utilRange = new List<Coordinate>();
@@ -46,8 +46,8 @@ namespace RedditEmblemAPI.Services.Helpers
                         //Calculate attack range
                         RecurseItemRange( unit,
                                           coord,
-                                         (minAtkRange != null ? minAtkRange.Range.Minimum : 0),
-                                         (maxAtkRange != null ? maxAtkRange.Range.Maximum : 0),
+                                         (minAtkRange != null ? minAtkRange.Item.Range.Minimum : 0),
+                                         (maxAtkRange != null ? maxAtkRange.Item.Range.Maximum : 0),
                                           new List<Coordinate>(),
                                           ref atkRange
                                         );
@@ -55,8 +55,8 @@ namespace RedditEmblemAPI.Services.Helpers
                         //Calculate utility range
                         RecurseItemRange( unit,
                                           coord,
-                                         (minUtilRange != null ? minUtilRange.Range.Minimum : 0),
-                                         (maxUtilRange != null ? maxUtilRange.Range.Maximum : 0),
+                                         (minUtilRange != null ? minUtilRange.Item.Range.Minimum : 0),
+                                         (maxUtilRange != null ? maxUtilRange.Item.Range.Maximum : 0),
                                           new List<Coordinate>(),
                                           ref utilRange
                                         );

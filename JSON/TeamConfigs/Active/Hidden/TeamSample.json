@@ -38,7 +38,7 @@
         "Selection": "B2:ZZ",
         "Orientation": 1
       },
-      "ItemName": 0,
+      "Name": 0,
       "SpriteURL": 1,
       "Category": 2,
       "WeaponRank": 3,
@@ -147,7 +147,7 @@
         "Selection": "B2:ZZ",
         "Orientation": 1
       },
-      "SkillName": 0,
+      "Name": 0,
       "SpriteURL": 1,
       "TextFields": [ 2 ]
     },
@@ -157,7 +157,7 @@
         "Selection": "A2:ZZ",
         "Orientation": 1
       },
-      "ClassName": 0,
+      "Name": 0,
       "Tags": 1,
       "MovementType": 2,
       "TextFields": [ 3 ]
@@ -168,7 +168,7 @@
         "Selection": "A2:ZZ",
         "Orientation": 1
       },
-      "TypeName": 0,
+      "Name": 0,
       "MovementCosts": [
         {
           "SourceName": "Foot",

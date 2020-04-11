@@ -21,14 +21,14 @@ namespace RedditEmblemAPI.Models.Output
         /// <param name="config"></param>
         /// <param name="tileData"></param>
         /// <exception cref="MapProcessingException"></exception>
-        public Map(string mapImageURL, string chapterPostURL, MapConstantsConfig config, IList<IList<object>> tileData, IDictionary<string, TerrainType> terrainTypes)
+        public Map(string mapImageURL, string chapterPostURL, MapConfig config, IDictionary<string, TerrainType> terrainTypes)
         {
             this.MapImageURL = mapImageURL;
             this.ChapterPostURL = chapterPostURL;
-            this.Constants = config;
+            this.Constants = config.Constants;
             this.Tiles = new List<List<Tile>>();
 
-            BuildTiles(tileData, terrainTypes);
+            BuildTiles(config.Tiles.Query.Data, terrainTypes);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace RedditEmblemAPI.Models.Output
         }
 
         /// <summary>
-        /// 
+        /// Calculates the expected height and width of the map in tiles based on image size.
         /// </summary>
         /// <param name="tileHeight">The height of the map in # of tiles.</param>
         /// <param name="tileWidth">The width of the map in # of tiles.</param>
