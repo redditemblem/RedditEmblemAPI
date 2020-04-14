@@ -1,5 +1,6 @@
 ﻿using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Exceptions;
+using RedditEmblemAPI.Models.Output.Skills;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,11 @@ namespace RedditEmblemAPI.Models.Output
         /// Container dictionary for data about classes.
         /// </summary>
         public IDictionary<string, Class> Classes { get; set; }
+
+        /// <summary>
+        /// Container dictionary for data about affiliations.
+        /// </summary>
+        public IDictionary<string, Affiliation> Affiliations { get; set; }
 
         /// <summary>
         /// Container dictionary for data about items.
@@ -35,6 +41,9 @@ namespace RedditEmblemAPI.Models.Output
 
         public SystemData(SystemConfig config)
         {
+            //Copy over currency constants from config
+            this.Currency = config.Currency;
+
             this.Classes = new Dictionary<string, Class>();
             foreach (IList<object> row in config.Classes.Query.Data)
             {
@@ -49,6 +58,23 @@ namespace RedditEmblemAPI.Models.Output
                 catch (Exception ex)
                 {
                     throw new ClassProcessingException((row.ElementAtOrDefault(config.Classes.Name) ?? string.Empty).ToString(), ex);
+                }
+            }
+
+            this.Affiliations = new Dictionary<string, Affiliation>();
+            foreach (IList<object> row in config.Affiliations.Query.Data)
+            {
+                try
+                {
+                    IList<string> aff = row.Select(r => r.ToString()).ToList();
+                    if (string.IsNullOrEmpty(aff.ElementAtOrDefault<string>(config.Affiliations.Name)))
+                        continue;
+                    this.Affiliations.Add(aff.ElementAtOrDefault<string>(config.Affiliations.Name),
+                                          new Affiliation(config.Affiliations, aff));
+                }
+                catch (Exception ex)
+                {
+                    throw new AffiliationProcessingException((row.ElementAtOrDefault(config.Affiliations.Name) ?? string.Empty).ToString(), ex);
                 }
             }
 

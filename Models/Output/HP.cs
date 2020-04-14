@@ -33,8 +33,8 @@ namespace RedditEmblemAPI.Models.Output
         {
             if (current < 0)
                 throw new NegativeIntegerException("Current HP", current.ToString());
-            if (maximum < 0)
-                throw new NegativeIntegerException("Maximum HP", maximum.ToString());
+            if (maximum <= 0)
+                throw new PositiveIntegerException("Maximum HP", maximum.ToString());
 
             this.Current = current;
             this.Maximum = maximum;
@@ -54,8 +54,8 @@ namespace RedditEmblemAPI.Models.Output
                 throw new NegativeIntegerException("Current HP", current);
             this.Current = val;
 
-            if (!int.TryParse(maximum, out val) || val < 0)
-                throw new NegativeIntegerException("Maximum HP", maximum);
+            if (!int.TryParse(maximum, out val) || val <= 0)
+                throw new PositiveIntegerException("Maximum HP", maximum);
             this.Maximum = val;
         }
     }

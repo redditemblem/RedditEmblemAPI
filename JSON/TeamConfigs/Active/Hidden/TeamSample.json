@@ -14,8 +14,8 @@
       "Constants": {
         "TileSize": 32,
         "TileSpacing": 0,
-        "HasHeaderTopLeft": true,
-        "HasHeaderBottomRight": true
+        "HasHeaderTopLeft": false,
+        "HasHeaderBottomRight": false
       },
       "Tiles": {
         "Query": {
@@ -149,7 +149,12 @@
       },
       "Name": 0,
       "SpriteURL": 1,
-      "TextFields": [ 2 ]
+      "TextFields": [ 2 ],
+      "Effect": {
+        "Type": 3,
+        "Parameter1": 4,
+        "Parameter2": 5
+      }
     },
     "Classes": {
       "Query": {
@@ -161,6 +166,16 @@
       "Tags": 1,
       "MovementType": 2,
       "TextFields": [ 3 ]
+    },
+    "Affiliations": {
+      "Query": {
+        "Sheet": "Affiliations",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Grouping": 1,
+      "TextFields": [ 2 ]
     },
     "TerrainTypes": {
       "Query": {
@@ -195,7 +210,7 @@
     "UnitName": 0,
     "SpriteURL": 1,
     "TextFields": [ 3 ],
-    "Level": 8,
+    "Level": 9,
     "Classes": [ 4, 5 ],
     "Affiliation": 12,
     "Coordinates": 6,
@@ -304,6 +319,20 @@
             "Value": 53
           }
         ]
+      }
+    ],
+    "WeaponRanks": [
+      {
+        "Type": 25,
+        "Rank": 26
+      },
+      {
+        "Type": 27,
+        "Rank": 28
+      },
+      {
+        "Type": 29,
+        "Rank": 30
       }
     ],
     "Inventory": {

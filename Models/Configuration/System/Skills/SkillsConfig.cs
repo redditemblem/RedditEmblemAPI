@@ -34,6 +34,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Skills
         /// </summary>
         public IList<int> TextFields { get; set; } = new List<int>();
 
+        /// <summary>
+        /// Container object for skill effect configuration.
+        /// </summary>
+        public SkillEffectConfig Effect { get; set; } = null;
+
         #endregion
     }
 }

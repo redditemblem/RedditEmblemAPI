@@ -55,9 +55,6 @@ namespace RedditEmblemAPI.Services
             RangeHelper rangeHelper = new RangeHelper(this.SheetData.Units, this.SheetData.Map.Tiles);
             rangeHelper.CalculateUnitRange();
 
-            //Copy constants
-            this.SheetData.System.Currency = config.System.Currency;
-
             //Clean up
             this.SheetData.System.RemoveUnusedObjects();
 

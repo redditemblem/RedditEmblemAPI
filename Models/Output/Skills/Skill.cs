@@ -4,7 +4,7 @@ using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RedditEmblemAPI.Models.Output
+namespace RedditEmblemAPI.Models.Output.Skills
 {
     /// <summary>
     /// Object representing a Skill definition in the team's system. 
@@ -33,13 +33,32 @@ namespace RedditEmblemAPI.Models.Output
         public IList<string> TextFields { get; set; }
 
         /// <summary>
+        /// The effect the skill applies to its unit, if any.
+        /// </summary>
+        [JsonIgnore]
+        public ISkillEffect Effect { get; set; }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         public Skill(SkillsConfig config, IList<string> data)
         {
-            this.Name = data.ElementAtOrDefault<string>(config.Name).Trim();
-            this.SpriteURL = data.ElementAtOrDefault<string>(config.SpriteURL).Trim();
+            this.Name = (data.ElementAtOrDefault<string>(config.Name) ?? string.Empty).Trim();
+            this.SpriteURL = (data.ElementAtOrDefault<string>(config.SpriteURL) ?? string.Empty).Trim();
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
+            this.Effect = BuildSkillEffect((data.ElementAtOrDefault<string>(config.Effect.Type) ?? string.Empty).Trim(),
+                                           (data.ElementAtOrDefault<string>(config.Effect.Parameter1) ?? string.Empty).Trim(),
+                                           (data.ElementAtOrDefault<string>(config.Effect.Parameter2) ?? string.Empty).Trim() );
+        }
+
+        private ISkillEffect BuildSkillEffect(string effectType, string param1, string param2)
+        {
+            switch (effectType)
+            {
+                
+            }
+
+            return null;
         }
     }
 }

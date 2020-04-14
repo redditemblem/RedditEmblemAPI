@@ -48,6 +48,7 @@ namespace RedditEmblemAPI.Models.Configuration
                 this.System.Items.Query,
                 this.System.Skills.Query,
                 this.System.Classes.Query,
+                this.System.Affiliations.Query,
                 this.System.TerrainTypes.Query
             };
         }

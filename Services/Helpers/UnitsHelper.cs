@@ -17,7 +17,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="data">Matrix of sheet Value values representing unit data</param>
         /// <param name="config">Parsed JSON configuration mapping Values to output</param>
         /// <returns></returns>
-        public static IList<Unit> Process(UnitsConfig config, Models.Output.SystemData system, List<List<Tile>> map)
+        public static IList<Unit> Process(UnitsConfig config, SystemData systemData, List<List<Tile>> map)
         {
             IList<Unit> units = new List<Unit>();
 
@@ -32,7 +32,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     if (string.IsNullOrEmpty(unit.ElementAtOrDefault(config.UnitName)))
                         continue;
 
-                    Unit temp = new Unit(config, unit, system.Classes, system.Items, system.Skills);
+                    Unit temp = new Unit(config, unit, systemData);
                     AddUnitToMap(temp, map);
 
                     units.Add(temp);

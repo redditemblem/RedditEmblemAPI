@@ -5,6 +5,7 @@ using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
 using RedditEmblemAPI.Models.Exceptions;
+using RedditEmblemAPI.Models.Output.Skills;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -63,7 +64,14 @@ namespace RedditEmblemAPI.Models.Output
         /// <summary>
         /// The unit's affiliation.
         /// </summary>
-        public string Affiliation { get; set; }
+        [JsonIgnore]
+        public Affiliation AffiliationObj { get; set; }
+
+        /// <summary>
+        /// Only for JSON serialization. The unit's affiliation name.
+        /// </summary>
+        [JsonProperty]
+        private string Affiliation { get { return AffiliationObj.Name; } }
 
         /// <summary>
         /// The unit's earned experience.
@@ -88,12 +96,17 @@ namespace RedditEmblemAPI.Models.Output
         /// <summary>
         /// Collection of the unit's calculated combat stats.
         /// </summary>
-        public Dictionary<string, int> CalculatedStats { get; set; }
+        public IDictionary<string, int> CalculatedStats { get; set; }
 
         /// <summary>
         /// Collection of the unit's stat values.
         /// </summary>
-        public Dictionary<string, ModifiedStatValue> Stats { get; set; }
+        public IDictionary<string, ModifiedStatValue> Stats { get; set; }
+
+        /// <summary>
+        /// Collection of the unit's weapon ranks.
+        /// </summary>
+        public IDictionary<string, string> WeaponRanks { get; set; }
 
         /// <summary>
         /// List of the items the unit is carrying.
@@ -165,17 +178,16 @@ namespace RedditEmblemAPI.Models.Output
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Unit(UnitsConfig config, IList<string> data, IDictionary<string, Class> classes, IDictionary<string, Item> items, IDictionary<string, Skill> skills)
+        public Unit(UnitsConfig config, IList<string> data, SystemData systemData)
         {
             this.Name = data.ElementAtOrDefault<string>(config.UnitName).Trim();
             this.SpriteURL = data.ElementAtOrDefault<string>(config.SpriteURL);
             this.Coordinates = new Coordinate(data.ElementAtOrDefault<string>(config.Coordinates));
             this.UnitSize = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.UnitSize), "Unit Size", true, 1);
-            this.HasMoved = (data.ElementAtOrDefault<string>(config.HasMoved) == "Yes");
+            this.HasMoved = ((data.ElementAtOrDefault<string>(config.HasMoved) ?? string.Empty) == "Yes");
             this.HP = new HP(data.ElementAtOrDefault<string>(config.CurrentHP),
                              data.ElementAtOrDefault<string>(config.MaxHP));
             this.Level = ParseHelper.SafeIntParse(data.ElementAtOrDefault(config.Level), "Level", true);
-            this.Affiliation = data.ElementAtOrDefault<string>(config.Affiliation);
             this.Experience = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(config.Experience), "Experience", true) % 100;
             this.HeldCurrency = ParseHelper.SafeIntParse(data.ElementAtOrDefault(config.HeldCurrency) ?? "-1", "Currency", false);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
@@ -190,8 +202,43 @@ namespace RedditEmblemAPI.Models.Output
             if (numberMatch.Success)
                 this.UnitNumber = numberMatch.Value.Trim();
 
+            //Match affiliation
+            Affiliation affMatch;
+            if (!systemData.Affiliations.TryGetValue(data.ElementAtOrDefault<string>(config.Affiliation), out affMatch))
+                throw new UnmatchedAffiliationException(data.ElementAtOrDefault<string>(config.Affiliation));
+            this.AffiliationObj = affMatch;
+            affMatch.Matched = true;
+
+            this.WeaponRanks = new Dictionary<string, string>();
+            BuildWeaponRanks(data, config.WeaponRanks);
+
             this.Stats = new Dictionary<string, ModifiedStatValue>();
-            foreach (ModifiedNamedStatConfig s in config.Stats)
+            BuildStats(data, config.Stats);
+
+            this.Inventory = new List<UnitHeldItem>();
+            BuildInventory(data, config.Inventory, systemData.Items);
+
+            this.SkillList = new List<Skill>();
+            BuildSkills(data, config.Skills, systemData.Skills);
+
+            this.ClassList = new List<Class>();
+            BuildClasses(data, config.Classes, systemData.Classes);
+
+            //This needs to be run last
+            this.CalculatedStats = new Dictionary<string, int>();
+            CalculateCombatStats(config.CalculatedStats);
+        }
+
+        private void BuildWeaponRanks(IList<string> data, IList<WeaponRankConfig> config)
+        {
+            foreach (WeaponRankConfig rank in config)
+                if (!string.IsNullOrEmpty(data.ElementAtOrDefault<string>(rank.Type)) && !string.IsNullOrEmpty(data.ElementAtOrDefault<string>(rank.Rank)))
+                    this.WeaponRanks.Add(data.ElementAtOrDefault<string>(rank.Type), data.ElementAtOrDefault<string>(rank.Rank));
+        }
+
+        private void BuildStats(IList<string> data, IList<ModifiedNamedStatConfig> config)
+        {
+            foreach (ModifiedNamedStatConfig s in config)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
 
@@ -213,19 +260,6 @@ namespace RedditEmblemAPI.Models.Output
 
                 this.Stats.Add(s.SourceName, temp);
             }
-
-            this.Inventory = new List<UnitHeldItem>();
-            BuildInventory(data, config.Inventory, items);
-
-            this.SkillList = new List<Skill>();
-            BuildSkills(data, config.Skills, skills);
-
-            this.ClassList = new List<Class>();
-            BuildClasses(data, config.Classes, classes);
-
-            //This needs to be run last
-            this.CalculatedStats = new Dictionary<string, int>();
-            CalculateCombatStats(config.CalculatedStats);
         }
 
         private void BuildInventory(IList<string> data, InventoryConfig config, IDictionary<string, Item> items)
@@ -253,9 +287,10 @@ namespace RedditEmblemAPI.Models.Output
                 //Apply equipped stat modifiers
                 foreach (string stat in equipped.Item.EquippedStatModifiers.Keys)
                 {
-                    ModifiedStatValue mods = this.Stats.GetValueOrDefault(stat);
-                    if (mods != null)
-                        mods.Modifiers.Add(string.Format("{0} ({1})", equipped.FullName, "Eqp"), equipped.Item.EquippedStatModifiers[stat]);
+                    ModifiedStatValue mods;
+                    if (!this.Stats.TryGetValue(stat, out mods))
+                        throw new UnmatchedStatException(stat);
+                    mods.Modifiers.Add(string.Format("{0} ({1})", equipped.FullName, "Eqp"), equipped.Item.EquippedStatModifiers[stat]);
                 }
             }
 
@@ -264,9 +299,10 @@ namespace RedditEmblemAPI.Models.Output
             {
                 foreach (string stat in inv.Item.InventoryStatModifiers.Keys)
                 {
-                    ModifiedStatValue mods = this.Stats.GetValueOrDefault(stat);
-                    if (mods != null)
-                        mods.Modifiers.Add(string.Format("{0} ({1})", inv.Item.Name, "Inv"), inv.Item.InventoryStatModifiers[stat]);
+                    ModifiedStatValue mods;
+                    if (!this.Stats.TryGetValue(stat, out mods))
+                        throw new UnmatchedStatException(stat);
+                    mods.Modifiers.Add(string.Format("{0} ({1})", inv.Item.Name, "Inv"), inv.Item.InventoryStatModifiers[stat]);
                 }
             }
 
@@ -287,6 +323,11 @@ namespace RedditEmblemAPI.Models.Output
                 match.Matched = true;
 
                 this.SkillList.Add(match);
+
+                //TO DO: Move this!
+                //Apply skill effects
+                if (match.Effect != null)
+                    match.Effect.Apply(this, match);
             }
         }
     

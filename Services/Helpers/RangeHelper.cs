@@ -29,7 +29,7 @@ namespace RedditEmblemAPI.Services.Helpers
                         continue;
 
                     //Calculate movement range
-                    RecurseUnitRange(unit, unit.Stats.GetValueOrDefault("Mov").FinalValue, unit.OriginTile.Coordinate, new List<Coordinate>());
+                    RecurseUnitRange(unit, unit.Stats["Mov"].FinalValue, unit.OriginTile.Coordinate, new List<Coordinate>());
 
                     //Find the items with minimum and maximum attack range
                     UnitHeldItem minAtkRange = unit.Inventory.Where(i => i != null && i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderBy(i => i.Item.Range.Minimum).FirstOrDefault();
@@ -79,10 +79,30 @@ namespace RedditEmblemAPI.Services.Helpers
             if (   remainingMov < 0
                 || currCoord.X < 1
                 || currCoord.Y < 1
-                || currCoord.X >= this.Tiles.First().Count
-                || currCoord.Y >= this.Tiles.Count
+                || currCoord.X > this.Tiles.First().Count
+                || currCoord.Y > this.Tiles.Count
                )
                 return;
+
+            //Don't perform checks for the starting tile
+            if(visitedCoords.Count > 0)
+            {
+                Tile tile = GetTileByCoord(currCoord);
+
+                //Test that the unit can move to this tile
+                int moveCost;
+                if (!tile.Terrain.MovementCosts.TryGetValue(unit.ClassList.First().MovementType, out moveCost))
+                    throw new UnmatchedMovementTypeException(unit.ClassList.First().MovementType, tile.Terrain.MovementCosts.Keys);
+                if (moveCost > remainingMov || moveCost >= 99) return;
+                remainingMov = remainingMov - moveCost;
+
+                //If there is a Unit occupying this tile, check for affiliation collisions
+                if (tile.Unit != null && unit.Name != tile.Unit.Name)
+                {
+                    if (unit.AffiliationObj.Grouping != tile.Unit.AffiliationObj.Grouping)
+                        return;
+                }
+            }
 
             visitedCoords.Add(currCoord);
 
@@ -92,19 +112,19 @@ namespace RedditEmblemAPI.Services.Helpers
             //Navigate in each cardinal direction, do not repeat tiles in this path
             //Left
             if(!visitedCoords.Contains(new Coordinate(currCoord.X - 1, currCoord.Y)))
-                RecurseUnitRange(unit, remainingMov - 1, new Coordinate(currCoord.X - 1, currCoord.Y), visitedCoords.ToList());
+                RecurseUnitRange(unit, remainingMov, new Coordinate(currCoord.X - 1, currCoord.Y), visitedCoords.ToList());
 
             //Right
             if (!visitedCoords.Contains(new Coordinate(currCoord.X + 1, currCoord.Y)))
-                RecurseUnitRange(unit, remainingMov - 1, new Coordinate(currCoord.X + 1, currCoord.Y), visitedCoords.ToList());
+                RecurseUnitRange(unit, remainingMov, new Coordinate(currCoord.X + 1, currCoord.Y), visitedCoords.ToList());
 
             //Up
             if (!visitedCoords.Contains(new Coordinate(currCoord.X, currCoord.Y - 1)))
-                RecurseUnitRange(unit, remainingMov - 1, new Coordinate(currCoord.X, currCoord.Y - 1), visitedCoords.ToList());
+                RecurseUnitRange(unit, remainingMov, new Coordinate(currCoord.X, currCoord.Y - 1), visitedCoords.ToList());
 
             //Down
             if (!visitedCoords.Contains(new Coordinate(currCoord.X, currCoord.Y + 1)))
-                RecurseUnitRange(unit, remainingMov - 1, new Coordinate(currCoord.X, currCoord.Y + 1), visitedCoords.ToList());
+                RecurseUnitRange(unit, remainingMov, new Coordinate(currCoord.X, currCoord.Y + 1), visitedCoords.ToList());
 
         }
 
@@ -115,12 +135,15 @@ namespace RedditEmblemAPI.Services.Helpers
             if (   remainingMaxRange < 0 
                 || currCoord.X < 1
                 || currCoord.Y < 1
-                || currCoord.X >= this.Tiles.First().Count
-                || currCoord.Y >= this.Tiles.Count
+                || currCoord.X > this.Tiles.First().Count
+                || currCoord.Y > this.Tiles.Count
                )
                 return;
 
-            if(remainingMinRange <= 0)
+            Tile tile = GetTileByCoord(currCoord);
+            if (tile.Terrain.BlocksItems) return;
+
+            if (remainingMinRange <= 0)
             {
                 visitedCoords.Add(currCoord);
 
@@ -146,11 +169,11 @@ namespace RedditEmblemAPI.Services.Helpers
                 RecurseItemRange(unit, new Coordinate(currCoord.X, currCoord.Y + 1), remainingMinRange - 1, remainingMaxRange - 1, visitedCoords.ToList(), ref itemRange);
         }
 
-        private Tile FetchTileByCoord(Coordinate coord)
+        private Tile GetTileByCoord(Coordinate coord)
         {
             IList<Tile> row = this.Tiles.ElementAtOrDefault(coord.Y - 1);
-            if (row == null)
-                return null;
+            if (row == null) return null;
+
             return row.ElementAtOrDefault(coord.X - 1);
         }
     }
