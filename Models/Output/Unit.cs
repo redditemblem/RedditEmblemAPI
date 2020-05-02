@@ -216,7 +216,7 @@ namespace RedditEmblemAPI.Models.Output
             BuildStats(data, config.Stats);
 
             this.Inventory = new List<UnitHeldItem>();
-            BuildInventory(data, config.Inventory, systemData.Items);
+            BuildInventory(data, config.Inventory, systemData.Items, systemData.WeaponRanks);
 
             this.SkillList = new List<Skill>();
             BuildSkills(data, config.Skills, systemData.Skills);
@@ -229,11 +229,11 @@ namespace RedditEmblemAPI.Models.Output
             CalculateCombatStats(config.CalculatedStats);
         }
 
-        private void BuildWeaponRanks(IList<string> data, IList<WeaponRankConfig> config)
+        private void BuildWeaponRanks(IList<string> data, IList<UnitWeaponRanksConfig> config)
         {
-            foreach (WeaponRankConfig rank in config)
-                if (!string.IsNullOrEmpty(data.ElementAtOrDefault<string>(rank.Type)) && !string.IsNullOrEmpty(data.ElementAtOrDefault<string>(rank.Rank)))
-                    this.WeaponRanks.Add(data.ElementAtOrDefault<string>(rank.Type), data.ElementAtOrDefault<string>(rank.Rank));
+            foreach (UnitWeaponRanksConfig rank in config)
+                if (!string.IsNullOrEmpty(data.ElementAtOrDefault<string>(rank.Type)))
+                    this.WeaponRanks.Add(data.ElementAtOrDefault<string>(rank.Type), data.ElementAtOrDefault<string>(rank.Rank) ?? string.Empty);
         }
 
         private void BuildStats(IList<string> data, IList<ModifiedNamedStatConfig> config)
@@ -262,18 +262,29 @@ namespace RedditEmblemAPI.Models.Output
             }
         }
 
-        private void BuildInventory(IList<string> data, InventoryConfig config, IDictionary<string, Item> items)
+        private void BuildInventory(IList<string> data, InventoryConfig config, IDictionary<string, Item> items, IList<string> weaponRanks)
         {
             foreach (int field in config.Slots)
             {
-                string Name = data.ElementAtOrDefault(field);
-                if (string.IsNullOrEmpty(Name))
+                string name = data.ElementAtOrDefault(field);
+                if (string.IsNullOrEmpty(name))
                 {
                     this.Inventory.Add(null);
                     continue;
                 }
+                UnitHeldItem item = new UnitHeldItem(name, items);
 
-                this.Inventory.Add(new UnitHeldItem(Name, items));
+                //Check if the item can be equipped
+                string unitRank;
+                if(this.WeaponRanks.TryGetValue(item.Item.Category, out unitRank))
+                {
+                    if (string.IsNullOrEmpty(unitRank)
+                     || string.IsNullOrEmpty(item.Item.WeaponRank)
+                     || weaponRanks.IndexOf(unitRank) >= weaponRanks.IndexOf(item.Item.WeaponRank))
+                        item.CanEquip = true;
+                }
+
+                this.Inventory.Add(item);
             }
 
             //Find the equipped item and flag it
@@ -305,7 +316,6 @@ namespace RedditEmblemAPI.Models.Output
                     mods.Modifiers.Add(string.Format("{0} ({1})", inv.Item.Name, "Inv"), inv.Item.InventoryStatModifiers[stat]);
                 }
             }
-
         }
     
         private void BuildSkills(IList<string> data, SkillListConfig config, IDictionary<string, Skill> skills)

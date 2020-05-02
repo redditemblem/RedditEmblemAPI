@@ -65,6 +65,11 @@ namespace RedditEmblemAPI.Models.Common
             this.Y = coord.Y;
         }
 
+        public double DistanceFrom(Coordinate coord)
+        {
+            return Math.Ceiling(Math.Sqrt(Math.Pow(this.X - coord.X, 2) + Math.Pow(this.Y - coord.Y, 2)));
+        }
+
         public override bool Equals(Object obj)
         {
             return Equals((Coordinate)obj);

@@ -85,7 +85,7 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// List of weapon ranks.
         /// </summary>
         [JsonRequired]
-        public IList<WeaponRankConfig> WeaponRanks { get; set; }
+        public IList<UnitWeaponRanksConfig> WeaponRanks { get; set; }
 
         /// <summary>
         /// Container object for a unit's inventory configuration.

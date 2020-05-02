@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.System;
+﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Exceptions;
 using RedditEmblemAPI.Models.Output.Skills;
 using System;
@@ -39,10 +40,21 @@ namespace RedditEmblemAPI.Models.Output
         /// </summary>
         public CurrencyConstsConfig Currency { get; set; }
 
+        /// <summary>
+        /// List of weapon ranks.
+        /// </summary>
+        [JsonIgnore]
+        public IList<string> WeaponRanks { get; set; }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="config"></param>
         public SystemData(SystemConfig config)
         {
             //Copy over currency constants from config
             this.Currency = config.Currency;
+            this.WeaponRanks = config.WeaponRanks;
 
             this.Classes = new Dictionary<string, Class>();
             foreach (IList<object> row in config.Classes.Query.Data)

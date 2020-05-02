@@ -27,6 +27,7 @@
     }
   },
   "System": {
+    "WeaponRanks": ["E", "D", "C", "B", "A", "S"],
     "Currency": {
       "CurrencyIcon": "G",
       "IsIconLeftAligned": false,

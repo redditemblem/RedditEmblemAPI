@@ -4,6 +4,7 @@ using RedditEmblemAPI.Models.Configuration.System.Classes;
 using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Configuration.System.Skills;
 using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
+using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System
 {
@@ -13,6 +14,9 @@ namespace RedditEmblemAPI.Models.Configuration.System
     public class SystemConfig
     {
         #region RequiredValues
+
+        [JsonRequired]
+        public IList<string> WeaponRanks { get; set; }
 
         /// <summary>
         /// Container object for a system's item configuration.

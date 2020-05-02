@@ -93,7 +93,7 @@ namespace RedditEmblemAPI.Models.Output
             this.Name = data.ElementAtOrDefault(config.Name).Trim();
             this.SpriteURL = data.ElementAtOrDefault<string>(config.SpriteURL).Trim();
             this.Category = data.ElementAtOrDefault<string>(config.Category);
-            this.WeaponRank = data.ElementAtOrDefault<string>(config.WeaponRank);
+            this.WeaponRank = (data.ElementAtOrDefault<string>(config.WeaponRank) ?? string.Empty);
             this.UtilizedStat = data.ElementAtOrDefault<string>(config.UtilizedStat);
             this.DealsDamage = ((data.ElementAtOrDefault(config.DealsDamage) ?? "No").Trim() == "Yes");
             this.MaxUses = ParseHelper.SafeIntParse(data.ElementAtOrDefault(config.Uses), "Uses", true);

@@ -26,6 +26,11 @@ namespace RedditEmblemAPI.Models.Output
         public Item Item { get; set; }
 
         /// <summary>
+        /// Flag indicating if this item can be equipped by the unit.
+        /// </summary>
+        public bool CanEquip { get; set; }
+
+        /// <summary>
         /// Flag indicating if this is the unit's currently equipped item.
         /// </summary>
         public bool IsEquipped { get; set; }
@@ -47,6 +52,7 @@ namespace RedditEmblemAPI.Models.Output
         {
             this.FullName = fullName;
             this.IsDroppable = false;
+            this.CanEquip = false;
             this.IsEquipped = false;
             this.Uses = 0;
 

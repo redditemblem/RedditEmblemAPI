@@ -27,12 +27,6 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         public int Category { get; set; }
 
         /// <summary>
-        /// Cell index of an item's weapon rank value.
-        /// </summary>
-        [JsonRequired]
-        public int WeaponRank { get; set; }
-
-        /// <summary>
         /// Cell index of an item's utilized stat value.
         /// </summary>
         [JsonRequired]
@@ -70,6 +64,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// Cell index of an item's sprite image URL value.
         /// </summary>
         public int SpriteURL { get; set; } = -1;
+
+        /// <summary>
+        /// Cell index of an item's weapon rank value.
+        /// </summary>
+        public int WeaponRank { get; set; } = -1;
 
         /// <summary>
         /// List of an item's stat modifiers when equipped.
