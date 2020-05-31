@@ -65,9 +65,14 @@ namespace RedditEmblemAPI.Models.Common
             this.Y = coord.Y;
         }
 
-        public double DistanceFrom(Coordinate coord)
+        /// <summary>
+        /// Returns the Manhattan Distance (horizontal/vertical displacement) between two coordinates.
+        /// </summary>
+        /// <param name="coord"></param>
+        /// <returns></returns>
+        public int DistanceFrom(Coordinate coord)
         {
-            return Math.Ceiling(Math.Sqrt(Math.Pow(this.X - coord.X, 2) + Math.Pow(this.Y - coord.Y, 2)));
+            return Math.Abs(this.X - coord.X) + Math.Abs(this.Y - coord.Y);
         }
 
         public override bool Equals(Object obj)
@@ -75,6 +80,12 @@ namespace RedditEmblemAPI.Models.Common
             return Equals((Coordinate)obj);
         }
 
+
+        /// <summary>
+        /// Returns true if the coordinates possess the same X and Y values.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public bool Equals(Coordinate obj)
         {
             return this.X == obj.X && this.Y == obj.Y;

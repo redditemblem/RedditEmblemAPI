@@ -283,6 +283,10 @@ namespace RedditEmblemAPI.Models.Output
                      || weaponRanks.IndexOf(unitRank) >= weaponRanks.IndexOf(item.Item.WeaponRank))
                         item.CanEquip = true;
                 }
+                else if (string.IsNullOrEmpty(item.Item.WeaponRank) && string.IsNullOrEmpty(item.Item.UtilizedStat) && !item.Item.DealsDamage)
+                {
+                    item.CanEquip = true;
+                }
 
                 this.Inventory.Add(item);
             }
