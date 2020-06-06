@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
 using RedditEmblemAPI.Models.Exceptions;
+using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,6 +25,11 @@ namespace RedditEmblemAPI.Models.Output
         public string Name { get; set; }
 
         /// <summary>
+        /// List of stat modifiers applied by the terrain type.
+        /// </summary>
+        public IDictionary<string, int> StatModifiers { get; set; }
+
+        /// <summary>
         /// List of movement costs for the terrain type.
         /// </summary>
         [JsonIgnore]
@@ -36,6 +42,11 @@ namespace RedditEmblemAPI.Models.Output
         public bool BlocksItems { get; set; }
 
         /// <summary>
+        /// List of text fields for the terrain type.
+        /// </summary>
+        public IList<string> TextFields { get; set; }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <exception cref="AnyIntegerException"></exception>
@@ -45,6 +56,15 @@ namespace RedditEmblemAPI.Models.Output
             this.Name = data.ElementAtOrDefault(config.Name).Trim();
             this.BlocksItems = ((data.ElementAtOrDefault(config.BlocksItems) ?? "No").Trim() == "Yes");
 
+            this.StatModifiers = new Dictionary<string, int>();
+            foreach(NamedStatConfig stat in config.StatModifiers)
+            {
+                int val;
+                if (!int.TryParse(data.ElementAtOrDefault(stat.Value), out val))
+                    throw new AnyIntegerException(stat.SourceName, data.ElementAtOrDefault(stat.Value));
+                this.StatModifiers.Add(stat.SourceName, val);
+            }
+
             this.MovementCosts = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.MovementCosts)
             {
@@ -53,6 +73,8 @@ namespace RedditEmblemAPI.Models.Output
                     throw new AnyIntegerException(stat.SourceName, data.ElementAtOrDefault(stat.Value));
                 this.MovementCosts.Add(stat.SourceName, val);
             }
+
+            this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
         }
     }
 }

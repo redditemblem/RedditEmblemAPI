@@ -33,5 +33,19 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         public int BlocksItems { get; set; }
 
         #endregion
+
+        #region OptionalFields
+
+        /// <summary>
+        /// List of cell indices for stat modifiers.
+        /// </summary>
+        public IList<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
+
+        /// <summary>
+        /// List of cell indices for the terrain type's text fields
+        /// </summary>
+        public IList<int> TextFields { get; set; } = new List<int>();
+
+        #endregion
     }
 }

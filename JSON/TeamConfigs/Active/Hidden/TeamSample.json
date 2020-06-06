@@ -185,6 +185,20 @@
         "Orientation": 1
       },
       "Name": 0,
+      "StatModifiers": [
+        {
+          "SourceName": "Avo",
+          "Value": 2
+        },
+        {
+          "SourceName": "Dmg",
+          "Value": 3
+        },
+        {
+          "SourceName": "HP",
+          "Value": 4
+        }
+      ],
       "MovementCosts": [
         {
           "SourceName": "Foot",
@@ -199,7 +213,8 @@
           "Value": 7
         }
       ],
-      "BlocksItems": 8
+      "BlocksItems": 8,
+      "TextFields": [ 9 ]
     }
   },
   "Units": {
