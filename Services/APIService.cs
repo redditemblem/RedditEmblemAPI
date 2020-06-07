@@ -2,7 +2,6 @@
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Common;
 using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Team;
@@ -102,7 +101,7 @@ namespace RedditEmblemAPI.Services
             // Execute queries
             ExecuteMapQuery(service, config.Team.WorkbookID, config.Team.Map, out mapImageURL, out chapterPostURL);
 
-            List<Query> queries = config.GetBatchQueries();
+            IList<Query> queries = config.GetBatchQueries();
 
             ExecuteBatchQuery(service,
                               config.Team.WorkbookID,

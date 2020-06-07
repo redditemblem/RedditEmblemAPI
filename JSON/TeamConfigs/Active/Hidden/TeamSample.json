@@ -215,6 +215,17 @@
       ],
       "BlocksItems": 8,
       "TextFields": [ 9 ]
+    },
+    "Statuses": {
+      "Query": {
+        "Sheet": "Statuses",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Type": 1,
+      "Turns": 2,
+      "TextFields": [ 3 ]
     }
   },
   "Units": {
@@ -357,6 +368,7 @@
     },
     "Skills": {
       "Slots": [ 37, 38, 39, 40, 41, 42, 43, 44 ]
-    }
+    },
+    "Statuses": [ 55, 56, 57 ]
   }
 }

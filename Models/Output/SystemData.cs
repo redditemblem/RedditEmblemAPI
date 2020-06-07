@@ -21,6 +21,11 @@ namespace RedditEmblemAPI.Models.Output
         public IDictionary<string, Affiliation> Affiliations { get; set; }
 
         /// <summary>
+        /// Container dictionary for data about status conditions.
+        /// </summary>
+        public IDictionary<string, StatusCondition> Statuses { get; set; }
+
+        /// <summary>
         /// Container dictionary for data about items.
         /// </summary>
         public IDictionary<string, Item> Items { get; set; }
@@ -137,6 +142,28 @@ namespace RedditEmblemAPI.Models.Output
                     throw new TerrainTypeProcessingException((row.ElementAtOrDefault(config.TerrainTypes.Name) ?? string.Empty).ToString(), ex);
                 }
             }
+
+            //OPTIONAL QUERIES -----------------------------------------------------------
+
+            this.Statuses = new Dictionary<string, StatusCondition>();
+            if (config.Statuses != null)
+            {
+                foreach (IList<object> row in config.Statuses.Query.Data)
+                {
+                    try
+                    {
+                        IList<string> stat = row.Select(r => r.ToString()).ToList();
+                        if (string.IsNullOrEmpty(stat.ElementAtOrDefault<string>(config.Statuses.Name)))
+                            continue;
+                        this.Statuses.Add(stat.ElementAtOrDefault<string>(config.Statuses.Name),
+                                              new StatusCondition(config.Statuses, stat));
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new StatusProcessingException((row.ElementAtOrDefault(config.Statuses.Name) ?? string.Empty).ToString(), ex);
+                    }
+                }
+            }
         }
 
         public void RemoveUnusedObjects()
@@ -145,6 +172,11 @@ namespace RedditEmblemAPI.Models.Output
             foreach (string key in this.Classes.Keys.ToList())
                 if (!this.Classes[key].Matched)
                     this.Classes.Remove(key);
+
+            //Cull unused status conditions
+            foreach (string key in this.Statuses.Keys.ToList())
+                if (!this.Statuses[key].Matched)
+                    this.Statuses.Remove(key);
 
             //Cull unused items
             foreach (string key in this.Items.Keys.ToList())

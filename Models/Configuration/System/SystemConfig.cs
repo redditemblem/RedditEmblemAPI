@@ -3,6 +3,7 @@ using RedditEmblemAPI.Models.Configuration.System.Affiliations;
 using RedditEmblemAPI.Models.Configuration.System.Classes;
 using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Configuration.System.Skills;
+using RedditEmblemAPI.Models.Configuration.System.Statuses;
 using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
 using System.Collections.Generic;
 
@@ -56,6 +57,11 @@ namespace RedditEmblemAPI.Models.Configuration.System
         /// Container object for a system's currency configuration.
         /// </summary>
         public CurrencyConstsConfig Currency { get; set; }
+
+        /// <summary>
+        /// Container object for a system's status configuration.
+        /// </summary>
+        public StatusConditionConfig Statuses { get; set; }
 
         #endregion
     }

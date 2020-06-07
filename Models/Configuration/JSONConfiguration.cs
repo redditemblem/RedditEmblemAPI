@@ -38,9 +38,9 @@ namespace RedditEmblemAPI.Models.Configuration
         /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
         /// </summary>
         /// <returns></returns>
-        public List<Query> GetBatchQueries()
+        public IList<Query> GetBatchQueries()
         {
-            return new List<Query>()
+            IList<Query> queries = new List<Query>()
             {
                 this.Team.Map.Tiles.Query,
                 this.System.TerrainTypes.Query,
@@ -51,6 +51,12 @@ namespace RedditEmblemAPI.Models.Configuration
                 this.System.Affiliations.Query,
                 this.System.TerrainTypes.Query
             };
+
+            //Add optional items
+            if (this.System.Statuses != null)
+                queries.Add(this.System.Statuses.Query);
+
+            return queries;
         }
     }
 }

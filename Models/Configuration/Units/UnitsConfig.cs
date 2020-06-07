@@ -128,6 +128,11 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// </summary>
         public int UnitSize { get; set; } = -1;
 
+        /// <summary>
+        /// List of cell indexes for a unit's status conditions.
+        /// </summary>
+        public IList<int> Statuses { get; set; } = new List<int>();
+
         #endregion
     }
 }

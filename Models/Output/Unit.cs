@@ -109,6 +109,18 @@ namespace RedditEmblemAPI.Models.Output
         public IDictionary<string, string> WeaponRanks { get; set; }
 
         /// <summary>
+        /// List of the statuses the unit has.
+        /// </summary>
+        [JsonIgnore]
+        public IList<StatusCondition> StatusList { get; set; }
+
+        /// <summary>
+        /// Only for JSON serialization. A list of the unit's statuses.
+        /// </summary>
+        [JsonProperty]
+        private IList<string> Statuses { get { return this.StatusList.Select(s => s.Name).ToList(); } }
+
+        /// <summary>
         /// List of the items the unit is carrying.
         /// </summary>
         public IList<UnitHeldItem> Inventory { get; set; }
@@ -215,6 +227,9 @@ namespace RedditEmblemAPI.Models.Output
             this.Stats = new Dictionary<string, ModifiedStatValue>();
             BuildStats(data, config.Stats);
 
+            this.StatusList = new List<StatusCondition>();
+            BuildStatusConditions(data, config.Statuses, systemData.Statuses);
+
             this.Inventory = new List<UnitHeldItem>();
             BuildInventory(data, config.Inventory, systemData.Items, systemData.WeaponRanks);
 
@@ -259,6 +274,24 @@ namespace RedditEmblemAPI.Models.Output
                 }
 
                 this.Stats.Add(s.SourceName, temp);
+            }
+        }
+
+        private void BuildStatusConditions(IList<string> data, IList<int> config, IDictionary<string, StatusCondition> statuses)
+        {
+            foreach(int status in config)
+            {
+                //Skip blank cells
+                string name = data.ElementAtOrDefault<string>(status);
+                if (string.IsNullOrEmpty(name))
+                    continue;
+
+                StatusCondition match;
+                if (!statuses.TryGetValue(name, out match))
+                    throw new UnmatchedStatusException(name);
+                match.Matched = true;
+
+                this.StatusList.Add(match);
             }
         }
 
