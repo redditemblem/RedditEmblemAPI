@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Exceptions;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -9,12 +10,13 @@ namespace RedditEmblemAPI.Models.Output
     public class UnitHeldItem
     {        
         /// <summary>
-        /// The full name of the item pulled from raw Unit data.
+        /// The full name of the item pulled from raw <c>Unit</c> data.
         /// </summary>
+        [JsonIgnore]
         public string FullName { get; set; }
 
         /// <summary>
-        /// The name of the item.
+        /// Only for JSON serialization. The name of the item.
         /// </summary>
         [JsonProperty]
         private string Name { get { return this.Item.Name; } }
@@ -56,33 +58,32 @@ namespace RedditEmblemAPI.Models.Output
             this.IsEquipped = false;
             this.Uses = 0;
 
-            string Name = this.FullName;
+            string name = this.FullName;
 
             //Search for droppable syntax
-            Match dropMatch = dropRegex.Match(Name);
+            Match dropMatch = dropRegex.Match(name);
             if (dropMatch.Success)
             {
                 this.IsDroppable = true;
-                Name = dropRegex.Replace(Name, string.Empty);
+                name = dropRegex.Replace(name, string.Empty);
             }
 
             //Search for uses syntax
-            Match usesMatch = usesRegex.Match(Name);
+            Match usesMatch = usesRegex.Match(name);
             if (usesMatch.Success)
             {
                 //Convert item use synatax to int
                 string u = usesMatch.Value.ToString();
                 u = u.Substring(1, u.Length - 2);
                 this.Uses = int.Parse(u);
-                Name = usesRegex.Replace(Name, string.Empty);
+                name = usesRegex.Replace(name, string.Empty);
             }
 
-            Name = Name.Trim();
+            name = name.Trim();
 
             Item match;
-            if (!items.TryGetValue(Name, out match))
-                throw new UnmatchedItemException(Name);
-
+            if (!items.TryGetValue(name, out match))
+                throw new UnmatchedItemException(name);
             this.Item = match;
             match.Matched = true;
         }

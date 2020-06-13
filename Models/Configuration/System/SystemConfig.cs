@@ -14,7 +14,7 @@ namespace RedditEmblemAPI.Models.Configuration.System
     /// </summary>
     public class SystemConfig
     {
-        #region RequiredValues
+        #region Required Fields
 
         [JsonRequired]
         public IList<string> WeaponRanks { get; set; }

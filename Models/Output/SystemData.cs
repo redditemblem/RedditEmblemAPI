@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Exceptions;
+using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Output.Skills;
 using System;
 using System.Collections.Generic;
@@ -41,15 +42,15 @@ namespace RedditEmblemAPI.Models.Output
         public IDictionary<string, TerrainType> TerrainTypes { get; set; }
 
         /// <summary>
-        /// Container for currency constants.
-        /// </summary>
-        public CurrencyConstsConfig Currency { get; set; }
-
-        /// <summary>
         /// List of weapon ranks.
         /// </summary>
         [JsonIgnore]
         public IList<string> WeaponRanks { get; set; }
+
+        /// <summary>
+        /// Container for currency constants.
+        /// </summary>
+        public CurrencyConstsConfig Currency { get; set; }
 
         /// <summary>
         /// Constructor.

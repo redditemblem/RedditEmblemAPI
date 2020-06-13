@@ -1,5 +1,7 @@
 using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
+using RedditEmblemAPI.Models.Configuration.Convoy;
+using RedditEmblemAPI.Models.Configuration.Shop;
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Configuration.Team;
 using RedditEmblemAPI.Models.Configuration.Units;
@@ -12,7 +14,7 @@ namespace RedditEmblemAPI.Models.Configuration
     /// </summary>
     public class JSONConfiguration
     {
-        #region RequiredFields
+        #region Required Fields
 
         /// <summary>
         /// Container object for team configuration.
@@ -34,11 +36,27 @@ namespace RedditEmblemAPI.Models.Configuration
 
         #endregion
 
+        #region Optional Fields
+
+        /// <summary>
+        /// Container object for convoy configuration.
+        /// </summary>
+        public ConvoyConfig Convoy { get; set; }
+
+        /// <summary>
+        /// Container object for shop configuration.
+        /// </summary>
+        public ShopConfig Shop { get; set; }
+
+        #endregion
+
+        #region Batch Query Requests
+
         /// <summary>
         /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
         /// </summary>
         /// <returns></returns>
-        public IList<Query> GetBatchQueries()
+        public IList<Query> GetMapBatchQueries()
         {
             IList<Query> queries = new List<Query>()
             {
@@ -58,5 +76,37 @@ namespace RedditEmblemAPI.Models.Configuration
 
             return queries;
         }
+
+        /// <summary>
+        /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
+        /// </summary>
+        /// <returns></returns>
+        public IList<Query> GetConvoyBatchQueries()
+        {
+            IList<Query> queries = new List<Query>()
+            {
+                this.System.Items.Query,
+                this.Convoy.Query
+            };
+
+            return queries;
+        }
+
+        /// <summary>
+        /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
+        /// </summary>
+        /// <returns></returns>
+        public IList<Query> GetShopBatchQueries()
+        {
+            IList<Query> queries = new List<Query>()
+            {
+                this.System.Items.Query,
+                this.Shop.Query
+            };
+
+            return queries;
+        }
+
+        #endregion
     }
 }

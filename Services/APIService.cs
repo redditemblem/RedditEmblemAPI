@@ -5,9 +5,11 @@ using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Team;
-using RedditEmblemAPI.Models.Exceptions;
+using RedditEmblemAPI.Models.Exceptions.Query;
 using RedditEmblemAPI.Models.Output;
-using RedditEmblemAPI.Services.Helpers;
+using RedditEmblemAPI.Models.Output.Convoy;
+using RedditEmblemAPI.Models.Output.Shop;
+using RedditEmblemAPI.Models.Output.Teams;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,17 +21,60 @@ namespace RedditEmblemAPI.Services
 {
     public class APIService : IAPIService
     {
-        //Attributes
-        private SheetsData SheetData;
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public APIService() { }
 
-        public APIService()
+        public MapData LoadMapData(string teamName)
         {
-            this.SheetData = new SheetsData();
+            JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
+
+            string mapImageURL, chapterPostURL;
+            QueryGoogleSheets(config, out mapImageURL, out chapterPostURL);
+
+            return new MapData(config, mapImageURL, chapterPostURL);
         }
 
-        public SheetsData LoadData(string teamName)
+        public ConvoyData LoadConvoyData(string teamName)
         {
-            //Do a deep search for our team file
+            JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
+            if(config.Convoy == null)
+                throw new ConvoyNotConfiguredException();
+
+            QueryGoogleSheets_ConvoyData(config);
+
+            return new ConvoyData(config);
+        }
+
+        public ShopData LoadShopData(string teamName)
+        {
+            JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
+            if(config.Shop == null)
+                throw new ShopNotConfiguredException();
+
+            QueryGoogleSheets_ShopData(config);
+
+            return new ShopData(config.Shop, config.System.Items);
+        }
+
+        public IList<TeamData> LoadTeamList()
+        {
+            IList<TeamData> teams = new List<TeamData>();
+
+            //Top directory enumeration
+            foreach (string filePath in Directory.EnumerateFiles("JSON/TeamConfigs/Active"))
+            {
+                JSONConfiguration config = ReadJSONConfiguration(filePath);
+                teams.Add(new TeamData(config.Team.Name, (config.Convoy != null), (config.Shop != null)));
+            }
+
+            return teams.OrderBy(t => t.TeamName).ToList();
+        }
+
+        private JSONConfiguration LoadTeamJSONConfiguration(string teamName)
+        {
+            //Do a deep search for our team file, we want to include things in the Hidden folder
             string filePath = "";
             foreach (string path in Directory.EnumerateFiles("JSON/TeamConfigs/Active", "", SearchOption.AllDirectories))
                 if (Path.GetFileNameWithoutExtension(path) == teamName)
@@ -39,42 +84,10 @@ namespace RedditEmblemAPI.Services
                 }
 
             if (string.IsNullOrEmpty(filePath)) throw new TeamConfigurationNotFoundException(teamName);
-            JSONConfiguration config = LoadTeamJSONConfiguration(filePath);
-
-            string mapImageURL, chapterPostURL;
-            QueryGoogleSheets(config, out mapImageURL, out chapterPostURL);
-
-            //Process data
-            this.SheetData.System = new SystemData(config.System);
-            this.SheetData.Map = new Map(mapImageURL, chapterPostURL, config.Team.Map, this.SheetData.System.TerrainTypes);
-
-            this.SheetData.Units = UnitsHelper.Process(config.Units, this.SheetData.System, this.SheetData.Map.Tiles);
-
-            //Calculate unit ranges
-            RangeHelper rangeHelper = new RangeHelper(this.SheetData.Units, this.SheetData.Map.Tiles);
-            rangeHelper.CalculateUnitRange();
-
-            //Clean up
-            this.SheetData.System.RemoveUnusedObjects();
-
-            return this.SheetData;
+            return ReadJSONConfiguration(filePath);
         }
 
-        public List<string> LoadTeamList()
-        {
-            List<string> teams = new List<string>();
-
-            //Top directory enumeration
-            foreach (string filePath in Directory.EnumerateFiles("JSON/TeamConfigs/Active"))
-            {
-                JSONConfiguration config = LoadTeamJSONConfiguration(filePath);
-                teams.Add(config.Team.Name);
-            }
-
-            return teams;
-        }
-
-        private JSONConfiguration LoadTeamJSONConfiguration(string filePath)
+        private JSONConfiguration ReadJSONConfiguration(string filePath)
         {
             try
             {
@@ -89,7 +102,9 @@ namespace RedditEmblemAPI.Services
                 throw new TeamConfigurationNotFoundException(Path.GetFileNameWithoutExtension(filePath));
             }
         }
-    
+
+        #region Google Sheet Queries
+
         private void QueryGoogleSheets( JSONConfiguration config, out string mapImageURL, out string chapterPostURL)
         {
             SheetsService service = new SheetsService(new BaseClientService.Initializer()
@@ -101,7 +116,53 @@ namespace RedditEmblemAPI.Services
             // Execute queries
             ExecuteMapQuery(service, config.Team.WorkbookID, config.Team.Map, out mapImageURL, out chapterPostURL);
 
-            IList<Query> queries = config.GetBatchQueries();
+            IList<Query> queries = config.GetMapBatchQueries();
+
+            ExecuteBatchQuery(service,
+                              config.Team.WorkbookID,
+                              MajorDimensionEnum.ROWS,
+                              queries.Where(q => q != null && q.Orientation == MajorDimensionEnum.ROWS).ToList()
+                             );
+
+            ExecuteBatchQuery(service,
+                              config.Team.WorkbookID,
+                              MajorDimensionEnum.COLUMNS,
+                              queries.Where(q => q != null && q.Orientation == MajorDimensionEnum.COLUMNS).ToList()
+                             );
+        }
+
+        private void QueryGoogleSheets_ConvoyData(JSONConfiguration config)
+        {
+            SheetsService service = new SheetsService(new BaseClientService.Initializer()
+            {
+                ApplicationName = "RedditEmblemAPI",
+                ApiKey = Environment.GetEnvironmentVariable("APIKey")
+            });
+
+            IList<Query> queries = config.GetConvoyBatchQueries();
+
+            ExecuteBatchQuery(service,
+                              config.Team.WorkbookID,
+                              MajorDimensionEnum.ROWS,
+                              queries.Where(q => q != null && q.Orientation == MajorDimensionEnum.ROWS).ToList()
+                             );
+
+            ExecuteBatchQuery(service,
+                              config.Team.WorkbookID,
+                              MajorDimensionEnum.COLUMNS,
+                              queries.Where(q => q != null && q.Orientation == MajorDimensionEnum.COLUMNS).ToList()
+                             );
+        }
+
+        private void QueryGoogleSheets_ShopData(JSONConfiguration config)
+        {
+            SheetsService service = new SheetsService(new BaseClientService.Initializer()
+            {
+                ApplicationName = "RedditEmblemAPI",
+                ApiKey = Environment.GetEnvironmentVariable("APIKey")
+            });
+
+            IList<Query> queries = config.GetShopBatchQueries();
 
             ExecuteBatchQuery(service,
                               config.Team.WorkbookID,
@@ -197,5 +258,7 @@ namespace RedditEmblemAPI.Services
                 throw new GoogleSheetsQueryFailedException(string.Join(", ", queries.Select(q => q.Sheet)), ex);
             } 
         }
+
+        #endregion
     }
 }

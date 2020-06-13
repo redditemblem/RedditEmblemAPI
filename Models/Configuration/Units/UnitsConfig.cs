@@ -104,6 +104,11 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         #region OptionalFields
 
         /// <summary>
+        /// Cell index of the unit's controlling player.
+        /// </summary>
+        public int Player { get; set; } = -1;
+
+        /// <summary>
         /// List of cell indexes for a unit's text fields.
         /// </summary>
         public IList<int> TextFields { get; set; } = new List<int>();

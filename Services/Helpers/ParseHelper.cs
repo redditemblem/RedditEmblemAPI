@@ -1,4 +1,4 @@
-﻿using RedditEmblemAPI.Models.Exceptions;
+﻿using RedditEmblemAPI.Models.Exceptions.Validation;
 using System.Collections.Generic;
 using System.Linq;
 

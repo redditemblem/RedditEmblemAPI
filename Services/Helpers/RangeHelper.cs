@@ -1,5 +1,6 @@
 ﻿using RedditEmblemAPI.Models.Common;
-using RedditEmblemAPI.Models.Exceptions;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output;
 using System;
 using System.Collections.Generic;

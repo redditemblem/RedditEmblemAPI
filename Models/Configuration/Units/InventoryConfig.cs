@@ -8,7 +8,7 @@ namespace RedditEmblemAPI.Models.Configuration.Units
     /// </summary>
     public class InventoryConfig
     {
-        #region RequiredFields
+        #region Required Fields
 
         /// <summary>
         /// Cell index of a unit's equipped item name.

@@ -15,7 +15,7 @@
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="1.68.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="JSON\TeamConfigs\Active\Hidden\TeamSample.json">
+    <Content Update="JSON\TeamConfigs\Active\Hidden\TeamExample.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

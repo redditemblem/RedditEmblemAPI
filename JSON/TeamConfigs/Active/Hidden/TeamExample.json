@@ -1,0 +1,386 @@
+{
+  "Team": {
+    "Name": "Team Example",
+    "WorkbookID": "10OGJGY4RcLemNcdoGVTrwoc6qJQyv5ONMK09VUyFptc",
+    "Map": {
+      "Query": {
+        "Sheet": "System Control",
+        "Selection": "B1:B",
+        "Orientation": 2
+      },
+      "MapSwitch": 0,
+      "MapURL": 2,
+      "ChapterPostURL": 1,
+      "Constants": {
+        "TileSize": 32,
+        "TileSpacing": 0,
+        "HasHeaderTopLeft": true,
+        "HasHeaderBottomRight": false
+      },
+      "Tiles": {
+        "Query": {
+          "Sheet": "Map Tiles",
+          "Selection": "A1:ZZ",
+          "Orientation": 1
+        }
+      }
+    }
+  },
+  "System": {
+    "WeaponRanks": [ "E", "D", "C", "B", "A", "S" ],
+    "Currency": {
+      "CurrencySymbol": "G",
+      "IsSymbolLeftAligned": false,
+      "IncludeSpace": true
+    },
+    "Items": {
+      "Query": {
+        "Sheet": "Items",
+        "Selection": "B2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "Category": 2,
+      "WeaponRank": 3,
+      "UtilizedStat": 4,
+      "DealsDamage": 5,
+      "Uses": 6,
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 7
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 8
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 9
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 10
+        },
+        {
+          "SourceName": "Eva",
+          "Value": 11
+        }
+      ],
+      "EquippedStatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 14
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 15
+        },
+        {
+          "SourceName": "Skl",
+          "Value": 16
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 17
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 18
+        },
+        {
+          "SourceName": "Def",
+          "Value": 19
+        },
+        {
+          "SourceName": "Res",
+          "Value": 20
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 21
+        }
+      ],
+      "InventoryStatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 21
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 23
+        },
+        {
+          "SourceName": "Skl",
+          "Value": 24
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 25
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 26
+        },
+        {
+          "SourceName": "Def",
+          "Value": 27
+        },
+        {
+          "SourceName": "Res",
+          "Value": 28
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 29
+        }
+      ],
+      "Range": {
+        "Minimum": 12,
+        "Maximum": 13
+      },
+      "TextFields": [ 30, 31 ]
+    },
+    "Skills": {
+      "Query": {
+        "Sheet": "Skills",
+        "Selection": "B2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "TextFields": [ 2 ],
+      "Effect": {
+        "Type": 3,
+        "Parameter1": 4,
+        "Parameter2": 5
+      }
+    },
+    "Classes": {
+      "Query": {
+        "Sheet": "Classes",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Tags": 1,
+      "MovementType": 2,
+      "TextFields": [ 3 ]
+    },
+    "Affiliations": {
+      "Query": {
+        "Sheet": "Affiliations",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Grouping": 1,
+      "TextFields": [ 2 ]
+    },
+    "TerrainTypes": {
+      "Query": {
+        "Sheet": "Terrain Types",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "StatModifiers": [
+        {
+          "SourceName": "Avo",
+          "Value": 2
+        },
+        {
+          "SourceName": "Dmg",
+          "Value": 3
+        },
+        {
+          "SourceName": "HP",
+          "Value": 4
+        }
+      ],
+      "MovementCosts": [
+        {
+          "SourceName": "Foot",
+          "Value": 5
+        },
+        {
+          "SourceName": "Mounted",
+          "Value": 6
+        },
+        {
+          "SourceName": "Flying",
+          "Value": 7
+        }
+      ],
+      "BlocksItems": 8,
+      "TextFields": [ 9 ]
+    },
+    "Statuses": {
+      "Query": {
+        "Sheet": "Statuses",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Type": 1,
+      "Turns": 2,
+      "TextFields": [ 3 ]
+    }
+  },
+  "Units": {
+    "Query": {
+      "Sheet": "Characters",
+      "Selection": "B1:ZZ",
+      "Orientation": 2
+    },
+    "UnitName": 0,
+    "Player": 1,
+    "SpriteURL": 2,
+    "TextFields": [ 4 ],
+    "Level": 10,
+    "Classes": [ 5, 6 ],
+    "Affiliation": 13,
+    "Coordinates": 7,
+    "HasMoved": 8,
+    "UnitSize": 9,
+    "Experience": 11,
+    "HeldCurrency": 12,
+    "CurrentHP": 15,
+    "MaxHP": 16,
+    "Tags": 14,
+    "CalculatedStats": [
+      {
+        "SourceName": "Atk",
+        "Equation": "2*{UnitStat[Str]}"
+      },
+      {
+        "SourceName": "Crit",
+        "Equation": "100"
+      },
+      {
+        "SourceName": "Hit",
+        "Equation": "100"
+      },
+      {
+        "SourceName": "Avo",
+        "Equation": "100"
+      }
+    ],
+    "Stats": [
+      {
+        "SourceName": "Str",
+        "BaseValue": 17,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 47
+          }
+        ]
+      },
+      {
+        "SourceName": "Def",
+        "BaseValue": 22,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 52
+          }
+        ]
+      },
+      {
+        "SourceName": "Mag",
+        "BaseValue": 18,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 48
+          }
+        ]
+      },
+      {
+        "SourceName": "Res",
+        "BaseValue": 23,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 53
+          }
+        ]
+      },
+      {
+        "SourceName": "Lck",
+        "BaseValue": 21,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 51
+          }
+        ]
+      },
+      {
+        "SourceName": "Spd",
+        "BaseValue": 20,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 50
+          }
+        ]
+      },
+      {
+        "SourceName": "Skl",
+        "BaseValue": 19,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 49
+          }
+        ]
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 24,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 54
+          }
+        ]
+      }
+    ],
+    "WeaponRanks": [
+      {
+        "Type": 26,
+        "Rank": 27
+      },
+      {
+        "Type": 28,
+        "Rank": 29
+      },
+      {
+        "Type": 30,
+        "Rank": 31
+      }
+    ],
+    "Inventory": {
+      "EquippedItem": 32,
+      "Slots": [ 33, 34, 35, 36, 37 ]
+    },
+    "Skills": {
+      "Slots": [ 38, 39, 40, 41, 42, 43, 44, 45 ]
+    },
+    "Statuses": [ 56, 57, 58 ]
+  },
+  "Convoy": {
+    "Query": {
+      "Sheet": "Convoy",
+      "Selection": "A2:ZZ",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "Owner": 1,
+    "Quantity": 2,
+    "Value": 3
+  }
+}

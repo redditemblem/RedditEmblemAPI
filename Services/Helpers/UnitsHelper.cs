@@ -1,7 +1,8 @@
 ﻿using NCalc;
 using RedditEmblemAPI.Models.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
-using RedditEmblemAPI.Models.Exceptions;
+using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output;
 using System;
 using System.Collections.Generic;

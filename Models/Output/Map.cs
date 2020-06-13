@@ -1,5 +1,8 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Team;
 using RedditEmblemAPI.Models.Exceptions;
+using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -21,10 +24,9 @@ namespace RedditEmblemAPI.Models.Output
         /// <param name="config"></param>
         /// <param name="tileData"></param>
         /// <exception cref="MapProcessingException"></exception>
-        public Map(string mapImageURL, string chapterPostURL, MapConfig config, IDictionary<string, TerrainType> terrainTypes)
+        public Map(string mapImageURL, MapConfig config, IDictionary<string, TerrainType> terrainTypes)
         {
             this.MapImageURL = mapImageURL;
-            this.ChapterPostURL = chapterPostURL;
             this.Constants = config.Constants;
             this.Tiles = new List<List<Tile>>();
 
@@ -45,11 +47,6 @@ namespace RedditEmblemAPI.Models.Output
         /// The width of the map image in pixels.
         /// </summary>
         public int MapImageWidth { get; private set; }
-
-        /// <summary>
-        /// The URL of the chapter post on Reddit.
-        /// </summary>
-        public string ChapterPostURL { get; set; }
 
         /// <summary>
         /// Collection of constant values for doing calculations.

@@ -4,7 +4,8 @@ using RedditEmblemAPI.Models.Common;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
-using RedditEmblemAPI.Models.Exceptions;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Skills;
 using RedditEmblemAPI.Services.Helpers;
 using System;
@@ -28,6 +29,11 @@ namespace RedditEmblemAPI.Models.Output
         /// The set of digits present at the end of the unit's <c>Name</c>, if any.
         /// </summary>
         public string UnitNumber { get; set; }
+
+        /// <summary>
+        /// The player that controls the unit.
+        /// </summary>
+        public string Player { get; set; }
 
         /// <summary>
         /// The sprite image URL for the unit.
@@ -111,14 +117,7 @@ namespace RedditEmblemAPI.Models.Output
         /// <summary>
         /// List of the statuses the unit has.
         /// </summary>
-        [JsonIgnore]
-        public IList<StatusCondition> StatusList { get; set; }
-
-        /// <summary>
-        /// Only for JSON serialization. A list of the unit's statuses.
-        /// </summary>
-        [JsonProperty]
-        private IList<string> Statuses { get { return this.StatusList.Select(s => s.Name).ToList(); } }
+        public IList<UnitStatus> Statuses { get; set; }
 
         /// <summary>
         /// List of the items the unit is carrying.
@@ -194,6 +193,7 @@ namespace RedditEmblemAPI.Models.Output
         {
             this.Name = data.ElementAtOrDefault<string>(config.UnitName).Trim();
             this.SpriteURL = data.ElementAtOrDefault<string>(config.SpriteURL);
+            this.Player = data.ElementAtOrDefault<string>(config.Player) ?? string.Empty;
             this.Coordinates = new Coordinate(data.ElementAtOrDefault<string>(config.Coordinates));
             this.UnitSize = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.UnitSize), "Unit Size", true, 1);
             this.HasMoved = ((data.ElementAtOrDefault<string>(config.HasMoved) ?? string.Empty) == "Yes");
@@ -227,7 +227,7 @@ namespace RedditEmblemAPI.Models.Output
             this.Stats = new Dictionary<string, ModifiedStatValue>();
             BuildStats(data, config.Stats);
 
-            this.StatusList = new List<StatusCondition>();
+            this.Statuses = new List<UnitStatus>();
             BuildStatusConditions(data, config.Statuses, systemData.Statuses);
 
             this.Inventory = new List<UnitHeldItem>();
@@ -279,19 +279,15 @@ namespace RedditEmblemAPI.Models.Output
 
         private void BuildStatusConditions(IList<string> data, IList<int> config, IDictionary<string, StatusCondition> statuses)
         {
-            foreach(int status in config)
+            foreach(int field in config)
             {
                 //Skip blank cells
-                string name = data.ElementAtOrDefault<string>(status);
+                string name = data.ElementAtOrDefault<string>(field);
                 if (string.IsNullOrEmpty(name))
                     continue;
 
-                StatusCondition match;
-                if (!statuses.TryGetValue(name, out match))
-                    throw new UnmatchedStatusException(name);
-                match.Matched = true;
-
-                this.StatusList.Add(match);
+                UnitStatus status = new UnitStatus(name, statuses);
+                this.Statuses.Add(status);
             }
         }
 
@@ -395,6 +391,9 @@ namespace RedditEmblemAPI.Models.Output
                     this.Tags = this.Tags.Union(match.Tags).Distinct().ToList();
                 }
             }
+
+            if (this.ClassList.Count < 1)
+                throw new Exception("Unit must have at least one class defined.");
         }
     
         private void CalculateCombatStats(IList<CalculatedStatConfig> stats)

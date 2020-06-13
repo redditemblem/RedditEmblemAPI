@@ -13,19 +13,19 @@ namespace RedditEmblemAPI.Models.Configuration.System
         /// The icon for the currency's denomination. (Ex. $, G)
         /// </summary>
         [JsonRequired]
-        public string CurrencyIcon { get; set; }
+        public string CurrencySymbol { get; set; }
 
         #endregion
 
         #region Optional Fields
 
         /// <summary>
-        /// Flag indicating if the <c>CurrencyIcon</c> appears on the left of numerical values.
+        /// Flag indicating if the <c>CurrencySymbol</c> appears on the left of numerical values.
         /// </summary>
-        public bool IsIconLeftAligned { get; set; } = true;
+        public bool IsSymbolLeftAligned { get; set; } = true;
 
         /// <summary>
-        /// Flag indicating if there should be a space between the <c>CurrencyIcon</c> and numerical values.
+        /// Flag indicating if there should be a space between the <c>CurrencySymbol</c> and numerical values.
         /// </summary>
         public bool IncludeSpace { get; set; } = false;
 
