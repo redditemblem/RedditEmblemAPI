@@ -29,5 +29,19 @@ namespace RedditEmblemAPI.Models.Configuration.Shop
         public int Stock { get; set; }
 
         #endregion
+
+        #region Optional Fields
+
+        /// <summary>
+        /// Cell index for the sale price of the shop item.
+        /// </summary>
+        public int SalePrice { get; set; } = -1;
+
+        /// <summary>
+        /// Cell index for flag indicating if the shop item is new.
+        /// </summary>
+        public int IsNew { get; set; } = -1;
+
+        #endregion
     }
 }

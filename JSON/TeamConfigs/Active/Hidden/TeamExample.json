@@ -230,7 +230,7 @@
   },
   "Units": {
     "Query": {
-      "Sheet": "Characters",
+      "Sheet": "Units",
       "Selection": "B1:ZZ",
       "Orientation": 2
     },
@@ -382,5 +382,17 @@
     "Owner": 1,
     "Quantity": 2,
     "Value": 3
+  },
+  "Shop": {
+    "Query": {
+      "Sheet": "Shop",
+      "Selection": "A2:ZZ",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "Stock": 1,
+    "Price": 2,
+    "SalePrice": 3,
+    "IsNew": 4
   }
 }

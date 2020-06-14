@@ -10,14 +10,14 @@ namespace RedditEmblemAPI.Models.Output
 
         public IList<string> UtilizedStats { get; set; }
 
-        public IDictionary<string, bool> Parameters { get; set; }
+        public IDictionary<string, bool> DisplayFilters { get; set; }
 
-        public FilterParameters(IList<ItemSort> sorts, IList<string> itemCategories, IList<string> utilizedStats, IDictionary<string, bool> parameters)
+        public FilterParameters(IList<ItemSort> sorts, IList<string> itemCategories, IList<string> utilizedStats, IDictionary<string, bool> displayFilters)
         {
             this.Sorts = sorts;
             this.ItemCategories = itemCategories;
             this.UtilizedStats = utilizedStats;
-            this.Parameters = parameters;
+            this.DisplayFilters = displayFilters;
         }
     }
 }

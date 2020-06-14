@@ -2,10 +2,8 @@
 using RedditEmblemAPI.Models.Configuration.Shop;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Services.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.Shop
 {
@@ -25,7 +23,11 @@ namespace RedditEmblemAPI.Models.Output.Shop
 
         public int Price { get; set; }
 
+        public int SalePrice { get; set; }
+
         public int Stock { get; set; }
+
+        public bool IsNew { get; set; }
 
         public ShopItem(ShopConfig config, IList<string> data, IDictionary<string, Item> items)
         {
@@ -36,7 +38,9 @@ namespace RedditEmblemAPI.Models.Output.Shop
             match.Matched = true;
 
             this.Price = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(config.Price), "Price", true);
+            this.SalePrice = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.SalePrice), "Sale Price", true, this.Price);
             this.Stock = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(config.Stock), "Stock", true);
+            this.IsNew = ((data.ElementAtOrDefault<string>(config.IsNew) ?? string.Empty) == "Yes");
         }
     }
 }

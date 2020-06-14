@@ -55,7 +55,7 @@ namespace RedditEmblemAPI.Services
 
             QueryGoogleSheets_ShopData(config);
 
-            return new ShopData(config.Shop, config.System.Items);
+            return new ShopData(config);
         }
 
         public IList<TeamData> LoadTeamList()
