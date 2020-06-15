@@ -37,8 +37,6 @@ namespace RedditEmblemAPI.Models.Configuration.Team
         [JsonRequired]
         public MapTilesConfig Tiles { get; set; }
 
-        //public MapEffectsConfig Effects { get; set; }
-
         #endregion
 
         #region OptionalFields
@@ -47,6 +45,11 @@ namespace RedditEmblemAPI.Models.Configuration.Team
         /// Cell index of chapter post URL value.
         /// </summary>
         public int ChapterPostURL { get; set; } = -1;
+
+        /// <summary>
+        /// Container object for effects configuration.
+        /// </summary>
+        public MapEffectsConfig Effects { get; set; } = null;
 
         #endregion
     }

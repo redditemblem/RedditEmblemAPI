@@ -1,12 +1,13 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Team;
-using RedditEmblemAPI.Models.Exceptions;
 using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Query;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 
 namespace RedditEmblemAPI.Models.Output
@@ -24,13 +25,26 @@ namespace RedditEmblemAPI.Models.Output
         /// <param name="config"></param>
         /// <param name="tileData"></param>
         /// <exception cref="MapProcessingException"></exception>
-        public Map(string mapImageURL, MapConfig config, IDictionary<string, TerrainType> terrainTypes)
+        public Map(MapConfig config, IDictionary<string, TerrainType> terrainTypes, IDictionary<string, TerrainEffect> terrainEffects)
         {
-            this.MapImageURL = mapImageURL;
             this.Constants = config.Constants;
-            this.Tiles = new List<List<Tile>>();
 
+            IList<object> values = config.Query.Data.First();
+
+            if ((values.ElementAtOrDefault(config.MapSwitch) ?? "Off").ToString() != "On")
+                throw new MapDataLockedException();
+
+            string mapImageURL = (values.ElementAtOrDefault(config.MapURL) ?? string.Empty).ToString();
+            if (string.IsNullOrEmpty(mapImageURL))
+                throw new MapImageURLNotFoundException(config.Query.Sheet);
+            this.MapImageURL = mapImageURL;
+
+            //Build map
+            this.Tiles = new List<List<Tile>>();
             BuildTiles(config.Tiles.Query.Data, terrainTypes);
+
+            if(config.Effects != null)
+                ApplyTerrainEffects(config.Effects.Query.Data, terrainEffects);
         }
 
         /// <summary>
@@ -57,7 +71,6 @@ namespace RedditEmblemAPI.Models.Output
         /// Matrix of map tiles.
         /// </summary>
         public List<List<Tile>> Tiles { get; set; }
-
 
         /// <summary>
         /// Uses the raw <paramref name="tileData"/> matrix to contruct the <c>Tiles</c> matrix for this map.
@@ -139,6 +152,45 @@ namespace RedditEmblemAPI.Models.Output
             {
                 tileHeight -= 1;
                 tileWidth -= 1;
+            }
+        }
+
+        private void ApplyTerrainEffects(IList<IList<object>> tileData, IDictionary<string, TerrainEffect> terrainEffects)
+        {
+            try
+            {
+                if (tileData.Count > this.Tiles.Count)
+                    throw new UnexpectedMapHeightException(tileData.Count, this.Tiles.Count);
+
+                for (int r = 0; r < tileData.Count; r++)
+                {
+                    IList<object> row = tileData[r];
+                    IList<Tile> tiles = this.Tiles[r];
+
+                    if (row.Count > tiles.Count)
+                        throw new UnexpectedMapWidthException(row.Count, tiles.Count);
+
+                    for (int t = 0; t < row.Count; t++)
+                    {
+                        string values = row[t].ToString();
+                        if (string.IsNullOrEmpty(values))
+                            continue;
+                        
+                        foreach(string value in values.Split(","))
+                        {
+                            TerrainEffect effect;
+                            if (!terrainEffects.TryGetValue(value.Trim(), out effect))
+                                throw new UnmatchedTileEffectException(tiles[t].Coordinate.X, tiles[t].Coordinate.Y, value.Trim());
+
+                            effect.Matched = true;
+                            tiles[t].TerrainEffectsList.Add(effect);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new MapProcessingException(ex);
             }
         }
     }

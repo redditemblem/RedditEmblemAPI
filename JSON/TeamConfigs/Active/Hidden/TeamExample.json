@@ -23,6 +23,14 @@
           "Selection": "A1:ZZ",
           "Orientation": 1
         }
+      },
+      "Effects": {
+        "Query": {
+          "Sheet": "Map Effects",
+          "Selection": "A1:ZZ",
+          "Orientation": 1,
+          "AllowNullData": true
+        }
       }
     }
   },
@@ -215,6 +223,16 @@
       ],
       "BlocksItems": 8,
       "TextFields": [ 9 ]
+    },
+    "TerrainEffects": {
+      "Query": {
+        "Sheet": "Terrain Effects",
+        "Selection": "B2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "TextFields": [ 12 ]
     },
     "Statuses": {
       "Query": {

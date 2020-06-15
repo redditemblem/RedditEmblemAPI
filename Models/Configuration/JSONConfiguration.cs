@@ -60,19 +60,20 @@ namespace RedditEmblemAPI.Models.Configuration
         {
             IList<Query> queries = new List<Query>()
             {
+                this.Team.Map.Query,
                 this.Team.Map.Tiles.Query,
                 this.System.TerrainTypes.Query,
                 this.Units.Query,
                 this.System.Items.Query,
-                this.System.Skills.Query,
                 this.System.Classes.Query,
-                this.System.Affiliations.Query,
-                this.System.TerrainTypes.Query
+                this.System.Affiliations.Query
             };
 
             //Add optional items
-            if (this.System.Statuses != null)
-                queries.Add(this.System.Statuses.Query);
+            if (this.Team.Map.Effects != null) queries.Add(this.Team.Map.Effects.Query);
+            if (this.System.Skills != null) queries.Add(this.System.Skills.Query);
+            if (this.System.Statuses != null) queries.Add(this.System.Statuses.Query);
+            if (this.System.TerrainEffects != null) queries.Add(this.System.TerrainEffects.Query);
 
             return queries;
         }

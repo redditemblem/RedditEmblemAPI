@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
     /// </summary>
     public class Query
     {
-        #region RequiredFields
+        #region Required Fields
 
         /// <summary>
         /// The name of the sheet to execute the query on.
@@ -38,6 +38,15 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         /// </summary>
         [JsonRequired]
         public MajorDimensionEnum Orientation { get; set; }
+
+        #endregion
+
+        #region Optional Fields
+
+        /// <summary>
+        /// Flag indicating whether or not this query should error if the data comes back null.
+        /// </summary>
+        public bool AllowNullData { get; set; } = false;
 
         #endregion
 

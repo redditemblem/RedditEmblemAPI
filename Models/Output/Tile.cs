@@ -1,5 +1,8 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Common;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output
 {
@@ -16,7 +19,8 @@ namespace RedditEmblemAPI.Models.Output
         public Tile(int x, int y, TerrainType terrainType)
         {
             this.Coordinate = new Coordinate(x, y);
-            this.Terrain = terrainType;
+            this.TerrainTypeObj = terrainType;
+            this.TerrainEffectsList = new List<TerrainEffect>();
         }
 
         /// <summary>
@@ -50,13 +54,25 @@ namespace RedditEmblemAPI.Models.Output
         /// The terrain type of this tile.
         /// </summary>
         [JsonIgnore]
-        public TerrainType Terrain { get; set; }
+        public TerrainType TerrainTypeObj { get; set; }
 
         /// <summary>
         /// Returns the name of the <c>TerrainType</c> of this tile.
         /// </summary>
         [JsonProperty]
-        private string TerrainTypeName { get { return this.Terrain.Name;  } }
+        private string TerrainType { get { return this.TerrainTypeObj.Name;  } }
+
+        /// <summary>
+        /// List of the terrain effects on this tile.
+        /// </summary>
+        [JsonIgnore]
+        public IList<TerrainEffect> TerrainEffectsList { get; set; }
+
+        /// <summary>
+        /// Returns a list of names for the terrain effects on this tile.
+        /// </summary>
+        [JsonProperty]
+        private IList<string> TerrainEffects { get { return this.TerrainEffectsList.Select(e => e.Name).OrderBy(e => e).ToList(); } }
 
         /// <summary>
         /// Just for serialization purposes. The number of units with displayed movement on this tile.

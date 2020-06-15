@@ -96,8 +96,8 @@ namespace RedditEmblemAPI.Services.Helpers
 
                 //Test that the unit can move to this tile
                 int moveCost;
-                if (!tile.Terrain.MovementCosts.TryGetValue(unit.ClassList.First().MovementType, out moveCost))
-                    throw new UnmatchedMovementTypeException(unit.ClassList.First().MovementType, tile.Terrain.MovementCosts.Keys);
+                if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(unit.ClassList.First().MovementType, out moveCost))
+                    throw new UnmatchedMovementTypeException(unit.ClassList.First().MovementType, tile.TerrainTypeObj.MovementCosts.Keys);
                 if (moveCost > remainingMov || moveCost >= 99) return;
                 remainingMov = remainingMov - moveCost;
 
@@ -146,7 +146,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 return;
 
             Tile tile = GetTileByCoord(currCoord);
-            if (tile.Terrain.BlocksItems) return;
+            if (tile.TerrainTypeObj.BlocksItems) return;
 
             if (remainingMinRange <= 0)
             {

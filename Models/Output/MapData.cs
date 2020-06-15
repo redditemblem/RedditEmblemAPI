@@ -1,7 +1,9 @@
 ﻿using RedditEmblemAPI.Models.Configuration;
+using RedditEmblemAPI.Models.Exceptions.Query;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output
 {
@@ -40,15 +42,15 @@ namespace RedditEmblemAPI.Models.Output
         /// </summary>
         public string ChapterPostURL { get; set; }
 
-        public MapData(JSONConfiguration config, string mapImageURL, string chapterPostURL)
+        public MapData(JSONConfiguration config)
         {
             this.ShowConvoyLink = (config.Convoy != null);
             this.ShowShopLink = (config.Shop != null);
-            this.ChapterPostURL = chapterPostURL;
+            this.ChapterPostURL = string.Empty; //(values.ElementAtOrDefault(config.Team.Map.ChapterPostURL) ?? string.Empty).ToString();
 
             //Process data
             this.System = new SystemData(config.System);
-            this.Map = new Map(mapImageURL, config.Team.Map, this.System.TerrainTypes);
+            this.Map = new Map(config.Team.Map, this.System.TerrainTypes, this.System.TerrainEffects);
             this.Units = UnitsHelper.Process(config.Units, this.System, this.Map.Tiles);
 
             //Calculate unit ranges

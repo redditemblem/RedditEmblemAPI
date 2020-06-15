@@ -42,6 +42,11 @@ namespace RedditEmblemAPI.Models.Output
         public IDictionary<string, TerrainType> TerrainTypes { get; set; }
 
         /// <summary>
+        /// Container dictionary for data about terrain effects.
+        /// </summary>
+        public IDictionary<string, TerrainEffect> TerrainEffects { get; set; }
+
+        /// <summary>
         /// List of weapon ranks.
         /// </summary>
         [JsonIgnore]
@@ -112,22 +117,6 @@ namespace RedditEmblemAPI.Models.Output
                 }
             }
 
-            this.Skills = new Dictionary<string, Skill>();
-            foreach (IList<object> row in config.Skills.Query.Data)
-            {
-                try
-                {
-                    IList<string> skill = row.Select(r => r.ToString()).ToList();
-                    if (string.IsNullOrEmpty(skill.ElementAtOrDefault<string>(config.Skills.Name)))
-                        continue;
-                    this.Skills.Add(skill.ElementAtOrDefault<string>(config.Skills.Name), new Skill(config.Skills, skill));
-                }
-                catch (Exception ex)
-                {
-                    throw new SkillProcessingException((row.ElementAtOrDefault(config.Skills.Name) ?? string.Empty).ToString(), ex);
-                }
-            }
-
             this.TerrainTypes = new Dictionary<string, TerrainType>();
             foreach (IList<object> row in config.TerrainTypes.Query.Data)
             {
@@ -145,6 +134,44 @@ namespace RedditEmblemAPI.Models.Output
             }
 
             //OPTIONAL QUERIES -----------------------------------------------------------
+
+            this.TerrainEffects = new Dictionary<string, TerrainEffect>();
+            if(config.TerrainEffects != null)
+            {
+                foreach (IList<object> row in config.TerrainEffects.Query.Data)
+                {
+                    try
+                    {
+                        IList<string> effect = row.Select(r => r.ToString()).ToList();
+                        if (string.IsNullOrEmpty(effect.ElementAtOrDefault<string>(config.TerrainEffects.Name)))
+                            continue;
+                        this.TerrainEffects.Add(effect.ElementAtOrDefault<string>(config.TerrainEffects.Name), new TerrainEffect(config.TerrainEffects, effect));
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TerrainEffectProcessingException((row.ElementAtOrDefault(config.TerrainEffects.Name) ?? string.Empty).ToString(), ex);
+                    }
+                }
+            }
+
+            this.Skills = new Dictionary<string, Skill>();
+            if(config.Skills != null)
+            {
+                foreach (IList<object> row in config.Skills.Query.Data)
+                {
+                    try
+                    {
+                        IList<string> skill = row.Select(r => r.ToString()).ToList();
+                        if (string.IsNullOrEmpty(skill.ElementAtOrDefault<string>(config.Skills.Name)))
+                            continue;
+                        this.Skills.Add(skill.ElementAtOrDefault<string>(config.Skills.Name), new Skill(config.Skills, skill));
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new SkillProcessingException((row.ElementAtOrDefault(config.Skills.Name) ?? string.Empty).ToString(), ex);
+                    }
+                }
+            }
 
             this.Statuses = new Dictionary<string, StatusCondition>();
             if (config.Statuses != null)
@@ -193,6 +220,11 @@ namespace RedditEmblemAPI.Models.Output
             foreach (string key in this.TerrainTypes.Keys.ToList())
                 if (!this.TerrainTypes[key].Matched)
                     this.TerrainTypes.Remove(key);
+
+            //Cull unused terrain effects
+            foreach (string key in this.TerrainEffects.Keys.ToList())
+                if (!this.TerrainEffects[key].Matched)
+                    this.TerrainEffects.Remove(key);
         }
     }
 }

@@ -57,6 +57,10 @@ namespace RedditEmblemAPI.Services.Helpers
             IList<Tile> row = map.ElementAtOrDefault(unit.Coordinates.Y - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates);
             Tile tile = row.ElementAtOrDefault(unit.Coordinates.X - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates);
 
+            //Make sure this unit is not placed overlapping another
+            if (tile.Unit != null)
+                throw new UnitTileOverlapException(unit.Name, tile.Unit.Name, tile.Coordinate.X, tile.Coordinate.Y);
+
             //Two way bind the unit and tile objects
             unit.AnchorTile = tile;
             tile.Unit = unit;
@@ -75,6 +79,10 @@ namespace RedditEmblemAPI.Services.Helpers
                     {
                         IList<Tile> intersectRow = map.ElementAtOrDefault(unit.Coordinates.Y + y - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates.X + x, unit.Coordinates.Y + y);
                         Tile intersectTile = intersectRow.ElementAtOrDefault(unit.Coordinates.X + x - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates.X + x, unit.Coordinates.Y + y);
+
+                        //Make sure this unit is not placed overlapping another
+                        if (intersectTile.Unit != null && unit.Name != intersectTile.Unit.Name)
+                            throw new UnitTileOverlapException(unit.Name, intersectTile.Unit.Name, intersectTile.Coordinate.X, intersectTile.Coordinate.Y);
 
                         intersectTile.Unit = unit;
                         if(!unit.MovementRange.Contains(intersectTile.Coordinate))
