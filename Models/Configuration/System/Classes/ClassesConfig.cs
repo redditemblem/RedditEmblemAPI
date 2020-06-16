@@ -9,34 +9,34 @@ namespace RedditEmblemAPI.Models.Configuration.System.Classes
     /// </summary>
     public class ClassesConfig
     {
-        #region RequiredFields
+        #region Required Fields
 
         [JsonRequired]
         public Query Query { get; set; }
 
         /// <summary>
-        /// Cell index of a class's name value.
+        /// Required. Cell index of a class's name value.
         /// </summary>
         [JsonRequired]
         public int Name { get; set; }
 
         /// <summary>
-        /// Cell index of a class's movement type value.
+        /// Required. Cell index of a class's movement type value.
         /// </summary>
         [JsonRequired]
         public int MovementType { get; set; }
 
         #endregion
 
-        #region OptionalFields
+        #region Optional Fields
 
         /// <summary>
-        /// Cell index of a class's tags value.
+        /// Optional. Cell index of a class's tags value.
         /// </summary>
         public int Tags { get; set; } = -1;
 
         /// <summary>
-        /// List of cell indexes for a class's text fields.
+        /// Optional. List of cell indexes for a class's text fields.
         /// </summary>
         public IList<int> TextFields { get; set; } = new List<int>();
 

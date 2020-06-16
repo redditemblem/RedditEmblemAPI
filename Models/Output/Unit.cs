@@ -1,6 +1,5 @@
 ﻿using NCalc;
 using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Common;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
@@ -191,7 +190,7 @@ namespace RedditEmblemAPI.Models.Output
         /// </summary>
         public Unit(UnitsConfig config, IList<string> data, SystemData systemData)
         {
-            this.Name = data.ElementAtOrDefault<string>(config.UnitName).Trim();
+            this.Name = data.ElementAtOrDefault<string>(config.Name).Trim();
             this.SpriteURL = data.ElementAtOrDefault<string>(config.SpriteURL);
             this.Player = data.ElementAtOrDefault<string>(config.Player) ?? string.Empty;
             this.Coordinates = new Coordinate(data.ElementAtOrDefault<string>(config.Coordinates));
@@ -228,7 +227,7 @@ namespace RedditEmblemAPI.Models.Output
             BuildStats(data, config.Stats);
 
             this.Statuses = new List<UnitStatus>();
-            BuildStatusConditions(data, config.Statuses, systemData.Statuses);
+            BuildStatusConditions(data, config.StatusConditions, systemData.Statuses);
 
             this.Inventory = new List<UnitHeldItem>();
             BuildInventory(data, config.Inventory, systemData.Items, systemData.WeaponRanks);
@@ -351,12 +350,12 @@ namespace RedditEmblemAPI.Models.Output
             }
         }
     
-        private void BuildSkills(IList<string> data, SkillListConfig config, IDictionary<string, Skill> skills)
+        private void BuildSkills(IList<string> data, IList<int> fields, IDictionary<string, Skill> skills)
         {
-            foreach (int slot in config.Slots)
+            foreach (int field in fields)
             {
                 //Skip blank cells
-                string name = data.ElementAtOrDefault<string>(slot).Trim();
+                string name = data.ElementAtOrDefault<string>(field).Trim();
                 if (string.IsNullOrEmpty(name))
                     continue;
 

@@ -3,6 +3,9 @@ using RedditEmblemAPI.Models.Configuration.Common;
 
 namespace RedditEmblemAPI.Models.Configuration.Shop
 {
+    /// <summary>
+    /// Container class for deserialized JSON <c>"Shop"</c> object data.
+    /// </summary>
     public class ShopConfig
     {
         #region Required Fields
@@ -11,19 +14,19 @@ namespace RedditEmblemAPI.Models.Configuration.Shop
         public Query Query { get; set; }
 
         /// <summary>
-        /// Cell index for the shop item's name.
+        /// Required. Cell index for a shop item's name value.
         /// </summary>
         [JsonRequired]
         public int Name { get; set; }
 
         /// <summary>
-        /// Cell index for the shop item's price.
+        /// Required.  Cell index for a shop item's price value.
         /// </summary>
         [JsonRequired]
         public int Price { get; set; }
 
         /// <summary>
-        /// Cell index for the shop item's stock.
+        /// Required. Cell index for a shop item's stock value.
         /// </summary>
         [JsonRequired]
         public int Stock { get; set; }
@@ -33,12 +36,12 @@ namespace RedditEmblemAPI.Models.Configuration.Shop
         #region Optional Fields
 
         /// <summary>
-        /// Cell index for the sale price of the shop item.
+        /// Optional. Cell index for a shop item's sale price value.
         /// </summary>
         public int SalePrice { get; set; } = -1;
 
         /// <summary>
-        /// Cell index for flag indicating if the shop item is new.
+        /// Optional. Cell index for a shop item's is new flag.
         /// </summary>
         public int IsNew { get; set; } = -1;
 

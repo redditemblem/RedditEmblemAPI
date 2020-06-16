@@ -1,14 +1,15 @@
-﻿using RedditEmblemAPI.Models.Exceptions;
-using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using RedditEmblemAPI.Models.Exceptions.Validation;
 using System;
 
-namespace RedditEmblemAPI.Models.Common
+namespace RedditEmblemAPI.Models.Output
 {
     /// <summary>
     /// Struct representing a coordinate pair on the map.
     /// </summary>
     public class Coordinate
     {
+        #region Attributes
+
         /// <summary>
         /// The coordinate's horizontal displacement value.
         /// </summary>
@@ -18,6 +19,10 @@ namespace RedditEmblemAPI.Models.Common
         /// The coordinate's vertical displacement value.
         /// </summary>
         public int Y;
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Initializes the <c>Coordinate</c> with the passed in <paramref name="x"/> and <paramref name="y"/> values.
@@ -66,8 +71,10 @@ namespace RedditEmblemAPI.Models.Common
             this.Y = coord.Y;
         }
 
+        #endregion
+
         /// <summary>
-        /// Returns the Manhattan Distance (horizontal/vertical displacement) between two coordinates.
+        /// Returns the Manhattan Distance (horizontal/vertical displacement) between this coordinate and <paramref name="coord"/>.
         /// </summary>
         /// <param name="coord"></param>
         /// <returns></returns>
@@ -76,20 +83,23 @@ namespace RedditEmblemAPI.Models.Common
             return Math.Abs(this.X - coord.X) + Math.Abs(this.Y - coord.Y);
         }
 
+        #region Equivalence Functions
+
         public override bool Equals(Object obj)
         {
             return Equals((Coordinate)obj);
         }
 
-
         /// <summary>
-        /// Returns true if the coordinates possess the same X and Y values.
+        /// Returns true if this coordinate and <paramref name="coord"/> possess the same <c>X</c> and <c>Y</c> values.
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="coord"></param>
         /// <returns></returns>
-        public bool Equals(Coordinate obj)
+        public bool Equals(Coordinate coord)
         {
-            return this.X == obj.X && this.Y == obj.Y;
+            return this.X == coord.X && this.Y == coord.Y;
         }
+
+        #endregion
     }
 }

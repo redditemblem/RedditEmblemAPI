@@ -4,31 +4,34 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Affiliations
 {
+    /// <summary>
+    /// Container class for deserialized JSON <c>"Affiliations"</c> object data.
+    /// </summary>
     public class AffiliationsConfig
     {
-        #region RequiredFields
+        #region Required Fields
 
         [JsonRequired]
         public Query Query { get; set; }
 
         /// <summary>
-        /// Cell index of the affiliation's name.
+        /// Required. Cell index of an affiliation's name value.
         /// </summary>
         [JsonRequired]
         public int Name { get; set; }
 
         /// <summary>
-        /// Cell index of the affiliation's grouping.
+        /// Required. Cell index of an affiliation's grouping value.
         /// </summary>
         [JsonRequired]
         public int Grouping { get; set; }
 
         #endregion
 
-        #region OptionalFields
+        #region Optional Fields
 
         /// <summary>
-        /// List of cell indexes for the affiliation's text fields.
+        /// Optional. List of cell indexes for an affiliation's text fields.
         /// </summary>
         public IList<int> TextFields { get; set; } = new List<int>();
 

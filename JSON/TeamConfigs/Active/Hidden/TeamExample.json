@@ -1,36 +1,38 @@
 {
   "Team": {
     "Name": "Team Example",
-    "WorkbookID": "10OGJGY4RcLemNcdoGVTrwoc6qJQyv5ONMK09VUyFptc",
-    "Map": {
+    "WorkbookID": "10OGJGY4RcLemNcdoGVTrwoc6qJQyv5ONMK09VUyFptc"
+  },
+  "Map": {
+    "Constants": {
+      "TileSize": 32,
+      "TileSpacing": 0,
+      "HasHeaderTopLeft": true,
+      "HasHeaderBottomRight": false
+    },
+    "MapControls": {
       "Query": {
         "Sheet": "System Control",
         "Selection": "B1:B",
         "Orientation": 2
       },
       "MapSwitch": 0,
-      "MapURL": 2,
-      "ChapterPostURL": 1,
-      "Constants": {
-        "TileSize": 32,
-        "TileSpacing": 0,
-        "HasHeaderTopLeft": true,
-        "HasHeaderBottomRight": false
-      },
-      "Tiles": {
-        "Query": {
-          "Sheet": "Map Tiles",
-          "Selection": "A1:ZZ",
-          "Orientation": 1
-        }
-      },
-      "Effects": {
-        "Query": {
-          "Sheet": "Map Effects",
-          "Selection": "A1:ZZ",
-          "Orientation": 1,
-          "AllowNullData": true
-        }
+      "MapImageURL": 2,
+      "ChapterPostURL": 1
+    },
+    "MapTiles": {
+      "Query": {
+        "Sheet": "Map Tiles",
+        "Selection": "A1:ZZ",
+        "Orientation": 1
+      }
+    },
+    "MapEffects": {
+      "Query": {
+        "Sheet": "Map Effects",
+        "Selection": "A1:ZZ",
+        "Orientation": 1,
+        "AllowNullData": true
       }
     }
   },
@@ -186,6 +188,17 @@
       "Grouping": 1,
       "TextFields": [ 2 ]
     },
+    "StatusConditions": {
+      "Query": {
+        "Sheet": "Statuses",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Type": 1,
+      "Turns": 2,
+      "TextFields": [ 3 ]
+    },
     "TerrainTypes": {
       "Query": {
         "Sheet": "Terrain Types",
@@ -233,17 +246,6 @@
       "Name": 0,
       "SpriteURL": 1,
       "TextFields": [ 12 ]
-    },
-    "Statuses": {
-      "Query": {
-        "Sheet": "Statuses",
-        "Selection": "A2:ZZ",
-        "Orientation": 1
-      },
-      "Name": 0,
-      "Type": 1,
-      "Turns": 2,
-      "TextFields": [ 3 ]
     }
   },
   "Units": {
@@ -252,7 +254,7 @@
       "Selection": "B1:ZZ",
       "Orientation": 2
     },
-    "UnitName": 0,
+    "Name": 0,
     "Player": 1,
     "SpriteURL": 2,
     "TextFields": [ 4 ],
@@ -385,10 +387,8 @@
       "EquippedItem": 32,
       "Slots": [ 33, 34, 35, 36, 37 ]
     },
-    "Skills": {
-      "Slots": [ 38, 39, 40, 41, 42, 43, 44, 45 ]
-    },
-    "Statuses": [ 56, 57, 58 ]
+    "Skills": [ 38, 39, 40, 41, 42, 43, 44, 45 ],
+    "StatusConditions": [ 56, 57, 58 ]
   },
   "Convoy": {
     "Query": {

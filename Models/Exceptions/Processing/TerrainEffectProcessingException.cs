@@ -2,10 +2,15 @@
 
 namespace RedditEmblemAPI.Models.Exceptions.Processing
 {
-    public class TerrainEffectProcessingException : Exception
+    public class TerrainEffectProcessingException : ProcessingException
     {
-        public TerrainEffectProcessingException(string effectName, Exception innerException)
-            : base(string.Format("An error occurred while processing terrain effect \"{0}\".", effectName), innerException)
+        /// <summary>
+        /// Container exception thrown when an error occurs while processing a <c>TerrainEffect</c>.
+        /// </summary>
+        /// <param name="terrainEffectName"></param>
+        /// <param name="innerException"></param>
+        public TerrainEffectProcessingException(string terrainEffectName, Exception innerException)
+            : base("terrain effect", terrainEffectName, innerException)
         { }
     }
 }

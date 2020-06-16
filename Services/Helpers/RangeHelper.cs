@@ -1,6 +1,5 @@
-﻿using RedditEmblemAPI.Models.Common;
+﻿using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
-using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output;
 using System;
 using System.Collections.Generic;
@@ -72,7 +71,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 }
                 catch(Exception ex)
                 {
-                    throw new RangeCalculationException(unit.Name, ex);
+                    throw new RangeCalculationException(unit, ex);
                 }
             }
         }
@@ -97,7 +96,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Test that the unit can move to this tile
                 int moveCost;
                 if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(unit.ClassList.First().MovementType, out moveCost))
-                    throw new UnmatchedMovementTypeException(unit.ClassList.First().MovementType, tile.TerrainTypeObj.MovementCosts.Keys);
+                    throw new UnmatchedClassMovementTypeException(unit.ClassList.First().MovementType, tile.TerrainTypeObj.MovementCosts.Keys.ToList());
                 if (moveCost > remainingMov || moveCost >= 99) return;
                 remainingMov = remainingMov - moveCost;
 

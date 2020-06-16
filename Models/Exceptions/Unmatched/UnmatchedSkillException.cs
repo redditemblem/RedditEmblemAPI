@@ -1,11 +1,13 @@
-﻿using System;
-
-namespace RedditEmblemAPI.Models.Exceptions.Unmatched
+﻿namespace RedditEmblemAPI.Models.Exceptions.Unmatched
 {
-    public class UnmatchedSkillException : Exception
+    public class UnmatchedSkillException : UnmatchedException
     {
+        /// <summary>
+        /// Thrown when text cannot be matched to the name of an <c>Skill</c>.
+        /// </summary>
+        /// <param name="skillName"></param>
         public UnmatchedSkillException(string skillName)
-            : base(string.Format("The skill \"{0}\" could not be matched to a known skill definition.  The given name must match exactly, including capitalization and punctuation.", skillName))
+            : base("skill", skillName)
         { }
     }
 }

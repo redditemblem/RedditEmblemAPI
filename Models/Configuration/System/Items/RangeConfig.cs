@@ -7,16 +7,16 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
     /// </summary>
     public class RangeConfig
     {
-        #region RequiredFields
+        #region Required Fields
 
         /// <summary>
-        /// Cell index for an item's minimum range value.
+        /// Required. Cell index for an item's minimum range value.
         /// </summary>
         [JsonRequired]
         public int Minimum { get; set; }
 
         /// <summary>
-        /// Cell index for an item's minimum range value.
+        /// Required. Cell index for an item's minimum range value.
         /// </summary>
         [JsonRequired]
         public int Maximum { get; set; }

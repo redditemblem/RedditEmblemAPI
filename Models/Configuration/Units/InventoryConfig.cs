@@ -11,13 +11,13 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         #region Required Fields
 
         /// <summary>
-        /// Cell index of a unit's equipped item name.
+        /// Required. Cell index of a unit's equipped item name.
         /// </summary>
         [JsonRequired]
         public int EquippedItem { get; set; }
 
         /// <summary>
-        /// List of cell indexes for a unit's inventory items.
+        /// Required. List of cell indexes for a unit's inventory items.
         /// </summary>
         [JsonRequired]
         public IList<int> Slots { get; set; }

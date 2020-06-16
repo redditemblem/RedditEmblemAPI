@@ -174,21 +174,21 @@ namespace RedditEmblemAPI.Models.Output
             }
 
             this.Statuses = new Dictionary<string, StatusCondition>();
-            if (config.Statuses != null)
+            if (config.StatusConditions != null)
             {
-                foreach (IList<object> row in config.Statuses.Query.Data)
+                foreach (IList<object> row in config.StatusConditions.Query.Data)
                 {
                     try
                     {
                         IList<string> stat = row.Select(r => r.ToString()).ToList();
-                        if (string.IsNullOrEmpty(stat.ElementAtOrDefault<string>(config.Statuses.Name)))
+                        if (string.IsNullOrEmpty(stat.ElementAtOrDefault<string>(config.StatusConditions.Name)))
                             continue;
-                        this.Statuses.Add(stat.ElementAtOrDefault<string>(config.Statuses.Name),
-                                              new StatusCondition(config.Statuses, stat));
+                        this.Statuses.Add(stat.ElementAtOrDefault<string>(config.StatusConditions.Name),
+                                              new StatusCondition(config.StatusConditions, stat));
                     }
                     catch (Exception ex)
                     {
-                        throw new StatusProcessingException((row.ElementAtOrDefault(config.Statuses.Name) ?? string.Empty).ToString(), ex);
+                        throw new StatusConditionProcessingException((row.ElementAtOrDefault(config.StatusConditions.Name) ?? string.Empty).ToString(), ex);
                     }
                 }
             }

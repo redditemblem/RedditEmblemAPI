@@ -2,10 +2,14 @@
 
 namespace RedditEmblemAPI.Models.Exceptions.Unmatched
 {
-    public class UnmatchedClassException : Exception
+    public class UnmatchedClassException : UnmatchedException
     {
+        /// <summary>
+        /// Thrown when text cannot be matched to the name of an <c>Class</c>.
+        /// </summary>
+        /// <param name="className"></param>
         public UnmatchedClassException(string className)
-            : base(string.Format("The class \"{0}\" could not be matched to a known class definition. The given name must match exactly, including capitalization and punctuation.", className))
+            : base("class", className)
         { }
     }
 }

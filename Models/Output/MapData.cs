@@ -8,7 +8,7 @@ using System.Linq;
 namespace RedditEmblemAPI.Models.Output
 {
     /// <summary>
-    /// Wrapper class for the serialized JSON object data.
+    /// Wrapper class for the serialized JSON map object data.
     /// </summary>
     public class MapData
     {
@@ -50,7 +50,7 @@ namespace RedditEmblemAPI.Models.Output
 
             //Process data
             this.System = new SystemData(config.System);
-            this.Map = new Map(config.Team.Map, this.System.TerrainTypes, this.System.TerrainEffects);
+            this.Map = new Map(config.Map, this.System.TerrainTypes, this.System.TerrainEffects);
             this.Units = UnitsHelper.Process(config.Units, this.System, this.Map.Tiles);
 
             //Calculate unit ranges

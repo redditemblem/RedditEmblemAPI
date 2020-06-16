@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Shop
 {
+    /// <summary>
+    /// Wrapper class for the serialized JSON shop object data.
+    /// </summary>
     public class ShopData
     {
         public CurrencyConstsConfig Currency { get; set; }

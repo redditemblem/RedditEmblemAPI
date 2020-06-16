@@ -2,10 +2,15 @@
 
 namespace RedditEmblemAPI.Models.Exceptions.Processing
 {
-    public class UnitProcessingException : Exception
+    public class UnitProcessingException : ProcessingException
     {
+        /// <summary>
+        /// Container exception thrown when an error occurs while processing a <c>Unit</c>.
+        /// </summary>
+        /// <param name="unitName"></param>
+        /// <param name="innerException"></param>
         public UnitProcessingException(string unitName, Exception innerException)
-            : base(string.Format("An error occurred while processing unit \"{0}\".", unitName), innerException)
+            : base("unit", unitName, innerException)
         { }
     }
 }

@@ -23,13 +23,16 @@ namespace RedditEmblemAPI.Models.Output
         /// </summary>
         /// <param name="minimum"></param>
         /// <param name="maximum"></param>
-        /// <exception cref="NegativeIntegerException"></exception>
+        /// <exception cref="PositiveIntegerException"></exception>
+        /// <exception cref="MinimumGreaterThanMaximumException"></exception>
         public ItemRange(int minimum, int maximum)
         {
             if (minimum < 0)
-                throw new NegativeIntegerException("Minimum Range", minimum.ToString());
+                throw new PositiveIntegerException("Minimum Range", minimum.ToString());
             if (maximum < 0)
-                throw new NegativeIntegerException("Maximum Range", maximum.ToString());
+                throw new PositiveIntegerException("Maximum Range", maximum.ToString());
+            if (minimum > maximum)
+                throw new MinimumGreaterThanMaximumException("Minimum Range", "Maximum Range");
 
             this.Minimum = minimum;
             this.Maximum = maximum;
@@ -41,17 +44,23 @@ namespace RedditEmblemAPI.Models.Output
         /// </summary>
         /// <param name="minimum">A numerical string value.</param>
         /// <param name="maximum">A numerical string value.</param>
-        /// <exception cref="NegativeIntegerException"></exception>
+        /// <exception cref="PositiveIntegerException"></exception>
+        /// <exception cref="MinimumGreaterThanMaximumException"></exception>
         public ItemRange(string minimum, string maximum)
         {
-            int val;
-            if (!int.TryParse(minimum, out val) || val < 0)
-                throw new NegativeIntegerException("Minimum Range", minimum);
-            this.Minimum = val;
+            int minValue;
+            if (!int.TryParse(minimum, out minValue) || minValue < 0)
+                throw new PositiveIntegerException("Minimum Range", minimum);
 
-            if (!int.TryParse(maximum, out val) || val < 0)
-                throw new NegativeIntegerException("Maximum Range", maximum);
-            this.Maximum = val;
+            int maxValue;
+            if (!int.TryParse(maximum, out maxValue) || maxValue < 0)
+                throw new PositiveIntegerException("Maximum Range", maximum);
+
+            if(minValue > maxValue)
+                throw new MinimumGreaterThanMaximumException("Minimum Range", "Maximum Range");
+
+            this.Minimum = minValue;
+            this.Maximum = maxValue;
         }
     }
 }

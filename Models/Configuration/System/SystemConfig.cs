@@ -17,29 +17,26 @@ namespace RedditEmblemAPI.Models.Configuration.System
     {
         #region Required Fields
 
-        [JsonRequired]
-        public IList<string> WeaponRanks { get; set; }
-
         /// <summary>
-        /// Container object for a system's item configuration.
-        /// </summary>
-        [JsonRequired]
-        public ItemsConfig Items { get; set; }
-
-        /// <summary>
-        /// Container object for a system's class configuration.
+        /// Required. Container object for a system's class configuration.
         /// </summary>
         [JsonRequired]
         public ClassesConfig Classes { get; set; }
 
         /// <summary>
-        /// Container object for a system's affiliation configuration.
+        /// Required. Container object for a system's affiliation configuration.
         /// </summary>
         [JsonRequired]
         public AffiliationsConfig Affiliations { get; set; }
 
         /// <summary>
-        /// Container object for a system's terrain type configuration.
+        /// Required. Container object for a system's item configuration.
+        /// </summary>
+        [JsonRequired]
+        public ItemsConfig Items { get; set; }
+
+        /// <summary>
+        /// Required. Container object for a system's terrain type configuration.
         /// </summary>
         [JsonRequired]
         public TerrainTypesConfig TerrainTypes { get; set; }
@@ -49,22 +46,27 @@ namespace RedditEmblemAPI.Models.Configuration.System
         #region Optional Fields
 
         /// <summary>
-        /// Container object for a system's currency configuration.
+        /// Optional. Container object for a system's currency configuration.
         /// </summary>
-        public CurrencyConstsConfig Currency { get; set; }
+        public CurrencyConstsConfig Currency { get; set; } = null;
 
         /// <summary>
-        /// Container object for a system's skill configuration.
+        /// Optional. List of the weapon rank letters for this system, in order from lowest to highest. (ex. "E","D","C"...)
+        /// </summary>
+        public IList<string> WeaponRanks { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Optional. Container object for a system's skill configuration.
         /// </summary>
         public SkillsConfig Skills { get; set; } = null;
 
         /// <summary>
-        /// Container object for a system's status configuration.
+        /// Optional. Container object for a system's status condition configuration.
         /// </summary>
-        public StatusConditionConfig Statuses { get; set; } = null;
+        public StatusConditionConfig StatusConditions { get; set; } = null;
 
         /// <summary>
-        /// Container object for a system's terrain effect configuration.
+        /// Optional. Container object for a system's terrain effect configuration.
         /// </summary>
         public TerrainEffectsConfig TerrainEffects { get; set; } = null;
 

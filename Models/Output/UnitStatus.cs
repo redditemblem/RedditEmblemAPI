@@ -60,7 +60,7 @@ namespace RedditEmblemAPI.Models.Output
 
             StatusCondition match;
             if (!statuses.TryGetValue(name, out match))
-                throw new UnmatchedStatusException(name);
+                throw new UnmatchedStatusConditionException(name);
 
             this.StatusObj = match;
             match.Matched = true;

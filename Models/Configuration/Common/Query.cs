@@ -12,7 +12,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         #region Required Fields
 
         /// <summary>
-        /// The name of the sheet to execute the query on.
+        /// The name of the Google Sheet to execute the query on.
         /// </summary>
         [JsonRequired]
         public string Sheet { get; set; }
@@ -51,10 +51,10 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         #endregion
 
         /// <summary>
-        /// Matrix of objects returned from Google after execution of this query.
+        /// Not a JSON value. The matrix of objects returned from Google after execution of this query.
         /// </summary>
+        [JsonIgnore]
         public IList<IList<object>> Data { get; set; }
-
 
         /// <summary>
         /// Overridden. Returns the worksheet query in <c>Sheet!Selection</c> format for passing to the Google Sheets API.

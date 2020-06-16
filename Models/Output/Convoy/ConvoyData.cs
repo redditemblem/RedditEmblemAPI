@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Convoy
 {
+    /// <summary>
+    /// Wrapper class for the serialized JSON convoy object data.
+    /// </summary>
     public class ConvoyData
     {
         public CurrencyConstsConfig Currency { get; set; }

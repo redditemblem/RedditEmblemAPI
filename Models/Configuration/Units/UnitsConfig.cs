@@ -10,133 +10,131 @@ namespace RedditEmblemAPI.Models.Configuration.Units
     /// </summary>
     public class UnitsConfig
     {
-        #region RequiredFields
+        #region Required Fields
 
         [JsonRequired]
         public Query Query { get; set; }
 
         /// <summary>
-        /// Cell index of a unit's name value.
+        /// Required. Cell index of a unit's name value.
         /// </summary>
         [JsonRequired]
-        public int UnitName { get; set; }
+        public int Name { get; set; }
 
         /// <summary>
-        /// Cell index of a unit's sprite image URL value.
+        /// Required. Cell index of a unit's sprite image URL value.
         /// </summary>
         [JsonRequired]
         public int SpriteURL { get; set; }
 
         /// <summary>
-        /// Cell index of a unit's coordinate value.
-        /// </summary>
-        [JsonRequired]
-        public int Coordinates { get; set; }
-
-        /// <summary>
-        /// Cell index of a unit's level value.
+        /// Required. Cell index of a unit's level value.
         /// </summary>
         [JsonRequired]
         public int Level { get; set; }
 
         /// <summary>
-        /// List of cell indexes for unit's class name values.
+        /// Required. List of cell indexes for a unit's class values.
         /// </summary>
         [JsonRequired]
         public IList<int> Classes { get; set; }
 
         /// <summary>
-        /// Cell index of a unit's affiliation value.
+        /// Required. Cell index of a unit's affiliation value.
         /// </summary>
         [JsonRequired]
         public int Affiliation { get; set; }
 
         /// <summary>
-        /// Cell index of a unit's experience value.
+        /// Required. Cell index of a unit's coordinate value.
         /// </summary>
         [JsonRequired]
-        public int Experience { get; set; }
+        public int Coordinates { get; set; }
 
         /// <summary>
-        /// Cell index of a unit's current HP value.
+        /// Required. Cell index of a unit's current HP value.
         /// </summary>
         [JsonRequired]
         public int CurrentHP { get; set; }
 
         /// <summary>
-        /// Cell index of a unit's maximum HP value.
+        /// Required. Cell index of a unit's maximum HP value.
         /// </summary>
         [JsonRequired]
         public int MaxHP { get; set; }
 
         /// <summary>
-        /// List of equations to calculate unit combat stats.
+        /// Required. List of equations to calculate a unit's combat stats.
         /// </summary>
         [JsonRequired]
         public IList<CalculatedStatConfig> CalculatedStats { get; set; }
 
         /// <summary>
-        /// List of modified named stat configurations.
+        /// Required. List of a unit's base stats.
         /// </summary>
         [JsonRequired]
         public IList<ModifiedNamedStatConfig> Stats { get; set; }
 
         /// <summary>
-        /// List of weapon ranks.
+        /// Required. List of a unit's weapon ranks.
         /// </summary>
         [JsonRequired]
         public IList<UnitWeaponRanksConfig> WeaponRanks { get; set; }
 
         /// <summary>
-        /// Container object for a unit's inventory configuration.
+        /// Required. Container object for a unit's inventory configuration.
         /// </summary>
         [JsonRequired]
         public InventoryConfig Inventory { get; set; }
 
-        /// <summary>
-        /// Container object for a unit's skills configuration.
-        /// </summary>
-        [JsonRequired]
-        public SkillListConfig Skills { get; set; }
-
         #endregion
 
-        #region OptionalFields
+        #region Optional Fields
 
         /// <summary>
-        /// Cell index of the unit's controlling player.
+        /// Optional. Cell index of the unit's controlling player.
         /// </summary>
         public int Player { get; set; } = -1;
 
         /// <summary>
-        /// List of cell indexes for a unit's text fields.
+        /// Optional. List of cell indexes for a unit's text fields.
         /// </summary>
         public IList<int> TextFields { get; set; } = new List<int>();
 
         /// <summary>
-        /// Cell index of the unit's held currency amount.
+        /// Optional. Cell index of a unit's experience value.
+        /// </summary>
+        public int Experience { get; set; } = -1;
+
+        /// <summary>
+        /// Optional. Cell index of the unit's held currency amount.
         /// </summary>
         public int HeldCurrency { get; set; } = -1;
 
         /// <summary>
-        /// Cell index of a unit's movement flag value.
-        /// </summary>
-        public int HasMoved { get; set; } = -1;
-
-        /// <summary>
-        /// Cell index of a unit's tags value.
-        /// </summary>
-        public int Tags { get; set; } = -1;
-
-        /// <summary>
-        /// Cell index of the unit's size in number of tiles.
+        /// Optional. Cell index of the unit's size in number of tiles.
         /// </summary>
         public int UnitSize { get; set; } = -1;
 
         /// <summary>
-        /// List of cell indexes for a unit's status conditions.
+        /// Optional. Cell index of a unit's movement flag value.
         /// </summary>
-        public IList<int> Statuses { get; set; } = new List<int>();
+        public int HasMoved { get; set; } = -1;
+
+        /// <summary>
+        /// Optional. Cell index of a unit's tags value.
+        /// </summary>
+        public int Tags { get; set; } = -1;
+
+        /// <summary>
+        /// Optional. List of cell indexes for a unit's status conditions.
+        /// </summary>
+        public IList<int> StatusConditions { get; set; } = new List<int>();
+
+        /// <summary>
+        /// Optional. Container object for a unit's skills configuration.
+        /// </summary>
+        public IList<int> Skills { get; set; } = new List<int>();
 
         #endregion
     }

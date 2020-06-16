@@ -1,37 +1,37 @@
 ﻿using Newtonsoft.Json;
 
-namespace RedditEmblemAPI.Models.Configuration.Team
+namespace RedditEmblemAPI.Models.Configuration.Map
 {
     /// <summary>
     /// Container class for deserialized JSON <c>"Constants"</c> object data.
     /// </summary>
     public class MapConstantsConfig
     {
-        #region RequiredValues
+        #region Required Fields
 
         /// <summary>
-        /// Height/width of each map tile measured in pixels.
+        /// Required. Height/width of each map tile measured in pixels.
         /// </summary>
         [JsonRequired]
         public int TileSize { get; set; }
 
         /// <summary>
-        /// Spacing between each map tile measured in pixels. 
+        /// Required. Spacing between each map tile measured in pixels. 
         /// </summary>
         [JsonRequired]
         public int TileSpacing { get; set; }
 
         #endregion
 
-        #region OptionalValues
+        #region Optional Fields
 
         /// <summary>
-        /// Flag signifying the existence of a header on the map image. When true, offsets the all tile rows right by <c>TileSize</c> pixels and omits the first row entirely.
+        /// Optional. Flag signifying the existence of a header on the map image.
         /// </summary>
         public bool HasHeaderTopLeft { get; set; } = false;
 
         /// <summary>
-        /// Flag signifying the existence of a footer on the map image. When true, truncates all tile rows by <c>TileSize</c> pixels and omits the final row entirely.
+        /// Optional. Flag signifying the existence of a footer on the map image.
         /// </summary>
         public bool HasHeaderBottomRight { get; set; } = false;
 

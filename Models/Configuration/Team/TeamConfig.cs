@@ -7,25 +7,19 @@ namespace RedditEmblemAPI.Models.Configuration.Team
     /// </summary>
     public class TeamConfig
     {
-        #region RequiredFields
+        #region Required Fields
 
         /// <summary>
-        /// The team's name as it should appear to a user in the UI. Must match the name of .json file in the JSON directory, spaces removed.
+        /// The team's name formatted as it should appear to a user in the UI. Must match the name of .json file in the JSON directory, spaces omitted.
         /// </summary>
         [JsonRequired]
         public string Name { get; set; }
 
         /// <summary>
-        /// The ID of the Google Sheets workbook from which to query all map data.
+        /// The ID of the Google Sheets workbook from which to query all data.
         /// </summary>
         [JsonRequired]
         public string WorkbookID { get; set; }
-
-        /// <summary>
-        /// Container object for map configuration.
-        /// </summary>
-        [JsonRequired]
-        public MapConfig Map { get; set; }
 
         #endregion
     }

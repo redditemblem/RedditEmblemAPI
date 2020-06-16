@@ -1,4 +1,4 @@
-﻿using RedditEmblemAPI.Models.Configuration.Team;
+﻿using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Query;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -29,22 +29,22 @@ namespace RedditEmblemAPI.Models.Output
         {
             this.Constants = config.Constants;
 
-            IList<object> values = config.Query.Data.First();
+            IList<object> values = config.MapControls.Query.Data.First();
 
-            if ((values.ElementAtOrDefault(config.MapSwitch) ?? "Off").ToString() != "On")
+            if ((values.ElementAtOrDefault(config.MapControls.MapSwitch) ?? "Off").ToString() != "On")
                 throw new MapDataLockedException();
 
-            string mapImageURL = (values.ElementAtOrDefault(config.MapURL) ?? string.Empty).ToString();
+            string mapImageURL = (values.ElementAtOrDefault(config.MapControls.MapImageURL) ?? string.Empty).ToString();
             if (string.IsNullOrEmpty(mapImageURL))
-                throw new MapImageURLNotFoundException(config.Query.Sheet);
+                throw new MapImageURLNotFoundException(config.MapControls.Query.Sheet);
             this.MapImageURL = mapImageURL;
 
             //Build map
             this.Tiles = new List<List<Tile>>();
-            BuildTiles(config.Tiles.Query.Data, terrainTypes);
+            BuildTiles(config.MapTiles.Query.Data, terrainTypes);
 
-            if(config.Effects != null)
-                ApplyTerrainEffects(config.Effects.Query.Data, terrainEffects);
+            if(config.MapEffects != null)
+                ApplyTerrainEffects(config.MapEffects.Query.Data, terrainEffects);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace RedditEmblemAPI.Models.Output
                         {
                             TerrainEffect effect;
                             if (!terrainEffects.TryGetValue(value.Trim(), out effect))
-                                throw new UnmatchedTileEffectException(tiles[t].Coordinate.X, tiles[t].Coordinate.Y, value.Trim());
+                                throw new UnmatchedTileEffectException(tiles[t].Coordinate, value.Trim());
 
                             effect.Matched = true;
                             tiles[t].TerrainEffectsList.Add(effect);

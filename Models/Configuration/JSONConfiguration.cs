@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Convoy;
+using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Configuration.Shop;
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Configuration.Team;
@@ -17,19 +18,25 @@ namespace RedditEmblemAPI.Models.Configuration
         #region Required Fields
 
         /// <summary>
-        /// Container object for team configuration.
+        /// Required. Container object for team configuration.
         /// </summary>
         [JsonRequired]
         public TeamConfig Team { get; set; }
 
         /// <summary>
-        /// Container object for system configuration.
+        /// Required. Container object for map configuration.
+        /// </summary>
+        [JsonRequired]
+        public MapConfig Map { get; set; }
+
+        /// <summary>
+        /// Required. Container object for system configuration.
         /// </summary>
         [JsonRequired]
         public SystemConfig System { get; set; }
 
         /// <summary>
-        /// Container object for units configuration.
+        /// Required. Container object for units configuration.
         /// </summary>
         [JsonRequired]
         public UnitsConfig Units { get; set; }
@@ -39,14 +46,14 @@ namespace RedditEmblemAPI.Models.Configuration
         #region Optional Fields
 
         /// <summary>
-        /// Container object for convoy configuration.
+        /// Optional. Container object for convoy configuration.
         /// </summary>
-        public ConvoyConfig Convoy { get; set; }
+        public ConvoyConfig Convoy { get; set; } = null;
 
         /// <summary>
-        /// Container object for shop configuration.
+        /// Optional. Container object for shop configuration.
         /// </summary>
-        public ShopConfig Shop { get; set; }
+        public ShopConfig Shop { get; set; } = null;
 
         #endregion
 
@@ -58,22 +65,23 @@ namespace RedditEmblemAPI.Models.Configuration
         /// <returns></returns>
         public IList<Query> GetMapBatchQueries()
         {
+            //Essential queries
             IList<Query> queries = new List<Query>()
             {
-                this.Team.Map.Query,
-                this.Team.Map.Tiles.Query,
+                this.Map.MapControls.Query,
+                this.Map.MapTiles.Query,
                 this.System.TerrainTypes.Query,
                 this.Units.Query,
-                this.System.Items.Query,
                 this.System.Classes.Query,
-                this.System.Affiliations.Query
+                this.System.Affiliations.Query,
+                this.System.Items.Query
             };
 
-            //Add optional items
-            if (this.Team.Map.Effects != null) queries.Add(this.Team.Map.Effects.Query);
-            if (this.System.Skills != null) queries.Add(this.System.Skills.Query);
-            if (this.System.Statuses != null) queries.Add(this.System.Statuses.Query);
+            //Add optional queries
+            if (this.Map.MapEffects != null) queries.Add(this.Map.MapEffects.Query);
             if (this.System.TerrainEffects != null) queries.Add(this.System.TerrainEffects.Query);
+            if (this.System.Skills != null) queries.Add(this.System.Skills.Query);
+            if (this.System.StatusConditions != null) queries.Add(this.System.StatusConditions.Query);
 
             return queries;
         }
@@ -84,6 +92,7 @@ namespace RedditEmblemAPI.Models.Configuration
         /// <returns></returns>
         public IList<Query> GetConvoyBatchQueries()
         {
+            //Essential queries
             IList<Query> queries = new List<Query>()
             {
                 this.System.Items.Query,
@@ -99,6 +108,7 @@ namespace RedditEmblemAPI.Models.Configuration
         /// <returns></returns>
         public IList<Query> GetShopBatchQueries()
         {
+            //Essential queries
             IList<Query> queries = new List<Query>()
             {
                 this.System.Items.Query,

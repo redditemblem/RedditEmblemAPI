@@ -1,11 +1,13 @@
-﻿using System;
-
-namespace RedditEmblemAPI.Models.Exceptions.Unmatched
+﻿namespace RedditEmblemAPI.Models.Exceptions.Unmatched
 {
-    public class UnmatchedAffiliationException : Exception
+    public class UnmatchedAffiliationException : UnmatchedException
     {
+        /// <summary>
+        /// Thrown when text cannot be matched to the name of an <c>Affiliation</c>.
+        /// </summary>
+        /// <param name="affiliation"></param>
         public UnmatchedAffiliationException(string affiliation)
-            : base(string.Format("The affiliation \"{0}\" could not be matched to a known class definition. The given name must match exactly, including capitalization and punctuation.", affiliation))
+            : base("affiliation", affiliation)
         { }
     }
 }

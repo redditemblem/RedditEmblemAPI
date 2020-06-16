@@ -10,7 +10,7 @@ namespace RedditEmblemAPI.Models.Configuration.System
         #region Required Fields
 
         /// <summary>
-        /// The icon for the currency's denomination. (Ex. $, G)
+        /// Required. The icon for the currency's denomination. (Ex. $, G)
         /// </summary>
         [JsonRequired]
         public string CurrencySymbol { get; set; }
@@ -20,12 +20,12 @@ namespace RedditEmblemAPI.Models.Configuration.System
         #region Optional Fields
 
         /// <summary>
-        /// Flag indicating if the <c>CurrencySymbol</c> appears on the left of numerical values.
+        /// Optional. Flag indicating if the <c>CurrencySymbol</c> appears on the left of numerical values.
         /// </summary>
         public bool IsSymbolLeftAligned { get; set; } = true;
 
         /// <summary>
-        /// Flag indicating if there should be a space between the <c>CurrencySymbol</c> and numerical values.
+        /// Optional. Flag indicating if there should be a space between the <c>CurrencySymbol</c> and numerical values.
         /// </summary>
         public bool IncludeSpace { get; set; } = false;
 

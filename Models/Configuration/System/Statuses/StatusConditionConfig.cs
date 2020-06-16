@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Statuses
 {
+    /// <summary>
+    /// Container class for deserialized JSON <c>"StatusConditions"</c> object data.
+    /// </summary>
     public class StatusConditionConfig
     {
         #region Required Fields
@@ -13,13 +15,13 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
         public Query Query { get; set; }
 
         /// <summary>
-        /// Cell index for the status name.
+        /// Required. Cell index for a status condition's name value.
         /// </summary>
         [JsonRequired]
         public int Name { get; set; }
 
         /// <summary>
-        /// Cell index for the status type.
+        /// Required. Cell index for a status condition's type value.
         /// </summary>
         [JsonRequired]
         public int Type { get; set; }
@@ -29,12 +31,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
         #region Optional Fields
 
         /// <summary>
-        /// Cell index for turns.
+        /// Optional. Cell index for a status condition's turns value.
         /// </summary>
         public int Turns { get; set; } = -1;
 
         /// <summary>
-        /// List of cell indexes for text fields.
+        /// Optional. List of cell indexes for a status condition's text fields.
         /// </summary>
         public IList<int> TextFields { get; set; } = new List<int>();
 

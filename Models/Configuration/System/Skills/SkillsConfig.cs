@@ -9,33 +9,33 @@ namespace RedditEmblemAPI.Models.Configuration.System.Skills
     /// </summary>
     public class SkillsConfig
     {
-        #region RequiredFields
+        #region Required Fields
 
         [JsonRequired]
         public Query Query { get; set; }
 
         /// <summary>
-        /// Cell index of a skill's name value.
+        /// Required. Cell index of a skill's name value.
         /// </summary>
         [JsonRequired]
         public int Name { get; set; }
 
         #endregion
 
-        #region OptionalFields
+        #region Optional Fields
 
         /// <summary>
-        /// Cell index of a skill's sprite image URL value.
+        /// Optional. Cell index of a skill's sprite image URL value.
         /// </summary>
         public int SpriteURL { get; set; } = -1;
 
         /// <summary>
-        /// List of cell indexes for a skill's text fields.
+        /// Optional. List of cell indexes for a skill's text fields.
         /// </summary>
         public IList<int> TextFields { get; set; } = new List<int>();
 
         /// <summary>
-        /// Container object for skill effect configuration.
+        /// Optional. Container object for skill effect configuration.
         /// </summary>
         public SkillEffectConfig Effect { get; set; } = null;
 

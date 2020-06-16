@@ -4,7 +4,6 @@ using Google.Apis.Sheets.v4.Data;
 using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Configuration.Common;
-using RedditEmblemAPI.Models.Configuration.Team;
 using RedditEmblemAPI.Models.Exceptions.Query;
 using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Models.Output.Convoy;
@@ -26,6 +25,11 @@ namespace RedditEmblemAPI.Services
         /// </summary>
         public APIService() { }
 
+        /// <summary>
+        /// Returns JSON data for displaying a team's map.
+        /// </summary>
+        /// <param name="teamName"></param>
+        /// <returns></returns>
         public MapData LoadMapData(string teamName)
         {
             JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
@@ -34,6 +38,11 @@ namespace RedditEmblemAPI.Services
             return new MapData(config);
         }
 
+        /// <summary>
+        /// Returns JSON data for displaying a team's convoy.
+        /// </summary>
+        /// <param name="teamName"></param>
+        /// <returns></returns>
         public ConvoyData LoadConvoyData(string teamName)
         {
             JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
@@ -44,6 +53,11 @@ namespace RedditEmblemAPI.Services
             return new ConvoyData(config);
         }
 
+        /// <summary>
+        /// Returns JSON data for displaying a team's shop.
+        /// </summary>
+        /// <param name="teamName"></param>
+        /// <returns></returns>
         public ShopData LoadShopData(string teamName)
         {
             JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
@@ -54,6 +68,10 @@ namespace RedditEmblemAPI.Services
             return new ShopData(config);
         }
 
+        /// <summary>
+        /// Returns an alphabetical list of team configurations present within the "JSON/TeamConfigs/Active" file directory.
+        /// </summary>
+        /// <returns></returns>
         public IList<TeamData> LoadTeamList()
         {
             IList<TeamData> teams = new List<TeamData>();
@@ -61,13 +79,21 @@ namespace RedditEmblemAPI.Services
             //Top directory enumeration
             foreach (string filePath in Directory.EnumerateFiles("JSON/TeamConfigs/Active"))
             {
-                JSONConfiguration config = ReadJSONConfiguration(filePath);
+                JSONConfiguration config = DeserializeJSONConfiguration(filePath);
                 teams.Add(new TeamData(config.Team.Name, (config.Convoy != null), (config.Shop != null)));
             }
 
             return teams.OrderBy(t => t.TeamName).ToList();
         }
 
+        #region JSON File Processing
+
+        /// <summary>
+        /// Performs a deep search on the "JSON/TeamConfigs/Active" directory for a file name that matches <paramref name="teamName"/>. If found, deserializes and returns the <c>JSONConfiguration</c> data contained within.
+        /// </summary>
+        /// <param name="teamName"></param>
+        /// <returns></returns>
+        /// <exception cref="TeamConfigurationNotFoundException"></exception>
         private JSONConfiguration LoadTeamJSONConfiguration(string teamName)
         {
             //Do a deep search for our team file, we want to include things in the Hidden folder
@@ -80,10 +106,16 @@ namespace RedditEmblemAPI.Services
                 }
 
             if (string.IsNullOrEmpty(filePath)) throw new TeamConfigurationNotFoundException(teamName);
-            return ReadJSONConfiguration(filePath);
+            return DeserializeJSONConfiguration(filePath);
         }
 
-        private JSONConfiguration ReadJSONConfiguration(string filePath)
+        /// <summary>
+        /// Opens the file located at <paramref name="filePath"/> and deserializes its contents into a <c>JSONConfiguration</c> object.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        /// <exception cref="TeamConfigurationNotFoundException"></exception>
+        private JSONConfiguration DeserializeJSONConfiguration(string filePath)
         {
             try
             {
@@ -99,8 +131,15 @@ namespace RedditEmblemAPI.Services
             }
         }
 
+        #endregion
+
         #region Google Sheet Queries
 
+        /// <summary>
+        /// Divides the list of <c>Query</c> objects into horizontal and vertical dimension subsets, then executes a batch query on each.
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="queries"></param>
         private void QueryGoogleSheets( JSONConfiguration config, IList<Query> queries)
         {
             SheetsService service = new SheetsService(new BaseClientService.Initializer()
@@ -123,7 +162,7 @@ namespace RedditEmblemAPI.Services
         }
 
         /// <summary>
-        /// Using the set of specified Query objects, executes a batch query on the Google Sheets API and sets their Data values. 
+        /// Using the set of <c>Query</c> objects, executes a batch query on the Google Sheets API and stores the returned values in the <c>Query</c>'s Data attributes.
         /// </summary>
         /// <param name="service"></param>
         /// <param name="workbookID"></param>
@@ -148,9 +187,8 @@ namespace RedditEmblemAPI.Services
                 {
                     if (response.ValueRanges.ElementAtOrDefault(i).Values == null)
                     {
-                        if (query.AllowNullData)
-                            query.Data = new List<IList<object>>();
-                        else throw new GoogleSheetsQueryReturnedNullException();
+                        if (query.AllowNullData) query.Data = new List<IList<object>>();
+                        else throw new GoogleSheetsQueryReturnedNullException(query.Sheet);
                     }
                     else
                         query.Data = response.ValueRanges.ElementAtOrDefault(i).Values;

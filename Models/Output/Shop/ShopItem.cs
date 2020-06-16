@@ -10,6 +10,12 @@ namespace RedditEmblemAPI.Models.Output.Shop
     public class ShopItem
     {
         /// <summary>
+        /// 
+        /// </summary>
+        [JsonIgnore]
+        public string FullName { get; set; }
+
+        /// <summary>
         /// Only for JSON serialization. The name of the item.
         /// </summary>
         [JsonProperty]
@@ -31,9 +37,11 @@ namespace RedditEmblemAPI.Models.Output.Shop
 
         public ShopItem(ShopConfig config, IList<string> data, IDictionary<string, Item> items)
         {
+            this.FullName = data.ElementAtOrDefault<string>(config.Name);
+
             Item match;
             if (!items.TryGetValue(data.ElementAtOrDefault<string>(config.Name), out match))
-                throw new UnmatchedShopItemException(data.ElementAtOrDefault<string>(config.Name));
+                throw new UnmatchedItemException(data.ElementAtOrDefault<string>(config.Name));
             this.Item = match;
             match.Matched = true;
 

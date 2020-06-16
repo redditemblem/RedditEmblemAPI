@@ -71,7 +71,7 @@ namespace RedditEmblemAPI.Models.Output.Convoy
 
             Item match;
             if(!items.TryGetValue(name, out match))
-                throw new UnmatchedConvoyItemException(name);
+                throw new UnmatchedItemException(name);
             this.Item = match;
             match.Matched = true;
 

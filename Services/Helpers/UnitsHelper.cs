@@ -1,5 +1,4 @@
 ﻿using NCalc;
-using RedditEmblemAPI.Models.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Validation;
@@ -30,7 +29,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     IList<string> unit = row.Select(r => r.ToString()).ToList();
 
                     //Skip blank units
-                    if (string.IsNullOrEmpty(unit.ElementAtOrDefault(config.UnitName)))
+                    if (string.IsNullOrEmpty(unit.ElementAtOrDefault(config.Name)))
                         continue;
 
                     Unit temp = new Unit(config, unit, systemData);
@@ -40,7 +39,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 }
                 catch (Exception ex)
                 {
-                    throw new UnitProcessingException(row.ElementAtOrDefault(config.UnitName).ToString(), ex);
+                    throw new UnitProcessingException(row.ElementAtOrDefault(config.Name).ToString(), ex);
                 }
             }
 
@@ -54,12 +53,12 @@ namespace RedditEmblemAPI.Services.Helpers
                 return;
 
             //Find tile corresponsing to units coordinates
-            IList<Tile> row = map.ElementAtOrDefault(unit.Coordinates.Y - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates);
-            Tile tile = row.ElementAtOrDefault(unit.Coordinates.X - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates);
+            IList<Tile> row = map.ElementAtOrDefault(unit.Coordinates.Y - 1) ?? throw new TileOutOfBoundsException(unit.Coordinates);
+            Tile tile = row.ElementAtOrDefault(unit.Coordinates.X - 1) ?? throw new TileOutOfBoundsException(unit.Coordinates);
 
             //Make sure this unit is not placed overlapping another
             if (tile.Unit != null)
-                throw new UnitTileOverlapException(unit.Name, tile.Unit.Name, tile.Coordinate.X, tile.Coordinate.Y);
+                throw new UnitTileOverlapException(unit, tile.Unit, tile.Coordinate);
 
             //Two way bind the unit and tile objects
             unit.AnchorTile = tile;
@@ -77,12 +76,12 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     for (int x = 0; x < unit.UnitSize; x++)
                     {
-                        IList<Tile> intersectRow = map.ElementAtOrDefault(unit.Coordinates.Y + y - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates.X + x, unit.Coordinates.Y + y);
-                        Tile intersectTile = intersectRow.ElementAtOrDefault(unit.Coordinates.X + x - 1) ?? throw new UnitTileOutOfBoundsException(unit.Coordinates.X + x, unit.Coordinates.Y + y);
+                        IList<Tile> intersectRow = map.ElementAtOrDefault(unit.Coordinates.Y + y - 1) ?? throw new TileOutOfBoundsException(unit.Coordinates.X + x, unit.Coordinates.Y + y);
+                        Tile intersectTile = intersectRow.ElementAtOrDefault(unit.Coordinates.X + x - 1) ?? throw new TileOutOfBoundsException(unit.Coordinates.X + x, unit.Coordinates.Y + y);
 
                         //Make sure this unit is not placed overlapping another
                         if (intersectTile.Unit != null && unit.Name != intersectTile.Unit.Name)
-                            throw new UnitTileOverlapException(unit.Name, intersectTile.Unit.Name, intersectTile.Coordinate.X, intersectTile.Coordinate.Y);
+                            throw new UnitTileOverlapException(unit, intersectTile.Unit, intersectTile.Coordinate);
 
                         intersectTile.Unit = unit;
                         if(!unit.MovementRange.Contains(intersectTile.Coordinate))

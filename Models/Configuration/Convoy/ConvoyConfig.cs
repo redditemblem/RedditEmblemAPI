@@ -3,6 +3,9 @@ using RedditEmblemAPI.Models.Configuration.Common;
 
 namespace RedditEmblemAPI.Models.Configuration.Convoy
 {
+    /// <summary>
+    /// Container class for deserialized JSON <c>"Convoy"</c> object data.
+    /// </summary>
     public class ConvoyConfig
     {
         #region Required Fields
@@ -11,13 +14,13 @@ namespace RedditEmblemAPI.Models.Configuration.Convoy
         public Query Query { get; set; }
 
         /// <summary>
-        /// Cell index of the convoy item's name.
+        /// Required. Cell index of a convoy item's name value.
         /// </summary>
         [JsonRequired]
         public int Name { get; set; }
 
         /// <summary>
-        /// Cell index of the convoy item's owner.
+        /// Required. Cell index of a convoy item's owner value.
         /// </summary>
         [JsonRequired]
         public int Owner { get; set; }
@@ -27,12 +30,12 @@ namespace RedditEmblemAPI.Models.Configuration.Convoy
         #region Optional Fields
 
         /// <summary>
-        /// Cell index of the convoy item's value.
+        /// Optional. Cell index of a convoy item's value.
         /// </summary>
         public int Value { get; set; } = -1;
 
         /// <summary>
-        /// Cell index of the convoy item's quantity.
+        /// Optional. Cell index of a convoy item's quantity value.
         /// </summary>
         public int Quantity { get; set; } = -1;
 
