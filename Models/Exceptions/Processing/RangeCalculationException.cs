@@ -1,4 +1,4 @@
-﻿using RedditEmblemAPI.Models.Output;
+﻿using RedditEmblemAPI.Models.Output.Units;
 using System;
 
 namespace RedditEmblemAPI.Models.Exceptions.Processing

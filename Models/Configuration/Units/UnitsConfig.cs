@@ -52,22 +52,16 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public int Coordinates { get; set; }
 
         /// <summary>
-        /// Required. Cell index of a unit's current HP value.
+        /// Required. Container object for a unit's HP configuration.
         /// </summary>
         [JsonRequired]
-        public int CurrentHP { get; set; }
-
-        /// <summary>
-        /// Required. Cell index of a unit's maximum HP value.
-        /// </summary>
-        [JsonRequired]
-        public int MaxHP { get; set; }
+        public HPConfig HP { get; set; }
 
         /// <summary>
         /// Required. List of equations to calculate a unit's combat stats.
         /// </summary>
         [JsonRequired]
-        public IList<CalculatedStatConfig> CalculatedStats { get; set; }
+        public IList<CalculatedStatConfig> CombatStats { get; set; }
 
         /// <summary>
         /// Required. List of a unit's base stats.

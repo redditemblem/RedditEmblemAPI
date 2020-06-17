@@ -5,9 +5,9 @@
         /// <summary>
         /// Thrown when text cannot be matched to the name of an <c>StatusCondition</c>.
         /// </summary>
-        /// <param name="statusName"></param>
-        public UnmatchedStatusConditionException(string statusName)
-            : base("status condition", statusName)
+        /// <param name="statusConditionName"></param>
+        public UnmatchedStatusConditionException(string statusConditionName)
+            : base("status condition", statusConditionName)
         { }
     }
 }

@@ -2,7 +2,9 @@
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output;
+using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +19,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="data">Matrix of sheet Value values representing unit data</param>
         /// <param name="config">Parsed JSON configuration mapping Values to output</param>
         /// <returns></returns>
-        public static IList<Unit> Process(UnitsConfig config, SystemData systemData, List<List<Tile>> map)
+        public static IList<Unit> Process(UnitsConfig config, SystemInfo systemData, List<List<Tile>> map)
         {
             IList<Unit> units = new List<Unit>();
 

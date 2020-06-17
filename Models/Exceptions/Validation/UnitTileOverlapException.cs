@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Output;
+﻿using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.Units;
 using System;
 
 namespace RedditEmblemAPI.Models.Exceptions.Validation

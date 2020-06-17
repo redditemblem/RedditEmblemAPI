@@ -1,6 +1,6 @@
-﻿using RedditEmblemAPI.Models.Output;
-using RedditEmblemAPI.Models.Output.Convoy;
-using RedditEmblemAPI.Models.Output.Shop;
+﻿using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.Storage.Convoy;
+using RedditEmblemAPI.Models.Output.Storage.Shop;
 using RedditEmblemAPI.Models.Output.Teams;
 using System.Collections.Generic;
 

@@ -266,10 +266,12 @@
     "UnitSize": 9,
     "Experience": 11,
     "HeldCurrency": 12,
-    "CurrentHP": 15,
-    "MaxHP": 16,
+    "HP": {
+      "Current": 15,
+      "Maximum": 16
+    },
     "Tags": 14,
-    "CalculatedStats": [
+    "CombatStats": [
       {
         "SourceName": "Atk",
         "Equation": "2*{UnitStat[Str]}"
