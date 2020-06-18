@@ -51,6 +51,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public int Uses { get; set; }
 
+        /// <summary>
+        /// The amount by which to alter the item's max range.
+        /// </summary>
+        public int MaxRangeModifier { get; set; }
+
         #endregion
 
         private static Regex usesRegex = new Regex(@"\([0-9]+\)"); //match item uses (ex. "(5)")
@@ -69,6 +74,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.CanEquip = false;
             this.IsEquipped = false;
             this.Uses = 0;
+            this.MaxRangeModifier = 0;
 
             string name = this.FullName;
 

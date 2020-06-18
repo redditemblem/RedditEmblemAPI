@@ -40,12 +40,7 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             this.Matched = false;
             this.Name = data.ElementAtOrDefault<string>(config.Name).Trim();
-
-            int grouping;
-            if (!int.TryParse(data.ElementAtOrDefault<string>(config.Grouping), out grouping) || grouping <= 0)
-                throw new PositiveIntegerException("Grouping", data.ElementAtOrDefault<string>(config.Grouping));
-            this.Grouping = grouping;
-
+            this.Grouping = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(config.Grouping), "Grouping", true);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
         }
     }

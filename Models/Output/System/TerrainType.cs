@@ -42,6 +42,12 @@ namespace RedditEmblemAPI.Models.Output.System
         public bool BlocksItems { get; set; }
 
         /// <summary>
+        /// The grouping that the terrain type belongs to.
+        /// </summary>
+        [JsonIgnore]
+        public int Grouping { get; set; }
+
+        /// <summary>
         /// List of text fields for the terrain type.
         /// </summary>
         public IList<string> TextFields { get; set; }
@@ -55,6 +61,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Matched = false;
             this.Name = data.ElementAtOrDefault(config.Name).Trim();
             this.BlocksItems = ((data.ElementAtOrDefault(config.BlocksItems) ?? "No").Trim() == "Yes");
+            this.Grouping = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.Grouping), "Grouping", true, -1);
 
             this.StatModifiers = new Dictionary<string, int>();
             foreach(NamedStatConfig stat in config.StatModifiers)

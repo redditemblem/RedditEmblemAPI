@@ -1,167 +1,95 @@
 {
   "Team": {
-    "Name": "Team Example",
-    "WorkbookID": "10OGJGY4RcLemNcdoGVTrwoc6qJQyv5ONMK09VUyFptc"
+    "Name": "Team X", //Formatted for UI display, JSON file name must match this value sans spaces
+    "WorkbookID": ""
   },
   "Map": {
     "Constants": {
-      "TileSize": 32,
+      "TileSize": 0,
       "TileSpacing": 0,
-      "HasHeaderTopLeft": true,
-      "HasHeaderBottomRight": false
+      "HasHeaderTopLeft": true, //Optional, defaults to false
+      "HasHeaderBottomRight": false //Optional, defaults to false
     },
     "MapControls": {
       "Query": {
-        "Sheet": "System Control",
-        "Selection": "B1:B",
-        "Orientation": 2
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
       },
       "MapSwitch": 0,
-      "MapImageURL": 2,
-      "ChapterPostURL": 1
+      "MapImageURL": 0,
+      "ChapterPostURL": 0 //Optional
     },
     "MapTiles": {
       "Query": {
-        "Sheet": "Map Tiles",
-        "Selection": "A1:ZZ",
+        "Sheet": "",
+        "Selection": "",
         "Orientation": 1
       }
     },
-    "MapEffects": {
+    "MapEffects": { //Optional
       "Query": {
-        "Sheet": "Map Effects",
-        "Selection": "A1:ZZ",
+        "Sheet": "",
+        "Selection": ""
         "Orientation": 1,
         "AllowNullData": true
       }
     }
   },
   "System": {
-    "WeaponRanks": [ "E", "D", "C", "B", "A", "S" ],
-    "Currency": {
-      "CurrencySymbol": "G",
-      "IsSymbolLeftAligned": false,
-      "IncludeSpace": true
+    "WeaponRanks": [ "E", "D", "C", "B", "A", "S" ], //Optional???
+    "Currency": { //Optional
+      "CurrencySymbol": "",
+      "IsSymbolLeftAligned": true, //Optional, defaults to true
+      "IncludeSpace": false //Optional, defaults to false
     },
     "Items": {
       "Query": {
-        "Sheet": "Items",
-        "Selection": "B2:ZZ",
-        "Orientation": 1
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
       },
       "Name": 0,
-      "SpriteURL": 1,
-      "Category": 2,
-      "WeaponRank": 3,
-      "UtilizedStat": 4,
-      "DealsDamage": 5,
-      "Uses": 6,
+      "SpriteURL": 0,
+      "Category": 0,
+      "WeaponRank": 0,
+      "UtilizedStat": 0,
+      "DealsDamage": 0,
+      "Uses": 0,
       "Stats": [
         {
           "SourceName": "Mt",
-          "Value": 7
-        },
-        {
-          "SourceName": "Hit",
-          "Value": 8
-        },
-        {
-          "SourceName": "Crit",
-          "Value": 9
-        },
-        {
-          "SourceName": "Avo",
-          "Value": 10
-        },
-        {
-          "SourceName": "Eva",
-          "Value": 11
+          "Value": 0
         }
       ],
-      "EquippedStatModifiers": [
+      "EquippedStatModifiers": [ //Optional
         {
           "SourceName": "Str",
-          "Value": 14
-        },
-        {
-          "SourceName": "Mag",
-          "Value": 15
-        },
-        {
-          "SourceName": "Skl",
-          "Value": 16
-        },
-        {
-          "SourceName": "Spd",
-          "Value": 17
-        },
-        {
-          "SourceName": "Lck",
-          "Value": 18
-        },
-        {
-          "SourceName": "Def",
-          "Value": 19
-        },
-        {
-          "SourceName": "Res",
-          "Value": 20
-        },
-        {
-          "SourceName": "Mov",
-          "Value": 21
+          "Value": 0
         }
       ],
-      "InventoryStatModifiers": [
+      "InventoryStatModifiers": [ //Optional
         {
           "SourceName": "Str",
-          "Value": 21
-        },
-        {
-          "SourceName": "Mag",
-          "Value": 23
-        },
-        {
-          "SourceName": "Skl",
-          "Value": 24
-        },
-        {
-          "SourceName": "Spd",
-          "Value": 25
-        },
-        {
-          "SourceName": "Lck",
-          "Value": 26
-        },
-        {
-          "SourceName": "Def",
-          "Value": 27
-        },
-        {
-          "SourceName": "Res",
-          "Value": 28
-        },
-        {
-          "SourceName": "Mov",
-          "Value": 29
+          "Value": 0
         }
       ],
       "Range": {
-        "Minimum": 12,
-        "Maximum": 13
+        "Minimum": 0,
+        "Maximum": 0
       },
-      "TextFields": [ 30, 31 ]
+      "TextFields": [ ] //Optional
     },
     "Skills": {
       "Query": {
-        "Sheet": "Skills",
-        "Selection": "B2:ZZ",
-        "Orientation": 1
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
       },
       "Name": 0,
-      "SpriteURL": 1,
-      "TextFields": [ 2 ],
-      "Effect": {
+      "SpriteURL": 0,
+      "TextFields": [ ], //Optional
+      "Effect": { //Optional
         "Type": 3,
         "Parameter1": 4,
         "Parameter2": 5,

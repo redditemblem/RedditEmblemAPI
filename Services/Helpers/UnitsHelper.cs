@@ -4,6 +4,8 @@ using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Skills;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.Units;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,7 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             IList<Unit> units = new List<Unit>();
 
+            //Create the units and add them to the map
             foreach (IList<object> row in config.Query.Data)
             {
                 try
@@ -45,18 +48,47 @@ namespace RedditEmblemAPI.Services.Helpers
                 }
             }
 
+            //Apply skill effects
+            foreach(Unit unit in units)
+            {
+                try
+                {
+                    foreach (Skill skill in unit.SkillList)
+                        if (skill.Effect != null)
+                            skill.Effect.Apply(unit, skill, units);
+                }
+                catch(Exception ex)
+                {
+                    throw new UnitProcessingException(unit.Name, ex);
+                }
+            }
+
+            //Calculate combat stats
+            //Always do this last
+            foreach (Unit unit in units)
+            {
+                try
+                {
+                    unit.CalculateCombatStats(config.CombatStats);
+                }
+                catch (Exception ex)
+                {
+                    throw new UnitProcessingException(unit.Name, ex);
+                }
+            }
+
             return units;
         }
 
         private static void AddUnitToMap(Unit unit, List<List<Tile>> map)
         {
             //Ignore hidden units
-            if (unit.Coordinates.X < 1 || unit.Coordinates.Y < 1)
+            if (unit.Coordinate.X < 1 || unit.Coordinate.Y < 1)
                 return;
 
             //Find tile corresponsing to units coordinates
-            IList<Tile> row = map.ElementAtOrDefault(unit.Coordinates.Y - 1) ?? throw new TileOutOfBoundsException(unit.Coordinates);
-            Tile tile = row.ElementAtOrDefault(unit.Coordinates.X - 1) ?? throw new TileOutOfBoundsException(unit.Coordinates);
+            IList<Tile> row = map.ElementAtOrDefault(unit.Coordinate.Y - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate);
+            Tile tile = row.ElementAtOrDefault(unit.Coordinate.X - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate);
 
             //Make sure this unit is not placed overlapping another
             if (tile.Unit != null)
@@ -78,8 +110,8 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     for (int x = 0; x < unit.UnitSize; x++)
                     {
-                        IList<Tile> intersectRow = map.ElementAtOrDefault(unit.Coordinates.Y + y - 1) ?? throw new TileOutOfBoundsException(unit.Coordinates.X + x, unit.Coordinates.Y + y);
-                        Tile intersectTile = intersectRow.ElementAtOrDefault(unit.Coordinates.X + x - 1) ?? throw new TileOutOfBoundsException(unit.Coordinates.X + x, unit.Coordinates.Y + y);
+                        IList<Tile> intersectRow = map.ElementAtOrDefault(unit.Coordinate.Y + y - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate.X + x, unit.Coordinate.Y + y);
+                        Tile intersectTile = intersectRow.ElementAtOrDefault(unit.Coordinate.X + x - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate.X + x, unit.Coordinate.Y + y);
 
                         //Make sure this unit is not placed overlapping another
                         if (intersectTile.Unit != null && unit.Name != intersectTile.Unit.Name)

@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System.Skills;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Services.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -49,17 +51,34 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
             this.Effect = BuildSkillEffect((data.ElementAtOrDefault<string>(config.Effect.Type) ?? string.Empty).Trim(),
                                            (data.ElementAtOrDefault<string>(config.Effect.Parameter1) ?? string.Empty).Trim(),
-                                           (data.ElementAtOrDefault<string>(config.Effect.Parameter2) ?? string.Empty).Trim() );
+                                           (data.ElementAtOrDefault<string>(config.Effect.Parameter2) ?? string.Empty).Trim(),
+                                           (data.ElementAtOrDefault<string>(config.Effect.Parameter3) ?? string.Empty).Trim());
         }
 
-        private ISkillEffect BuildSkillEffect(string effectType, string param1, string param2)
+        private ISkillEffect BuildSkillEffect(string effectType, string param1, string param2, string param3)
         {
+            if (string.IsNullOrEmpty(effectType))
+                return null;
+
             switch (effectType)
             {
-                case "FlatUnitStatModifer": return new FlatUnitStatModiferEffect(param1, param2);
+                //Stat Modifier Effects
+                case "BaseStatModifier": return new BaseStatModifierEffect(param1, param2);
+                case "CombatStatModifier": return new CombatStatModifierEffect(param1, param2);
+                //Equipped Item Modifier Effects
+                case "EquippedCombatStatModifier": return new EquippedItemCombatStatModifierEffect(param1, param2, param3);
+                case "EquippedBaseStatModifier": return new EquippedBaseStatModifierEffect(param1, param2, param3);
+                //Range Modifier Effects
+                case "TerrainTypeMovementCostModifier": return new TerrainTypeMovementCostModifierEffect(param1, param2);
+                case "ItemMaxRangeModifier": return new ItemMaxRangeModifierEffect(param1, param2);
+                //Unit Radius Stat Modifier Effects
+                case "AllyRadiusCombatStatModifer": return new AllyRadiusCombatStatModiferEffect(param1, param2, param3);
+                case "AllyRadiusBaseStatModifer": return new AllyRadiusBaseStatModiferEffect(param1, param2, param3);
+                case "EnemyRadiusCombatStatModifer": return new EnemyRadiusCombatStatModiferEffect(param1, param2, param3);
+                case "EnemyRadiusBaseStatModifer": return new EnemyRadiusBaseStatModiferEffect(param1, param2, param3);
             }
 
-            return null;
+            throw new UnmatchedSkillEffectException(effectType);
         }
     }
 }

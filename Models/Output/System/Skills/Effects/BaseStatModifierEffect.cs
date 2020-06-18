@@ -1,10 +1,11 @@
-﻿using RedditEmblemAPI.Models.Output.Units;
+﻿using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
-using System;
+using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class FlatUnitStatModiferEffect : ISkillEffect
+    public class BaseStatModifierEffect : ISkillEffect
     {
         #region Attributes
 
@@ -20,17 +21,17 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 
         #endregion
 
-        public FlatUnitStatModiferEffect(string param1, string param2)
+        public BaseStatModifierEffect(string param1, string param2)
         {
             this.Stat = param1;
             this.Value = ParseHelper.SafeIntParse(param2, "Param2", false);
         }
 
-        public void Apply(Unit unit, Skill skill)
+        public void Apply(Unit unit, Skill skill, IList<Unit> units)
         {
             ModifiedStatValue stat;
             if (!unit.Stats.TryGetValue(this.Stat, out stat))
-                throw new Exception("Not written!");
+                throw new UnmatchedStatException(this.Stat);
             stat.Modifiers.Add(skill.Name, this.Value);
         }
     }

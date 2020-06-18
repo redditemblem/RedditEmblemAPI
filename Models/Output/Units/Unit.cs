@@ -49,7 +49,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// The unit's location on the map.
         /// </summary>
-        public Coordinate Coordinates { get; set; }
+        public Coordinate Coordinate { get; set; }
 
         /// <summary>
         /// The unit's current level.
@@ -103,7 +103,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Collection of the unit's calculated combat stats.
         /// </summary>
-        public IDictionary<string, int> CombatStats { get; set; }
+        public IDictionary<string, ModifiedStatValue> CombatStats { get; set; }
 
         /// <summary>
         /// Collection of the unit's stat values.
@@ -118,7 +118,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// List of the statuses the unit has.
         /// </summary>
-        public IList<UnitStatus> Statuses { get; set; }
+        public IList<UnitStatus> StatusConditions { get; set; }
 
         /// <summary>
         /// List of the items the unit is carrying.
@@ -195,7 +195,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Name = data.ElementAtOrDefault<string>(config.Name).Trim();
             this.SpriteURL = data.ElementAtOrDefault<string>(config.SpriteURL);
             this.Player = data.ElementAtOrDefault<string>(config.Player) ?? string.Empty;
-            this.Coordinates = new Coordinate(data.ElementAtOrDefault<string>(config.Coordinates));
+            this.Coordinate = new Coordinate(data.ElementAtOrDefault<string>(config.Coordinates));
             this.UnitSize = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.UnitSize), "Unit Size", true, 1);
             this.HasMoved = ((data.ElementAtOrDefault<string>(config.HasMoved) ?? string.Empty) == "Yes");
             this.HP = new HP(data.ElementAtOrDefault<string>(config.HP.Current),
@@ -228,7 +228,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Stats = new Dictionary<string, ModifiedStatValue>();
             BuildStats(data, config.Stats);
 
-            this.Statuses = new List<UnitStatus>();
+            this.StatusConditions = new List<UnitStatus>();
             BuildStatusConditions(data, config.StatusConditions, systemData.StatusConditions);
 
             this.Inventory = new List<UnitInventoryItem>();
@@ -240,9 +240,8 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.ClassList = new List<Class>();
             BuildClasses(data, config.Classes, systemData.Classes);
 
-            //This needs to be run last
-            this.CombatStats = new Dictionary<string, int>();
-            CalculateCombatStats(config.CombatStats);
+            this.CombatStats = new Dictionary<string, ModifiedStatValue>();
+            BuildCombatStats(config.CombatStats);
         }
 
         private void BuildWeaponRanks(IList<string> data, IList<UnitWeaponRanksConfig> config)
@@ -288,7 +287,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                     continue;
 
                 UnitStatus status = new UnitStatus(name, statuses);
-                this.Statuses.Add(status);
+                this.StatusConditions.Add(status);
             }
         }
 
@@ -367,11 +366,6 @@ namespace RedditEmblemAPI.Models.Output.Units
                 match.Matched = true;
 
                 this.SkillList.Add(match);
-
-                //TO DO: Move this!
-                //Apply skill effects
-                if (match.Effect != null)
-                    match.Effect.Apply(this, match);
             }
         }
     
@@ -396,8 +390,20 @@ namespace RedditEmblemAPI.Models.Output.Units
             if (this.ClassList.Count < 1)
                 throw new Exception("Unit must have at least one class defined.");
         }
-    
-        private void CalculateCombatStats(IList<CalculatedStatConfig> stats)
+
+        private void BuildCombatStats(IList<CalculatedStatConfig> stats)
+        {
+            foreach (CalculatedStatConfig stat in stats)
+            {
+                this.CombatStats.Add(stat.SourceName, new ModifiedStatValue());
+            }
+        }
+
+        /// <summary>
+        /// Assembles and executes the equations in <paramref name="stats"/>.
+        /// </summary>
+        /// <param name="stats"></param>
+        public void CalculateCombatStats(IList<CalculatedStatConfig> stats)
         {
             foreach (CalculatedStatConfig stat in stats)
             {
@@ -429,7 +435,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                     throw new UnrecognizedEquationVariableException(stat.Equation);
 
                 Expression expression = new Expression(equation);
-                this.CombatStats.Add(stat.SourceName, (int)expression.Evaluate());
+                this.CombatStats[stat.SourceName].BaseValue = (int)expression.Evaluate();
             }
         }
     }

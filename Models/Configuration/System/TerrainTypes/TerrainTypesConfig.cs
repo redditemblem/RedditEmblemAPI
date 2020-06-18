@@ -42,6 +42,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         public IList<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
+        /// Optional. Cell index of a terrain type's grouping value.
+        /// </summary>
+        public int Grouping { get; set; } = -1;
+
+        /// <summary>
         /// Optional. List of cell indexes for a terrain type's text fields.
         /// </summary>
         public IList<int> TextFields { get; set; } = new List<int>();

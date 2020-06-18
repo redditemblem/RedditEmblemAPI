@@ -1,6 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.Units;
 using System;
 using System.Collections.Generic;
@@ -26,26 +27,29 @@ namespace RedditEmblemAPI.Services.Helpers
                 try
                 {
                     //Ignore hidden units
-                    if (unit.Coordinates.X < 1 || unit.Coordinates.Y < 1)
+                    if (unit.Coordinate.X < 1 || unit.Coordinate.Y < 1)
                         continue;
 
+
                     //Calculate movement range
-                    RecurseUnitRange(unit, unit.Stats["Mov"].FinalValue, unit.OriginTile.Coordinate, new List<Coordinate>());
+                    UnitRangeParameters unitParms = new UnitRangeParameters(unit);
+                    RecurseUnitRange(unitParms, unit.Stats["Mov"].FinalValue, unit.OriginTile.Coordinate, new List<Coordinate>());
 
                     //Find the items with minimum and maximum attack range
                     UnitInventoryItem minAtkRange = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderBy(i => i.Item.Range.Minimum).FirstOrDefault();
-                    UnitInventoryItem maxAtkRange = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderByDescending(i => i.Item.Range.Maximum).FirstOrDefault();
+                    UnitInventoryItem maxAtkRange = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderByDescending(i => i.Item.Range.Maximum + i.MaxRangeModifier).FirstOrDefault();
 
                     //Find the items with minimum and maximum utility range
                     UnitInventoryItem minUtilRange = unit.Inventory.Where(i => i != null && i.CanEquip && !i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderBy(i => i.Item.Range.Minimum).FirstOrDefault();
-                    UnitInventoryItem maxUtilRange = unit.Inventory.Where(i => i != null && i.CanEquip && !i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderByDescending(i => i.Item.Range.Maximum).FirstOrDefault();
+                    UnitInventoryItem maxUtilRange = unit.Inventory.Where(i => i != null && i.CanEquip && !i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderByDescending(i => i.Item.Range.Maximum + i.MaxRangeModifier).FirstOrDefault();
 
                     IList<Coordinate> atkRange = new List<Coordinate>();
                     IList<Coordinate> utilRange = new List<Coordinate>();
                     foreach (Coordinate coord in unit.MovementRange)
                     {
                         //Calculate attack range
-                        ItemRangeParameters atkParms = new ItemRangeParameters(coord, (minAtkRange != null ? minAtkRange.Item.Range.Minimum : 0), (maxAtkRange != null ? maxAtkRange.Item.Range.Maximum : 0));
+                        ItemRangeParameters atkParms = new ItemRangeParameters(coord, 
+                            (minAtkRange != null ? minAtkRange.Item.Range.Minimum : 0), (maxAtkRange != null ? maxAtkRange.Item.Range.Maximum + maxAtkRange.MaxRangeModifier : 0));
                         RecurseItemRange( unit,
                                           atkParms,
                                           coord,
@@ -56,7 +60,8 @@ namespace RedditEmblemAPI.Services.Helpers
                                         );
 
                         //Calculate utility range
-                        ItemRangeParameters utilParms = new ItemRangeParameters(coord, (minUtilRange != null ? minUtilRange.Item.Range.Minimum : 0), (maxUtilRange != null ? maxUtilRange.Item.Range.Maximum : 0));
+                        ItemRangeParameters utilParms = new ItemRangeParameters(coord, 
+                            (minUtilRange != null ? minUtilRange.Item.Range.Minimum : 0), (maxUtilRange != null ? maxUtilRange.Item.Range.Maximum + maxUtilRange.MaxRangeModifier : 0));
                         RecurseItemRange( unit,
                                           utilParms,
                                           coord,
@@ -77,7 +82,7 @@ namespace RedditEmblemAPI.Services.Helpers
             }
         }
 
-        private void RecurseUnitRange(Unit unit, int remainingMov, Coordinate currCoord, List<Coordinate> visitedCoords)
+        private void RecurseUnitRange(UnitRangeParameters unitParms, int remainingMov, Coordinate currCoord, List<Coordinate> visitedCoords)
         {
             //Base case
             //Don't exceed the maximum range and don't go off the map
@@ -94,42 +99,49 @@ namespace RedditEmblemAPI.Services.Helpers
             {
                 Tile tile = GetTileByCoord(currCoord);
 
+                //If there is a Unit occupying this tile, check for affiliation collisions
+                if (tile.Unit != null && unitParms.Unit.Name != tile.Unit.Name)
+                {
+                    if (unitParms.Unit.AffiliationObj.Grouping != tile.Unit.AffiliationObj.Grouping)
+                        return;
+                }
+
                 //Test that the unit can move to this tile
                 int moveCost;
-                if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(unit.ClassList.First().MovementType, out moveCost))
-                    throw new UnmatchedClassMovementTypeException(unit.ClassList.First().MovementType, tile.TerrainTypeObj.MovementCosts.Keys.ToList());
+                if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(unitParms.Unit.ClassList.First().MovementType, out moveCost))
+                    throw new UnmatchedClassMovementTypeException(unitParms.Unit.ClassList.First().MovementType, tile.TerrainTypeObj.MovementCosts.Keys.ToList());
+
+                //Apply movement cost modifiers
+                TerrainTypeMovementCostModifierEffect moveCostMod = unitParms.MovCostModifiers.FirstOrDefault(s => s.TerrainTypeGrouping == tile.TerrainTypeObj.Grouping);
+                if (moveCostMod != null)
+                    moveCost += moveCostMod.Value;
+
                 if (moveCost > remainingMov || moveCost >= 99) return;
                 remainingMov = remainingMov - moveCost;
 
-                //If there is a Unit occupying this tile, check for affiliation collisions
-                if (tile.Unit != null && unit.Name != tile.Unit.Name)
-                {
-                    if (unit.AffiliationObj.Grouping != tile.Unit.AffiliationObj.Grouping)
-                        return;
-                }
             }
 
             visitedCoords.Add(currCoord);
 
-            if (!unit.MovementRange.Contains(currCoord))
-                unit.MovementRange.Add(currCoord);
+            if (!unitParms.Unit.MovementRange.Contains(currCoord))
+                unitParms.Unit.MovementRange.Add(currCoord);
 
             //Navigate in each cardinal direction, do not repeat tiles in this path
             //Left
             if(!visitedCoords.Contains(new Coordinate(currCoord.X - 1, currCoord.Y)))
-                RecurseUnitRange(unit, remainingMov, new Coordinate(currCoord.X - 1, currCoord.Y), visitedCoords.ToList());
+                RecurseUnitRange(unitParms, remainingMov, new Coordinate(currCoord.X - 1, currCoord.Y), visitedCoords.ToList());
 
             //Right
             if (!visitedCoords.Contains(new Coordinate(currCoord.X + 1, currCoord.Y)))
-                RecurseUnitRange(unit, remainingMov, new Coordinate(currCoord.X + 1, currCoord.Y), visitedCoords.ToList());
+                RecurseUnitRange(unitParms, remainingMov, new Coordinate(currCoord.X + 1, currCoord.Y), visitedCoords.ToList());
 
             //Up
             if (!visitedCoords.Contains(new Coordinate(currCoord.X, currCoord.Y - 1)))
-                RecurseUnitRange(unit, remainingMov, new Coordinate(currCoord.X, currCoord.Y - 1), visitedCoords.ToList());
+                RecurseUnitRange(unitParms, remainingMov, new Coordinate(currCoord.X, currCoord.Y - 1), visitedCoords.ToList());
 
             //Down
             if (!visitedCoords.Contains(new Coordinate(currCoord.X, currCoord.Y + 1)))
-                RecurseUnitRange(unit, remainingMov, new Coordinate(currCoord.X, currCoord.Y + 1), visitedCoords.ToList());
+                RecurseUnitRange(unitParms, remainingMov, new Coordinate(currCoord.X, currCoord.Y + 1), visitedCoords.ToList());
 
         }
 
@@ -181,6 +193,18 @@ namespace RedditEmblemAPI.Services.Helpers
             if (row == null) return null;
 
             return row.ElementAtOrDefault(coord.X - 1);
+        }
+    }
+
+    public struct UnitRangeParameters
+    {
+        public Unit Unit;
+        public IList<TerrainTypeMovementCostModifierEffect> MovCostModifiers { get; set; }
+
+        public UnitRangeParameters(Unit unit)
+        {
+            this.Unit = unit;
+            this.MovCostModifiers = unit.SkillList.Select(s => s.Effect).OfType<TerrainTypeMovementCostModifierEffect>().ToList();
         }
     }
 

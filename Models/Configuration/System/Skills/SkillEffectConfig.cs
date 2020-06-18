@@ -7,7 +7,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Skills
     /// </summary>
     public class SkillEffectConfig
     {
-        #region RequiredFields
+        #region Required Fields
 
         /// <summary>
         /// Required. Cell index of a skill effect's type.
@@ -26,6 +26,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.Skills
         /// </summary>
         [JsonRequired]
         public int Parameter2 { get; set; }
+
+        /// <summary>
+        /// Required. Cell index of the skill effect's third parameter.
+        /// </summary>
+        [JsonRequired]
+        public int Parameter3 { get; set; }
 
         #endregion
     }

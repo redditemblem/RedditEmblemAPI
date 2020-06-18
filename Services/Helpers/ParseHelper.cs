@@ -80,9 +80,20 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <returns></returns>
         public static IList<string> StringCSVParse(IList<string> data, int index, bool keepEmptyValues = false)
         {
+            return StringCSVParse((data.ElementAtOrDefault<string>(index) ?? string.Empty), keepEmptyValues);
+        }
+
+        /// <summary>
+        /// Splits the CSV contained in <paramref name="csv"/> and formats it into a list.
+        /// </summary>
+        /// <param name="csv"></param>
+        /// <param name="keepEmptyValues">If true, then null or empty string values will be retained in the returned list.</param>
+        /// <returns></returns>
+        public static IList<string> StringCSVParse(string csv, bool keepEmptyValues = false)
+        {
             IList<string> output = new List<string>();
-            
-            foreach (string value in (data.ElementAtOrDefault<string>(index) ?? string.Empty).Split(','))
+
+            foreach (string value in csv.Split(','))
                 if (!string.IsNullOrEmpty(value) || keepEmptyValues)
                     output.Add(value.Trim());
 
