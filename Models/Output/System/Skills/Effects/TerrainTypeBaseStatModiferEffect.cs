@@ -7,14 +7,14 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class EquippedBaseStatModifierEffect : ISkillEffect
+    public class TerrainTypeBaseStatModiferEffect : ISkillEffect
     {
         #region Attributes
 
         /// <summary>
-        /// Param1. List of <c>Item</c> categories to check for.
+        /// Param1. The terrain type grouping to look for <c>Tile</c>s in.
         /// </summary>
-        public IList<string> Categories { get; set; }
+        public int TerrainTypeGrouping { get; set; }
 
         /// <summary>
         /// Param2. The unit base stat to be affected.
@@ -33,23 +33,20 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// </summary>
         /// <param name="parameters"></param>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
-        public EquippedBaseStatModifierEffect(IList<string> parameters)
+        public TerrainTypeBaseStatModiferEffect(IList<string> parameters)
         {
             if (parameters.Count < 3)
-                throw new SkillEffectMissingParameterException("EquippedBaseStatModifier", 3, parameters.Count);
+                throw new SkillEffectMissingParameterException("TerrainTypeBaseStatModifer", 3, parameters.Count);
 
-            this.Categories = ParseHelper.StringCSVParse(parameters.ElementAt<string>(0));
+            this.TerrainTypeGrouping = ParseHelper.SafeIntParse(parameters.ElementAt<string>(0), "Param1", true);
             this.Stat = parameters.ElementAt<string>(1);
             this.Value = ParseHelper.SafeIntParse(parameters.ElementAt<string>(2), "Param3", false);
         }
 
         public void Apply(Unit unit, Skill skill, IList<Unit> units)
         {
-            UnitInventoryItem equipped = unit.Inventory.SingleOrDefault(i => i != null && i.IsEquipped);
-            if (equipped == null)
-                return;
-
-            if (!this.Categories.Contains(equipped.Item.Category))
+            //The terrain type must be in the defined grouping
+            if (!unit.OriginTile.TerrainTypeObj.Groupings.Contains(this.TerrainTypeGrouping))
                 return;
 
             ModifiedStatValue stat;

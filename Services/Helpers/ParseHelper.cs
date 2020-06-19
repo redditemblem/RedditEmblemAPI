@@ -50,6 +50,51 @@ namespace RedditEmblemAPI.Services.Helpers
             return SafeIntParse(number, fieldName, isPositive);
         }
 
+        /// <summary>
+        /// Converts the CSV in <paramref name="data"/> at <paramref name="index"/> to a list of ints.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="index"></param>
+        /// <param name="fieldName">The name of the numerical value list as it should display in any thrown exception messages.</param>
+        /// <param name="isPositive">If true, an exception will be thrown if any integer in the CSV is less than 0.</param>
+        /// <returns></returns>
+        public static IList<int> IntCSVParse(IList<string> data, int index, string fieldName, bool isPositive)
+        {
+            return IntCSVParse(data.ElementAtOrDefault<string>(index), fieldName, isPositive);
+        }
+
+        /// <summary>
+        /// Converts the CSV in <paramref name="csv"/> to a list of ints.
+        /// </summary>
+        /// <param name="csv"></param>
+        /// <param name="fieldName">The name of the numerical value list as it should display in any thrown exception messages.</param>
+        /// <param name="isPositive">If true, an exception will be thrown if any integer in the CSV is less than 0.</param>
+        /// <exception cref="AnyIntegerException"></exception>
+        /// <exception cref="PositiveIntegerException"></exception>
+        public static IList<int> IntCSVParse(string csv, string fieldName, bool isPositive)
+        {
+            IList<int> output = new List<int>();
+
+            if (string.IsNullOrEmpty(csv))
+                return output;
+
+            foreach (string value in csv.Split(','))
+            {
+                if (string.IsNullOrEmpty(value))
+                    continue;
+
+                int val;
+                if(!int.TryParse(value, out val) || (val < 0 && isPositive))
+                {
+                    if (isPositive) throw new PositiveIntegerException(fieldName, value);
+                    else throw new AnyIntegerException(fieldName, value);
+                }
+                output.Add(val);
+            }
+
+            return output;
+        }
+
         #endregion
 
         #region String Parsing
@@ -65,8 +110,10 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             IList<string> output = new List<string>();
             foreach (int index in indexes)
-                if (!string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)) || keepEmptyValues)
+                if (!string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
                     output.Add(data.ElementAtOrDefault<string>(index).Trim());
+                else if(keepEmptyValues)
+                    output.Add(string.Empty);
 
             return output;
         }
@@ -93,9 +140,14 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             IList<string> output = new List<string>();
 
+            if (string.IsNullOrEmpty(csv))
+                return output;
+
             foreach (string value in csv.Split(','))
-                if (!string.IsNullOrEmpty(value) || keepEmptyValues)
+                if (!string.IsNullOrEmpty(value))
                     output.Add(value.Trim());
+                else if (keepEmptyValues)
+                    output.Add(string.Empty);
 
             return output;
         }

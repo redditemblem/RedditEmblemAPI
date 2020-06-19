@@ -102,7 +102,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 //If there is a Unit occupying this tile, check for affiliation collisions
                 if (tile.Unit != null && unitParms.Unit.Name != tile.Unit.Name)
                 {
-                    if (unitParms.Unit.AffiliationObj.Grouping != tile.Unit.AffiliationObj.Grouping)
+                    if (!unitParms.IgnoresAffiliations && unitParms.Unit.AffiliationObj.Grouping != tile.Unit.AffiliationObj.Grouping)
                         return;
                 }
 
@@ -112,10 +112,14 @@ namespace RedditEmblemAPI.Services.Helpers
                     throw new UnmatchedClassMovementTypeException(unitParms.Unit.ClassList.First().MovementType, tile.TerrainTypeObj.MovementCosts.Keys.ToList());
 
                 //Apply movement cost modifiers
-                TerrainTypeMovementCostModifierEffect moveCostMod = unitParms.MovCostModifiers.FirstOrDefault(s => s.TerrainTypeGrouping == tile.TerrainTypeObj.Grouping);
-                if (moveCostMod != null)
+                TerrainTypeMovementCostSetEffect movCostSet = unitParms.MoveCostSets.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+                TerrainTypeMovementCostModifierEffect moveCostMod = unitParms.MovCostModifiers.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+                if (movCostSet != null && moveCost < 99)
+                    moveCost = movCostSet.Value;
+                else if (moveCostMod != null && moveCost < 99)
                     moveCost += moveCostMod.Value;
 
+                if (moveCost < 0) moveCost = 0;
                 if (moveCost > remainingMov || moveCost >= 99) return;
                 remainingMov = remainingMov - moveCost;
 
@@ -199,12 +203,16 @@ namespace RedditEmblemAPI.Services.Helpers
     public struct UnitRangeParameters
     {
         public Unit Unit;
+        public bool IgnoresAffiliations { get; set; }
         public IList<TerrainTypeMovementCostModifierEffect> MovCostModifiers { get; set; }
+        public IList<TerrainTypeMovementCostSetEffect> MoveCostSets { get; set; }
 
         public UnitRangeParameters(Unit unit)
         {
             this.Unit = unit;
+            this.IgnoresAffiliations = unit.SkillList.Select(s => s.Effect).OfType<IgnoreUnitAffiliationsEffect>().Any();
             this.MovCostModifiers = unit.SkillList.Select(s => s.Effect).OfType<TerrainTypeMovementCostModifierEffect>().ToList();
+            this.MoveCostSets = unit.SkillList.Select(s => s.Effect).OfType<TerrainTypeMovementCostSetEffect>().ToList();
         }
     }
 

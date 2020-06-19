@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class TerrainTypeMovementCostModifierEffect : ISkillEffect
+    public class TerrainTypeMovementCostSetEffect : ISkillEffect
     {
         #region Attributes
 
@@ -27,13 +27,13 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// </summary>
         /// <param name="parameters"></param>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
-        public TerrainTypeMovementCostModifierEffect(IList<string> parameters)
+        public TerrainTypeMovementCostSetEffect(IList<string> parameters)
         {
             if (parameters.Count < 2)
-                throw new SkillEffectMissingParameterException("TerrainTypeMovementCostModifier", 2, parameters.Count);
+                throw new SkillEffectMissingParameterException("TerrainTypeMovementCostSet", 2, parameters.Count);
 
             this.TerrainTypeGrouping = ParseHelper.SafeIntParse(parameters.ElementAt<string>(0), "Param1", true);
-            this.Value = ParseHelper.SafeIntParse(parameters.ElementAt<string>(1), "Param2", false);
+            this.Value = ParseHelper.SafeIntParse(parameters.ElementAt<string>(1), "Param2", true);
         }
 
         public void Apply(Unit unit, Skill skill, IList<Unit> units)

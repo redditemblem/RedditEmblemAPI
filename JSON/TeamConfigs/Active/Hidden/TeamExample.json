@@ -163,9 +163,7 @@
       "TextFields": [ 2 ],
       "Effect": {
         "Type": 3,
-        "Parameter1": 4,
-        "Parameter2": 5,
-        "Parameter3": 6
+        "Parameters": [ 4, 5, 6 ]
       }
     },
     "Classes": {
@@ -236,7 +234,8 @@
         }
       ],
       "BlocksItems": 8,
-      "TextFields": [ 9 ]
+      "TextFields": [ 9 ],
+      "Groupings":  10
     },
     "TerrainEffects": {
       "Query": {

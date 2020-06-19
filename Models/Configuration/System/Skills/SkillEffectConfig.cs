@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Skills
 {
@@ -16,22 +17,10 @@ namespace RedditEmblemAPI.Models.Configuration.System.Skills
         public int Type { get; set; }
 
         /// <summary>
-        /// Required. Cell index of the skill effect's first parameter.
+        /// Required. List of cell indexes for the parameters.
         /// </summary>
         [JsonRequired]
-        public int Parameter1 { get; set; }
-
-        /// <summary>
-        /// Required. Cell index of the skill effect's second parameter.
-        /// </summary>
-        [JsonRequired]
-        public int Parameter2 { get; set; }
-
-        /// <summary>
-        /// Required. Cell index of the skill effect's third parameter.
-        /// </summary>
-        [JsonRequired]
-        public int Parameter3 { get; set; }
+        public IList<int> Parameters { get; set; }
 
         #endregion
     }

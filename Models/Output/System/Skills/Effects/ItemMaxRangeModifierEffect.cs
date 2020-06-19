@@ -1,7 +1,9 @@
-﻿using RedditEmblemAPI.Models.Output.Units;
+﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
@@ -21,10 +23,18 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 
         #endregion
 
-        public ItemMaxRangeModifierEffect(string param1, string param2)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <exception cref="SkillEffectMissingParameterException"></exception>
+        public ItemMaxRangeModifierEffect(IList<string> parameters)
         {
-            this.Categories = ParseHelper.StringCSVParse(param1);
-            this.Value = ParseHelper.SafeIntParse(param2, "Param2", false);
+            if (parameters.Count < 2)
+                throw new SkillEffectMissingParameterException("ItemMaxRangeModifier", 2, parameters.Count);
+
+            this.Categories = ParseHelper.StringCSVParse(parameters.ElementAt<string>(0));
+            this.Value = ParseHelper.SafeIntParse(parameters.ElementAt<string>(1), "Param2", false);
         }
 
         public void Apply(Unit unit, Skill skill, IList<Unit> units)

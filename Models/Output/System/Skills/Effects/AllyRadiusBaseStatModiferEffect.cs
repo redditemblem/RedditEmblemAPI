@@ -1,7 +1,9 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
@@ -26,11 +28,19 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 
         #endregion
 
-        public AllyRadiusBaseStatModiferEffect(string param1, string param2, string param3)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <exception cref="SkillEffectMissingParameterException"></exception>
+        public AllyRadiusBaseStatModiferEffect(IList<string> parameters)
         {
-            this.Radius = ParseHelper.SafeIntParse(param1, "Param1", true);
-            this.Stat = param2;
-            this.Value = ParseHelper.SafeIntParse(param3, "Param3", false);
+            if (parameters.Count < 3)
+                throw new SkillEffectMissingParameterException("AllyRadiusBaseStatModifer", 3, parameters.Count);
+
+            this.Radius = ParseHelper.SafeIntParse(parameters.ElementAt<string>(0), "Param1", true);
+            this.Stat = parameters.ElementAt<string>(1);
+            this.Value = ParseHelper.SafeIntParse(parameters.ElementAt<string>(2), "Param3", false);
         }
 
         public void Apply(Unit unit, Skill skill, IList<Unit> units)

@@ -50,12 +50,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             this.SpriteURL = (data.ElementAtOrDefault<string>(config.SpriteURL) ?? string.Empty).Trim();
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
             this.Effect = BuildSkillEffect((data.ElementAtOrDefault<string>(config.Effect.Type) ?? string.Empty).Trim(),
-                                           (data.ElementAtOrDefault<string>(config.Effect.Parameter1) ?? string.Empty).Trim(),
-                                           (data.ElementAtOrDefault<string>(config.Effect.Parameter2) ?? string.Empty).Trim(),
-                                           (data.ElementAtOrDefault<string>(config.Effect.Parameter3) ?? string.Empty).Trim());
+                                           ParseHelper.StringListParse(data, config.Effect.Parameters, true));
         }
 
-        private ISkillEffect BuildSkillEffect(string effectType, string param1, string param2, string param3)
+        private ISkillEffect BuildSkillEffect(string effectType, IList<string> parameters)
         {
             if (string.IsNullOrEmpty(effectType))
                 return null;
@@ -63,19 +61,24 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             switch (effectType)
             {
                 //Stat Modifier Effects
-                case "BaseStatModifier": return new BaseStatModifierEffect(param1, param2);
-                case "CombatStatModifier": return new CombatStatModifierEffect(param1, param2);
+                case "BaseStatModifier": return new BaseStatModifierEffect(parameters);
+                case "CombatStatModifier": return new CombatStatModifierEffect(parameters);
                 //Equipped Item Modifier Effects
-                case "EquippedCombatStatModifier": return new EquippedItemCombatStatModifierEffect(param1, param2, param3);
-                case "EquippedBaseStatModifier": return new EquippedBaseStatModifierEffect(param1, param2, param3);
-                //Range Modifier Effects
-                case "TerrainTypeMovementCostModifier": return new TerrainTypeMovementCostModifierEffect(param1, param2);
-                case "ItemMaxRangeModifier": return new ItemMaxRangeModifierEffect(param1, param2);
+                case "EquippedCombatStatModifier": return new EquippedItemCombatStatModifierEffect(parameters);
+                case "EquippedBaseStatModifier": return new EquippedBaseStatModifierEffect(parameters);
+                //Terrain Type Modifier Effects
+                case "TerrainTypeCombatStatModifer": return new TerrainTypeCombatStatModiferEffect(parameters);
+                case "TerrainTypeBaseStatModifer": return new TerrainTypeBaseStatModiferEffect(parameters);
+                //Unit/Item Range Modifier Effects
+                case "TerrainTypeMovementCostModifier": return new TerrainTypeMovementCostModifierEffect(parameters);
+                case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect(parameters);
+                case "ItemMaxRangeModifier": return new ItemMaxRangeModifierEffect(parameters);
+                case "IgnoreUnitAffiliations": return new IgnoreUnitAffiliationsEffect(parameters);
                 //Unit Radius Stat Modifier Effects
-                case "AllyRadiusCombatStatModifer": return new AllyRadiusCombatStatModiferEffect(param1, param2, param3);
-                case "AllyRadiusBaseStatModifer": return new AllyRadiusBaseStatModiferEffect(param1, param2, param3);
-                case "EnemyRadiusCombatStatModifer": return new EnemyRadiusCombatStatModiferEffect(param1, param2, param3);
-                case "EnemyRadiusBaseStatModifer": return new EnemyRadiusBaseStatModiferEffect(param1, param2, param3);
+                case "AllyRadiusCombatStatModifer": return new AllyRadiusCombatStatModiferEffect(parameters);
+                case "AllyRadiusBaseStatModifer": return new AllyRadiusBaseStatModiferEffect(parameters);
+                case "EnemyRadiusCombatStatModifer": return new EnemyRadiusCombatStatModiferEffect(parameters);
+                case "EnemyRadiusBaseStatModifer": return new EnemyRadiusBaseStatModiferEffect(parameters);
             }
 
             throw new UnmatchedSkillEffectException(effectType);

@@ -7,14 +7,14 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class EnemyRadiusBaseStatModiferEffect : ISkillEffect
+    public class TerrainTypeCombatStatModiferEffect : ISkillEffect
     {
         #region Attributes
 
         /// <summary>
-        /// Param1. The range within this skill affects units.
+        /// Param1. The terrain type grouping to look for <c>Tile</c>s in.
         /// </summary>
-        public int Radius { get; set; }
+        public int TerrainTypeGrouping { get; set; }
 
         /// <summary>
         /// Param2. The unit combat stat to be affected.
@@ -33,36 +33,26 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// </summary>
         /// <param name="parameters"></param>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
-        public EnemyRadiusBaseStatModiferEffect(IList<string> parameters)
+        public TerrainTypeCombatStatModiferEffect(IList<string> parameters)
         {
             if (parameters.Count < 3)
-                throw new SkillEffectMissingParameterException("EnemyRadiusBaseStatModifer", 3, parameters.Count);
+                throw new SkillEffectMissingParameterException("TerrainTypeCombatStatModifer", 3, parameters.Count);
 
-            this.Radius = ParseHelper.SafeIntParse(parameters.ElementAt<string>(0), "Param1", true);
+            this.TerrainTypeGrouping = ParseHelper.SafeIntParse(parameters.ElementAt<string>(0), "Param1", true);
             this.Stat = parameters.ElementAt<string>(1);
             this.Value = ParseHelper.SafeIntParse(parameters.ElementAt<string>(2), "Param3", false);
         }
 
         public void Apply(Unit unit, Skill skill, IList<Unit> units)
         {
-            foreach (Unit other in units)
-            {
-                if (unit.Name == other.Name)
-                    continue;
+            //The terrain type must be in the defined grouping
+            if (!unit.OriginTile.TerrainTypeObj.Groupings.Contains(this.TerrainTypeGrouping))
+                return;
 
-                //Units must be in different groupings
-                if (unit.AffiliationObj.Grouping == other.AffiliationObj.Grouping)
-                    continue;
-
-                //Units must be within range
-                if (this.Radius < unit.Coordinate.DistanceFrom(other.Coordinate))
-                    continue;
-
-                ModifiedStatValue stat;
-                if (!other.Stats.TryGetValue(this.Stat, out stat))
-                    throw new UnmatchedStatException(this.Stat);
-                stat.Modifiers.Add(unit.Name + "'s " + skill.Name, this.Value);
-            }
+            ModifiedStatValue stat;
+            if (!unit.CombatStats.TryGetValue(this.Stat, out stat))
+                throw new UnmatchedStatException(this.Stat);
+            stat.Modifiers.Add(skill.Name, this.Value);
         }
     }
 }
