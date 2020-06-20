@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.Map;
+﻿using Microsoft.EntityFrameworkCore;
+using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Query;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -200,11 +201,39 @@ namespace RedditEmblemAPI.Models.Output.Map
                         
                         foreach(string value in cell.Split(","))
                         {
+                            //Skip any empty strings
+                            if (string.IsNullOrEmpty(value))
+                                continue;
+
                             TerrainEffect effect;
                             if (!terrainEffects.TryGetValue(value.Trim(), out effect))
                                 throw new UnmatchedTileTerrainEffectException(tiles[c].Coordinate, value.Trim());
                             effect.Matched = true;
-                            tiles[c].TerrainEffectsList.Add(effect);
+                            tiles[c].TerrainEffects.Add(new TileTerrainEffect(effect, true));
+
+                            //Set all tiles for multi-tile effects
+                            if(effect.Size > 1)
+                            {
+                                for(int r2 = r; r2 < r + effect.Size; r2++)
+                                {
+                                    for(int c2 = c; c2 < c + effect.Size; c2++)
+                                    {
+                                        //Skip the starting tile
+                                        if (r2 == r && c2 == c)
+                                            continue;
+
+                                        if (r2 >= this.Tiles.Count)
+                                            throw new TileOutOfBoundsException(r2, c2);
+
+                                        IList<Tile> tiles2 = this.Tiles[r2];
+
+                                        if(c2 >= tiles2.Count)
+                                            throw new TileOutOfBoundsException(r2, c2);
+
+                                        tiles2[c2].TerrainEffects.Add(new TileTerrainEffect(effect, false));
+                                    }
+                                }
+                            }
                         }
                     }
                 }

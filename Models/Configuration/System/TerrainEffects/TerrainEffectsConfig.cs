@@ -36,7 +36,22 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainEffects
         public int Size { get; set; } = -1;
 
         /// <summary>
-        /// Optional. List of cell indexes a terrain effect's text fields.
+        /// Optional. Cell index for a terrain effect's hit point modifier value.
+        /// </summary>
+        public int HPModifier { get; set; } = -1;
+
+        /// <summary>
+        /// Optional. List of a terrain effect's combat stat modifiers.
+        /// </summary>
+        public IList<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
+
+        /// <summary>
+        /// Optional. List of a terrain effect's combat stat modifiers.
+        /// </summary>
+        public IList<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
+
+        /// <summary>
+        /// Optional. List of cell indexes for a terrain effect's text fields.
         /// </summary>
         public IList<int> TextFields { get; set; } = new List<int>();
 

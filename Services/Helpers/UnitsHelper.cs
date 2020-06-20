@@ -1,7 +1,9 @@
 ﻿using NCalc;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills;
@@ -101,6 +103,10 @@ namespace RedditEmblemAPI.Services.Helpers
 
             unit.MovementRange.Add(new Coordinate(tile.Coordinate));
 
+            //Apply terrain effects to the unit
+            IList<string> effectsApplied = new List<string>();
+            ApplyTileTerrainEffectsToUnit(unit, tile, effectsApplied);
+
             if (unit.UnitSize > 1)
             {
                 //Calculate origin tile for multi-tile units
@@ -126,6 +132,8 @@ namespace RedditEmblemAPI.Services.Helpers
                             unit.OriginTile = intersectTile;
                             intersectTile.IsUnitOrigin = true;
                         }
+
+                        ApplyTileTerrainEffectsToUnit(unit, intersectTile, effectsApplied);
                     }
                 }
             }
@@ -135,6 +143,44 @@ namespace RedditEmblemAPI.Services.Helpers
                 unit.OriginTile = tile;
                 tile.IsUnitOrigin = true;
             }   
+        }
+
+        private static void ApplyTileTerrainEffectsToUnit(Unit unit, Tile tile, IList<string> effectsApplied)
+        {
+            foreach(TileTerrainEffect effect in tile.TerrainEffects)
+            {
+                //Terrain effects cannot be applied twice
+                if (effectsApplied.Contains(effect.TerrainEffect.Name))
+                    continue;
+
+                effectsApplied.Add(effect.TerrainEffect.Name);
+
+                //Apply combat stat modifiers
+                foreach(KeyValuePair<string, int> modifier in effect.TerrainEffect.CombatStatModifiers)
+                {
+                    //Skip 0 value modifiers
+                    if (modifier.Value == 0)
+                        continue;
+
+                    ModifiedStatValue stat;
+                    if (!unit.CombatStats.TryGetValue(modifier.Key, out stat))
+                        throw new UnmatchedStatException(modifier.Key);
+                    stat.Modifiers.Add(effect.TerrainEffect.Name, modifier.Value);
+                }
+
+                //Apply stat modifiers
+                foreach (KeyValuePair<string, int> modifier in effect.TerrainEffect.StatModifiers)
+                {
+                    //Skip 0 value modifiers
+                    if (modifier.Value == 0)
+                        continue;
+
+                    ModifiedStatValue stat;
+                    if (!unit.Stats.TryGetValue(modifier.Key, out stat))
+                        throw new UnmatchedStatException(modifier.Key);
+                    stat.Modifiers.Add(effect.TerrainEffect.Name, modifier.Value);
+                }
+            }
         }
     }
 }

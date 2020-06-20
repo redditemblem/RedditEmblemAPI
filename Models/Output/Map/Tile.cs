@@ -55,14 +55,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// List of the terrain effects on this tile.
         /// </summary>
-        [JsonIgnore]
-        public IList<TerrainEffect> TerrainEffectsList { get; set; }
-
-        /// <summary>
-        /// Only for JSON serialization. Returns a list of names for the terrain effects on this tile.
-        /// </summary>
-        [JsonProperty]
-        private IList<string> TerrainEffects { get { return this.TerrainEffectsList.Select(e => e.Name).OrderBy(e => e).ToList(); } }
+        public IList<TileTerrainEffect> TerrainEffects { get; set; }
 
         /// <summary>
         /// Only for JSON serialization. The number of units with displayed movement on this tile.
@@ -95,7 +88,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         {
             this.Coordinate = new Coordinate(x, y);
             this.TerrainTypeObj = terrainType;
-            this.TerrainEffectsList = new List<TerrainEffect>();
+            this.TerrainEffects = new List<TileTerrainEffect>();
         }
 
         #endregion

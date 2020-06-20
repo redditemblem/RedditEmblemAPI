@@ -245,7 +245,39 @@
       },
       "Name": 0,
       "SpriteURL": 1,
-      "TextFields": [ 12 ]
+      "Size": 2,
+      "TextFields": [ 11 ],
+      "HPModifier": 3,
+      "StatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 4
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 5
+        },
+        {
+          "SourceName": "Skl",
+          "Value": 6
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 7
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 8
+        },
+        {
+          "SourceName": "Def",
+          "Value": 9
+        },
+        {
+          "SourceName": "Res",
+          "Value": 10
+        }
+      ]
     }
   },
   "Units": {
