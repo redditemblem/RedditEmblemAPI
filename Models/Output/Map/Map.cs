@@ -27,6 +27,11 @@ namespace RedditEmblemAPI.Models.Output.Map
         public string MapImageURL { get; set; }
 
         /// <summary>
+        /// The chapter post's URL.
+        /// </summary>
+        public string ChapterPostURL { get; set; }
+
+        /// <summary>
         /// The height of the map image in pixels.
         /// </summary>
         public int MapImageHeight { get; private set; }
@@ -71,6 +76,8 @@ namespace RedditEmblemAPI.Models.Output.Map
             if (string.IsNullOrEmpty(mapImageURL))
                 throw new MapImageURLNotFoundException(config.MapControls.Query.Sheet);
             this.MapImageURL = mapImageURL;
+
+            this.ChapterPostURL = (values.ElementAtOrDefault(config.MapControls.ChapterPostURL) ?? string.Empty).ToString();
 
             //Build tile matrix
             this.Tiles = new List<List<Tile>>();

@@ -32,8 +32,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
             if (parameters.Count < 2)
                 throw new SkillEffectMissingParameterException("TerrainTypeMovementCostModifier", 2, parameters.Count);
 
-            this.TerrainTypeGrouping = ParseHelper.SafeIntParse(parameters.ElementAt<string>(0), "Param1", true);
-            this.Value = ParseHelper.SafeIntParse(parameters.ElementAt<string>(1), "Param2", false);
+            this.TerrainTypeGrouping = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
+            this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", false);
         }
 
         public void Apply(Unit unit, Skill skill, IList<Unit> units)

@@ -205,37 +205,34 @@
         "Orientation": 1
       },
       "Name": 0,
-      "StatModifiers": [
+      "HPModifier": 3,
+      "CombatStatModifiers": [
         {
           "SourceName": "Avo",
+          "Value": 1
+        },
+        {
+          "SourceName": "Atk",
           "Value": 2
-        },
-        {
-          "SourceName": "Dmg",
-          "Value": 3
-        },
-        {
-          "SourceName": "HP",
-          "Value": 4
         }
       ],
       "MovementCosts": [
         {
           "SourceName": "Foot",
-          "Value": 5
+          "Value": 4
         },
         {
           "SourceName": "Mounted",
-          "Value": 6
+          "Value": 5
         },
         {
           "SourceName": "Flying",
-          "Value": 7
+          "Value": 6
         }
       ],
-      "BlocksItems": 8,
-      "TextFields": [ 9 ],
-      "Groupings":  10
+      "BlocksItems": 7,
+      "TextFields": [ 8 ],
+      "Groupings":  9
     },
     "TerrainEffects": {
       "Query": {

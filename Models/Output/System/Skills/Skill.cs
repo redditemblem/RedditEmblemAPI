@@ -46,10 +46,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// </summary>
         public Skill(SkillsConfig config, IList<string> data)
         {
-            this.Name = (data.ElementAtOrDefault<string>(config.Name) ?? string.Empty).Trim();
-            this.SpriteURL = (data.ElementAtOrDefault<string>(config.SpriteURL) ?? string.Empty).Trim();
+            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
+            this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
-            this.Effect = BuildSkillEffect((data.ElementAtOrDefault<string>(config.Effect.Type) ?? string.Empty).Trim(),
+            this.Effect = BuildSkillEffect(ParseHelper.SafeStringParse(data, config.Effect.Type, "Skill Effect Type", false),
                                            ParseHelper.StringListParse(data, config.Effect.Parameters, true));
         }
 

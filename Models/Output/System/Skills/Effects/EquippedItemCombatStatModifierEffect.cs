@@ -38,9 +38,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
             if (parameters.Count < 3)
                 throw new SkillEffectMissingParameterException("EquippedItemCombatStatModifier", 3, parameters.Count);
 
-            this.Categories = ParseHelper.StringCSVParse(parameters.ElementAt<string>(0));
-            this.Stat = parameters.ElementAt<string>(1);
-            this.Value = ParseHelper.SafeIntParse(parameters.ElementAt<string>(2), "Param3", false);
+            this.Categories = ParseHelper.StringCSVParse(parameters.ElementAtOrDefault<string>(0));
+            this.Stat = ParseHelper.SafeStringParse(parameters, 1, "Param2", true);
+            this.Value = ParseHelper.SafeIntParse(parameters, 2, "Param3", false);
         }
 
         public void Apply(Unit unit, Skill skill, IList<Unit> units)

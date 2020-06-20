@@ -20,7 +20,7 @@ namespace RedditEmblemAPI.Models.Output.System
         public string Name { get; set; }
 
         /// <summary>
-        /// The class's movement type.
+        /// The class's movement type. (i.e. Foot/Mounted/etc.)
         /// </summary>
         [JsonIgnore]
         public string MovementType { get; set; }
@@ -44,8 +44,8 @@ namespace RedditEmblemAPI.Models.Output.System
         public Class(ClassesConfig config, IList<string> data)
         {
             this.Matched = false;
-            this.Name = data.ElementAtOrDefault(config.Name).Trim();
-            this.MovementType = data.ElementAtOrDefault<string>(config.MovementType).Trim();
+            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
+            this.MovementType = ParseHelper.SafeStringParse(data, config.MovementType, "Movement Type", true);
 
             this.Tags = ParseHelper.StringCSVParse(data, config.Tags);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);

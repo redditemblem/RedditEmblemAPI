@@ -28,13 +28,13 @@ namespace RedditEmblemAPI.Models.Output.System
 
         public StatusCondition(StatusConditionConfig config, IList<string> data)
         {
-            this.Name = data.ElementAtOrDefault<string>(config.Name).Trim();
-            this.Type = ParseStatusConditionType(config.Type, data);
+            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
+            this.Type = ParseStatusConditionType(data, config.Type);
             this.Turns = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.Turns), "Turns", true, 0);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
         }
 
-        private StatusType ParseStatusConditionType(int index, IList<string> data)
+        private StatusType ParseStatusConditionType(IList<string> data, int index)
         {
             string name = data.ElementAtOrDefault<string>(index).Trim();
             switch (name)

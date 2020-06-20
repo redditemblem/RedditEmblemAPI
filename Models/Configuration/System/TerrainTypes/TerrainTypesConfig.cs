@@ -37,6 +37,16 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         #region Optional Fields
 
         /// <summary>
+        /// Optional. Cell index for a terrain type's hit point modifier.
+        /// </summary>
+        public int HPModifier { get; set; } = -1;
+
+        /// <summary>
+        /// Optional. List of combat stat modifiers for a terrain type.
+        /// </summary>
+        public IList<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
+
+        /// <summary>
         /// Optional. List of stat modifiers for a terrain type.
         /// </summary>
         public IList<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();

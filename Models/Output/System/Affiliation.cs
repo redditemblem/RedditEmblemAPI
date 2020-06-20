@@ -39,8 +39,8 @@ namespace RedditEmblemAPI.Models.Output.System
         public Affiliation(AffiliationsConfig config, IList<string> data)
         {
             this.Matched = false;
-            this.Name = data.ElementAtOrDefault<string>(config.Name).Trim();
-            this.Grouping = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(config.Grouping), "Grouping", true);
+            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
+            this.Grouping = ParseHelper.SafeIntParse(data, config.Grouping, "Grouping", true);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
         }
     }

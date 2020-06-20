@@ -192,17 +192,17 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public Unit(UnitsConfig config, IList<string> data, SystemInfo systemData)
         {
-            this.Name = data.ElementAtOrDefault<string>(config.Name).Trim();
-            this.SpriteURL = data.ElementAtOrDefault<string>(config.SpriteURL);
-            this.Player = data.ElementAtOrDefault<string>(config.Player) ?? string.Empty;
-            this.Coordinate = new Coordinate(data.ElementAtOrDefault<string>(config.Coordinates));
+            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
+            this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", true);
+            this.Player = ParseHelper.SafeStringParse(data, config.Player, "Player", false);
+            this.Coordinate = new Coordinate(data.ElementAtOrDefault<string>(config.Coordinate));
             this.UnitSize = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.UnitSize), "Unit Size", true, 1);
-            this.HasMoved = ((data.ElementAtOrDefault<string>(config.HasMoved) ?? string.Empty) == "Yes");
+            this.HasMoved = (ParseHelper.SafeStringParse(data, config.HasMoved, "Has Moved", false) == "Yes");
             this.HP = new HP(data.ElementAtOrDefault<string>(config.HP.Current),
                              data.ElementAtOrDefault<string>(config.HP.Maximum));
             this.Level = ParseHelper.SafeIntParse(data.ElementAtOrDefault(config.Level), "Level", true);
-            this.Experience = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(config.Experience), "Experience", true) % 100;
-            this.HeldCurrency = ParseHelper.SafeIntParse(data.ElementAtOrDefault(config.HeldCurrency) ?? "-1", "Currency", false);
+            this.Experience = ParseHelper.SafeIntParse(data, config.Experience, "Experience", true) % 100;
+            this.HeldCurrency = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.HeldCurrency), "Currency", false, -1);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
             this.Tags = ParseHelper.StringCSVParse(data, config.Tags);
 
@@ -253,27 +253,20 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         private void BuildStats(IList<string> data, IList<ModifiedNamedStatConfig> config)
         {
-            foreach (ModifiedNamedStatConfig s in config)
+            foreach (ModifiedNamedStatConfig stat in config)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
-
-                //Parse base value
-                int val;
-                if (!int.TryParse(data.ElementAtOrDefault(s.BaseValue), out val) || val < 0)
-                    throw new PositiveIntegerException(s.SourceName, data.ElementAtOrDefault<string>(s.BaseValue));
-                temp.BaseValue = val;
+                temp.BaseValue = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(stat.BaseValue), stat.SourceName, true);
 
                 //Parse modifiers list
-                foreach (NamedStatConfig mod in s.Modifiers)
+                foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    if (!int.TryParse(data.ElementAtOrDefault(mod.Value), out val))
-                        throw new AnyIntegerException(string.Format("{0} {1}", s.SourceName, mod.SourceName), data.ElementAtOrDefault<string>(mod.Value));
-
+                    int val = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(mod.Value), string.Format("{0} {1}", stat.SourceName, mod.SourceName), false);
                     if (val != 0)
                         temp.Modifiers.Add(mod.SourceName, val);
                 }
 
-                this.Stats.Add(s.SourceName, temp);
+                this.Stats.Add(stat.SourceName, temp);
             }
         }
 

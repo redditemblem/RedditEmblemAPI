@@ -25,6 +25,16 @@ namespace RedditEmblemAPI.Models.Output.System
         public string Name { get; set; }
 
         /// <summary>
+        /// The value by which the terrain effect modifies a unit's HP. Assumed to be a percentage.
+        /// </summary>
+        public int HPModifier { get; set; }
+
+        /// <summary>
+        /// List of combat stat modifiers applied by the terrain type.
+        /// </summary>
+        public IDictionary<string, int> CombatStatModifiers { get; set; }
+
+        /// <summary>
         /// List of stat modifiers applied by the terrain type.
         /// </summary>
         public IDictionary<string, int> StatModifiers { get; set; }
@@ -55,33 +65,38 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="AnyIntegerException"></exception>
         public TerrainType(TerrainTypesConfig config, IList<string> data)
         {
             this.Matched = false;
-            this.Name = data.ElementAtOrDefault(config.Name).Trim();
-            this.BlocksItems = ((data.ElementAtOrDefault(config.BlocksItems) ?? "No").Trim() == "Yes");
+            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
+            this.BlocksItems = (ParseHelper.SafeStringParse(data, config.BlocksItems, "Blocks Items", true) == "Yes");
             this.Groupings = ParseHelper.IntCSVParse(data, config.Groupings, "Groupings", true);
+            this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
+
+            this.HPModifier = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.HPModifier), "HP Modifier", false, 0);
 
             this.StatModifiers = new Dictionary<string, int>();
             foreach(NamedStatConfig stat in config.StatModifiers)
             {
-                int val;
-                if (!int.TryParse(data.ElementAtOrDefault(stat.Value), out val))
-                    throw new AnyIntegerException(stat.SourceName, data.ElementAtOrDefault(stat.Value));
+                int val = ParseHelper.SafeIntParse(data.ElementAtOrDefault(stat.Value), stat.SourceName, false);
+                if (val == 0) continue;
                 this.StatModifiers.Add(stat.SourceName, val);
+            }
+
+            this.CombatStatModifiers = new Dictionary<string, int>();
+            foreach (NamedStatConfig stat in config.CombatStatModifiers)
+            {
+                int val = ParseHelper.SafeIntParse(data.ElementAtOrDefault(stat.Value), stat.SourceName, false);
+                if (val == 0) continue;
+                this.CombatStatModifiers.Add(stat.SourceName, val);
             }
 
             this.MovementCosts = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.MovementCosts)
             {
-                int val;
-                if (!int.TryParse(data.ElementAtOrDefault(stat.Value), out val))
-                    throw new AnyIntegerException(stat.SourceName, data.ElementAtOrDefault(stat.Value));
+                int val = ParseHelper.SafeIntParse(data.ElementAtOrDefault(stat.Value), stat.SourceName, true);
                 this.MovementCosts.Add(stat.SourceName, val);
             }
-
-            this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
         }
     }
 }

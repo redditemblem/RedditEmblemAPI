@@ -33,8 +33,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
             if (parameters.Count < 2)
                 throw new SkillEffectMissingParameterException("ItemMaxRangeModifier", 2, parameters.Count);
 
-            this.Categories = ParseHelper.StringCSVParse(parameters.ElementAt<string>(0));
-            this.Value = ParseHelper.SafeIntParse(parameters.ElementAt<string>(1), "Param2", false);
+            this.Categories = ParseHelper.StringCSVParse(parameters.ElementAtOrDefault<string>(0));
+            this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", false);
         }
 
         public void Apply(Unit unit, Skill skill, IList<Unit> units)

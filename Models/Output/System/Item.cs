@@ -90,34 +90,28 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <exception cref="AnyIntegerException"></exception>
         public Item(ItemsConfig config, IList<string> data)
         {
-            this.Name = data.ElementAtOrDefault(config.Name).Trim();
-            this.SpriteURL = data.ElementAtOrDefault<string>(config.SpriteURL).Trim();
-            this.Category = data.ElementAtOrDefault<string>(config.Category);
-            this.WeaponRank = (data.ElementAtOrDefault<string>(config.WeaponRank) ?? string.Empty);
-            this.UtilizedStat = data.ElementAtOrDefault<string>(config.UtilizedStat);
-            this.DealsDamage = ((data.ElementAtOrDefault(config.DealsDamage) ?? "No").Trim() == "Yes");
+            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
+            this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
+            this.Category = ParseHelper.SafeStringParse(data, config.Category, "Category", true);
+            this.WeaponRank = ParseHelper.SafeStringParse(data, config.WeaponRank, "Weapon Rank", false);
+            this.UtilizedStat = ParseHelper.SafeStringParse(data, config.UtilizedStat, "Utilized Stat", true);
+            this.DealsDamage = (ParseHelper.SafeStringParse(data, config.DealsDamage, "Deals Damage", true) == "Yes");
             this.MaxUses = ParseHelper.SafeIntParse(data.ElementAtOrDefault(config.Uses), "Uses", true);
             this.Range = new ItemRange(data.ElementAtOrDefault<string>(config.Range.Minimum),
                                        data.ElementAtOrDefault<string>(config.Range.Maximum));
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
 
             this.Stats = new Dictionary<string, int>();
-            foreach (NamedStatConfig s in config.Stats)
+            foreach (NamedStatConfig stat in config.Stats)
             {
-                int val;
-                if (!int.TryParse(data.ElementAtOrDefault(s.Value), out val))
-                    throw new AnyIntegerException(s.SourceName, data.ElementAtOrDefault<string>(s.Value));
-
-                this.Stats.Add(s.SourceName, val);
+                int val = ParseHelper.SafeIntParse(data, stat.Value, stat.SourceName, false);
+                this.Stats.Add(stat.SourceName, val);
             }
 
             this.EquippedStatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.EquippedStatModifiers)
             {
-                int val;
-                if (!int.TryParse(data.ElementAtOrDefault(stat.Value), out val))
-                    throw new AnyIntegerException(string.Format("{0} ({1})", stat.SourceName, "Equipped"), data.ElementAtOrDefault<string>(stat.Value));
-
+                int val = ParseHelper.SafeIntParse(data, stat.Value, string.Format("{0} ({1})", stat.SourceName, "Equipped"), false);
                 if (val != 0)
                     this.EquippedStatModifiers.Add(stat.SourceName, val);
             }
@@ -125,10 +119,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.InventoryStatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.InventoryStatModifiers)
             {
-                int val;
-                if (!int.TryParse(data.ElementAtOrDefault(stat.Value), out val))
-                    throw new AnyIntegerException(string.Format("{0} ({1})", stat.SourceName, "Inventory"), data.ElementAtOrDefault<string>(stat.Value));
-
+                int val = ParseHelper.SafeIntParse(data, stat.Value, string.Format("{0} ({1})", stat.SourceName, "Inventory"), false);
                 if (val != 0)
                     this.InventoryStatModifiers.Add(stat.SourceName, val);
             }

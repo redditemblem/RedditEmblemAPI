@@ -11,13 +11,25 @@ namespace RedditEmblemAPI.Models.Output.System
     {
         #region Attributes
 
+        /// <summary>
+        /// Flag indicating whether or not this terrain effect was found on a tile. Used to minify the output JSON.
+        /// </summary>
         [JsonIgnore]
         public bool Matched { get; set; }
 
+        /// <summary>
+        /// The name of the terrain effect.
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// The sprite image URL for the terrain effect.
+        /// </summary>
         public string SpriteURL { get; set; }
 
+        /// <summary>
+        /// The size of the terrain effect in map tiles. Defaults to 1.
+        /// </summary>
         public int Size { get; set; }
 
         /// <summary>
@@ -35,6 +47,9 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public IDictionary<string, int> StatModifiers { get; set; }
 
+        /// <summary>
+        /// List of text fields for the terrain effect.
+        /// </summary>
         public IList<string> TextFields { get; set; }
 
         #endregion
@@ -43,8 +58,8 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             this.Matched = false;
 
-            this.Name = data.ElementAtOrDefault<string>(config.Name);
-            this.SpriteURL = data.ElementAtOrDefault<string>(config.SpriteURL);
+            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
+            this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", true);
             this.Size = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.Size), "Size", true, 1);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
 
@@ -52,11 +67,24 @@ namespace RedditEmblemAPI.Models.Output.System
 
             this.CombatStatModifiers = new Dictionary<string, int>();
             foreach(NamedStatConfig stat in config.CombatStatModifiers)
-                this.CombatStatModifiers.Add(stat.SourceName, ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(stat.Value), stat.SourceName + " Modifier", false));
+            {
+                int val = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(stat.Value), stat.SourceName + " Modifier", false);
+                if (val == 0)
+                    continue;
+
+                this.CombatStatModifiers.Add(stat.SourceName, val);
+            }
+                
 
             this.StatModifiers = new Dictionary<string, int>();
             foreach(NamedStatConfig stat in config.StatModifiers)
-                this.StatModifiers.Add(stat.SourceName, ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(stat.Value), stat.SourceName + " Modifier", false));
+            {
+                int val = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(stat.Value), stat.SourceName + " Modifier", false);
+                if (val == 0)
+                    continue;
+
+                this.StatModifiers.Add(stat.SourceName, val);
+            }
         }
     }
 }

@@ -103,7 +103,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             unit.MovementRange.Add(new Coordinate(tile.Coordinate));
 
-            //Apply terrain effects to the unit
+            //Apply terrain effect to the unit
             IList<string> effectsApplied = new List<string>();
             ApplyTileTerrainEffectsToUnit(unit, tile, effectsApplied);
 
@@ -131,6 +131,9 @@ namespace RedditEmblemAPI.Services.Helpers
                         {
                             unit.OriginTile = intersectTile;
                             intersectTile.IsUnitOrigin = true;
+
+                            //Apply terrain type effects from the origin tile.
+                            ApplyTileTerrainTypeToUnit(unit, intersectTile);
                         }
 
                         ApplyTileTerrainEffectsToUnit(unit, intersectTile, effectsApplied);
@@ -142,7 +145,31 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Single tile units have their anchor and origin in the same place.
                 unit.OriginTile = tile;
                 tile.IsUnitOrigin = true;
+
+                //Apply terrain type effects from the origin tile.
+                ApplyTileTerrainTypeToUnit(unit, tile);
             }   
+        }
+
+        private static void ApplyTileTerrainTypeToUnit(Unit unit, Tile tile)
+        {
+            //Apply combat stat modifiers
+            foreach (KeyValuePair<string, int> modifier in tile.TerrainTypeObj.CombatStatModifiers)
+            {
+                ModifiedStatValue stat;
+                if (!unit.CombatStats.TryGetValue(modifier.Key, out stat))
+                    throw new UnmatchedStatException(modifier.Key);
+                stat.Modifiers.Add(tile.TerrainTypeObj.Name, modifier.Value);
+            }
+
+            //Apply stat modifiers
+            foreach (KeyValuePair<string, int> modifier in tile.TerrainTypeObj.StatModifiers)
+            {
+                ModifiedStatValue stat;
+                if (!unit.Stats.TryGetValue(modifier.Key, out stat))
+                    throw new UnmatchedStatException(modifier.Key);
+                stat.Modifiers.Add(tile.TerrainTypeObj.Name, modifier.Value);
+            }
         }
 
         private static void ApplyTileTerrainEffectsToUnit(Unit unit, Tile tile, IList<string> effectsApplied)
@@ -158,10 +185,6 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Apply combat stat modifiers
                 foreach(KeyValuePair<string, int> modifier in effect.TerrainEffect.CombatStatModifiers)
                 {
-                    //Skip 0 value modifiers
-                    if (modifier.Value == 0)
-                        continue;
-
                     ModifiedStatValue stat;
                     if (!unit.CombatStats.TryGetValue(modifier.Key, out stat))
                         throw new UnmatchedStatException(modifier.Key);
@@ -171,10 +194,6 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Apply stat modifiers
                 foreach (KeyValuePair<string, int> modifier in effect.TerrainEffect.StatModifiers)
                 {
-                    //Skip 0 value modifiers
-                    if (modifier.Value == 0)
-                        continue;
-
                     ModifiedStatValue stat;
                     if (!unit.Stats.TryGetValue(modifier.Key, out stat))
                         throw new UnmatchedStatException(modifier.Key);

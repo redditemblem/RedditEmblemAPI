@@ -38,9 +38,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
             if (parameters.Count < 3)
                 throw new SkillEffectMissingParameterException("TerrainTypeBaseStatModifer", 3, parameters.Count);
 
-            this.TerrainTypeGrouping = ParseHelper.SafeIntParse(parameters.ElementAt<string>(0), "Param1", true);
-            this.Stat = parameters.ElementAt<string>(1);
-            this.Value = ParseHelper.SafeIntParse(parameters.ElementAt<string>(2), "Param3", false);
+            this.TerrainTypeGrouping = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
+            this.Stat = ParseHelper.SafeStringParse(parameters, 1, "Param2", true);
+            this.Value = ParseHelper.SafeIntParse(parameters, 2, "Param3", false);
         }
 
         public void Apply(Unit unit, Skill skill, IList<Unit> units)

@@ -45,7 +45,6 @@ namespace RedditEmblemAPI.Models.Output.Map
         {
             this.ShowConvoyLink = (config.Convoy != null);
             this.ShowShopLink = (config.Shop != null);
-            this.ChapterPostURL = string.Empty; //(values.ElementAtOrDefault(config.Team.Map.ChapterPostURL) ?? string.Empty).ToString();
 
             //Process data, order is important on these
             this.System = new SystemInfo(config.System);

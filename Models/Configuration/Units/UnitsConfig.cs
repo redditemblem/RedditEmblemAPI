@@ -49,7 +49,7 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// Required. Cell index of a unit's coordinate value.
         /// </summary>
         [JsonRequired]
-        public int Coordinates { get; set; }
+        public int Coordinate { get; set; }
 
         /// <summary>
         /// Required. Container object for a unit's HP configuration.

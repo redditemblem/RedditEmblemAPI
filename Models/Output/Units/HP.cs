@@ -1,4 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Services.Helpers;
 using System;
 
 namespace RedditEmblemAPI.Models.Output.Units
@@ -49,18 +50,16 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         /// <param name="current">A numerical value.</param>
         /// <param name="maximum">A numerical value.</param>
-        /// <exception cref="PositiveIntegerException"></exception>
         /// <exception cref="NonZeroPositiveIntegerException"></exception>
         public HP(string current, string maximum)
         {
-            int val;
-            if (!int.TryParse(current, out val) || val < 0)
-                throw new PositiveIntegerException("Current HP", current);
-            this.Current = val;
+            int currentVal = ParseHelper.SafeIntParse(current, "Current HP", true);
+            this.Current = currentVal;
 
-            if (!int.TryParse(maximum, out val) || val <= 0)
+            int maximumVal = ParseHelper.SafeIntParse(maximum, "Maximum HP", true);
+            if(maximumVal == 0)
                 throw new NonZeroPositiveIntegerException("Maximum HP", maximum);
-            this.Maximum = val;
+            this.Maximum = maximumVal;
         }
 
         #endregion

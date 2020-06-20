@@ -12,6 +12,11 @@ namespace RedditEmblemAPI.Services.Helpers
     {
         #region Numerical Parsing
 
+        public static int SafeIntParse(IList<string> data, int index, string fieldName, bool isPositive)
+        {
+            return SafeIntParse(data.ElementAtOrDefault<string>(index), fieldName, isPositive);
+        }
+
         /// <summary>
         /// Converts the value of <paramref name="number"/> to a integer.
         /// </summary>
@@ -98,6 +103,37 @@ namespace RedditEmblemAPI.Services.Helpers
         #endregion
 
         #region String Parsing
+
+        /// <summary>
+        /// Returns the value of the cell in <paramref name="data"/> at <paramref name="index"/> with Trim() applied.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="index"></param>
+        /// <param name="fieldName">The name of the value as it should display in any thrown exception messages.</param>
+        /// <param name="isRequired">When true, an exception will be thrown if the value is out of range, null, or an empty string.</param>
+        /// <returns></returns>
+        public static string SafeStringParse(IList<string> data, int index, string fieldName, bool isRequired)
+        {
+            return SafeStringParse(data.ElementAtOrDefault<string>(index), fieldName, isRequired);
+        }
+
+        /// <summary>
+        /// Returns <paramref name="value"/> with Trim() applied.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="fieldName">The name of the value as it should display in any thrown exception messages.</param>
+        /// <param name="isRequired">When true, an exception will be thrown if the value is null or an empty string.</param>
+        /// <returns></returns>
+        public static string SafeStringParse(string value, string fieldName, bool isRequired)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                if (isRequired) throw new RequiredValueNotProvidedException(fieldName);
+                else return string.Empty;
+            }
+
+            return value.Trim();
+        }
 
         /// <summary>
         /// Returns a list containing the values of <paramref name="data"/> at the locations contained in <paramref name="indexes"/>.
