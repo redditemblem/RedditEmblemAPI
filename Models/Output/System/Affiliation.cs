@@ -34,8 +34,6 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="data"></param>
-        /// <param name="config"></param>
         public Affiliation(AffiliationsConfig config, IList<string> data)
         {
             this.Matched = false;

@@ -64,8 +64,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Searches for an <c>Item</c> in <paramref name="items"/> that matches <paramref name="fullItemName"/>.
         /// </summary>
-        /// <param name="fullItemName"></param>
-        /// <param name="items"></param>
         /// <exception cref="UnmatchedItemException"></exception>
         public UnitInventoryItem(string fullItemName, IDictionary<string, Item> items)
         {

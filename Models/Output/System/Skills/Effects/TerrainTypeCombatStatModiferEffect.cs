@@ -3,7 +3,6 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
@@ -31,7 +30,6 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="parameters"></param>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
         public TerrainTypeCombatStatModiferEffect(IList<string> parameters)
         {
@@ -43,6 +41,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
             this.Value = ParseHelper.SafeIntParse(parameters, 2, "Param3", false);
         }
 
+        /// <summary>
+        /// If <paramref name="unit"/> originates on a tile with a terrain type in <c>TerrainTypeGrouping</c>, then <c>Value</c> is added as a modifier on <c>Stat</c>.
+        /// </summary>
+        /// <exception cref="UnmatchedStatException"></exception>
         public void Apply(Unit unit, Skill skill, IList<Unit> units)
         {
             //The terrain type must be in the defined grouping

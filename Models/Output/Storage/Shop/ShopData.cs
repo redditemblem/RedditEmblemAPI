@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,9 +54,9 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
                 try
                 {
                     IList<string> item = row.Select(r => r.ToString()).ToList();
-                    if (string.IsNullOrEmpty(item.ElementAtOrDefault<string>(config.System.Items.Name)))
-                        continue;
-                    this.Items.Add(item.ElementAtOrDefault(config.System.Items.Name), new Item(config.System.Items, item));
+                    string name = ParseHelper.SafeStringParse(item, config.System.Items.Name, "Name", false);
+                    if (string.IsNullOrEmpty(name)) continue;
+                    this.Items.Add(name, new Item(config.System.Items, item));
                 }
                 catch (Exception ex)
                 {
@@ -70,8 +71,8 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
                 try
                 {
                     IList<string> item = row.Select(r => r.ToString()).ToList();
-                    if (string.IsNullOrEmpty(item.ElementAtOrDefault<string>(config.Shop.Name)))
-                        continue;
+                    string name = ParseHelper.SafeStringParse(item, config.Shop.Name, "Name", false);
+                    if (string.IsNullOrEmpty(name)) continue;
                     this.ShopItems.Add(new ShopItem(config.Shop, item, this.Items));
                 }
                 catch (Exception ex)
@@ -107,7 +108,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// </summary>
         private void RemoveUnusedObjects()
         {
-            //Cull unused classes
+            //Cull unused items
             foreach (string key in this.Items.Keys.ToList())
                 if (!this.Items[key].Matched)
                     this.Items.Remove(key);

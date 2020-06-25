@@ -2,7 +2,6 @@
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
@@ -25,7 +24,6 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="parameters"></param>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
         public TerrainTypeMovementCostModifierEffect(IList<string> parameters)
         {

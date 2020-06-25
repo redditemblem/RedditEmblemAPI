@@ -2,7 +2,6 @@
 using RedditEmblemAPI.Models.Configuration.System.Classes;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -39,8 +38,6 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="config"></param>
-        /// <param name="data"></param>
         public Class(ClassesConfig config, IList<string> data)
         {
             this.Matched = false;

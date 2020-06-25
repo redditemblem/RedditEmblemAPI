@@ -37,6 +37,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
             this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", false);
         }
 
+        /// <summary>
+        /// Adds <c>Value</c> as a modifier to <c>Stat</c> for <paramref name="unit"/>.
+        /// </summary>
+        /// <exception cref="UnmatchedStatException"></exception>
         public void Apply(Unit unit, Skill skill, IList<Unit> units)
         {
             ModifiedStatValue stat;

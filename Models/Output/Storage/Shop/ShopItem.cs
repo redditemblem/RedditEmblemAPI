@@ -53,26 +53,23 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         #endregion
 
         /// <summary>
-        /// Attempts to match the values in <paramref name="data"/> to an <c>Item</c> from <paramref name="items"/>.
+        /// Constructor. Builds the <c>ShopItem</c> and matches it to an <c>Item</c> definition from <paramref name="items"/>.
         /// </summary>
-        /// <param name="config"></param>
-        /// <param name="data"></param>
-        /// <param name="items"></param>
         /// <exception cref="UnmatchedItemException"></exception>
         public ShopItem(ShopConfig config, IList<string> data, IDictionary<string, Item> items)
         {
-            this.FullName = data.ElementAtOrDefault<string>(config.Name);
+            this.FullName = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
 
             Item match;
-            if (!items.TryGetValue(data.ElementAtOrDefault<string>(config.Name), out match))
-                throw new UnmatchedItemException(data.ElementAtOrDefault<string>(config.Name));
+            if (!items.TryGetValue(this.FullName, out match))
+                throw new UnmatchedItemException(this.FullName);
             this.Item = match;
             match.Matched = true;
 
-            this.Price = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(config.Price), "Price", true);
-            this.SalePrice = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.SalePrice), "Sale Price", true, this.Price);
-            this.Stock = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(config.Stock), "Stock", true);
-            this.IsNew = ((data.ElementAtOrDefault<string>(config.IsNew) ?? string.Empty) == "Yes");
+            this.Price = ParseHelper.SafeIntParse(data, config.Price, "Price", true);
+            this.SalePrice = ParseHelper.OptionalSafeIntParse(data, config.SalePrice, "Sale Price", true, this.Price);
+            this.Stock = ParseHelper.SafeIntParse(data, config.Stock, "Stock", true);
+            this.IsNew = (ParseHelper.SafeStringParse(data, config.IsNew, "Is New", false) == "Yes");
         }
     }
 }

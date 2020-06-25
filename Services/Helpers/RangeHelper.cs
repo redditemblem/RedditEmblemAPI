@@ -1,5 +1,6 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.Units;
@@ -191,12 +192,16 @@ namespace RedditEmblemAPI.Services.Helpers
                 RecurseItemRange(unit, parms, new Coordinate(currCoord.X, currCoord.Y + 1), remainingMinRange - 1, remainingMaxRange - 1, visitedCoords.ToList(), ref itemRange);
         }
 
+        /// <summary>
+        /// Fetches the tile with matching coordinates to <paramref name="coord"/>.
+        /// </summary>
+        /// <exception cref="TileOutOfBoundsException"></exception>
         private Tile GetTileByCoord(Coordinate coord)
         {
-            IList<Tile> row = this.Tiles.ElementAtOrDefault(coord.Y - 1);
-            if (row == null) return null;
+            IList<Tile> row = this.Tiles.ElementAtOrDefault<IList<Tile>>(coord.Y - 1) ?? throw new TileOutOfBoundsException(coord.X, coord.Y);
+            Tile column = row.ElementAtOrDefault<Tile>(coord.X - 1) ?? throw new TileOutOfBoundsException(coord.X, coord.Y);
 
-            return row.ElementAtOrDefault(coord.X - 1);
+            return column;
         }
     }
 

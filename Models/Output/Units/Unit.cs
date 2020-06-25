@@ -196,13 +196,13 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", true);
             this.Player = ParseHelper.SafeStringParse(data, config.Player, "Player", false);
             this.Coordinate = new Coordinate(data.ElementAtOrDefault<string>(config.Coordinate));
-            this.UnitSize = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.UnitSize), "Unit Size", true, 1);
+            this.UnitSize = ParseHelper.OptionalSafeIntParse(data, config.UnitSize, "Unit Size", true, 1);
             this.HasMoved = (ParseHelper.SafeStringParse(data, config.HasMoved, "Has Moved", false) == "Yes");
             this.HP = new HP(data.ElementAtOrDefault<string>(config.HP.Current),
                              data.ElementAtOrDefault<string>(config.HP.Maximum));
-            this.Level = ParseHelper.SafeIntParse(data.ElementAtOrDefault(config.Level), "Level", true);
+            this.Level = ParseHelper.SafeIntParse(data, config.Level, "Level", true);
             this.Experience = ParseHelper.SafeIntParse(data, config.Experience, "Experience", true) % 100;
-            this.HeldCurrency = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.HeldCurrency), "Currency", false, -1);
+            this.HeldCurrency = ParseHelper.OptionalSafeIntParse(data, config.HeldCurrency, "Currency", false, -1);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
             this.Tags = ParseHelper.StringCSVParse(data, config.Tags);
 
@@ -216,9 +216,10 @@ namespace RedditEmblemAPI.Models.Output.Units
                 this.UnitNumber = numberMatch.Value.Trim();
 
             //Match affiliation
+            string affiliation = ParseHelper.SafeStringParse(data, config.Affiliation, "Affiliation", true);
             Affiliation affMatch;
-            if (!systemData.Affiliations.TryGetValue(data.ElementAtOrDefault<string>(config.Affiliation), out affMatch))
-                throw new UnmatchedAffiliationException(data.ElementAtOrDefault<string>(config.Affiliation));
+            if (!systemData.Affiliations.TryGetValue(affiliation, out affMatch))
+                throw new UnmatchedAffiliationException(affiliation);
             this.AffiliationObj = affMatch;
             affMatch.Matched = true;
 
@@ -247,8 +248,13 @@ namespace RedditEmblemAPI.Models.Output.Units
         private void BuildWeaponRanks(IList<string> data, IList<UnitWeaponRanksConfig> config)
         {
             foreach (UnitWeaponRanksConfig rank in config)
-                if (!string.IsNullOrEmpty(data.ElementAtOrDefault<string>(rank.Type)))
-                    this.WeaponRanks.Add(data.ElementAtOrDefault<string>(rank.Type), data.ElementAtOrDefault<string>(rank.Rank) ?? string.Empty);
+            {
+                string rankType = ParseHelper.SafeStringParse(data, rank.Type, "Weapon Rank Type", false);
+                string rankLetter = ParseHelper.SafeStringParse(data, rank.Rank, "Weapon Rank Letter", false);
+
+                if (!string.IsNullOrEmpty(rankType))
+                    this.WeaponRanks.Add(rankType, rankLetter);
+            }
         }
 
         private void BuildStats(IList<string> data, IList<ModifiedNamedStatConfig> config)
@@ -256,26 +262,27 @@ namespace RedditEmblemAPI.Models.Output.Units
             foreach (ModifiedNamedStatConfig stat in config)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
-                temp.BaseValue = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(stat.BaseValue), stat.SourceName, true);
+                temp.BaseValue = ParseHelper.SafeIntParse(data, stat.BaseValue, stat.SourceName, true);
 
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(mod.Value), string.Format("{0} {1}", stat.SourceName, mod.SourceName), false);
-                    if (val != 0)
-                        temp.Modifiers.Add(mod.SourceName, val);
+                    int val = ParseHelper.SafeIntParse(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName), false);
+                    if (val == 0)
+                        continue;
+                    temp.Modifiers.Add(mod.SourceName, val);
                 }
 
                 this.Stats.Add(stat.SourceName, temp);
             }
         }
 
-        private void BuildStatusConditions(IList<string> data, IList<int> config, IDictionary<string, StatusCondition> statuses)
+        private void BuildStatusConditions(IList<string> data, IList<int> indexes, IDictionary<string, StatusCondition> statuses)
         {
-            foreach(int field in config)
+            foreach(int index in indexes)
             {
                 //Skip blank cells
-                string name = data.ElementAtOrDefault<string>(field);
+                string name = ParseHelper.SafeStringParse(data, index, "Status Condition Name", false);
                 if (string.IsNullOrEmpty(name))
                     continue;
 
@@ -286,9 +293,9 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         private void BuildInventory(IList<string> data, InventoryConfig config, IDictionary<string, Item> items, IList<string> weaponRanks)
         {
-            foreach (int field in config.Slots)
+            foreach (int index in config.Slots)
             {
-                string name = data.ElementAtOrDefault(field);
+                string name = ParseHelper.SafeStringParse(data, index, "Item Name", false);
                 if (string.IsNullOrEmpty(name))
                 {
                     this.Inventory.Add(null);
@@ -314,11 +321,12 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             //Find the equipped item and flag it
-            if (!string.IsNullOrEmpty(data.ElementAtOrDefault(config.EquippedItem)))
+            string equippedItemName = ParseHelper.SafeStringParse(data, config.EquippedItem, "Equipped Item", false);
+            if (!string.IsNullOrEmpty(equippedItemName))
             {
-                UnitInventoryItem equipped = this.Inventory.FirstOrDefault(i => i.FullName == data.ElementAt(config.EquippedItem));
+                UnitInventoryItem equipped = this.Inventory.FirstOrDefault(i => i.FullName == equippedItemName);
                 if (equipped == null)
-                    throw new UnmatchedEquippedItemException(data.ElementAt(config.EquippedItem));
+                    throw new UnmatchedEquippedItemException(equippedItemName);
                 equipped.IsEquipped = true;
 
                 //Apply equipped stat modifiers
@@ -343,13 +351,17 @@ namespace RedditEmblemAPI.Models.Output.Units
                 }
             }
         }
-    
-        private void BuildSkills(IList<string> data, IList<int> fields, IDictionary<string, Skill> skills)
+
+        /// <summary>
+        /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>Skill</c> from <paramref name="skills"/>.
+        /// </summary>
+        /// <exception cref="UnmatchedSkillException"></exception>
+        private void BuildSkills(IList<string> data, IList<int> indexes, IDictionary<string, Skill> skills)
         {
-            foreach (int field in fields)
+            foreach (int index in indexes)
             {
                 //Skip blank cells
-                string name = data.ElementAtOrDefault<string>(field).Trim();
+                string name = ParseHelper.SafeStringParse(data, index, "Skill Name", false);
                 if (string.IsNullOrEmpty(name))
                     continue;
 
@@ -361,29 +373,37 @@ namespace RedditEmblemAPI.Models.Output.Units
                 this.SkillList.Add(match);
             }
         }
-    
-        private void BuildClasses(IList<string> data, IList<int> config, IDictionary<string, Class> classes)
+
+        /// <summary>
+        /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>Class</c> from <paramref name="classes"/>.
+        /// </summary>
+        /// <exception cref="UnmatchedClassException"></exception>
+        private void BuildClasses(IList<string> data, IList<int> indexes, IDictionary<string, Class> classes)
         {
-            foreach (int field in config)
+            foreach (int index in indexes)
             {
-                if (!string.IsNullOrEmpty(data.ElementAtOrDefault(field)))
-                {
-                    Class match;
-                    if (!classes.TryGetValue(data.ElementAt(field), out match))
-                        throw new UnmatchedClassException(data.ElementAt(field));
+                string className = ParseHelper.SafeStringParse(data, index, "Class Name", false);
+                if (string.IsNullOrEmpty(className))
+                    continue;
+                
+                Class match;
+                if (!classes.TryGetValue(className, out match))
+                    throw new UnmatchedClassException(className);
 
-                    match.Matched = true;
-                    this.ClassList.Add(match);
+                match.Matched = true;
+                this.ClassList.Add(match);
 
-                    //Append class tags to unit's tags
-                    this.Tags = this.Tags.Union(match.Tags).Distinct().ToList();
-                }
+                //Append class tags to unit's tags
+                this.Tags = this.Tags.Union(match.Tags).Distinct().ToList();
             }
 
             if (this.ClassList.Count < 1)
                 throw new Exception("Unit must have at least one class defined.");
         }
 
+        /// <summary>
+        /// Adds the stats from <paramref name="stats"/> into <c>CombatStats</c>. Does NOT calculate their values.
+        /// </summary>
         private void BuildCombatStats(IList<CalculatedStatConfig> stats)
         {
             foreach (CalculatedStatConfig stat in stats)

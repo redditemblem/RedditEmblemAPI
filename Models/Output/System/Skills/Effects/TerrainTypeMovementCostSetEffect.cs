@@ -25,7 +25,6 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="parameters"></param>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
         public TerrainTypeMovementCostSetEffect(IList<string> parameters)
         {

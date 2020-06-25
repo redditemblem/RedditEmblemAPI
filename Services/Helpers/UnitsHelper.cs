@@ -34,10 +34,8 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     //Convert objects to strings
                     IList<string> unit = row.Select(r => r.ToString()).ToList();
-
-                    //Skip blank units
-                    if (string.IsNullOrEmpty(unit.ElementAtOrDefault(config.Name)))
-                        continue;
+                    string unitName = ParseHelper.SafeStringParse(unit, config.Name, "Name", false);
+                    if (string.IsNullOrEmpty(unitName)) continue;
 
                     Unit temp = new Unit(config, unit, systemData);
                     AddUnitToMap(temp, map);
@@ -46,7 +44,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 }
                 catch (Exception ex)
                 {
-                    throw new UnitProcessingException(row.ElementAtOrDefault(config.Name).ToString(), ex);
+                    throw new UnitProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
                 }
             }
 
@@ -89,8 +87,8 @@ namespace RedditEmblemAPI.Services.Helpers
                 return;
 
             //Find tile corresponsing to units coordinates
-            IList<Tile> row = map.ElementAtOrDefault(unit.Coordinate.Y - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate);
-            Tile tile = row.ElementAtOrDefault(unit.Coordinate.X - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate);
+            IList<Tile> row = map.ElementAtOrDefault<IList<Tile>>(unit.Coordinate.Y - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate);
+            Tile tile = row.ElementAtOrDefault<Tile>(unit.Coordinate.X - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate);
 
             //Make sure this unit is not placed overlapping another
             if (tile.Unit != null)
@@ -116,8 +114,8 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     for (int x = 0; x < unit.UnitSize; x++)
                     {
-                        IList<Tile> intersectRow = map.ElementAtOrDefault(unit.Coordinate.Y + y - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate.X + x, unit.Coordinate.Y + y);
-                        Tile intersectTile = intersectRow.ElementAtOrDefault(unit.Coordinate.X + x - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate.X + x, unit.Coordinate.Y + y);
+                        IList<Tile> intersectRow = map.ElementAtOrDefault<IList<Tile>>(unit.Coordinate.Y + y - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate.X + x, unit.Coordinate.Y + y);
+                        Tile intersectTile = intersectRow.ElementAtOrDefault<Tile>(unit.Coordinate.X + x - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate.X + x, unit.Coordinate.Y + y);
 
                         //Make sure this unit is not placed overlapping another
                         if (intersectTile.Unit != null && unit.Name != intersectTile.Unit.Name)

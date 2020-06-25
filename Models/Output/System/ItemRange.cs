@@ -44,6 +44,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="minimum">A numerical string value.</param>
         /// <param name="maximum">A numerical string value.</param>
+        /// <exception cref="MinimumGreaterThanMaximumException"></exception>
         public ItemRange(string minimum, string maximum)
         {
             this.Minimum = ParseHelper.SafeIntParse(minimum, "Minimum Range", true);

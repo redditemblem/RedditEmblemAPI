@@ -3,7 +3,6 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
@@ -38,15 +37,20 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
             if (parameters.Count < 3)
                 throw new SkillEffectMissingParameterException("AllyRadiusBaseStatModifer", 3, parameters.Count);
 
-            this.Radius = ParseHelper.SafeIntParse(parameters.ElementAtOrDefault<string>(0), "Param1", true);
+            this.Radius = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
             this.Stat = ParseHelper.SafeStringParse(parameters, 1, "Param2", true);
             this.Value = ParseHelper.SafeIntParse(parameters, 2, "Param3", false);
         }
 
+        /// <summary>
+        /// Searches the <paramref name="units"/> list for friendly units within <c>Radius</c> tiles. If it finds one, adds <c>Value</c> as a modifier to <c>Stat</c>.
+        /// </summary>
+        /// <exception cref="UnmatchedStatException"></exception>
         public void Apply(Unit unit, Skill skill, IList<Unit> units)
         {
             foreach (Unit other in units)
             {
+                //Ignore self
                 if (unit.Name == other.Name)
                     continue;
 
@@ -55,7 +59,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                     continue;
 
                 //Units must be within range
-                if (this.Radius < unit.Coordinate.DistanceFrom(other.Coordinate))
+                if (this.Radius < unit.OriginTile.Coordinate.DistanceFrom(other.OriginTile.Coordinate))
                     continue;
 
                 ModifiedStatValue stat;

@@ -1,8 +1,5 @@
 ﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.Map
 {

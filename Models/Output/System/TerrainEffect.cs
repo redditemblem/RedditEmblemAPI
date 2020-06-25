@@ -60,15 +60,15 @@ namespace RedditEmblemAPI.Models.Output.System
 
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", true);
-            this.Size = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.Size), "Size", true, 1);
+            this.Size = ParseHelper.OptionalSafeIntParse(data, config.Size, "Size", true, 1);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
 
-            this.HPModifier = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.HPModifier), "HP Modifier", false, 0);
+            this.HPModifier = ParseHelper.OptionalSafeIntParse(data, config.HPModifier, "HP Modifier", false, 0);
 
             this.CombatStatModifiers = new Dictionary<string, int>();
             foreach(NamedStatConfig stat in config.CombatStatModifiers)
             {
-                int val = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(stat.Value), stat.SourceName + " Modifier", false);
+                int val = ParseHelper.SafeIntParse(data, stat.Value, stat.SourceName + " Modifier", false);
                 if (val == 0)
                     continue;
 
@@ -79,7 +79,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.StatModifiers = new Dictionary<string, int>();
             foreach(NamedStatConfig stat in config.StatModifiers)
             {
-                int val = ParseHelper.SafeIntParse(data.ElementAtOrDefault<string>(stat.Value), stat.SourceName + " Modifier", false);
+                int val = ParseHelper.SafeIntParse(data, stat.Value, stat.SourceName + " Modifier", false);
                 if (val == 0)
                     continue;
 

@@ -49,9 +49,13 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
 
         private static Regex usesRegex = new Regex(@"\([0-9]+\)"); //match item uses (ex. "(5)")
 
+        /// <summary>
+        /// Constructor. Builds the <c>ConvoyItem</c> and matches it to an <c>Item</c> definition from <paramref name="items"/>.
+        /// </summary>
+        /// <exception cref="UnmatchedItemException"></exception>
         public ConvoyItem(ConvoyConfig config, IList<string> data, IDictionary<string, Item> items)
         {
-            this.FullName = data.ElementAtOrDefault<string>(config.Name);
+            this.FullName = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.Uses = 0;
 
             string name = this.FullName;
@@ -75,9 +79,9 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             this.Item = match;
             match.Matched = true;
 
-            this.Owner = (data.ElementAtOrDefault<string>(config.Owner) ?? string.Empty);
-            this.Value = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.Value), "Value", true, -1);
-            this.Quantity = ParseHelper.OptionalSafeIntParse(data.ElementAtOrDefault<string>(config.Quantity), "Quantity", true, 1);
+            this.Owner = ParseHelper.SafeStringParse(data, config.Owner, "Owner", false);
+            this.Value = ParseHelper.OptionalSafeIntParse(data, config.Value, "Value", true, -1);
+            this.Quantity = ParseHelper.OptionalSafeIntParse(data, config.Quantity, "Quantity", true, 1);
         }
     }
 }

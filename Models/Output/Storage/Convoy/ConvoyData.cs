@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,9 +54,9 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
                 try
                 {
                     IList<string> item = row.Select(r => r.ToString()).ToList();
-                    if (string.IsNullOrEmpty(item.ElementAtOrDefault<string>(config.System.Items.Name)))
-                        continue;
-                    this.Items.Add(item.ElementAtOrDefault(config.System.Items.Name), new Item(config.System.Items, item));
+                    string name = ParseHelper.SafeStringParse(item, config.System.Items.Name, "Name", false);
+                    if (string.IsNullOrEmpty(name)) continue;
+                    this.Items.Add(name, new Item(config.System.Items, item));
                 }
                 catch (Exception ex)
                 {
@@ -70,8 +71,8 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
                 try
                 {
                     IList<string> item = row.Select(r => r.ToString()).ToList();
-                    if (string.IsNullOrEmpty(item.ElementAtOrDefault<string>(config.Convoy.Name)))
-                        continue;
+                    string name = ParseHelper.SafeStringParse(item, config.Convoy.Name, "Name", false);
+                    if (string.IsNullOrEmpty(name)) continue;
                     this.ConvoyItems.Add(new ConvoyItem(config.Convoy, item, this.Items));
                 }
                 catch (Exception ex)

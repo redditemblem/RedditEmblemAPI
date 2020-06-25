@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Output.System.Skills;
+using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -138,9 +139,9 @@ namespace RedditEmblemAPI.Models.Output.System
                 try
                 {
                     IList<string> type = row.Select(r => r.ToString()).ToList();
-                    if (string.IsNullOrEmpty(type.ElementAtOrDefault<string>(config.TerrainTypes.Name)))
-                        continue;
-                    this.TerrainTypes.Add(type.ElementAtOrDefault<string>(config.TerrainTypes.Name), new TerrainType(config.TerrainTypes, type));
+                    string name = ParseHelper.SafeStringParse(type, config.TerrainTypes.Name, "Name", false);
+                    if (string.IsNullOrEmpty(name)) continue;
+                    this.TerrainTypes.Add(name, new TerrainType(config.TerrainTypes, type));
                 }
                 catch (Exception ex)
                 {
@@ -154,10 +155,9 @@ namespace RedditEmblemAPI.Models.Output.System
                 try
                 {
                     IList<string> cls = row.Select(r => r.ToString()).ToList();
-                    if (string.IsNullOrEmpty(cls.ElementAtOrDefault<string>(config.Classes.Name)))
-                        continue;
-                    this.Classes.Add(cls.ElementAtOrDefault<string>(config.Classes.Name),
-                                     new Class(config.Classes, cls));
+                    string name = ParseHelper.SafeStringParse(cls, config.Classes.Name, "Name", false);
+                    if (string.IsNullOrEmpty(name)) continue;
+                    this.Classes.Add(name, new Class(config.Classes, cls));
                 }
                 catch (Exception ex)
                 {
@@ -171,10 +171,9 @@ namespace RedditEmblemAPI.Models.Output.System
                 try
                 {
                     IList<string> aff = row.Select(r => r.ToString()).ToList();
-                    if (string.IsNullOrEmpty(aff.ElementAtOrDefault<string>(config.Affiliations.Name)))
-                        continue;
-                    this.Affiliations.Add(aff.ElementAtOrDefault<string>(config.Affiliations.Name),
-                                          new Affiliation(config.Affiliations, aff));
+                    string name = ParseHelper.SafeStringParse(aff, config.Affiliations.Name, "Name", false);
+                    if (string.IsNullOrEmpty(name)) continue;
+                    this.Affiliations.Add(name, new Affiliation(config.Affiliations, aff));
                 }
                 catch (Exception ex)
                 {
@@ -188,9 +187,9 @@ namespace RedditEmblemAPI.Models.Output.System
                 try
                 {
                     IList<string> item = row.Select(r => r.ToString()).ToList();
-                    if (string.IsNullOrEmpty(item.ElementAtOrDefault<string>(config.Items.Name)))
-                        continue;
-                    this.Items.Add(item.ElementAtOrDefault(config.Items.Name), new Item(config.Items, item));
+                    string name = ParseHelper.SafeStringParse(item, config.Items.Name, "Name", false);
+                    if (string.IsNullOrEmpty(name)) continue;
+                    this.Items.Add(name, new Item(config.Items, item));
                 }
                 catch (Exception ex)
                 {
@@ -213,9 +212,9 @@ namespace RedditEmblemAPI.Models.Output.System
                     try
                     {
                         IList<string> effect = row.Select(r => r.ToString()).ToList();
-                        if (string.IsNullOrEmpty(effect.ElementAtOrDefault<string>(config.TerrainEffects.Name)))
-                            continue;
-                        this.TerrainEffects.Add(effect.ElementAtOrDefault<string>(config.TerrainEffects.Name), new TerrainEffect(config.TerrainEffects, effect));
+                        string name = ParseHelper.SafeStringParse(effect, config.TerrainEffects.Name, "Name", false);
+                        if (string.IsNullOrEmpty(name)) continue;
+                        this.TerrainEffects.Add(name, new TerrainEffect(config.TerrainEffects, effect));
                     }
                     catch (Exception ex)
                     {
@@ -232,9 +231,9 @@ namespace RedditEmblemAPI.Models.Output.System
                     try
                     {
                         IList<string> skill = row.Select(r => r.ToString()).ToList();
-                        if (string.IsNullOrEmpty(skill.ElementAtOrDefault<string>(config.Skills.Name)))
-                            continue;
-                        this.Skills.Add(skill.ElementAtOrDefault<string>(config.Skills.Name), new Skill(config.Skills, skill));
+                        string name = ParseHelper.SafeStringParse(skill, config.Skills.Name, "Name", false);
+                        if (string.IsNullOrEmpty(name)) continue;
+                        this.Skills.Add(name, new Skill(config.Skills, skill));
                     }
                     catch (Exception ex)
                     {
@@ -251,10 +250,9 @@ namespace RedditEmblemAPI.Models.Output.System
                     try
                     {
                         IList<string> stat = row.Select(r => r.ToString()).ToList();
-                        if (string.IsNullOrEmpty(stat.ElementAtOrDefault<string>(config.StatusConditions.Name)))
-                            continue;
-                        this.StatusConditions.Add(stat.ElementAtOrDefault<string>(config.StatusConditions.Name),
-                                              new StatusCondition(config.StatusConditions, stat));
+                        string name = ParseHelper.SafeStringParse(stat, config.StatusConditions.Name, "Name", false);
+                        if (string.IsNullOrEmpty(name)) continue;
+                        this.StatusConditions.Add(name, new StatusCondition(config.StatusConditions, stat));
                     }
                     catch (Exception ex)
                     {

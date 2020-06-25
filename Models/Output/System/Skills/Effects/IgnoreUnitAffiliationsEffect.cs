@@ -8,7 +8,6 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="parameters"></param>
         public IgnoreUnitAffiliationsEffect(IList<string> parameters)
         {
             //This effect has no parameters

@@ -3,14 +3,13 @@ using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Services.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
     /// <summary>
-    /// Object representing a Item definition in the team's system. 
+    /// Object representing an item definition in the team's system. 
     /// </summary>
     public class Item
     {
@@ -85,8 +84,6 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="config"></param>
-        /// <param name="data"></param>
         /// <exception cref="AnyIntegerException"></exception>
         public Item(ItemsConfig config, IList<string> data)
         {
@@ -94,9 +91,9 @@ namespace RedditEmblemAPI.Models.Output.System
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
             this.Category = ParseHelper.SafeStringParse(data, config.Category, "Category", true);
             this.WeaponRank = ParseHelper.SafeStringParse(data, config.WeaponRank, "Weapon Rank", false);
-            this.UtilizedStat = ParseHelper.SafeStringParse(data, config.UtilizedStat, "Utilized Stat", true);
+            this.UtilizedStat = ParseHelper.SafeStringParse(data, config.UtilizedStat, "Utilized Stat", false);
             this.DealsDamage = (ParseHelper.SafeStringParse(data, config.DealsDamage, "Deals Damage", true) == "Yes");
-            this.MaxUses = ParseHelper.SafeIntParse(data.ElementAtOrDefault(config.Uses), "Uses", true);
+            this.MaxUses = ParseHelper.SafeIntParse(data, config.Uses, "Uses", true);
             this.Range = new ItemRange(data.ElementAtOrDefault<string>(config.Range.Minimum),
                                        data.ElementAtOrDefault<string>(config.Range.Maximum));
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
@@ -112,16 +109,18 @@ namespace RedditEmblemAPI.Models.Output.System
             foreach (NamedStatConfig stat in config.EquippedStatModifiers)
             {
                 int val = ParseHelper.SafeIntParse(data, stat.Value, string.Format("{0} ({1})", stat.SourceName, "Equipped"), false);
-                if (val != 0)
-                    this.EquippedStatModifiers.Add(stat.SourceName, val);
+                if (val == 0)
+                    continue;
+                this.EquippedStatModifiers.Add(stat.SourceName, val);
             }
 
             this.InventoryStatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.InventoryStatModifiers)
             {
                 int val = ParseHelper.SafeIntParse(data, stat.Value, string.Format("{0} ({1})", stat.SourceName, "Inventory"), false);
-                if (val != 0)
-                    this.InventoryStatModifiers.Add(stat.SourceName, val);
+                if (val == 0)
+                    continue;
+                this.InventoryStatModifiers.Add(stat.SourceName, val);
             }
         }
     }
