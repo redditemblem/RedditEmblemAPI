@@ -121,6 +121,11 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public int Tags { get; set; } = -1;
 
         /// <summary>
+        /// Optional. List of a unit's system stats.
+        /// </summary>
+        public IList<ModifiedNamedStatConfig> SystemStats { get; set; } = new List<ModifiedNamedStatConfig>();
+
+        /// <summary>
         /// Optional. List of cell indexes for a unit's status conditions.
         /// </summary>
         public IList<int> StatusConditions { get; set; } = new List<int>();

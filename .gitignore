@@ -3,3 +3,4 @@ obj
 bin
 aws-lambda-tools-defaults.json
 RedditEmblemAPI.csproj.user
+Properties/launchSettings.json

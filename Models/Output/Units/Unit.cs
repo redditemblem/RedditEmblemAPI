@@ -106,6 +106,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         public IDictionary<string, ModifiedStatValue> CombatStats { get; set; }
 
         /// <summary>
+        /// Collection of the unit's system stats.
+        /// </summary>
+        public IDictionary<string, ModifiedStatValue> SystemStats { get; set; }
+
+        /// <summary>
         /// Collection of the unit's stat values.
         /// </summary>
         public IDictionary<string, ModifiedStatValue> Stats { get; set; }
@@ -226,6 +231,9 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.WeaponRanks = new Dictionary<string, string>();
             BuildWeaponRanks(data, config.WeaponRanks);
 
+            this.SystemStats = new Dictionary<string, ModifiedStatValue>();
+            BuildSystemStats(data, config.SystemStats);
+
             this.Stats = new Dictionary<string, ModifiedStatValue>();
             BuildStats(data, config.Stats);
 
@@ -254,6 +262,26 @@ namespace RedditEmblemAPI.Models.Output.Units
 
                 if (!string.IsNullOrEmpty(rankType))
                     this.WeaponRanks.Add(rankType, rankLetter);
+            }
+        }
+
+        private void BuildSystemStats(IList<string> data, IList<ModifiedNamedStatConfig> config)
+        {
+            foreach(ModifiedNamedStatConfig stat in config)
+            {
+                ModifiedStatValue temp = new ModifiedStatValue();
+                temp.BaseValue = ParseHelper.SafeIntParse(data, stat.BaseValue, stat.SourceName, true);
+
+                //Parse modifiers list
+                foreach (NamedStatConfig mod in stat.Modifiers)
+                {
+                    int val = ParseHelper.SafeIntParse(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName), false);
+                    if (val == 0)
+                        continue;
+                    temp.Modifiers.Add(mod.SourceName, val);
+                }
+
+                this.SystemStats.Add(stat.SourceName, temp);
             }
         }
 

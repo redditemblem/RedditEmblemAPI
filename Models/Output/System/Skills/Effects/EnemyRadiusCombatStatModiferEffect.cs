@@ -59,7 +59,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                     continue;
 
                 //Units must be within range
-                if (this.Radius < unit.OriginTile.Coordinate.DistanceFrom(other.OriginTile.Coordinate))
+                if ( unit.OriginTile == null
+                  || other.OriginTile == null 
+                  || this.Radius < unit.OriginTile.Coordinate.DistanceFrom(other.OriginTile.Coordinate))
                     continue;
 
                 ModifiedStatValue stat;
