@@ -1,0 +1,265 @@
+{
+  "Team": { //Required
+    "Name": "Team X", //Required. String is formatted for UI display, JSON file name must match this value sans spaces
+    "WorkbookID": "" //Required
+  },
+  "Map": { //Required
+    "Constants": { //Required
+      "TileSize": 0, //Required
+      "TileSpacing": 0, //Required
+      "HasHeaderTopLeft": false, //Optional, defaults to false
+      "HasHeaderBottomRight": false //Optional, defaults to false
+    },
+    "MapControls": {   //Required
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "MapSwitch": 0, //Required
+      "MapImageURL": 0, //Required
+      "ChapterPostURL": 0 //Optional
+    },
+    "MapTiles": { //Required
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 1
+      }
+    },
+    "MapEffects": { //Optional, defaults to null
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 1,
+        "AllowNullData": true //Important!
+      }
+    }
+  },
+  "System": { //Required
+    "WeaponRanks": [ "E", "D", "C", "B", "A", "S" ], //Optional, defaults to an empty list
+    "Currency": { //Optional, defaults to null
+      "CurrencySymbol": "", //Required
+      "IsSymbolLeftAligned": true, //Optional, defaults to true
+      "IncludeSpace": false //Optional, defaults to false
+    },
+    "Items": { //Required
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "SpriteURL": 0, //Optional
+      "Category": 0, //Required
+      "WeaponRank": 0, //Optional
+      "UtilizedStat": 0, //Required
+      "DealsDamage": 0, //Required
+      "Uses": 0, //Required
+      "Stats": [ //Required
+        {
+          "SourceName": "Mt",
+          "Value": 0
+        }
+      ],
+      "EquippedStatModifiers": [ //Optional
+        {
+          "SourceName": "Str",
+          "Value": 0
+        }
+      ],
+      "InventoryStatModifiers": [ //Optional
+        {
+          "SourceName": "Str",
+          "Value": 0
+        }
+      ],
+      "Range": { //Required
+        "Minimum": 0, //Required
+        "Maximum": 0 //Required
+      },
+      "TextFields": [] //Optional
+    },
+    "Skills": { //Optional, defaults to null
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "SpriteURL": 0, //Optional
+      "TextFields": [], //Optional
+      "Effect": { //Optional
+        "Type": 3,
+        "Parameter1": 4,
+        "Parameter2": 5,
+        "Parameter3": 6
+      }
+    },
+    "Classes": { //Required
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "MovementType": 0, //Required
+      "Tags": 0, //Optional
+      "TextFields": [ 0 ] //Optional
+    },
+    "Affiliations": { //Required
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "Grouping": 0, //Required
+      "TextFields": [ 0 ] //Optional
+    },
+    "StatusEffects": { //Optional
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "Type": 0, //Required
+      "Turns": 0, //Optional
+      "TextFields": [ 0 ] //Optional
+    },
+    "TerrainTypes": { //Required
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "MovementCosts": [ //Required
+        {
+          "SourceName": "Mounted",
+          "Value": 0
+        }
+      ],
+      "BlocksItems": 0, //Required
+      "StatModifiers": [ //Optional
+        {
+          "SourceName": "Avo",
+          "Value": 0
+        }
+      ],
+      "TextFields": [ 0 ] //Optional
+    },
+    "TerrainEffects": { //Optional
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "SpriteURL": 0, //Required
+      "Size": 0, //Optional
+      "HPModifier": 0, //Optional
+      "CombatStatModifiers": [ //Optional
+        {
+          "SourceName": 0,
+          "Value": 0
+        }
+      ],
+      "StatModifiers": [ //Optional
+        {
+          "SourceName": 0,
+          "Value": 0
+        }
+      ],
+      "TextFields": [ 0 ] //Optional
+    }
+  },
+  "Units": { //Required
+    "Query": {
+      "Sheet": "",
+      "Selection": "",
+      "Orientation": 0
+    },
+    "Name": 0, //Required
+    "SpriteURL": 0, //Required
+    "Level": 0, //Required
+    "Classes": [ 0 ], //Required
+    "Affiliation": 0, //Required
+    "Coordinate": 0, //Required
+    "HP": { //Required
+      "Current": 0,
+      "Maximum": 0
+    },
+    "CombatStats": [ //Required
+      {
+        "SourceName": "",
+        "Equation": ""
+      }
+    ],
+    "Stats": [ //Required
+      {
+        "SourceName": "Mov", //"Mov" is a required stat
+        "BaseValue": 0,
+        "Modifiers": [ //Required
+          {
+            "SourceName": "",
+            "Value": 0
+          }
+        ]
+      }
+    ],
+    "WeaponRanks": [ //Required
+      {
+        "Type": 0, //Required
+        "Rank": 0 //Optional
+      }
+    ],
+    "Inventory": { //Required
+      "EquippedItem": 0, //Required
+      "Slots": [ 0 ] //Required
+    },
+    "Player": 0, //Optional
+    "TextFields": [ 0 ], //Optional
+    "UnitSize": 0, //Optional
+    "HasMoved": 0, //Optional
+    "Experience": 0, //Optional
+    "HeldCurrency": 0, //Optional
+    "Tags": 0, //Optional
+    "SystemStats": { //Optional
+      "SourceName": "Charge",
+      "BaseValue": 0,
+      "Modifiers": [
+        {
+          "SourceName": "",
+          "Value": 0
+        }
+      ]
+    },
+    "Skills": [ 0 ], //Optional
+    "StatusEffects": [ 0 ] //Optional
+  },
+  "Convoy": { //Optional
+    "Query": {
+      "Sheet": "",
+      "Selection": "",
+      "Orientation": 0
+    },
+    "Name": 0, //Required
+    "Owner": 0, //Required
+    "Quantity": 0, //Optional
+    "Value": 0 //Optional
+  },
+  "Shop": { //Optional
+    "Query": {
+      "Sheet": "",
+      "Selection": "",
+      "Orientation": 0
+    },
+    "Name": 0, //Required
+    "Stock": 0, //Required
+    "Price": 0, //Required
+    "SalePrice": 0, //Optional
+    "IsNew": 0 //Optional
+  }
+}

@@ -8,7 +8,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
     /// </summary>
     public class ModifiedNamedStatConfig
     {
-        #region RequiredFields
+        #region Required Fields
 
         /// <summary>
         /// Required. Name of the stat value. (ex. "Str")
@@ -22,11 +22,14 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         [JsonRequired]
         public int BaseValue { get; set; }
 
+        #endregion
+
+        #region Optional Fields
+
         /// <summary>
-        /// Required. List of named modifiers to this stat. (ex. "Buff/Debuff")
+        /// Optional. List of named modifiers to this stat. (ex. "Buff/Debuff")
         /// </summary>
-        [JsonRequired]
-        public IList<NamedStatConfig> Modifiers { get; set; }
+        public IList<NamedStatConfig> Modifiers { get; set; } = new List<NamedStatConfig>();
 
         #endregion
     }

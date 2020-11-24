@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainEffects
     /// </summary>
     public class TerrainEffectsConfig
     {
-        #region RequiredFields
+        #region Required Fields
 
         [JsonRequired]
         public Query Query { get; set; }

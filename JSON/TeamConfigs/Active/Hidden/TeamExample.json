@@ -189,7 +189,7 @@
     },
     "StatusConditions": {
       "Query": {
-        "Sheet": "Statuses",
+        "Sheet": "Status Conditions",
         "Selection": "A2:ZZ",
         "Orientation": 1
       },
@@ -311,7 +311,7 @@
       },
       {
         "SourceName": "Hit",
-        "Equation": "100"
+        "Equation": "{WeaponStat[Hit]}+({UnitStat[Skl]}*1.5)+({UnitStat[Lck]}/2)"
       },
       {
         "SourceName": "Avo",

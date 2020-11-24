@@ -197,17 +197,20 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public Unit(UnitsConfig config, IList<string> data, SystemInfo systemData)
         {
+            //Required fields
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", true);
-            this.Player = ParseHelper.SafeStringParse(data, config.Player, "Player", false);
+            this.Level = ParseHelper.SafeIntParse(data, config.Level, "Level", true);
             this.Coordinate = new Coordinate(data.ElementAtOrDefault<string>(config.Coordinate));
-            this.UnitSize = ParseHelper.OptionalSafeIntParse(data, config.UnitSize, "Unit Size", true, 1);
-            this.HasMoved = (ParseHelper.SafeStringParse(data, config.HasMoved, "Has Moved", false) == "Yes");
             this.HP = new HP(data.ElementAtOrDefault<string>(config.HP.Current),
                              data.ElementAtOrDefault<string>(config.HP.Maximum));
-            this.Level = ParseHelper.SafeIntParse(data, config.Level, "Level", true);
-            this.Experience = ParseHelper.SafeIntParse(data, config.Experience, "Experience", true) % 100;
-            this.HeldCurrency = ParseHelper.OptionalSafeIntParse(data, config.HeldCurrency, "Currency", false, -1);
+
+            //Optional fields
+            this.Player = ParseHelper.SafeStringParse(data, config.Player, "Player", false);
+            this.UnitSize = ParseHelper.OptionalSafeIntParse(data, config.UnitSize, "Unit Size", true, 1);
+            this.HasMoved = (ParseHelper.SafeStringParse(data, config.HasMoved, "Has Moved", false) == "Yes");
+            this.Experience = ParseHelper.OptionalSafeIntParse(data, config.Experience, "Experience", true, 0) % 100;
+            this.HeldCurrency = ParseHelper.OptionalSafeIntParse(data, config.HeldCurrency, "Currency", true, -1);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
             this.Tags = ParseHelper.StringCSVParse(data, config.Tags);
 
@@ -340,7 +343,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                      || weaponRanks.IndexOf(unitRank) >= weaponRanks.IndexOf(item.Item.WeaponRank))
                         item.CanEquip = true;
                 }
-                else if (string.IsNullOrEmpty(item.Item.WeaponRank) && string.IsNullOrEmpty(item.Item.UtilizedStat) && !item.Item.DealsDamage)
+                else if (string.IsNullOrEmpty(item.Item.WeaponRank) && string.IsNullOrEmpty(item.Item.UtilizedStat))
                 {
                     item.CanEquip = true;
                 }
@@ -449,6 +452,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             foreach (CalculatedStatConfig stat in stats)
             {
                 string equation = stat.Equation;
+                UnitInventoryItem equipped = this.Inventory.SingleOrDefault(i => i != null && i.IsEquipped);
 
                 //{UnitStat[...]}
                 //Replaced by values from the unit.Stats list
@@ -456,19 +460,34 @@ namespace RedditEmblemAPI.Models.Output.Units
                 if (unitStatMatches.Count > 0)
                 {
                     foreach (Match match in unitStatMatches)
-                        equation = equation.Substring(0, match.Index) + this.Stats[match.Groups[1].Value].FinalValue + equation.Substring(match.Index + match.Length);
+                    {
+                        ModifiedStatValue unitStat;
+                        if (!this.Stats.TryGetValue(match.Groups[1].Value, out unitStat))
+                            throw new UnmatchedStatException(match.Groups[1].Value);
+                        equation = equation.Substring(0, match.Index) + unitStat.FinalValue + equation.Substring(match.Index + match.Length);
+                    }   
                 }
 
                 //{WeaponUtilStat}
-                UnitInventoryItem equipped = this.Inventory.SingleOrDefault(i => i != null && i.IsEquipped);
-                equation = equation.Replace("{WeaponUtilStat}", (equipped != null ? this.Stats[equipped.Item.UtilizedStat].FinalValue : 0).ToString());
+                if (equation.Contains("{WeaponUtilStat}"))
+                {
+                    ModifiedStatValue weaponUtilStat;
+                    if(!this.Stats.TryGetValue(equipped.Item.UtilizedStat, out weaponUtilStat) && !string.IsNullOrEmpty(equipped.Item.UtilizedStat))
+                        throw new UnmatchedStatException(equipped.Item.UtilizedStat);
+                    equation = equation.Replace("{WeaponUtilStat}", (equipped != null && weaponUtilStat != null ? weaponUtilStat.FinalValue : 0).ToString()); 
+                }
 
                 //{WeaponStat[...]}
                 MatchCollection weaponStatMatches = weaponStatRegex.Matches(equation);
                 if (weaponStatMatches.Count > 0)
                 {
                     foreach (Match match in weaponStatMatches)
-                        equation = equation.Substring(0, match.Index) + (equipped != null ? equipped.Item.Stats[match.Groups[1].Value] : 0) + equation.Substring(match.Index + match.Length);
+                    {
+                        int weaponStatValue = 0;
+                        if (equipped != null && equipped.Item.Stats.TryGetValue(match.Groups[1].Value, out weaponStatValue))
+                            throw new UnmatchedStatException(match.Groups[1].Value);
+                        equation = equation.Substring(0, match.Index) + weaponStatValue + equation.Substring(match.Index + match.Length);
+                    }
                 }
 
                 //Throw an error if anything remains unparsed

@@ -1,5 +1,6 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Services.Helpers;
+using System;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -33,6 +34,8 @@ namespace RedditEmblemAPI.Models.Output.System
                 throw new PositiveIntegerException("Maximum Range", maximum.ToString());
             if (minimum > maximum)
                 throw new MinimumGreaterThanMaximumException("Minimum Range", "Maximum Range");
+            if (maximum > 12)
+                throw new RangeMaximumTooLargeException("For performance reasons, item ranges in excess of 12 tiles are currently not allowed.");
 
             this.Minimum = minimum;
             this.Maximum = maximum;
@@ -52,6 +55,8 @@ namespace RedditEmblemAPI.Models.Output.System
 
             if (this.Minimum > this.Maximum)
                 throw new MinimumGreaterThanMaximumException("Minimum Range", "Maximum Range");
+            if (this.Maximum > 12)
+                throw new RangeMaximumTooLargeException("For performance reasons, item ranges in excess of 12 tiles are currently not allowed.");
         }
     }
 }
