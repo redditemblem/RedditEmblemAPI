@@ -99,7 +99,7 @@ namespace RedditEmblemAPI.Services
             //Do a deep search for our team file, we want to include things in the Hidden folder
             string filePath = "";
             foreach (string path in Directory.EnumerateFiles("JSON/TeamConfigs/Active", "", SearchOption.AllDirectories))
-                if (Path.GetFileNameWithoutExtension(path) == teamName)
+                if (string.Equals(Path.GetFileNameWithoutExtension(path), teamName, StringComparison.OrdinalIgnoreCase))
                 {
                     filePath = path;
                     break;

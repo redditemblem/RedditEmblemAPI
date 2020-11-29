@@ -37,12 +37,12 @@ namespace RedditEmblemAPI.Services.Helpers
                     RecurseUnitRange(unitParms, unit.Stats["Mov"].FinalValue, unit.OriginTile.Coordinate, new List<Coordinate>());
 
                     //Find the items with minimum and maximum attack range
-                    UnitInventoryItem minAtkRange = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderBy(i => i.Item.Range.Minimum).FirstOrDefault();
-                    UnitInventoryItem maxAtkRange = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderByDescending(i => i.Item.Range.Maximum + i.MaxRangeModifier).FirstOrDefault();
+                    UnitInventoryItem minAtkRange = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderBy(i => i.ModifiedMinRangeValue).FirstOrDefault();
+                    UnitInventoryItem maxAtkRange = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderByDescending(i => i.ModifiedMaxRangeValue).FirstOrDefault();
 
                     //Find the items with minimum and maximum utility range
-                    UnitInventoryItem minUtilRange = unit.Inventory.Where(i => i != null && i.CanEquip && !i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderBy(i => i.Item.Range.Minimum).FirstOrDefault();
-                    UnitInventoryItem maxUtilRange = unit.Inventory.Where(i => i != null && i.CanEquip && !i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderByDescending(i => i.Item.Range.Maximum + i.MaxRangeModifier).FirstOrDefault();
+                    UnitInventoryItem minUtilRange = unit.Inventory.Where(i => i != null && i.CanEquip && !i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderBy(i => i.ModifiedMinRangeValue).FirstOrDefault();
+                    UnitInventoryItem maxUtilRange = unit.Inventory.Where(i => i != null && i.CanEquip && !i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderByDescending(i => i.ModifiedMaxRangeValue).FirstOrDefault();
 
                     IList<Coordinate> atkRange = new List<Coordinate>();
                     IList<Coordinate> utilRange = new List<Coordinate>();
@@ -50,7 +50,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     {
                         //Calculate attack range
                         ItemRangeParameters atkParms = new ItemRangeParameters(coord, 
-                            (minAtkRange != null ? minAtkRange.Item.Range.Minimum : 0), (maxAtkRange != null ? maxAtkRange.Item.Range.Maximum + maxAtkRange.MaxRangeModifier : 0));
+                            (minAtkRange != null ? minAtkRange.ModifiedMinRangeValue : 0), (maxAtkRange != null ? maxAtkRange.ModifiedMaxRangeValue : 0));
                         RecurseItemRange( unit,
                                           atkParms,
                                           coord,
@@ -62,7 +62,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
                         //Calculate utility range
                         ItemRangeParameters utilParms = new ItemRangeParameters(coord, 
-                            (minUtilRange != null ? minUtilRange.Item.Range.Minimum : 0), (maxUtilRange != null ? maxUtilRange.Item.Range.Maximum + maxUtilRange.MaxRangeModifier : 0));
+                            (minUtilRange != null ? minUtilRange.ModifiedMinRangeValue : 0), (maxUtilRange != null ? maxUtilRange.ModifiedMaxRangeValue : 0));
                         RecurseItemRange( unit,
                                           utilParms,
                                           coord,
@@ -122,6 +122,9 @@ namespace RedditEmblemAPI.Services.Helpers
 
                 if (moveCost < 0) moveCost = 0;
                 if (moveCost > remainingMov || moveCost >= 99) return;
+                if (unitParms.Unit.UnitSize > 1 && !UnitCanAccessAllIntersectedTiles(unitParms, tile))
+                    return;
+               
                 remainingMov = remainingMov - moveCost;
 
             }
@@ -192,6 +195,42 @@ namespace RedditEmblemAPI.Services.Helpers
                 RecurseItemRange(unit, parms, new Coordinate(currCoord.X, currCoord.Y + 1), remainingMinRange - 1, remainingMaxRange - 1, visitedCoords.ToList(), ref itemRange);
         }
 
+        private bool UnitCanAccessAllIntersectedTiles(UnitRangeParameters unitParms, Tile currentOriginTile)
+        {
+            int anchorOffset = (int)Math.Ceiling(unitParms.Unit.UnitSize / 2.0m) - 1;
+            Tile relativeAnchorTile = GetTileByCoord(currentOriginTile.Coordinate.X - anchorOffset, currentOriginTile.Coordinate.Y - anchorOffset);
+
+            for (int y = 0; y < unitParms.Unit.UnitSize; y++)
+            {
+                for (int x = 0; x < unitParms.Unit.UnitSize; x++)
+                {
+                    //We don't need to recheck the current origin
+                    if (currentOriginTile.Coordinate.X == relativeAnchorTile.Coordinate.X + x && currentOriginTile.Coordinate.Y == relativeAnchorTile.Coordinate.Y + y)
+                        continue;
+
+                    Tile tile = GetTileByCoord(relativeAnchorTile.Coordinate.X + x, relativeAnchorTile.Coordinate.Y + y);
+
+                    //If there is a Unit occupying this tile, check for affiliation collisions
+                    if (tile.Unit != null && unitParms.Unit.Name != tile.Unit.Name)
+                    {
+                        if (!unitParms.IgnoresAffiliations && unitParms.Unit.AffiliationObj.Grouping != tile.Unit.AffiliationObj.Grouping)
+                            return false;
+                    }
+
+                    int moveCost;
+                    if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(unitParms.Unit.ClassList.First().MovementType, out moveCost))
+                        throw new UnmatchedClassMovementTypeException(unitParms.Unit.ClassList.First().MovementType, tile.TerrainTypeObj.MovementCosts.Keys.ToList());
+
+                    //We only care if the unit cannot move onto this tile at all
+                    //Move costs only matters for the origin
+                    if (moveCost >= 99)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+        
         /// <summary>
         /// Fetches the tile with matching coordinates to <paramref name="coord"/>.
         /// </summary>
@@ -200,6 +239,19 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             IList<Tile> row = this.Tiles.ElementAtOrDefault<IList<Tile>>(coord.Y - 1) ?? throw new TileOutOfBoundsException(coord.X, coord.Y);
             Tile column = row.ElementAtOrDefault<Tile>(coord.X - 1) ?? throw new TileOutOfBoundsException(coord.X, coord.Y);
+
+            return column;
+        }
+
+
+        /// <summary>
+        /// Fetches the tile with matching coordinates to <paramref name="x"/> and <paramref name="y"/>.
+        /// </summary>
+        /// <exception cref="TileOutOfBoundsException"></exception>
+        private Tile GetTileByCoord(int x, int y)
+        {
+            IList<Tile> row = this.Tiles.ElementAtOrDefault<IList<Tile>>(y - 1) ?? throw new TileOutOfBoundsException(x, y);
+            Tile column = row.ElementAtOrDefault<Tile>(x - 1) ?? throw new TileOutOfBoundsException(x, y);
 
             return column;
         }

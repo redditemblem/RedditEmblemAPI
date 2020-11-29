@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class EnemyRadiusBaseStatModiferEffect : ISkillEffect
+    public class EnemyRadiusStatModiferEffect : ISkillEffect
     {
         #region Attributes
 
@@ -32,10 +32,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// Constructor.
         /// </summary>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
-        public EnemyRadiusBaseStatModiferEffect(IList<string> parameters)
+        public EnemyRadiusStatModiferEffect(IList<string> parameters)
         {
             if (parameters.Count < 3)
-                throw new SkillEffectMissingParameterException("EnemyRadiusBaseStatModifer", 3, parameters.Count);
+                throw new SkillEffectMissingParameterException("EnemyRadiusStatModifer", 3, parameters.Count);
 
             this.Radius = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
             this.Stat = ParseHelper.SafeStringParse(parameters, 1, "Param2", true);

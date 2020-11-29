@@ -188,7 +188,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         private static Regex unitNumberRegex = new Regex(@"\s([0-9]+$)"); //matches digits at the end of a string (ex. "Swordmaster _05_")
 
         private static Regex unitStatRegex = new Regex(@"{UnitStat\[([A-Za-z]+)\]}"); //match unit stat name
-        private static Regex weaponStatRegex = new Regex(@"{WeaponStat[A-Za-z]+]}"); //match weapon stat name
+        private static Regex weaponStatRegex = new Regex(@"{WeaponStat\[([A-Za-z]+)\]}"); //match weapon stat name
 
         #endregion
 
@@ -209,8 +209,12 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Player = ParseHelper.SafeStringParse(data, config.Player, "Player", false);
             this.UnitSize = ParseHelper.OptionalSafeIntParse(data, config.UnitSize, "Unit Size", true, 1);
             this.HasMoved = (ParseHelper.SafeStringParse(data, config.HasMoved, "Has Moved", false) == "Yes");
-            this.Experience = ParseHelper.OptionalSafeIntParse(data, config.Experience, "Experience", true, 0) % 100;
-            this.HeldCurrency = ParseHelper.OptionalSafeIntParse(data, config.HeldCurrency, "Currency", true, -1);
+
+            int experience = ParseHelper.OptionalSafeIntParse(data, config.Experience, "Experience", true, -1);
+            if(experience > -1) experience %= 100;
+            this.Experience = experience;
+
+            this.HeldCurrency = ParseHelper.OptionalSafeIntParse(data, config.HeldCurrency, "Currency", true, 0);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
             this.Tags = ParseHelper.StringCSVParse(data, config.Tags);
 
@@ -232,7 +236,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             affMatch.Matched = true;
 
             this.WeaponRanks = new Dictionary<string, string>();
-            BuildWeaponRanks(data, config.WeaponRanks);
+            BuildWeaponRanks(data, config.WeaponRanks, systemData.WeaponRanks.Any());
 
             this.SystemStats = new Dictionary<string, ModifiedStatValue>();
             BuildSystemStats(data, config.SystemStats);
@@ -256,7 +260,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             BuildCombatStats(config.CombatStats);
         }
 
-        private void BuildWeaponRanks(IList<string> data, IList<UnitWeaponRanksConfig> config)
+        private void BuildWeaponRanks(IList<string> data, IList<UnitWeaponRanksConfig> config, bool systemUsesWeaponRanks)
         {
             foreach (UnitWeaponRanksConfig rank in config)
             {
@@ -264,7 +268,11 @@ namespace RedditEmblemAPI.Models.Output.Units
                 string rankLetter = ParseHelper.SafeStringParse(data, rank.Rank, "Weapon Rank Letter", false);
 
                 if (!string.IsNullOrEmpty(rankType))
+                {
+                    if (systemUsesWeaponRanks && string.IsNullOrEmpty(rankLetter))
+                        throw new WeaponRankMissingLetterException(rankType);
                     this.WeaponRanks.Add(rankType, rankLetter);
+                }
             }
         }
 
@@ -464,17 +472,22 @@ namespace RedditEmblemAPI.Models.Output.Units
                         ModifiedStatValue unitStat;
                         if (!this.Stats.TryGetValue(match.Groups[1].Value, out unitStat))
                             throw new UnmatchedStatException(match.Groups[1].Value);
-                        equation = equation.Substring(0, match.Index) + unitStat.FinalValue + equation.Substring(match.Index + match.Length);
+                        equation = equation.Replace(match.Groups[0].Value, unitStat.FinalValue.ToString());
                     }   
                 }
 
                 //{WeaponUtilStat}
                 if (equation.Contains("{WeaponUtilStat}"))
                 {
-                    ModifiedStatValue weaponUtilStat;
-                    if(!this.Stats.TryGetValue(equipped.Item.UtilizedStat, out weaponUtilStat) && !string.IsNullOrEmpty(equipped.Item.UtilizedStat))
-                        throw new UnmatchedStatException(equipped.Item.UtilizedStat);
-                    equation = equation.Replace("{WeaponUtilStat}", (equipped != null && weaponUtilStat != null ? weaponUtilStat.FinalValue : 0).ToString()); 
+                    int weaponUtilStatValue = 0;
+                    if(equipped != null && !string.IsNullOrEmpty(equipped.Item.UtilizedStat))
+                    {
+                        ModifiedStatValue weaponUtilStat;
+                        if (!this.Stats.TryGetValue(equipped.Item.UtilizedStat, out weaponUtilStat))
+                            throw new UnmatchedStatException(equipped.Item.UtilizedStat);
+                        weaponUtilStatValue = weaponUtilStat.FinalValue;
+                    }
+                    equation = equation.Replace("{WeaponUtilStat}", weaponUtilStatValue.ToString()); 
                 }
 
                 //{WeaponStat[...]}
@@ -484,9 +497,9 @@ namespace RedditEmblemAPI.Models.Output.Units
                     foreach (Match match in weaponStatMatches)
                     {
                         int weaponStatValue = 0;
-                        if (equipped != null && equipped.Item.Stats.TryGetValue(match.Groups[1].Value, out weaponStatValue))
+                        if (equipped != null && !equipped.Item.Stats.TryGetValue(match.Groups[1].Value, out weaponStatValue))
                             throw new UnmatchedStatException(match.Groups[1].Value);
-                        equation = equation.Substring(0, match.Index) + weaponStatValue + equation.Substring(match.Index + match.Length);
+                        equation = equation.Replace(match.Groups[0].Value, weaponStatValue.ToString());
                     }
                 }
 
@@ -495,7 +508,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                     throw new UnrecognizedEquationVariableException(stat.Equation);
 
                 Expression expression = new Expression(equation);
-                this.CombatStats[stat.SourceName].BaseValue = (int)expression.Evaluate();
+                this.CombatStats[stat.SourceName].BaseValue = Convert.ToInt32(expression.Evaluate());
             }
         }
     }

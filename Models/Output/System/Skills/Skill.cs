@@ -61,14 +61,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             switch (effectType)
             {
                 //Stat Modifier Effects
-                case "BaseStatModifier": return new BaseStatModifierEffect(parameters);
+                case "StatModifier": return new StatModifierEffect(parameters);
                 case "CombatStatModifier": return new CombatStatModifierEffect(parameters);
                 //Equipped Item Modifier Effects
                 case "EquippedCombatStatModifier": return new EquippedItemCombatStatModifierEffect(parameters);
-                case "EquippedBaseStatModifier": return new EquippedBaseStatModifierEffect(parameters);
+                case "EquippedStatModifier": return new EquippedStatModifierEffect(parameters);
                 //Terrain Type Modifier Effects
                 case "TerrainTypeCombatStatModifer": return new TerrainTypeCombatStatModiferEffect(parameters);
-                case "TerrainTypeBaseStatModifer": return new TerrainTypeBaseStatModiferEffect(parameters);
+                case "TerrainTypeStatModifer": return new TerrainTypeStatModiferEffect(parameters);
                 //Unit/Item Range Modifier Effects
                 case "TerrainTypeMovementCostModifier": return new TerrainTypeMovementCostModifierEffect(parameters);
                 case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect(parameters);
@@ -76,9 +76,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "IgnoreUnitAffiliations": return new IgnoreUnitAffiliationsEffect(parameters);
                 //Unit Radius Stat Modifier Effects
                 case "AllyRadiusCombatStatModifer": return new AllyRadiusCombatStatModiferEffect(parameters);
-                case "AllyRadiusBaseStatModifer": return new AllyRadiusBaseStatModiferEffect(parameters);
+                case "AllyRadiusStatModifer": return new AllyRadiusStatModiferEffect(parameters);
                 case "EnemyRadiusCombatStatModifer": return new EnemyRadiusCombatStatModiferEffect(parameters);
-                case "EnemyRadiusBaseStatModifer": return new EnemyRadiusBaseStatModiferEffect(parameters);
+                case "EnemyRadiusStatModifer": return new EnemyRadiusStatModiferEffect(parameters);
             }
 
             throw new UnmatchedSkillEffectException(effectType);

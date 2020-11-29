@@ -57,19 +57,19 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Collection of stat values for the item. (ex. Hit)
         /// </summary>
-        public Dictionary<string, int> Stats { get; set; }
+        public IDictionary<string, int> Stats { get; set; }
 
         /// <summary>
         /// Collection of stat modifiers that will be applied to the owning unit when this item <c>IsEquipped</c>.
         /// </summary>
         [JsonIgnore]
-        public Dictionary<string, int> EquippedStatModifiers { get; set; }
+        public IDictionary<string, int> EquippedStatModifiers { get; set; }
 
         /// <summary>
         /// Collection of stat modifiers that will be applied to the owning unit when this item !<c>IsEquipped</c>.
         /// </summary>
         [JsonIgnore]
-        public Dictionary<string, int> InventoryStatModifiers { get; set; }
+        public IDictionary<string, int> InventoryStatModifiers { get; set; }
 
         /// <summary>
         /// The item's range.

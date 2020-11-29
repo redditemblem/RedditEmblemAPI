@@ -3,17 +3,18 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class TerrainTypeBaseStatModiferEffect : ISkillEffect
+    public class EquippedStatModifierEffect : ISkillEffect
     {
         #region Attributes
 
         /// <summary>
-        /// Param1. The terrain type grouping to look for <c>Tile</c>s in.
+        /// Param1. List of <c>Item</c> categories to check for.
         /// </summary>
-        public int TerrainTypeGrouping { get; set; }
+        public IList<string> Categories { get; set; }
 
         /// <summary>
         /// Param2. The unit base stat to be affected.
@@ -30,26 +31,29 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="parameters"></param>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
-        public TerrainTypeBaseStatModiferEffect(IList<string> parameters)
+        public EquippedStatModifierEffect(IList<string> parameters)
         {
             if (parameters.Count < 3)
-                throw new SkillEffectMissingParameterException("TerrainTypeBaseStatModifer", 3, parameters.Count);
+                throw new SkillEffectMissingParameterException("EquippedStatModifier", 3, parameters.Count);
 
-            this.TerrainTypeGrouping = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
+            this.Categories = ParseHelper.StringCSVParse(parameters, 0);
             this.Stat = ParseHelper.SafeStringParse(parameters, 1, "Param2", true);
             this.Value = ParseHelper.SafeIntParse(parameters, 2, "Param3", false);
         }
 
         /// <summary>
-        /// If <paramref name="unit"/> originates on a tile with a terrain type in <c>TerrainTypeGrouping</c>, then <c>Value</c> is added as a modifier on <c>Stat</c>.
+        /// If <paramref name="unit"/> has an item equipped with a category in <c>Categories</c>, then <c>Value</c> is added as a modifier of <c>Stat</c>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
         public void Apply(Unit unit, Skill skill, IList<Unit> units)
         {
-            //The terrain type must be in the defined grouping
-            if (!unit.OriginTile.TerrainTypeObj.Groupings.Contains(this.TerrainTypeGrouping))
+            UnitInventoryItem equipped = unit.Inventory.SingleOrDefault(i => i != null && i.IsEquipped);
+            if (equipped == null)
+                return;
+
+            //The equipped item's category must be in the category list
+            if (!this.Categories.Contains(equipped.Item.Category))
                 return;
 
             ModifiedStatValue stat;

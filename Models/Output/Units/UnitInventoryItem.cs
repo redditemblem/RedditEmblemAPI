@@ -52,7 +52,24 @@ namespace RedditEmblemAPI.Models.Output.Units
         public int Uses { get; set; }
 
         /// <summary>
-        /// The amount by which to alter the item's max range.
+        /// The calculated minimum range for the item, including modifier values.
+        /// </summary>
+        [JsonIgnore]
+        public int ModifiedMinRangeValue { get { return this.Item.Range.Minimum + this.MinRangeModifier; } }
+
+        /// <summary>
+        /// The amount by which to alter the item's minimum range.
+        /// </summary>
+        public int MinRangeModifier { get; set; }
+
+        /// <summary>
+        /// The calculated maximum range for the item, including modifier values.
+        /// </summary>
+        [JsonIgnore]
+        public int ModifiedMaxRangeValue { get { return this.Item.Range.Maximum + this.MaxRangeModifier; } }
+
+        /// <summary>
+        /// The amount by which to alter the item's maximum range.
         /// </summary>
         public int MaxRangeModifier { get; set; }
 
@@ -72,6 +89,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.CanEquip = false;
             this.IsEquipped = false;
             this.Uses = 0;
+            this.MinRangeModifier = 0;
             this.MaxRangeModifier = 0;
 
             string name = this.FullName;

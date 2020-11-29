@@ -75,14 +75,6 @@ namespace RedditEmblemAPI.Models.Output.System
 
             this.HPModifier = ParseHelper.OptionalSafeIntParse(data, config.HPModifier, "HP Modifier", false, 0);
 
-            this.StatModifiers = new Dictionary<string, int>();
-            foreach(NamedStatConfig stat in config.StatModifiers)
-            {
-                int val = ParseHelper.SafeIntParse(data, stat.Value, stat.SourceName, false);
-                if (val == 0) continue;
-                this.StatModifiers.Add(stat.SourceName, val);
-            }
-
             this.CombatStatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.CombatStatModifiers)
             {
@@ -91,6 +83,15 @@ namespace RedditEmblemAPI.Models.Output.System
                 this.CombatStatModifiers.Add(stat.SourceName, val);
             }
 
+
+            this.StatModifiers = new Dictionary<string, int>();
+            foreach(NamedStatConfig stat in config.StatModifiers)
+            {
+                int val = ParseHelper.SafeIntParse(data, stat.Value, stat.SourceName, false);
+                if (val == 0) continue;
+                this.StatModifiers.Add(stat.SourceName, val);
+            }
+            
             this.MovementCosts = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.MovementCosts)
             {

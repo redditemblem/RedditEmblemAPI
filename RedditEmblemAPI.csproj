@@ -18,6 +18,9 @@
     <Content Update="JSON\TeamConfigs\Active\Hidden\TeamExample.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="JSON\TeamConfigs\Active\SandboxTeam.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="JSON\TeamConfigs\Disabled\" />

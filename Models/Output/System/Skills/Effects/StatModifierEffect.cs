@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class BaseStatModifierEffect : ISkillEffect
+    public class StatModifierEffect : ISkillEffect
     {
         #region Attributes
 
@@ -26,10 +26,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// Constructor.
         /// </summary>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
-        public BaseStatModifierEffect(IList<string> parameters)
+        public StatModifierEffect(IList<string> parameters)
         {
             if (parameters.Count < 2)
-                throw new SkillEffectMissingParameterException("BaseStatModifier", 2, parameters.Count);
+                throw new SkillEffectMissingParameterException("StatModifier", 2, parameters.Count);
 
             this.Stat = ParseHelper.SafeStringParse(parameters, 0, "Param1", true);
             this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", false);
