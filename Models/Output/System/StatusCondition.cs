@@ -24,6 +24,11 @@ namespace RedditEmblemAPI.Models.Output.System
         public string Name { get; set; }
 
         /// <summary>
+        /// The sprite image URL for the status condition.
+        /// </summary>
+        public string SpriteURL { get; set; }
+
+        /// <summary>
         /// The type of the status condition.
         /// </summary>
         public StatusConditionType Type { get; set; }
@@ -44,6 +49,7 @@ namespace RedditEmblemAPI.Models.Output.System
         public StatusCondition(StatusConditionConfig config, IList<string> data)
         {
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
+            this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
             this.Type = ParseStatusConditionType(data, config.Type);
             this.Turns = ParseHelper.OptionalSafeIntParse(data, config.Turns, "Turns", true, 0);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);

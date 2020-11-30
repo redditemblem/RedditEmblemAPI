@@ -53,7 +53,7 @@
       "SpriteURL": 0, //Optional
       "Category": 0, //Required
       "WeaponRank": 0, //Optional
-      "UtilizedStat": 0, //Required
+      "UtilizedStats": 0, //Required
       "DealsDamage": 0, //Required
       "Uses": 0, //Required
       "Stats": [ //Required
@@ -117,13 +117,14 @@
       "Grouping": 0, //Required
       "TextFields": [ 0 ] //Optional
     },
-    "StatusEffects": { //Optional
+    "StatusConditions": { //Optional
       "Query": {
         "Sheet": "",
         "Selection": "",
         "Orientation": 0
       },
       "Name": 0, //Required
+      "SpriteURL": 0, //Optional
       "Type": 0, //Required
       "Turns": 0, //Optional
       "TextFields": [ 0 ] //Optional
@@ -237,7 +238,7 @@
       ]
     },
     "Skills": [ 0 ], //Optional
-    "StatusEffects": [ 0 ] //Optional
+    "StatusConditions": [ 0 ] //Optional
   },
   "Convoy": { //Optional
     "Query": {

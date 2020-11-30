@@ -31,6 +31,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
         #region Optional Fields
 
         /// <summary>
+        /// Optional. Cell index for a status condition's sprite.
+        /// </summary>
+        public int SpriteURL { get; set; } = -1;
+
+        /// <summary>
         /// Optional. Cell index for a status condition's turns value.
         /// </summary>
         public int Turns { get; set; } = -1;

@@ -37,12 +37,12 @@ namespace RedditEmblemAPI.Services.Helpers
                     RecurseUnitRange(unitParms, unit.Stats["Mov"].FinalValue, unit.OriginTile.Coordinate, new List<Coordinate>());
 
                     //Find the items with minimum and maximum attack range
-                    UnitInventoryItem minAtkRange = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderBy(i => i.ModifiedMinRangeValue).FirstOrDefault();
-                    UnitInventoryItem maxAtkRange = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderByDescending(i => i.ModifiedMaxRangeValue).FirstOrDefault();
+                    UnitInventoryItem minAtkRange = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.DealsDamage && i.Item.UtilizedStats.Any()).OrderBy(i => i.ModifiedMinRangeValue).FirstOrDefault();
+                    UnitInventoryItem maxAtkRange = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.DealsDamage && i.Item.UtilizedStats.Any()).OrderByDescending(i => i.ModifiedMaxRangeValue).FirstOrDefault();
 
                     //Find the items with minimum and maximum utility range
-                    UnitInventoryItem minUtilRange = unit.Inventory.Where(i => i != null && i.CanEquip && !i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderBy(i => i.ModifiedMinRangeValue).FirstOrDefault();
-                    UnitInventoryItem maxUtilRange = unit.Inventory.Where(i => i != null && i.CanEquip && !i.Item.DealsDamage && i.Item.UtilizedStat.Length > 0).OrderByDescending(i => i.ModifiedMaxRangeValue).FirstOrDefault();
+                    UnitInventoryItem minUtilRange = unit.Inventory.Where(i => i != null && i.CanEquip && !i.Item.DealsDamage && i.Item.UtilizedStats.Any()).OrderBy(i => i.ModifiedMinRangeValue).FirstOrDefault();
+                    UnitInventoryItem maxUtilRange = unit.Inventory.Where(i => i != null && i.CanEquip && !i.Item.DealsDamage && i.Item.UtilizedStats.Any()).OrderByDescending(i => i.ModifiedMaxRangeValue).FirstOrDefault();
 
                     IList<Coordinate> atkRange = new List<Coordinate>();
                     IList<Coordinate> utilRange = new List<Coordinate>();
@@ -115,7 +115,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Apply movement cost modifiers
                 TerrainTypeMovementCostSetEffect movCostSet = unitParms.MoveCostSets.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
                 TerrainTypeMovementCostModifierEffect moveCostMod = unitParms.MovCostModifiers.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-                if (movCostSet != null && moveCost < 99)
+                if (movCostSet != null)
                     moveCost = movCostSet.Value;
                 else if (moveCostMod != null && moveCost < 99)
                     moveCost += moveCostMod.Value;

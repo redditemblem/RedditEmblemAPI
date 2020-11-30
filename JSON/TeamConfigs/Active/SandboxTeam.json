@@ -53,7 +53,7 @@
       "SpriteURL": 1,
       "Category": 2,
       "WeaponRank": 3,
-      "UtilizedStat": 4,
+      "UtilizedStats": 4,
       "DealsDamage": 5,
       "Uses": 6,
       "Stats": [
@@ -193,10 +193,11 @@
         "Selection": "A2:ZZ",
         "Orientation": 1
       },
-      "Name": 0,
-      "Type": 1,
-      "Turns": 2,
-      "TextFields": [ 3 ]
+      "Name": 1,
+      "SpriteURL": 2,
+      "Type": 3,
+      "Turns": 4,
+      "TextFields": [ 5 ]
     },
     "TerrainTypes": {
       "Query": {

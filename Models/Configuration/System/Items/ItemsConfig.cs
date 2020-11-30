@@ -30,7 +30,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// Required. Cell index of an item's utilized stat value.
         /// </summary>
         [JsonRequired]
-        public int UtilizedStat { get; set; }
+        public int UtilizedStats { get; set; }
 
         /// <summary>
         /// Required. Cell index of an item's deal damage flag.

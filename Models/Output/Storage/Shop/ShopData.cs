@@ -27,6 +27,11 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         public FilterParameters Parameters { get; set; }
 
         /// <summary>
+        /// Flag indicating if the convoy link should be shown.
+        /// </summary>
+        public bool ShowConvoyLink { get; set; }
+
+        /// <summary>
         /// List of <c>ShopItem</c>s that will be presented on the Shop page.
         /// </summary>
         public IList<ShopItem> ShopItems { get; set; }
@@ -46,6 +51,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         public ShopData(JSONConfiguration config)
         {
             this.Currency = config.System.Currency;
+            this.ShowConvoyLink = (config.Convoy != null);
 
             //Build the item list
             this.Items = new Dictionary<string, Item>();
@@ -96,7 +102,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
 
             this.Parameters = new FilterParameters(sorts,
                 this.ShopItems.Select(i => i.Item.Category).Distinct().OrderBy(c => c).ToList(),
-                this.ShopItems.Select(i => i.Item.UtilizedStat).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(c => c).ToList(),
+                this.ShopItems.SelectMany(i => i.Item.UtilizedStats).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(c => c).ToList(),
                 filters);
 
             //Always do this last.

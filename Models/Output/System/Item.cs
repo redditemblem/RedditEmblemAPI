@@ -40,9 +40,9 @@ namespace RedditEmblemAPI.Models.Output.System
         public string WeaponRank { get; set; }
 
         /// <summary>
-        /// The unit stat that the item uses in calculations, if applicable.
+        /// The unit stats that the item uses in calculations, if applicable.
         /// </summary>
-        public string UtilizedStat { get; set; }
+        public IList<string> UtilizedStats { get; set; }
 
         /// <summary>
         /// Flag indicating whether or not this item is capable of attacking.
@@ -91,7 +91,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
             this.Category = ParseHelper.SafeStringParse(data, config.Category, "Category", true);
             this.WeaponRank = ParseHelper.SafeStringParse(data, config.WeaponRank, "Weapon Rank", false);
-            this.UtilizedStat = ParseHelper.SafeStringParse(data, config.UtilizedStat, "Utilized Stat", false);
+            this.UtilizedStats = ParseHelper.StringCSVParse(data, config.UtilizedStats);
             this.DealsDamage = (ParseHelper.SafeStringParse(data, config.DealsDamage, "Deals Damage", true) == "Yes");
             this.MaxUses = ParseHelper.SafeIntParse(data, config.Uses, "Uses", true);
             this.Range = new ItemRange(data.ElementAtOrDefault<string>(config.Range.Minimum),

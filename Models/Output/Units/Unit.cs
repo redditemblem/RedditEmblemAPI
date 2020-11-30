@@ -351,7 +351,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                      || weaponRanks.IndexOf(unitRank) >= weaponRanks.IndexOf(item.Item.WeaponRank))
                         item.CanEquip = true;
                 }
-                else if (string.IsNullOrEmpty(item.Item.WeaponRank) && string.IsNullOrEmpty(item.Item.UtilizedStat))
+                else if (string.IsNullOrEmpty(item.Item.WeaponRank) && !item.Item.UtilizedStats.Any())
                 {
                     item.CanEquip = true;
                 }
@@ -480,12 +480,18 @@ namespace RedditEmblemAPI.Models.Output.Units
                 if (equation.Contains("{WeaponUtilStat}"))
                 {
                     int weaponUtilStatValue = 0;
-                    if(equipped != null && !string.IsNullOrEmpty(equipped.Item.UtilizedStat))
+                    if(equipped != null)
                     {
-                        ModifiedStatValue weaponUtilStat;
-                        if (!this.Stats.TryGetValue(equipped.Item.UtilizedStat, out weaponUtilStat))
-                            throw new UnmatchedStatException(equipped.Item.UtilizedStat);
-                        weaponUtilStatValue = weaponUtilStat.FinalValue;
+                        foreach(string utilStatName in equipped.Item.UtilizedStats)
+                        {
+                            ModifiedStatValue weaponUtilStat;
+                            if (!this.Stats.TryGetValue(utilStatName, out weaponUtilStat))
+                                throw new UnmatchedStatException(utilStatName);
+
+                            //Take the greatest stat value of all the utilized stats
+                            if(weaponUtilStat.FinalValue > weaponUtilStatValue)
+                                weaponUtilStatValue = weaponUtilStat.FinalValue;
+                        }
                     }
                     equation = equation.Replace("{WeaponUtilStat}", weaponUtilStatValue.ToString()); 
                 }
