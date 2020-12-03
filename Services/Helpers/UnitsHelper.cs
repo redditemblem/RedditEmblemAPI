@@ -57,7 +57,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 }
                 catch(Exception ex)
                 {
-                    throw new UnitProcessingException(unit.Name, ex);
+                    throw new UnitSkillEffectProcessingException(unit.Name, ex);
                 }
             }
 

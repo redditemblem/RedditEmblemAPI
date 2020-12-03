@@ -115,7 +115,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Apply movement cost modifiers
                 TerrainTypeMovementCostSetEffect movCostSet = unitParms.MoveCostSets.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
                 TerrainTypeMovementCostModifierEffect moveCostMod = unitParms.MovCostModifiers.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-                if (movCostSet != null)
+                if (movCostSet != null && (movCostSet.CanOverride99MoveCost || moveCost < 99))
                     moveCost = movCostSet.Value;
                 else if (moveCostMod != null && moveCost < 99)
                     moveCost += moveCostMod.Value;

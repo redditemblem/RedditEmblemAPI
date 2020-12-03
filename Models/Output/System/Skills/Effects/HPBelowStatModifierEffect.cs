@@ -6,19 +6,24 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class StatModifierEffect : ISkillEffect
+    public class HPBelowStatModifierEffect : ISkillEffect
     {
         #region Attributes
 
         /// <summary>
-        /// Param1. The unit stats to be affected.
+        /// Param1. The maximum HP percentage the unit can have.
         /// </summary>
-        public IList<string> Stats { get; private set; }
+        public int HPPercentage { get; set; }
 
         /// <summary>
-        /// Param2. The value by which to modify the <c>Stats</c>.
+        /// Param2. The unit combat stats to be affected.
         /// </summary>
-        public IList<int> Values { get; private set; }
+        public IList<string> Stats { get; set; }
+
+        /// <summary>
+        /// Param3. The values by which to modify the <c>Stats</c>.
+        /// </summary>
+        public IList<int> Values { get; set; }
 
         #endregion
 
@@ -28,29 +33,34 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <exception cref="SkillEffectMissingParameterException"></exception>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
         /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
-        public StatModifierEffect(IList<string> parameters)
+        public HPBelowStatModifierEffect(IList<string> parameters)
         {
-            if (parameters.Count < 2)
-                throw new SkillEffectMissingParameterException("StatModifier", 2, parameters.Count);
+            if (parameters.Count < 3)
+                throw new SkillEffectMissingParameterException("HPBelowStatModifier", 3, parameters.Count);
 
-            this.Stats = ParseHelper.StringCSVParse(parameters, 0); //Param1
-            this.Values = ParseHelper.IntCSVParse(parameters, 1, "Param2", false);
+            this.HPPercentage = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
+            this.Stats = ParseHelper.StringCSVParse(parameters, 1); //Param2
+            this.Values = ParseHelper.IntCSVParse(parameters, 2, "Param3", false);
 
             if (this.Stats.Count == 0)
-                throw new RequiredValueNotProvidedException("Param1");
-            if (this.Values.Count == 0)
                 throw new RequiredValueNotProvidedException("Param2");
+            if (this.Values.Count == 0)
+                throw new RequiredValueNotProvidedException("Param3");
 
             if (this.Stats.Count != this.Values.Count)
-                throw new SkillEffectParameterLengthsMismatchedException("Param1", "Param2");
+                throw new SkillEffectParameterLengthsMismatchedException("Param2", "Param3");
         }
 
         /// <summary>
-        /// Adds the items in <c>Values</c> as modifiers to the stats in <c>Stats</c> for <paramref name="unit"/>.
+        /// If <paramref name="unit"/>'s HP percentage is equal to or below the value of <c>HPPercentage</c>, adds the values in <c>Values</c> as modifiers to the items in <c>Stats</c>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
         public void Apply(Unit unit, Skill skill, IList<Unit> units)
         {
+            //HP percentage must be equal to or below threshold
+            if (unit.HP.Percentage > this.HPPercentage)
+                return;
+
             for (int i = 0; i < this.Stats.Count; i++)
             {
                 string statName = this.Stats[i];
