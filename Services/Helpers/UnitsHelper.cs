@@ -35,14 +35,37 @@ namespace RedditEmblemAPI.Services.Helpers
                     string unitName = ParseHelper.SafeStringParse(unit, config.Name, "Name", false);
                     if (string.IsNullOrEmpty(unitName)) continue;
 
-                    Unit temp = new Unit(config, unit, systemData);
-                    AddUnitToMap(temp, map);
-
-                    units.Add(temp);
+                    units.Add(new Unit(config, unit, systemData));
                 }
                 catch (Exception ex)
                 {
                     throw new UnitProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                }
+            }
+
+            //Add units to the map
+            foreach(Unit unit in units)
+            {
+                try
+                {
+                    unit.Coordinate = new Coordinate(unit.CoordinateString);
+                    AddUnitToMap(unit, map);
+                }
+                catch(CoordinateFormattingException ex)
+                {
+                    //If the coordinates aren't in an <x,y> format, check if it's the name of another unit.
+                    Unit pair = units.FirstOrDefault(u => u.Name == unit.CoordinateString);
+
+                    if (pair == null || pair.Name == unit.Name)
+                        throw new UnitProcessingException(unit.Name, ex);
+                    if (pair.PairedUnitObj != null)
+                        throw new UnitProcessingException(unit.Name, new UnitAlreadyPairedException(pair.Name, pair.PairedUnitObj.Name));
+
+                    //Bind paired units together
+                    pair.PairedUnitObj = unit;
+                    unit.PairedUnitObj = pair;
+                    unit.IsBackOfPair = true;
+                    unit.Coordinate = new Coordinate(-1, -1);
                 }
             }
 

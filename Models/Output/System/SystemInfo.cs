@@ -67,6 +67,11 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public IDictionary<string, StatusCondition> StatusConditions { get; set; }
 
+        /// <summary>
+        /// Container dictionary for data about tags.
+        /// </summary>
+        public IDictionary<string, Tag> Tags { get; set; }
+
         #endregion
 
         /// <summary>
@@ -92,11 +97,6 @@ namespace RedditEmblemAPI.Models.Output.System
                 if (!this.TerrainTypes[key].Matched)
                     this.TerrainTypes.Remove(key);
 
-            //Cull unused classes
-            foreach (string key in this.Classes.Keys.ToList())
-                if (!this.Classes[key].Matched)
-                    this.Classes.Remove(key);
-
             //Cull unused affiliations
             foreach (string key in this.Affiliations.Keys.ToList())
                 if (!this.Affiliations[key].Matched)
@@ -114,6 +114,11 @@ namespace RedditEmblemAPI.Models.Output.System
                 if (!this.TerrainEffects[key].Matched)
                     this.TerrainEffects.Remove(key);
 
+            //Cull unused classes
+            foreach (string key in this.Classes.Keys.ToList())
+                if (!this.Classes[key].Matched)
+                    this.Classes.Remove(key);
+
             //Cull unused skills
             foreach (string key in this.Skills.Keys.ToList())
                 if (!this.Skills[key].Matched)
@@ -123,6 +128,11 @@ namespace RedditEmblemAPI.Models.Output.System
             foreach (string key in this.StatusConditions.Keys.ToList())
                 if (!this.StatusConditions[key].Matched)
                     this.StatusConditions.Remove(key);
+
+            //Cull unused tags
+            foreach (string key in this.Tags.Keys.ToList())
+                if (!this.Tags[key].Matched)
+                    this.Tags.Remove(key);
         }
 
         #region Parsers
@@ -146,22 +156,6 @@ namespace RedditEmblemAPI.Models.Output.System
                 catch (Exception ex)
                 {
                     throw new TerrainTypeProcessingException((row.ElementAtOrDefault(config.TerrainTypes.Name) ?? string.Empty).ToString(), ex);
-                }
-            }
-
-            this.Classes = new Dictionary<string, Class>();
-            foreach (IList<object> row in config.Classes.Query.Data)
-            {
-                try
-                {
-                    IList<string> cls = row.Select(r => r.ToString()).ToList();
-                    string name = ParseHelper.SafeStringParse(cls, config.Classes.Name, "Name", false);
-                    if (string.IsNullOrEmpty(name)) continue;
-                    this.Classes.Add(name, new Class(config.Classes, cls));
-                }
-                catch (Exception ex)
-                {
-                    throw new ClassProcessingException((row.ElementAtOrDefault(config.Classes.Name) ?? string.Empty).ToString(), ex);
                 }
             }
 
@@ -223,6 +217,25 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
             }
 
+            this.Classes = new Dictionary<string, Class>();
+            if(config.Classes != null)
+            {
+                foreach (IList<object> row in config.Classes.Query.Data)
+                {
+                    try
+                    {
+                        IList<string> cls = row.Select(r => r.ToString()).ToList();
+                        string name = ParseHelper.SafeStringParse(cls, config.Classes.Name, "Name", false);
+                        if (string.IsNullOrEmpty(name)) continue;
+                        this.Classes.Add(name, new Class(config.Classes, cls));
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ClassProcessingException((row.ElementAtOrDefault(config.Classes.Name) ?? string.Empty).ToString(), ex);
+                    }
+                }
+            }
+           
             this.Skills = new Dictionary<string, Skill>();
             if (config.Skills != null)
             {
@@ -257,6 +270,25 @@ namespace RedditEmblemAPI.Models.Output.System
                     catch (Exception ex)
                     {
                         throw new StatusConditionProcessingException((row.ElementAtOrDefault(config.StatusConditions.Name) ?? string.Empty).ToString(), ex);
+                    }
+                }
+            }
+
+            this.Tags = new Dictionary<string, Tag>();
+            if(config.Tags != null)
+            {
+                foreach (IList<object> row in config.Tags.Query.Data)
+                {
+                    try
+                    {
+                        IList<string> tag = row.Select(r => r.ToString()).ToList();
+                        string name = ParseHelper.SafeStringParse(tag, config.Tags.Name, "Name", false);
+                        if (string.IsNullOrEmpty(name)) continue;
+                        this.Tags.Add(name, new Tag(config.Tags, tag));
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TagProcessingException((row.ElementAtOrDefault(config.Tags.Name) ?? string.Empty).ToString(), ex);
                     }
                 }
             }

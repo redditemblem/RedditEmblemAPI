@@ -109,8 +109,8 @@ namespace RedditEmblemAPI.Services.Helpers
 
                 //Test that the unit can move to this tile
                 int moveCost;
-                if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(unitParms.Unit.ClassList.First().MovementType, out moveCost))
-                    throw new UnmatchedClassMovementTypeException(unitParms.Unit.ClassList.First().MovementType, tile.TerrainTypeObj.MovementCosts.Keys.ToList());
+                if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(unitParms.Unit.GetUnitMovementType(), out moveCost))
+                    throw new UnmatchedMovementTypeException(unitParms.Unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys.ToList());
 
                 //Apply movement cost modifiers
                 TerrainTypeMovementCostSetEffect movCostSet = unitParms.MoveCostSets.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
@@ -218,8 +218,8 @@ namespace RedditEmblemAPI.Services.Helpers
                     }
 
                     int moveCost;
-                    if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(unitParms.Unit.ClassList.First().MovementType, out moveCost))
-                        throw new UnmatchedClassMovementTypeException(unitParms.Unit.ClassList.First().MovementType, tile.TerrainTypeObj.MovementCosts.Keys.ToList());
+                    if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(unitParms.Unit.GetUnitMovementType(), out moveCost))
+                        throw new UnmatchedMovementTypeException(unitParms.Unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys.ToList());
 
                     //We only care if the unit cannot move onto this tile at all
                     //Move costs only matters for the origin

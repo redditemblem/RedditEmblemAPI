@@ -34,12 +34,6 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public int Level { get; set; }
 
         /// <summary>
-        /// Required. List of cell indexes for a unit's class values.
-        /// </summary>
-        [JsonRequired]
-        public IList<int> Classes { get; set; }
-
-        /// <summary>
         /// Required. Cell index of a unit's affiliation value.
         /// </summary>
         [JsonRequired]
@@ -89,6 +83,16 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// Optional. Cell index of the unit's controlling player.
         /// </summary>
         public int Player { get; set; } = -1;
+
+        /// <summary>
+        /// Optional. List of cell indexes for a unit's class values.
+        /// </summary>
+        public IList<int> Classes { get; set; } = new List<int>();
+
+        /// <summary>
+        /// Optional. The cell index for a unit's movement type.
+        /// </summary>
+        public int MovementType { get; set; } = -1;
 
         /// <summary>
         /// Optional. List of cell indexes for a unit's text fields.

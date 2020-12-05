@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class NoAllyRadiusStatModifierEffect : ISkillEffect
+    public class NoAllyRadiusSelfStatModifierEffect : ISkillEffect
     {
         #region Attributes
 
@@ -34,10 +34,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <exception cref="SkillEffectMissingParameterException"></exception>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
         /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
-        public NoAllyRadiusStatModifierEffect(IList<string> parameters)
+        public NoAllyRadiusSelfStatModifierEffect(IList<string> parameters)
         {
             if (parameters.Count < 3)
-                throw new SkillEffectMissingParameterException("NoAllyRadiusStatModifier", 3, parameters.Count);
+                throw new SkillEffectMissingParameterException("NoAllyRadiusSelfStatModifier", 3, parameters.Count);
 
             this.Radius = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
             this.Stats = ParseHelper.StringCSVParse(parameters, 1); //Param2

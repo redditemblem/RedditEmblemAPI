@@ -72,7 +72,6 @@ namespace RedditEmblemAPI.Models.Configuration
                 this.Map.MapTiles.Query,
                 this.System.TerrainTypes.Query,
                 this.Units.Query,
-                this.System.Classes.Query,
                 this.System.Affiliations.Query,
                 this.System.Items.Query
             };
@@ -80,8 +79,11 @@ namespace RedditEmblemAPI.Models.Configuration
             //Add optional queries
             if (this.Map.MapEffects != null) queries.Add(this.Map.MapEffects.Query);
             if (this.System.TerrainEffects != null) queries.Add(this.System.TerrainEffects.Query);
+
+            if (this.System.Classes != null) queries.Add(this.System.Classes.Query);
             if (this.System.Skills != null) queries.Add(this.System.Skills.Query);
             if (this.System.StatusConditions != null) queries.Add(this.System.StatusConditions.Query);
+            if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
 
             return queries;
         }

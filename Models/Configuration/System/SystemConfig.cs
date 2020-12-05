@@ -4,6 +4,7 @@ using RedditEmblemAPI.Models.Configuration.System.Classes;
 using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Configuration.System.Skills;
 using RedditEmblemAPI.Models.Configuration.System.Statuses;
+using RedditEmblemAPI.Models.Configuration.System.Tags;
 using RedditEmblemAPI.Models.Configuration.System.TerrainEffects;
 using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
 using System.Collections.Generic;
@@ -16,12 +17,6 @@ namespace RedditEmblemAPI.Models.Configuration.System
     public class SystemConfig
     {
         #region Required Fields
-
-        /// <summary>
-        /// Required. Container object for a system's class configuration.
-        /// </summary>
-        [JsonRequired]
-        public ClassesConfig Classes { get; set; }
 
         /// <summary>
         /// Required. Container object for a system's affiliation configuration.
@@ -56,6 +51,11 @@ namespace RedditEmblemAPI.Models.Configuration.System
         public IList<string> WeaponRanks { get; set; } = new List<string>();
 
         /// <summary>
+        /// Optional. Container object for a system's class configuration.
+        /// </summary>
+        public ClassesConfig Classes { get; set; } = null;
+
+        /// <summary>
         /// Optional. Container object for a system's skill configuration.
         /// </summary>
         public SkillsConfig Skills { get; set; } = null;
@@ -64,6 +64,11 @@ namespace RedditEmblemAPI.Models.Configuration.System
         /// Optional. Container object for a system's status condition configuration.
         /// </summary>
         public StatusConditionConfig StatusConditions { get; set; } = null;
+
+        /// <summary>
+        /// Optional. Container object for a system's tag configuration.
+        /// </summary>
+        public TagConfig Tags { get; set; } = null;
 
         /// <summary>
         /// Optional. Container object for a system's terrain effect configuration.

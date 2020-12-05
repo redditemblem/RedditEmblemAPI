@@ -47,6 +47,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         public IList<string> TextFields { get; set; }
 
         /// <summary>
+        /// Unparsed, raw coordinate string value.
+        /// </summary>
+        [JsonIgnore]
+        public string CoordinateString { get; set; }
+
+        /// <summary>
         /// The unit's location on the map.
         /// </summary>
         public Coordinate Coordinate { get; set; }
@@ -67,6 +73,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         [JsonProperty]
         private IList<string> Classes { get { return this.ClassList.Select(c => c.Name).ToList();  } }
+
+        /// <summary>
+        /// The unit's movement type. Only used if classes are not provided.
+        /// </summary>
+        public string MovementType { get; set; }
 
         /// <summary>
         /// The unit's affiliation.
@@ -142,6 +153,27 @@ namespace RedditEmblemAPI.Models.Output.Units
         [JsonProperty]
         private IList<string> Skills { get { return this.SkillList.Select(c => c.Name).ToList(); } }
 
+        #region Pair_Ups
+
+        /// <summary>
+        /// The <c>Unit</c> paired with the unit, if any.
+        /// </summary>
+        [JsonIgnore]
+        public Unit PairedUnitObj { get; set; }
+
+        //// <summary>
+        /// Only for JSON serialization. Returns the name of the <c>PairedUnit</c>. If <c>PairedUnit</c> is null, returns an empty string.
+        /// </summary>
+        [JsonProperty]
+        private string PairedUnit { get { return (this.PairedUnitObj == null ? string.Empty : this.PairedUnitObj.Name); } }
+
+        /// <summary>
+        /// Flag indicating if the unit is sitting in the back of a pair.
+        /// </summary>
+        public bool IsBackOfPair { get; set; }
+
+        #endregion
+
         #region Movement_And_Range
 
         /// <summary>
@@ -201,7 +233,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", true);
             this.Level = ParseHelper.SafeIntParse(data, config.Level, "Level", true);
-            this.Coordinate = new Coordinate(data.ElementAtOrDefault<string>(config.Coordinate));
+            this.CoordinateString = ParseHelper.SafeStringParse(data, config.Coordinate, "Coordinate", false);
             this.HP = new HP(data.ElementAtOrDefault<string>(config.HP.Current),
                              data.ElementAtOrDefault<string>(config.HP.Maximum));
 
@@ -235,8 +267,18 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.AffiliationObj = affMatch;
             affMatch.Matched = true;
 
+            this.ClassList = new List<Class>();
+            BuildClasses(data, config.Classes, systemData.Classes);
+
+            //If the system does not use classes, fall back on the MovementType attribute
+            if (this.ClassList.Count == 0)
+                this.MovementType = ParseHelper.SafeStringParse(data, config.MovementType, "Movement Type", true);
+
             this.WeaponRanks = new Dictionary<string, string>();
             BuildWeaponRanks(data, config.WeaponRanks, systemData.WeaponRanks.Any());
+
+            this.CombatStats = new Dictionary<string, ModifiedStatValue>();
+            BuildCombatStats(config.CombatStats);
 
             this.SystemStats = new Dictionary<string, ModifiedStatValue>();
             BuildSystemStats(data, config.SystemStats);
@@ -244,21 +286,21 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Stats = new Dictionary<string, ModifiedStatValue>();
             BuildStats(data, config.Stats);
 
-            this.StatusConditions = new List<UnitStatus>();
-            BuildStatusConditions(data, config.StatusConditions, systemData.StatusConditions);
-
             this.Inventory = new List<UnitInventoryItem>();
             BuildInventory(data, config.Inventory, systemData.Items, systemData.WeaponRanks);
 
             this.SkillList = new List<Skill>();
             BuildSkills(data, config.Skills, systemData.Skills);
 
-            this.ClassList = new List<Class>();
-            BuildClasses(data, config.Classes, systemData.Classes);
+            this.StatusConditions = new List<UnitStatus>();
+            BuildStatusConditions(data, config.StatusConditions, systemData.StatusConditions);
 
-            this.CombatStats = new Dictionary<string, ModifiedStatValue>();
-            BuildCombatStats(config.CombatStats);
+            //If we have loaded tags, attempt to match. If not, just keep our plaintext list.
+            if(systemData.Tags.Count > 0)
+                MatchTags(systemData.Tags);
         }
+
+        #region Build Functions
 
         private void BuildWeaponRanks(IList<string> data, IList<UnitWeaponRanksConfig> config, bool systemUsesWeaponRanks)
         {
@@ -286,7 +328,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.SafeIntParse(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName), false);
+                    int val = ParseHelper.OptionalSafeIntParse(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName), false, 0);
                     if (val == 0)
                         continue;
                     temp.Modifiers.Add(mod.SourceName, val);
@@ -306,7 +348,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.SafeIntParse(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName), false);
+                    int val = ParseHelper.OptionalSafeIntParse(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName), false, 0);
                     if (val == 0)
                         continue;
                     temp.Modifiers.Add(mod.SourceName, val);
@@ -436,8 +478,24 @@ namespace RedditEmblemAPI.Models.Output.Units
                 this.Tags = this.Tags.Union(match.Tags).Distinct().ToList();
             }
 
-            if (this.ClassList.Count < 1)
+            if (indexes.Count > 0 && this.ClassList.Count < 1)
                 throw new Exception("Unit must have at least one class defined.");
+        }
+
+        /// <summary>
+        /// MUST BE RUN AFTER TAGS ARE BUILT. Iterates through the values in <c>this.Tags</c> and attempts to match them a <c>Tag</c> from <paramref name="tags"/>.
+        /// </summary>
+        /// <param name="tags"></param>
+        private void MatchTags(IDictionary<string, Tag> tags)
+        {
+            foreach (string tag in this.Tags)
+            {
+                Tag match;
+                if (!tags.TryGetValue(tag, out match))
+                    throw new UnmatchedTagException(tag);
+
+                match.Matched = true;
+            }
         }
 
         /// <summary>
@@ -450,6 +508,8 @@ namespace RedditEmblemAPI.Models.Output.Units
                 this.CombatStats.Add(stat.SourceName, new ModifiedStatValue());
             }
         }
+
+        #endregion
 
         /// <summary>
         /// Assembles and executes the equations in <paramref name="stats"/>.
@@ -516,6 +576,13 @@ namespace RedditEmblemAPI.Models.Output.Units
                 Expression expression = new Expression(equation);
                 this.CombatStats[stat.SourceName].BaseValue = Convert.ToInt32(expression.Evaluate());
             }
+        }
+    
+        public string GetUnitMovementType()
+        {
+            if (this.ClassList.Count > 0)
+                return this.ClassList.First().MovementType;
+            else return this.MovementType;
         }
     }
 }

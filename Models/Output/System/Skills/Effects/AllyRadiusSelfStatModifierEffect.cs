@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class NoAllyRadiusCombatStatModifierEffect : ISkillEffect
+    public class AllyRadiusSelfStatModifierEffect : ISkillEffect
     {
         #region Attributes
 
@@ -16,7 +16,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         public int Radius { get; set; }
 
         /// <summary>
-        /// Param2. The unit combat stats to be affected.
+        /// Param2. The unit stats to be affected.
         /// </summary>
         public IList<string> Stats { get; set; }
 
@@ -30,13 +30,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <param name="parameters"></param>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
         /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
-        public NoAllyRadiusCombatStatModifierEffect(IList<string> parameters)
+        public AllyRadiusSelfStatModifierEffect(IList<string> parameters)
         {
             if (parameters.Count < 3)
-                throw new SkillEffectMissingParameterException("NoAllyRadiusCombatStatModifier", 3, parameters.Count);
+                throw new SkillEffectMissingParameterException("AllyRadiusSelfStatModifier", 3, parameters.Count);
 
             this.Radius = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
             this.Stats = ParseHelper.StringCSVParse(parameters, 1); //Param2
@@ -52,12 +53,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         }
 
         /// <summary>
-        /// Searches the <paramref name="units"/> list for friendly units within <c>Radius</c> tiles. If none exist, adds the values in <c>Values</c> as modifiers to the items in <c>Stats</c>.
+        /// Searches the <paramref name="units"/> list for friendly units within <c>Radius</c> tiles. If it finds one, adds the values in <c>Values</c> as modifiers to the items in <c>Stats</c>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
         public void Apply(Unit unit, Skill skill, IList<Unit> units)
         {
-            bool noAlliesInRange = true;
+            bool allyInRange = false;
             foreach (Unit other in units)
             {
                 //Ignore self
@@ -75,11 +76,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                     continue;
 
                 //If we reach this point, we have found an allied unit in radius range
-                noAlliesInRange = false;
+                allyInRange = true;
                 break;
             }
 
-            if (noAlliesInRange)
+            if (allyInRange)
             {
                 for (int i = 0; i < this.Stats.Count; i++)
                 {
@@ -87,7 +88,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                     int value = this.Values[i];
 
                     ModifiedStatValue stat;
-                    if (!unit.CombatStats.TryGetValue(statName, out stat))
+                    if (!unit.Stats.TryGetValue(statName, out stat))
                         throw new UnmatchedStatException(statName);
                     stat.Modifiers.Add(skill.Name, value);
                 }
