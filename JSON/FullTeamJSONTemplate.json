@@ -43,6 +43,27 @@
       "IsSymbolLeftAligned": true, //Optional, defaults to true
       "IncludeSpace": false //Optional, defaults to false
     },
+    "Affiliations": { //Required
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "Grouping": 0, //Required
+      "TextFields": [ 0 ] //Optional
+    },
+    "Classes": { //Optional
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "MovementType": 0, //Required
+      "Tags": 0, //Optional
+      "TextFields": [ 0 ] //Optional
+    },
     "Items": { //Required
       "Query": {
         "Sheet": "",
@@ -96,27 +117,6 @@
         "Parameter3": 6
       }
     },
-    "Classes": { //Required
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
-      "Name": 0, //Required
-      "MovementType": 0, //Required
-      "Tags": 0, //Optional
-      "TextFields": [ 0 ] //Optional
-    },
-    "Affiliations": { //Required
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
-      "Name": 0, //Required
-      "Grouping": 0, //Required
-      "TextFields": [ 0 ] //Optional
-    },
     "StatusConditions": { //Optional
       "Query": {
         "Sheet": "",
@@ -128,6 +128,15 @@
       "Type": 0, //Required
       "Turns": 0, //Optional
       "TextFields": [ 0 ] //Optional
+    },
+    "Tags": { //Optional
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "SpriteURL": 0 //Optional
     },
     "TerrainTypes": { //Required
       "Query": {
@@ -185,7 +194,8 @@
     "Name": 0, //Required
     "SpriteURL": 0, //Required
     "Level": 0, //Required
-    "Classes": [ 0 ], //Required
+    "Classes": [ 0 ], //Optional, either Classes or MovementType must be included
+    "MovementType":  0, //Optional
     "Affiliation": 0, //Required
     "Coordinate": 0, //Required
     "HP": { //Required

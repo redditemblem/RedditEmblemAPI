@@ -31,6 +31,12 @@ namespace RedditEmblemAPI.Models.Output.Map
         private string OccupyingUnitName { get { return (this.Unit == null ? string.Empty : this.Unit.Name); } }
 
         /// <summary>
+        /// Only for JSON serialization. Returns the name of the paired <c>Unit</c> on this tile. If <c>Unit</c> is null or there is no paired unit, returns an empty string.
+        /// </summary>
+        [JsonProperty]
+        private string PairedUnitName { get { return (this.Unit == null || this.Unit.PairedUnitObj == null ? string.Empty : this.Unit.PairedUnitObj.Name); } }
+
+        /// <summary>
         /// Flag indicating if the <c>Unit</c> occupying this tile is anchored here. Units will be drawn at the anchor tile.
         /// </summary>
         public bool IsUnitAnchor { get; set; }
