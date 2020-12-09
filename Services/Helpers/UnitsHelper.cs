@@ -58,8 +58,14 @@ namespace RedditEmblemAPI.Services.Helpers
 
                     if (pair == null || pair.Name == unit.Name)
                         throw new UnitProcessingException(unit.Name, ex);
+
+                    //Unit is already paired with someone
+                    if (unit.PairedUnitObj != null)
+                        throw new UnitProcessingException(unit.Name, new UnitAlreadyPairedException(unit.Name, unit.PairedUnitObj.Name, pair.Name));
+
+                    //Paired unit is already paired with someone
                     if (pair.PairedUnitObj != null)
-                        throw new UnitProcessingException(unit.Name, new UnitAlreadyPairedException(pair.Name, pair.PairedUnitObj.Name));
+                        throw new UnitProcessingException(unit.Name, new UnitAlreadyPairedException(pair.Name, pair.PairedUnitObj.Name, unit.Name));
 
                     //Bind paired units together
                     pair.PairedUnitObj = unit;
