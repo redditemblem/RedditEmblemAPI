@@ -24,12 +24,18 @@ namespace RedditEmblemAPI.Models.Output.System
         public string SpriteURL { get; set; }
 
         /// <summary>
+        /// Flag indicating if the tag's sprite should be displayed over the map sprite of units who possess it.
+        /// </summary>
+        public bool ShowOnUnit { get; set; }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         public Tag(TagConfig config, IList<string> data)
         {
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
+            this.ShowOnUnit = (ParseHelper.SafeStringParse(data, config.ShowOnUnit, "Show On Unit", false) == "Yes");
         }
     }
 }

@@ -101,6 +101,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             filters.Add("AllowSales", (config.Shop.SalePrice != -1));
 
             this.Parameters = new FilterParameters(sorts,
+                new List<string>(), //shop items don't have owners
                 this.ShopItems.Select(i => i.Item.Category).Distinct().OrderBy(c => c).ToList(),
                 this.ShopItems.SelectMany(i => i.Item.UtilizedStats).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(c => c).ToList(),
                 filters);

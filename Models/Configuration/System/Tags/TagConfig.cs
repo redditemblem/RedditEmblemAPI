@@ -25,6 +25,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Tags
         /// </summary>
         public int SpriteURL { get; set; } = -1;
 
+        /// <summary>
+        /// Optional. Cell index for a tag's Show On Unit flag.
+        /// </summary>
+        public int ShowOnUnit { get; set; } = -1;
+
         #endregion
     }
 }

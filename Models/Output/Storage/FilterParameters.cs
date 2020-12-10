@@ -10,6 +10,11 @@ namespace RedditEmblemAPI.Models.Output.Storage
         public IList<ItemSort> Sorts { get; set; }
 
         /// <summary>
+        /// List of possible owners to filter by.
+        /// </summary>
+        public IList<string> Owners { get; set; }
+
+        /// <summary>
         /// List of all the item category values to be available as checkboxes.
         /// </summary>
         public IList<string> ItemCategories { get; set; }
@@ -28,12 +33,14 @@ namespace RedditEmblemAPI.Models.Output.Storage
         /// Constructor.
         /// </summary>
         /// <param name="sorts"></param>
+        /// <param name="owners"></param>
         /// <param name="itemCategories"></param>
         /// <param name="utilizedStats"></param>
         /// <param name="filterConditions"></param>
-        public FilterParameters(IList<ItemSort> sorts, IList<string> itemCategories, IList<string> utilizedStats, IDictionary<string, bool> filterConditions)
+        public FilterParameters(IList<ItemSort> sorts, IList<string> owners, IList<string> itemCategories, IList<string> utilizedStats, IDictionary<string, bool> filterConditions)
         {
             this.Sorts = sorts;
+            this.Owners = owners;
             this.ItemCategories = itemCategories;
             this.UtilizedStats = utilizedStats;
             this.FilterConditions = filterConditions;

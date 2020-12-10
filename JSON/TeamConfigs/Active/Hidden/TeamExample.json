@@ -276,6 +276,16 @@
           "Value": 10
         }
       ]
+    },
+    "Tags": {
+      "Query": {
+        "Sheet": "Tags",
+        "Selection": "B2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "ShowOnUnit": 2
     }
   },
   "Units": {
