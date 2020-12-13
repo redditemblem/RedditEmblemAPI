@@ -57,6 +57,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <exception cref="UnmatchedStatException"></exception>
         public void Apply(Unit unit, Skill skill, IList<Unit> units)
         {
+            //If unit is not on the map, don't apply
+            if (unit.OriginTile == null)
+                return;
+
             bool allyInRange = false;
             foreach (Unit other in units)
             {
@@ -69,8 +73,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                     continue;
 
                 //Units must be within range
-                if ( unit.OriginTile == null
-                  || other.OriginTile == null
+                if ( other.OriginTile == null
                   || this.Radius < unit.OriginTile.Coordinate.DistanceFrom(other.OriginTile.Coordinate))
                     continue;
 

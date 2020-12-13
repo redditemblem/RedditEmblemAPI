@@ -58,6 +58,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <exception cref="UnmatchedStatException"></exception>
         public void Apply(Unit unit, Skill skill, IList<Unit> units)
         {
+            //If unit is not on the map, don't apply
+            if (unit.OriginTile == null)
+                return;
+
             //The terrain type must be in the defined grouping
             if (!unit.OriginTile.TerrainTypeObj.Groupings.Contains(this.TerrainTypeGrouping))
                 return;

@@ -198,6 +198,15 @@ namespace RedditEmblemAPI.Services.Helpers
         private bool UnitCanAccessAllIntersectedTiles(UnitRangeParameters unitParms, Tile currentOriginTile)
         {
             int anchorOffset = (int)Math.Ceiling(unitParms.Unit.UnitSize / 2.0m) - 1;
+
+            //Make sure the relative anchor doesn't fall off the map
+            if( currentOriginTile.Coordinate.X - anchorOffset < 1
+             || currentOriginTile.Coordinate.Y - anchorOffset < 1
+             || currentOriginTile.Coordinate.X - anchorOffset > this.Tiles.First().Count
+             || currentOriginTile.Coordinate.Y - anchorOffset > this.Tiles.Count
+              )
+                return false;
+
             Tile relativeAnchorTile = GetTileByCoord(currentOriginTile.Coordinate.X - anchorOffset, currentOriginTile.Coordinate.Y - anchorOffset);
 
             for (int y = 0; y < unitParms.Unit.UnitSize; y++)

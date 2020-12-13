@@ -112,6 +112,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         public IList<string> Tags { get; set; }
 
         /// <summary>
+        /// Description of how the unit behaves.
+        /// </summary>
+        public string Behavior { get; set; }
+
+        /// <summary>
         /// Collection of the unit's calculated combat stats.
         /// </summary>
         public IDictionary<string, ModifiedStatValue> CombatStats { get; set; }
@@ -249,6 +254,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.HeldCurrency = ParseHelper.OptionalSafeIntParse(data, config.HeldCurrency, "Currency", true, 0);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
             this.Tags = ParseHelper.StringCSVParse(data, config.Tags);
+            this.Behavior = ParseHelper.SafeStringParse(data, config.Behavior, "Behavior", false);
 
             this.MovementRange = new List<Coordinate>();
             this.AttackRange = new List<Coordinate>();

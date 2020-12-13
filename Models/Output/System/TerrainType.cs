@@ -42,7 +42,6 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// List of movement costs for the terrain type.
         /// </summary>
-        [JsonIgnore]
         public IDictionary<string, int> MovementCosts { get; set; }
 
         /// <summary>

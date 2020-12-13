@@ -21,7 +21,6 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// The class's movement type. (i.e. Foot/Mounted/etc.)
         /// </summary>
-        [JsonIgnore]
         public string MovementType { get; set; }
 
         /// <summary>
