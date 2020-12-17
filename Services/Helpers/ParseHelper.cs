@@ -18,10 +18,11 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="index"></param>
         /// <param name="fieldName">The name of the numerical value as it should display in any thrown exception messages.</param>
         /// <param name="isPositive">If true, an exception will be thrown if the numerical value is less than 0.</param>
+        /// <param name="isNonZero">If true, an exception will be thrown if <paramref name="number"/> is equal to or less than 0.</param>
         /// <returns></returns>
-        public static int SafeIntParse(IList<string> data, int index, string fieldName, bool isPositive)
+        public static int SafeIntParse(IList<string> data, int index, string fieldName, bool isPositive, bool isNonZero = false)
         {
-            return SafeIntParse(data.ElementAtOrDefault<string>(index), fieldName, isPositive);
+            return SafeIntParse(data.ElementAtOrDefault<string>(index), fieldName, isPositive, isNonZero);
         }
 
         /// <summary>
@@ -30,9 +31,11 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="number"></param>
         /// <param name="fieldName">The name of the numerical value as it should display in any thrown exception messages.</param>
         /// <param name="isPositive">If true, an exception will be thrown if <paramref name="number"/> is less than 0.</param>
+        /// <param name="isNonZero">If true, an exception will be thrown if <paramref name="number"/> is equal to or less than 0.</param>
         /// <exception cref="AnyIntegerException"></exception>
         /// <exception cref="PositiveIntegerException"></exception>
-        public static int SafeIntParse(string number, string fieldName, bool isPositive)
+        /// <exception cref="NonZeroPositiveIntegerException"></exception>
+        public static int SafeIntParse(string number, string fieldName, bool isPositive, bool isNonZero = false)
         {
             int val;
             if (!int.TryParse(number, out val))
@@ -40,8 +43,10 @@ namespace RedditEmblemAPI.Services.Helpers
                 if (isPositive) throw new PositiveIntegerException(fieldName, number);
                 else throw new AnyIntegerException(fieldName, number);
             }
-            else if (isPositive && val < 0)
+            else if (isPositive && !isNonZero && val < 0)
                 throw new PositiveIntegerException(fieldName, number);
+            else if (isNonZero && val <= 0)
+                throw new NonZeroPositiveIntegerException(fieldName, number);
             return val;
         }
 
@@ -52,11 +57,12 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="index"></param>
         /// <param name="fieldName">The name of the numerical value as it should display in any thrown exception messages.</param>
         /// <param name="isPositive">If true, an exception will be thrown if the value in <paramref name="data"/> is less than 0.</param>
+        /// <param name="isNonZero">If true, an exception will be thrown if the value in <paramref name="data"/> is less than or equal to 0.</param>
         /// <param name="defaultValueIfNull">The value to return if the value in <paramref name="data"/> is null or empty.</param>
         /// <returns></returns>
-        public static int OptionalSafeIntParse(IList<string> data, int index, string fieldName, bool isPositive, int defaultValueIfNull)
+        public static int OptionalSafeIntParse(IList<string> data, int index, string fieldName, bool isPositive, bool isNonZero, int defaultValueIfNull)
         {
-            return OptionalSafeIntParse(data.ElementAtOrDefault<string>(index), fieldName, isPositive, defaultValueIfNull);
+            return OptionalSafeIntParse(data.ElementAtOrDefault<string>(index), fieldName, isPositive, isNonZero, defaultValueIfNull);
         }
 
         /// <summary>
@@ -65,14 +71,15 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="number"></param>
         /// <param name="fieldName">The name of the numerical value as it should display in any thrown exception messages.</param>
         /// <param name="isPositive">If true, an exception will be thrown if <paramref name="number"/> is less than 0.</param>
+        /// <param name="isNonZero">If true, an exception will be thrown if the value in <paramref name="number"/> is less than or equal to 0.</param>
         /// <param name="defaultValueIfNull">The value to return if <paramref name="number"/> is null or empty.</param>
         /// <returns></returns>
-        public static int OptionalSafeIntParse(string number, string fieldName, bool isPositive, int defaultValueIfNull)
+        public static int OptionalSafeIntParse(string number, string fieldName, bool isPositive, bool isNonZero, int defaultValueIfNull)
         {
             if (string.IsNullOrEmpty(number))
                 return defaultValueIfNull;
 
-            return SafeIntParse(number, fieldName, isPositive);
+            return SafeIntParse(number, fieldName, isPositive, isNonZero);
         }
 
         #endregion

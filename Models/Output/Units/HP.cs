@@ -53,12 +53,10 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <exception cref="NonZeroPositiveIntegerException"></exception>
         public HP(string current, string maximum)
         {
-            int currentVal = ParseHelper.SafeIntParse(current, "Current HP", true);
+            int currentVal = ParseHelper.SafeIntParse(current, "Current HP", true, false);
             this.Current = currentVal;
 
-            int maximumVal = ParseHelper.SafeIntParse(maximum, "Maximum HP", true);
-            if(maximumVal == 0)
-                throw new NonZeroPositiveIntegerException("Maximum HP", maximum);
+            int maximumVal = ParseHelper.SafeIntParse(maximum, "Maximum HP", true, true);
             this.Maximum = maximumVal;
         }
 

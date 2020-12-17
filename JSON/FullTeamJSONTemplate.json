@@ -195,7 +195,7 @@
     "SpriteURL": 0, //Required
     "Level": 0, //Required
     "Classes": [ 0 ], //Optional, either Classes or MovementType must be included
-    "MovementType":  0, //Optional
+    "MovementType": 0, //Optional
     "Affiliation": 0, //Required
     "Coordinate": 0, //Required
     "HP": { //Required
@@ -237,6 +237,7 @@
     "Experience": 0, //Optional
     "HeldCurrency": 0, //Optional
     "Tags": 0, //Optional
+    "Behavior": 0, //Optional
     "SystemStats": { //Optional
       "SourceName": "Charge",
       "BaseValue": 0,

@@ -72,12 +72,12 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Groupings = ParseHelper.IntCSVParse(data, config.Groupings, "Groupings", true);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
 
-            this.HPModifier = ParseHelper.OptionalSafeIntParse(data, config.HPModifier, "HP Modifier", false, 0);
+            this.HPModifier = ParseHelper.OptionalSafeIntParse(data, config.HPModifier, "HP Modifier", false, false, 0);
 
             this.CombatStatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.CombatStatModifiers)
             {
-                int val = ParseHelper.SafeIntParse(data, stat.Value, stat.SourceName, false);
+                int val = ParseHelper.OptionalSafeIntParse(data, stat.Value, stat.SourceName, false, false, 0);
                 if (val == 0) continue;
                 this.CombatStatModifiers.Add(stat.SourceName, val);
             }
@@ -86,7 +86,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.StatModifiers = new Dictionary<string, int>();
             foreach(NamedStatConfig stat in config.StatModifiers)
             {
-                int val = ParseHelper.SafeIntParse(data, stat.Value, stat.SourceName, false);
+                int val = ParseHelper.OptionalSafeIntParse(data, stat.Value, stat.SourceName, false, false, 0);
                 if (val == 0) continue;
                 this.StatModifiers.Add(stat.SourceName, val);
             }
@@ -94,7 +94,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.MovementCosts = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.MovementCosts)
             {
-                int val = ParseHelper.SafeIntParse(data, stat.Value, stat.SourceName, true);
+                int val = ParseHelper.SafeIntParse(data, stat.Value, string.Format("{0} Movement Cost", stat.SourceName), true, true);
                 this.MovementCosts.Add(stat.SourceName, val);
             }
         }

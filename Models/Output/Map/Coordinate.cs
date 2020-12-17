@@ -83,6 +83,15 @@ namespace RedditEmblemAPI.Models.Output.Map
             return Math.Abs(this.X - coord.X) + Math.Abs(this.Y - coord.Y);
         }
 
+        /// <summary>
+        /// Returns the <c>Coordinate</c> in "x,y" format.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.X + "," + this.Y;
+        }
+
         #region Equivalence Functions
 
         public override bool Equals(Object obj)

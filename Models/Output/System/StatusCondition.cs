@@ -51,7 +51,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
             this.Type = ParseStatusConditionType(data, config.Type);
-            this.Turns = ParseHelper.OptionalSafeIntParse(data, config.Turns, "Turns", true, 0);
+            this.Turns = ParseHelper.OptionalSafeIntParse(data, config.Turns, "Turns", true, true, 0);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
         }
 

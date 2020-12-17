@@ -244,14 +244,14 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             //Optional fields
             this.Player = ParseHelper.SafeStringParse(data, config.Player, "Player", false);
-            this.UnitSize = ParseHelper.OptionalSafeIntParse(data, config.UnitSize, "Unit Size", true, 1);
+            this.UnitSize = ParseHelper.OptionalSafeIntParse(data, config.UnitSize, "Unit Size", true, true, 1);
             this.HasMoved = (ParseHelper.SafeStringParse(data, config.HasMoved, "Has Moved", false) == "Yes");
 
-            int experience = ParseHelper.OptionalSafeIntParse(data, config.Experience, "Experience", true, -1);
+            int experience = ParseHelper.OptionalSafeIntParse(data, config.Experience, "Experience", true, false, -1);
             if(experience > -1) experience %= 100;
             this.Experience = experience;
 
-            this.HeldCurrency = ParseHelper.OptionalSafeIntParse(data, config.HeldCurrency, "Currency", true, 0);
+            this.HeldCurrency = ParseHelper.OptionalSafeIntParse(data, config.HeldCurrency, "Currency", true, false, 0);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
             this.Tags = ParseHelper.StringCSVParse(data, config.Tags);
             this.Behavior = ParseHelper.SafeStringParse(data, config.Behavior, "Behavior", false);
@@ -334,9 +334,8 @@ namespace RedditEmblemAPI.Models.Output.Units
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.OptionalSafeIntParse(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName), false, 0);
-                    if (val == 0)
-                        continue;
+                    int val = ParseHelper.OptionalSafeIntParse(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName), false, false, 0);
+                    if (val == 0) continue;
                     temp.Modifiers.Add(mod.SourceName, val);
                 }
 
@@ -354,9 +353,8 @@ namespace RedditEmblemAPI.Models.Output.Units
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.OptionalSafeIntParse(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName), false, 0);
-                    if (val == 0)
-                        continue;
+                    int val = ParseHelper.OptionalSafeIntParse(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName), false, false, 0);
+                    if (val == 0) continue;
                     temp.Modifiers.Add(mod.SourceName, val);
                 }
 

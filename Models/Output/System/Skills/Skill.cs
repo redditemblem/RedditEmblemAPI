@@ -79,6 +79,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect(parameters);
                 case "ItemMaxRangeModifier": return new ItemMaxRangeModifierEffect(parameters);
                 case "IgnoreUnitAffiliations": return new IgnoreUnitAffiliationsEffect(parameters);
+                case "HPBelowIgnoreUnitAffiliations": return new HPBelowIgnoreUnitAffiliationsEffect(parameters);
+                case "HPAboveIgnoreUnitAffiliations": return new HPAboveIgnoreUnitAffiliationsEffect(parameters);
                 //Unit Radius Stat Effects
                 //Normal
                 case "AllyRadiusCombatStatModifier": return new AllyRadiusCombatStatModifierEffect(parameters);

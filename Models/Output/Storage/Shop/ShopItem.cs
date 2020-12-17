@@ -67,7 +67,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             match.Matched = true;
 
             this.Price = ParseHelper.SafeIntParse(data, config.Price, "Price", true);
-            this.SalePrice = ParseHelper.OptionalSafeIntParse(data, config.SalePrice, "Sale Price", true, this.Price);
+            this.SalePrice = ParseHelper.OptionalSafeIntParse(data, config.SalePrice, "Sale Price", true, false, this.Price);
             this.Stock = ParseHelper.SafeIntParse(data, config.Stock, "Stock", true);
             this.IsNew = (ParseHelper.SafeStringParse(data, config.IsNew, "Is New", false) == "Yes");
         }

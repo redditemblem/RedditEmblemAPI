@@ -60,10 +60,10 @@ namespace RedditEmblemAPI.Models.Output.System
 
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", true);
-            this.Size = ParseHelper.OptionalSafeIntParse(data, config.Size, "Size", true, 1);
+            this.Size = ParseHelper.OptionalSafeIntParse(data, config.Size, "Size", true, true, 1);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
 
-            this.HPModifier = ParseHelper.OptionalSafeIntParse(data, config.HPModifier, "HP Modifier", false, 0);
+            this.HPModifier = ParseHelper.OptionalSafeIntParse(data, config.HPModifier, "HP Modifier", false, false, 0);
 
             this.CombatStatModifiers = new Dictionary<string, int>();
             foreach(NamedStatConfig stat in config.CombatStatModifiers)
