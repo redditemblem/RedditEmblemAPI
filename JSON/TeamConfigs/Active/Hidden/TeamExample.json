@@ -231,9 +231,11 @@
           "Value": 6
         }
       ],
-      "BlocksItems": 7,
-      "TextFields": [ 8 ],
-      "Groupings":  9
+      "WarpType": 7,
+      "WarpCost": 8,
+      "BlocksItems": 9,
+      "TextFields": [ 10 ],
+      "Groupings":  11
     },
     "TerrainEffects": {
       "Query": {

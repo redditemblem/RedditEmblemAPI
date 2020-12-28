@@ -74,13 +74,17 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 //Terrain Type Effects
                 case "TerrainTypeCombatStatModifier": return new TerrainTypeCombatStatModifierEffect(parameters);
                 case "TerrainTypeStatModifier": return new TerrainTypeStatModifierEffect(parameters);
-                //Unit/Item Range Effects
+                //Unit Movement Range Effects
                 case "TerrainTypeMovementCostModifier": return new TerrainTypeMovementCostModifierEffect(parameters);
                 case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect(parameters);
-                case "ItemMaxRangeModifier": return new ItemMaxRangeModifierEffect(parameters);
+                case "WarpMovementCostModifier": return new WarpMovementCostModifierEffect(parameters);
+                case "WarpMovementCostSet": return new WarpMovementCostSetEffect(parameters);
                 case "IgnoreUnitAffiliations": return new IgnoreUnitAffiliationsEffect(parameters);
                 case "HPBelowIgnoreUnitAffiliations": return new HPBelowIgnoreUnitAffiliationsEffect(parameters);
                 case "HPAboveIgnoreUnitAffiliations": return new HPAboveIgnoreUnitAffiliationsEffect(parameters);
+                //Item Range Effects
+                case "ItemMaxRangeSet": return new ItemMaxRangeSetEffect(parameters);
+                case "ItemMaxRangeModifier": return new ItemMaxRangeModifierEffect(parameters);
                 //Unit Radius Stat Effects
                 //Normal
                 case "AllyRadiusCombatStatModifier": return new AllyRadiusCombatStatModifierEffect(parameters);

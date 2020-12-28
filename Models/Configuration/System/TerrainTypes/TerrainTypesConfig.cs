@@ -52,6 +52,16 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         public IList<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
+        /// Optional. Cell index of a terrain type's warp type.
+        /// </summary>
+        public int WarpType { get; set; } = -1;
+
+        /// <summary>
+        /// Optional. Cell index of a terrain type's warp cost.
+        /// </summary>
+        public int WarpCost { get; set; } = -1;
+
+        /// <summary>
         /// Optional. Cell index of a terrain type's groupings value.
         /// </summary>
         public int Groupings { get; set; } = -1;

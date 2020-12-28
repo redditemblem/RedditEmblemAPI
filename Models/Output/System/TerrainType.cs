@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
@@ -43,6 +44,16 @@ namespace RedditEmblemAPI.Models.Output.System
         /// List of movement costs for the terrain type.
         /// </summary>
         public IDictionary<string, int> MovementCosts { get; set; }
+
+        /// <summary>
+        /// The warp type of the terrain effect.
+        /// </summary>
+        public WarpType WarpType { get; set; }
+
+        /// <summary>
+        /// The cost to begin a warp starting from this terrain effect, if applicable.
+        /// </summary>
+        public int WarpCost { get; set; }
 
         /// <summary>
         /// Flag indicating whether or not item ranges can pass through the terrain type.
@@ -97,6 +108,39 @@ namespace RedditEmblemAPI.Models.Output.System
                 int val = ParseHelper.SafeIntParse(data, stat.Value, string.Format("{0} Movement Cost", stat.SourceName), true, true);
                 this.MovementCosts.Add(stat.SourceName, val);
             }
+
+            this.WarpType = GetWarpTypeEnum(ParseHelper.SafeStringParse(data, config.WarpType, "Warp Type", false));
+            if (this.WarpType == WarpType.Entrance || this.WarpType == WarpType.Dual)
+            {
+                this.WarpCost = ParseHelper.SafeIntParse(data, config.WarpCost, "Warp Cost", true);
+            }
+            else this.WarpCost = 0;
         }
+
+        /// <summary>
+        /// Converts the string value of <paramref name="warpTypeName"/> into the corresponding <c>WarpType</c> object.
+        /// </summary>
+        /// <param name="warpTypeName"></param>
+        /// <exception cref="UnmatchedWarpTypeException"></exception>
+        /// <returns></returns>
+        private WarpType GetWarpTypeEnum(string warpTypeName)
+        {
+            switch (warpTypeName)
+            {
+                case "": return WarpType.None;
+                case "Entrance": return WarpType.Entrance;
+                case "Exit": return WarpType.Exit;
+                case "Dual": return WarpType.Dual;
+                default: throw new UnmatchedWarpTypeException(warpTypeName);
+            }
+        }
+    }
+
+    public enum WarpType
+    {
+        None = 0,
+        Entrance = 1,
+        Exit = 2,
+        Dual = 3
     }
 }

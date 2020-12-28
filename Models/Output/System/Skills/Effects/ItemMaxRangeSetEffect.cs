@@ -1,11 +1,12 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
+using System;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class ItemMaxRangeModifierEffect : ISkillEffect
+    public class ItemMaxRangeSetEffect : ISkillEffect
     {
         #region Attributes
 
@@ -25,17 +26,20 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// Constructor.
         /// </summary>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
-        public ItemMaxRangeModifierEffect(IList<string> parameters)
+        public ItemMaxRangeSetEffect(IList<string> parameters)
         {
             if (parameters.Count < 2)
-                throw new SkillEffectMissingParameterException("ItemMaxRangeModifier", 2, parameters.Count);
+                throw new SkillEffectMissingParameterException("ItemMaxRangeSet", 2, parameters.Count);
 
             this.Categories = ParseHelper.StringCSVParse(parameters, 0);
             this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", true, true);
+
+            if (this.Value > 15)
+                throw new RangeMaximumTooLargeException("For performance reasons, item ranges in excess of 15 tiles are currently not allowed.");
         }
 
         /// <summary>
-        /// Finds all items in <paramref name="unit"/>'s inventory with a category in <c>Categories</c> and boosts their max range by <c>Value</c>.
+        /// Finds all items in <paramref name="unit"/>'s inventory with a category in <c>Categories</c> and sets their max range by <c>Value</c>.
         /// </summary>
         public void Apply(Unit unit, Skill skill, IList<Unit> units)
         {
@@ -52,9 +56,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                 if (item.Item.Range.Maximum == 0)
                     continue;
 
-                //If this modifier is greater than the one we're currently using, apply it
-                if(this.Value > item.MaxRangeModifier)
-                    item.MaxRangeModifier = this.Value;
+                //Calculate the difference between the set value and the item's base max range 
+                int modifier = this.Value - item.Item.Range.Maximum;
+
+                //If there is a difference and it's larger than what we're already applying, use it
+                if (modifier > 0 && modifier > item.MaxRangeModifier)
+                    item.MaxRangeModifier = modifier;
             }
         }
     }

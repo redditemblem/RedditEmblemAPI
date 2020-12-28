@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Models.Output.Map
 {
@@ -50,6 +51,12 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// Matrix of map tiles.
         /// </summary>
         public List<List<Tile>> Tiles { get; set; }
+
+        #endregion
+
+        #region Constants
+
+        private static Regex warpGroupRegex = new Regex(@"\(([0-9]+)\)"); //match warp group (ex. "(1)")
 
         #endregion
 
@@ -139,6 +146,7 @@ namespace RedditEmblemAPI.Models.Output.Map
             try
             {
                 IList<IList<object>> tileData = config.Query.Data;
+                IDictionary<int, IList<Tile>> warpGroups = new Dictionary<int, IList<Tile>>();
 
                 GetMapDimensions(out mapHeight, out mapWidth);
 
@@ -153,13 +161,45 @@ namespace RedditEmblemAPI.Models.Output.Map
                     List<Tile> currentRow = new List<Tile>();
                     foreach (object tile in row)
                     {
+                        string t = tile.ToString().Trim();
+
+                        //Search for warp group number
+                        int warpGroupNum = 0;
+                        Match match = warpGroupRegex.Match(t);
+                        if(match.Success)
+                        {
+                            t = t.Replace(match.Groups[0].Value, string.Empty).Trim();
+                            warpGroupNum = int.Parse(match.Groups[1].Value);
+                        }
+
                         //Match on tile's terrain type
                         TerrainType type;
-                        if (!terrainTypes.TryGetValue(tile.ToString(), out type))
+                        if (!terrainTypes.TryGetValue(t, out type))
                             throw new UnmatchedTileTerrainTypeException(x, y, tile.ToString());
 
                         type.Matched = true;
-                        currentRow.Add(new Tile(x, y, type));
+                        Tile temp = new Tile(x, y, type);
+
+                        //If we found a warp group number, add the new tile to a warp group.
+                        if(warpGroupNum > 0)
+                        {
+                            //If the terrain type isn't configured as a warp, error.
+                            if (type.WarpType == WarpType.None)
+                                throw new TerrainTypeNotConfiguredAsWarpException(t, tile.ToString());
+
+                            IList<Tile> warpGroup;
+                            if (!warpGroups.TryGetValue(warpGroupNum, out warpGroup))
+                            {
+                                warpGroup = new List<Tile>();
+                                warpGroups.Add(warpGroupNum, warpGroup);
+                            }
+
+                            //Two-way bind warp group data
+                            warpGroup.Add(temp);
+                            temp.WarpGroup = warpGroup;
+                        }
+
+                        currentRow.Add(temp);
                         x++;
                     }
 
@@ -168,6 +208,23 @@ namespace RedditEmblemAPI.Models.Output.Map
                     x = 1;
                     y++;
                 }
+
+                //Validate all warp groups for entrances/exits
+                foreach(int key in warpGroups.Keys)
+                {
+                    IList<Tile> group = warpGroups[key];
+
+                    IList<Tile> entrances = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Entrance || w.TerrainTypeObj.WarpType == WarpType.Dual).ToList();
+                    IList<Tile> exits = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Exit || w.TerrainTypeObj.WarpType == WarpType.Dual).ToList();
+
+                    //If we do not have at least one distinct entrance and exit
+                    if (   entrances.Count == 0
+                        || exits.Count == 0
+                        || entrances.Select(e => e.Coordinate).Union(exits.Select(e => e.Coordinate)).Distinct().Count() < 2
+                        )
+                        throw new InvalidWarpGroupException(key.ToString());
+                }
+                
             }
             catch (Exception ex)
             {

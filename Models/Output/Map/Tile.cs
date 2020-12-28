@@ -59,6 +59,12 @@ namespace RedditEmblemAPI.Models.Output.Map
         private string TerrainType { get { return this.TerrainTypeObj.Name;  } }
 
         /// <summary>
+        /// List of warp tiles this tile is linked to.
+        /// </summary>
+        [JsonIgnore]
+        public IList<Tile> WarpGroup { get; set; }
+
+        /// <summary>
         /// List of the terrain effects on this tile.
         /// </summary>
         public IList<TileTerrainEffect> TerrainEffects { get; set; }

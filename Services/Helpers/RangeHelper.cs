@@ -34,7 +34,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
                     //Calculate movement range
                     UnitRangeParameters unitParms = new UnitRangeParameters(unit);
-                    RecurseUnitRange(unitParms, unit.OriginTile.Coordinate, unit.Stats["Mov"].FinalValue, string.Empty);
+                    RecurseUnitRange(unitParms, unit.OriginTile.Coordinate, unit.Stats["Mov"].FinalValue, string.Empty, null);
 
                     //Calculate item range
                     IList<Coordinate> atkRange = new List<Coordinate>();
@@ -69,7 +69,7 @@ namespace RedditEmblemAPI.Services.Helpers
             }
         }
 
-        private void RecurseUnitRange(UnitRangeParameters parms, Coordinate currCoord, int remainingMov, string visitedCoords)
+        private void RecurseUnitRange(UnitRangeParameters parms, Coordinate currCoord, int remainingMov, string visitedCoords, Coordinate lastWarpUsed)
         {
             //Base case
             //Don't exceed the maximum range and don't go off the map
@@ -81,38 +81,41 @@ namespace RedditEmblemAPI.Services.Helpers
                )
                 return;
 
-            //Don't perform checks for the starting tile
-            if(visitedCoords.Length > 0)
+            Tile tile = GetTileByCoord(currCoord);
+
+            //If there is a Unit occupying this tile, check for affiliation collisions
+            if (tile.Unit != null && parms.Unit.Name != tile.Unit.Name)
             {
-                Tile tile = GetTileByCoord(currCoord);
-
-                //If there is a Unit occupying this tile, check for affiliation collisions
-                if (tile.Unit != null && parms.Unit.Name != tile.Unit.Name)
-                {
-                    if (!parms.IgnoresAffiliations && parms.Unit.AffiliationObj.Grouping != tile.Unit.AffiliationObj.Grouping)
-                        return;
-                }
-
-                //Test that the unit can move to this tile
-                int moveCost;
-                if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(parms.Unit.GetUnitMovementType(), out moveCost))
-                    throw new UnmatchedMovementTypeException(parms.Unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys.ToList());
-
-                //Apply movement cost modifiers
-                TerrainTypeMovementCostSetEffect movCostSet = parms.MoveCostSets.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-                TerrainTypeMovementCostModifierEffect moveCostMod = parms.MovCostModifiers.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-                if (movCostSet != null && (movCostSet.CanOverride99MoveCost || moveCost < 99))
-                    moveCost = movCostSet.Value;
-                else if (moveCostMod != null && moveCost < 99)
-                    moveCost += moveCostMod.Value;
-
-                if (moveCost < 0) moveCost = 0;
-                if (moveCost > remainingMov || moveCost >= 99) return;
-                if (parms.Unit.UnitSize > 1 && !UnitCanAccessAllIntersectedTiles(parms, tile))
+                if (!parms.IgnoresAffiliations && parms.Unit.AffiliationObj.Grouping != tile.Unit.AffiliationObj.Grouping)
                     return;
-               
+            }
+
+            //Test that the unit can move to this tile
+            int moveCost;
+            if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(parms.Unit.GetUnitMovementType(), out moveCost))
+                throw new UnmatchedMovementTypeException(parms.Unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys.ToList());
+
+            //Apply movement cost modifiers
+            TerrainTypeMovementCostSetEffect movCostSet = parms.MoveCostSets.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+            TerrainTypeMovementCostModifierEffect moveCostMod = parms.MoveCostModifiers.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+            if (movCostSet != null && (movCostSet.CanOverride99MoveCost || moveCost < 99))
+                moveCost = movCostSet.Value;
+            else if (moveCostMod != null && moveCost < 99)
+                moveCost += moveCostMod.Value;
+
+            if (moveCost < 0) moveCost = 0;
+            if (moveCost >= 99) return;
+
+            //Don't check or subtract move cost for the starting tile
+            if (visitedCoords.Length > 0)
+            {
+                if (moveCost > remainingMov) return;
                 remainingMov = remainingMov - moveCost;
             }
+
+            //Make sure multi-tile units fit here
+            if (parms.Unit.UnitSize > 1 && !UnitCanAccessAllIntersectedTiles(parms, tile))
+                return;
 
             visitedCoords += "_" + currCoord.ToString() + "_";
 
@@ -123,22 +126,44 @@ namespace RedditEmblemAPI.Services.Helpers
             //Left
             Coordinate left = new Coordinate(currCoord.X - 1, currCoord.Y);
             if (!visitedCoords.Contains("_" + left.ToString() + "_"))
-                RecurseUnitRange(parms, left, remainingMov, visitedCoords);
+                RecurseUnitRange(parms, left, remainingMov, visitedCoords, lastWarpUsed);
 
             //Right
             Coordinate right = new Coordinate(currCoord.X + 1, currCoord.Y);
             if (!visitedCoords.Contains("_" + right.ToString() + "_"))
-                RecurseUnitRange(parms, right, remainingMov, visitedCoords);
+                RecurseUnitRange(parms, right, remainingMov, visitedCoords, lastWarpUsed);
 
             //Up
             Coordinate up = new Coordinate(currCoord.X, currCoord.Y - 1);
             if (!visitedCoords.Contains("_" + up.ToString() + "_"))
-                RecurseUnitRange(parms, up, remainingMov, visitedCoords);
+                RecurseUnitRange(parms, up, remainingMov, visitedCoords, lastWarpUsed);
 
             //Down
             Coordinate down = new Coordinate(currCoord.X, currCoord.Y + 1);
             if (!visitedCoords.Contains("_" + down.ToString() + "_"))
-                RecurseUnitRange(parms, down, remainingMov, visitedCoords);
+                RecurseUnitRange(parms, down, remainingMov, visitedCoords, lastWarpUsed);
+
+            //If this tile is a warp entrance, calculate the remaining range from each warp exit too.
+            if (     remainingMov > 0
+                 && (tile.TerrainTypeObj.WarpType == WarpType.Entrance || tile.TerrainTypeObj.WarpType == WarpType.Dual)
+                 && (lastWarpUsed == null || tile.Coordinate != lastWarpUsed)
+               )
+            {
+                //Calculate warp cost
+                WarpMovementCostSetEffect warpCostSet = parms.WarpCostSets.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+                WarpMovementCostModifierEffect warpCostMod = parms.WarpCostModifiers.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+
+                int warpCost = tile.TerrainTypeObj.WarpCost;
+                if (warpCostSet != null) warpCost = warpCostSet.Value;
+                else if (warpCostMod != null) warpCost += warpCostMod.Value;
+
+                if (warpCost < 0) warpCost = 0;
+
+                foreach (Tile warpExit in tile.WarpGroup.Where(t => tile.Coordinate != t.Coordinate && (t.TerrainTypeObj.WarpType == WarpType.Exit || t.TerrainTypeObj.WarpType == WarpType.Dual)))
+                {
+                    RecurseUnitRange(parms, warpExit.Coordinate, remainingMov - warpCost, string.Empty, warpExit.Coordinate);
+                }
+            }
 
         }
 
@@ -277,16 +302,28 @@ namespace RedditEmblemAPI.Services.Helpers
     public struct UnitRangeParameters
     {
         public Unit Unit;
+
+        #region Skill Effects
+
         public bool IgnoresAffiliations { get; set; }
-        public IList<TerrainTypeMovementCostModifierEffect> MovCostModifiers { get; set; }
+
+        public IList<TerrainTypeMovementCostModifierEffect> MoveCostModifiers { get; set; }
         public IList<TerrainTypeMovementCostSetEffect> MoveCostSets { get; set; }
+
+        public IList<WarpMovementCostModifierEffect> WarpCostModifiers { get; set; }
+        public IList<WarpMovementCostSetEffect> WarpCostSets { get; set; }
+
+        #endregion
 
         public UnitRangeParameters(Unit unit)
         {
             this.Unit = unit;
+
             this.IgnoresAffiliations = unit.SkillList.Select(s => s.Effect).OfType<IIgnoreUnitAffiliations>().Any(e => e.IsActive(unit));
-            this.MovCostModifiers = unit.SkillList.Select(s => s.Effect).OfType<TerrainTypeMovementCostModifierEffect>().ToList();
+            this.MoveCostModifiers = unit.SkillList.Select(s => s.Effect).OfType<TerrainTypeMovementCostModifierEffect>().ToList();
             this.MoveCostSets = unit.SkillList.Select(s => s.Effect).OfType<TerrainTypeMovementCostSetEffect>().ToList();
+            this.WarpCostModifiers = unit.SkillList.Select(s => s.Effect).OfType<WarpMovementCostModifierEffect>().ToList();
+            this.WarpCostSets = unit.SkillList.Select(s => s.Effect).OfType<WarpMovementCostSetEffect>().ToList();
         }
     }
 
