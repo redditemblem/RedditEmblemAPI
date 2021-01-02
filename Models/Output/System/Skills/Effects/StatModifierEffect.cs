@@ -1,38 +1,39 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class StatModifierEffect : ISkillEffect
+    public class StatModifierEffect : SkillEffect
     {
         #region Attributes
+
+        protected override string SkillEffectName { get { return "StatModifier"; } }
+        protected override int ParameterCount { get { return 2; } }
 
         /// <summary>
         /// Param1. The unit stats to be affected.
         /// </summary>
-        public IList<string> Stats { get; private set; }
+        private IList<string> Stats { get; set; }
 
         /// <summary>
         /// Param2. The value by which to modify the <c>Stats</c>.
         /// </summary>
-        public IList<int> Values { get; private set; }
+        private IList<int> Values { get; set; }
 
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="SkillEffectMissingParameterException"></exception>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
         /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
         public StatModifierEffect(IList<string> parameters)
+            : base(parameters)
         {
-            if (parameters.Count < 2)
-                throw new SkillEffectMissingParameterException("StatModifier", 2, parameters.Count);
-
             this.Stats = ParseHelper.StringCSVParse(parameters, 0); //Param1
             this.Values = ParseHelper.IntCSVParse(parameters, 1, "Param2", false);
 
@@ -49,7 +50,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// Adds the items in <c>Values</c> as modifiers to the stats in <c>Stats</c> for <paramref name="unit"/>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        public void Apply(Unit unit, Skill skill, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             for (int i = 0; i < this.Stats.Count; i++)
             {

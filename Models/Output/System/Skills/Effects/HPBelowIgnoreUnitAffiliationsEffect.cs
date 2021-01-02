@@ -1,31 +1,32 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class HPBelowIgnoreUnitAffiliationsEffect : ISkillEffect, IIgnoreUnitAffiliations
+    public class HPBelowIgnoreUnitAffiliationsEffect : SkillEffect, IIgnoreUnitAffiliations
     {
+        #region Attributes 
+
+        protected override string SkillEffectName { get { return "HPBelowIgnoreUnitAffiliations"; } }
+        protected override int ParameterCount { get { return 1; } }
+
         /// <summary>
         /// Param1. The maximum HP percentage the unit can have.
         /// </summary>
-        public int HPPercentage { get; set; }
+        private int HPPercentage { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
         public HPBelowIgnoreUnitAffiliationsEffect(IList<string> parameters)
+            : base(parameters)
         {
-            if (parameters.Count < 1)
-                throw new SkillEffectMissingParameterException("HPBelowIgnoreUnitAffiliations", 1, parameters.Count);
-
             this.HPPercentage = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
-        }
-
-        public void Apply(Unit unit, Skill skill, IList<Unit> units)
-        {
-            //This effect has nothing to apply
         }
 
         public bool IsActive(Unit unit)

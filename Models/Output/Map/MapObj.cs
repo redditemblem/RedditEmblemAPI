@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Query;
@@ -18,7 +18,7 @@ namespace RedditEmblemAPI.Models.Output.Map
     /// <summary>
     /// Object representing the map.
     /// </summary>
-    public class Map
+    public class MapObj
     {
         #region Attributes
 
@@ -35,12 +35,26 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// The height of the map image in pixels.
         /// </summary>
-        public int MapImageHeight { get; private set; }
+        [JsonProperty]
+        private int ImageHeight { get; set; }
 
         /// <summary>
         /// The width of the map image in pixels.
         /// </summary>
-        public int MapImageWidth { get; private set; }
+        [JsonProperty]
+        private int ImageWidth { get; set; }
+
+        /// <summary>
+        /// The height of the map in number of tiles.
+        /// </summary>
+        [JsonIgnore]
+        public int TileHeight { get; private set; }
+
+        /// <summary>
+        /// The width of the map in number of tiles.
+        /// </summary>
+        [JsonIgnore]
+        public int TileWidth { get; private set; }
 
         /// <summary>
         /// Collection of constant values for doing calculations.
@@ -67,7 +81,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// </summary>
         /// <exception cref="MapDataLockedException"></exception>
         /// <exception cref="MapImageURLNotFoundException"></exception>
-        public Map(MapConfig config, IDictionary<string, TerrainType> terrainTypes, IDictionary<string, TerrainEffect> terrainEffects)
+        public MapObj(MapConfig config, IDictionary<string, TerrainType> terrainTypes, IDictionary<string, TerrainEffect> terrainEffects)
         {
             this.Constants = config.Constants;
 
@@ -86,12 +100,14 @@ namespace RedditEmblemAPI.Models.Output.Map
 
             this.ChapterPostURL = (values.ElementAtOrDefault(config.MapControls.ChapterPostURL) ?? string.Empty).ToString();
 
+            GetMapDimensionsFromImage();
+
             //Build tile matrix
             this.Tiles = new List<List<Tile>>();
             BuildTiles(config.MapTiles, terrainTypes);
 
             //If we have terrain effects configured, add those to the map
-            if(config.MapEffects != null)
+            if (config.MapEffects != null)
                 AddTerrainEffectsToTiles(config.MapEffects, terrainEffects);
         }
 
@@ -100,21 +116,22 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Calculates the expected height/width of the map in # of tiles based on the dimensions the image loaded from <c>MapImageURL</c>.
         /// </summary>
-        /// <param name="tileHeight">The height of the map in # of tiles.</param>
-        /// <param name="tileWidth">The width of the map in # of tiles.</param>
-        private void GetMapDimensions(out int tileHeight, out int tileWidth)
+        private void GetMapDimensionsFromImage()
         {
+            int tileHeight;
+            int tileWidth;
+
             byte[] imageData = new WebClient().DownloadData(this.MapImageURL);
             using (MemoryStream imgStream = new MemoryStream(imageData))
             using (SKManagedStream inputStream = new SKManagedStream(imgStream))
             using (SKBitmap img = SKBitmap.Decode(inputStream))
             {
-                this.MapImageHeight = img.Height;
-                this.MapImageWidth = img.Width;
+                this.ImageHeight = img.Height;
+                this.ImageWidth = img.Width;
             }
 
-            tileHeight = (int)Math.Floor((decimal)this.MapImageHeight / (this.Constants.TileSize + this.Constants.TileSpacing));
-            tileWidth = (int)Math.Floor((decimal)this.MapImageWidth / (this.Constants.TileSize + this.Constants.TileSpacing));
+            tileHeight = (int)Math.Floor((decimal)this.ImageHeight / (this.Constants.TileSize + this.Constants.TileSpacing));
+            tileWidth = (int)Math.Floor((decimal)this.ImageWidth / (this.Constants.TileSize + this.Constants.TileSpacing));
 
             if (this.Constants.HasHeaderTopLeft)
             {
@@ -127,6 +144,9 @@ namespace RedditEmblemAPI.Models.Output.Map
                 tileHeight -= 1;
                 tileWidth -= 1;
             }
+
+            this.TileHeight = tileHeight;
+            this.TileWidth = tileWidth;
         }
 
         /// <summary>
@@ -140,23 +160,18 @@ namespace RedditEmblemAPI.Models.Output.Map
             int x = 1;
             int y = 1;
 
-            int mapHeight;
-            int mapWidth;
-
             try
             {
                 IList<IList<object>> tileData = config.Query.Data;
                 IDictionary<int, IList<Tile>> warpGroups = new Dictionary<int, IList<Tile>>();
 
-                GetMapDimensions(out mapHeight, out mapWidth);
-
-                if (tileData.Count != mapHeight)
-                    throw new UnexpectedMapHeightException(tileData.Count, mapHeight, config.Query.Sheet);
+                if (tileData.Count != this.TileHeight)
+                    throw new UnexpectedMapHeightException(tileData.Count, this.TileHeight, config.Query.Sheet);
 
                 foreach (IList<object> row in tileData)
                 {
-                    if (row.Count != mapWidth)
-                        throw new UnexpectedMapWidthException(row.Count, mapWidth, config.Query.Sheet);
+                    if (row.Count != this.TileWidth)
+                        throw new UnexpectedMapWidthException(row.Count, this.TileWidth, config.Query.Sheet);
 
                     List<Tile> currentRow = new List<Tile>();
                     foreach (object tile in row)
@@ -166,7 +181,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                         //Search for warp group number
                         int warpGroupNum = 0;
                         Match match = warpGroupRegex.Match(t);
-                        if(match.Success)
+                        if (match.Success)
                         {
                             t = t.Replace(match.Groups[0].Value, string.Empty).Trim();
                             warpGroupNum = int.Parse(match.Groups[1].Value);
@@ -181,7 +196,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                         Tile temp = new Tile(x, y, type);
 
                         //If we found a warp group number, add the new tile to a warp group.
-                        if(warpGroupNum > 0)
+                        if (warpGroupNum > 0)
                         {
                             //If the terrain type isn't configured as a warp, error.
                             if (type.WarpType == WarpType.None)
@@ -210,7 +225,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                 }
 
                 //Validate all warp groups for entrances/exits
-                foreach(int key in warpGroups.Keys)
+                foreach (int key in warpGroups.Keys)
                 {
                     IList<Tile> group = warpGroups[key];
 
@@ -218,13 +233,13 @@ namespace RedditEmblemAPI.Models.Output.Map
                     IList<Tile> exits = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Exit || w.TerrainTypeObj.WarpType == WarpType.Dual).ToList();
 
                     //If we do not have at least one distinct entrance and exit
-                    if (   entrances.Count == 0
+                    if (entrances.Count == 0
                         || exits.Count == 0
                         || entrances.Select(e => e.Coordinate).Union(exits.Select(e => e.Coordinate)).Distinct().Count() < 2
                         )
                         throw new InvalidWarpGroupException(key.ToString());
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -262,8 +277,8 @@ namespace RedditEmblemAPI.Models.Output.Map
                         //Skip empty cells
                         if (string.IsNullOrEmpty(cell))
                             continue;
-                        
-                        foreach(string value in cell.Split(","))
+
+                        foreach (string value in cell.Split(","))
                         {
                             //Skip any empty strings
                             if (string.IsNullOrEmpty(value))
@@ -276,11 +291,11 @@ namespace RedditEmblemAPI.Models.Output.Map
                             tiles[c].TerrainEffects.Add(new TileTerrainEffect(effect, true));
 
                             //Set all tiles for multi-tile effects
-                            if(effect.Size > 1)
+                            if (effect.Size > 1)
                             {
-                                for(int r2 = r; r2 < r + effect.Size; r2++)
+                                for (int r2 = r; r2 < r + effect.Size; r2++)
                                 {
-                                    for(int c2 = c; c2 < c + effect.Size; c2++)
+                                    for (int c2 = c; c2 < c + effect.Size; c2++)
                                     {
                                         //Skip the starting tile
                                         if (r2 == r && c2 == c)
@@ -291,7 +306,7 @@ namespace RedditEmblemAPI.Models.Output.Map
 
                                         IList<Tile> tiles2 = this.Tiles[r2];
 
-                                        if(c2 >= tiles2.Count)
+                                        if (c2 >= tiles2.Count)
                                             throw new TileOutOfBoundsException(r2, c2);
 
                                         tiles2[c2].TerrainEffects.Add(new TileTerrainEffect(effect, false));
@@ -307,5 +322,64 @@ namespace RedditEmblemAPI.Models.Output.Map
                 throw new MapProcessingException(ex);
             }
         }
+
+        #region Tile Functions
+
+        /// <summary>
+        /// Fetches the tile with matching coordinates to <paramref name="coord"/>.
+        /// </summary>
+        /// <exception cref="TileOutOfBoundsException"></exception>
+        public Tile GetTileByCoord(Coordinate coord)
+        {
+            return GetTileByCoord(coord.X, coord.Y);
+        }
+
+        /// <summary>
+        /// Fetches the tile with matching coordinates to <paramref name="x"/>,<paramref name="y"/>.
+        /// </summary>
+        /// <exception cref="TileOutOfBoundsException"></exception>
+        public Tile GetTileByCoord(int x, int y)
+        {
+            IList<Tile> row = this.Tiles.ElementAtOrDefault<IList<Tile>>(y - 1) ?? throw new TileOutOfBoundsException(x, y);
+            Tile column = row.ElementAtOrDefault<Tile>(x - 1) ?? throw new TileOutOfBoundsException(x, y);
+
+            return column;
+        }
+
+        /// <summary>
+        /// Returns a list of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="centerTile"/>.
+        /// </summary>
+        public List<Tile> GetTilesInRadius(Tile centerTile, int radius)
+        {
+            return GetTilesInRadius(centerTile.Coordinate, radius);
+        }
+
+        /// <summary>
+        /// Returns a list of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="center"/>.
+        /// </summary>
+        public List<Tile> GetTilesInRadius(Coordinate center, int radius)
+        {
+            IList<Tile> temp = new List<Tile>();
+
+            for (int x = 0; x <= radius; x++)
+            {
+                for (int y = 0; y <= radius; y++)
+                {
+                    if (x == 0 && y == 0) continue; //ignore origin
+                    if (x + y > radius) continue; //if the total displacement is greater than the radius, stop
+
+                    //If fetching any tile fails, we still want to continue execution
+                    try { temp.Add(GetTileByCoord(center.X + x, center.Y + y)); } catch (TileOutOfBoundsException ex) { }
+                    try { temp.Add(GetTileByCoord(center.X - x, center.Y + y)); } catch (TileOutOfBoundsException ex) { }
+                    try { temp.Add(GetTileByCoord(center.X + x, center.Y - y)); } catch (TileOutOfBoundsException ex) { }
+                    try { temp.Add(GetTileByCoord(center.X - x, center.Y - y)); } catch (TileOutOfBoundsException ex) { }
+                }
+            }
+
+            //Return distinct list of tiles
+            return temp.Distinct().ToList();
+        }
+
+        #endregion
     }
 }

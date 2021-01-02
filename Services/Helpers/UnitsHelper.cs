@@ -21,11 +21,11 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="data">Matrix of sheet Value values representing unit data</param>
         /// <param name="config">Parsed JSON configuration mapping Values to output</param>
         /// <returns></returns>
-        public static IList<Unit> Process(UnitsConfig config, SystemInfo systemData, List<List<Tile>> map)
+        public static IList<Unit> Process(UnitsConfig config, SystemInfo systemData, MapObj map)
         {
             IList<Unit> units = new List<Unit>();
 
-            //Create the units and add them to the map
+            //Create units
             foreach (IList<object> row in config.Query.Data)
             {
                 try
@@ -82,7 +82,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     foreach (Skill skill in unit.SkillList)
                         if (skill.Effect != null)
-                            skill.Effect.Apply(unit, skill, units);
+                            skill.Effect.Apply(unit, skill, map, units);
                 }
                 catch(Exception ex)
                 {
@@ -107,15 +107,14 @@ namespace RedditEmblemAPI.Services.Helpers
             return units;
         }
 
-        private static void AddUnitToMap(Unit unit, List<List<Tile>> map)
+        private static void AddUnitToMap(Unit unit, MapObj map)
         {
             //Ignore hidden units
             if (unit.Coordinate.X < 1 || unit.Coordinate.Y < 1)
                 return;
 
             //Find tile corresponsing to units coordinates
-            IList<Tile> row = map.ElementAtOrDefault<IList<Tile>>(unit.Coordinate.Y - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate);
-            Tile tile = row.ElementAtOrDefault<Tile>(unit.Coordinate.X - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate);
+            Tile tile = map.GetTileByCoord(unit.Coordinate);
 
             //Make sure this unit is not placed overlapping another
             if (tile.Unit != null)
@@ -141,8 +140,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     for (int x = 0; x < unit.UnitSize; x++)
                     {
-                        IList<Tile> intersectRow = map.ElementAtOrDefault<IList<Tile>>(unit.Coordinate.Y + y - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate.X + x, unit.Coordinate.Y + y);
-                        Tile intersectTile = intersectRow.ElementAtOrDefault<Tile>(unit.Coordinate.X + x - 1) ?? throw new TileOutOfBoundsException(unit.Coordinate.X + x, unit.Coordinate.Y + y);
+                        Tile intersectTile = map.GetTileByCoord(unit.Coordinate.X + x, unit.Coordinate.Y + y);
 
                         //Make sure this unit is not placed overlapping another
                         if (intersectTile.Unit != null && unit.Name != intersectTile.Unit.Name)

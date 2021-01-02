@@ -2,15 +2,15 @@
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
-using System;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class ItemMaxRangeSetEffect : SkillEffect
+    public class ItemMinRangeModifierEffect : SkillEffect
     {
         #region Attributes
-        protected override string SkillEffectName { get { return "ItemMaxRangeSet"; } }
+
+        protected override string SkillEffectName { get { return "ItemMinRangeModifier"; } }
         protected override int ParameterCount { get { return 2; } }
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         private IList<string> Categories { get; set; }
 
         /// <summary>
-        /// Param2. The value by which to modifiy the <c>UnitInventoryItem</c>'s max range.
+        /// Param2. The value by which to modifiy the <c>UnitInventoryItem</c>'s min range.
         /// </summary>
         private int Value { get; set; }
 
@@ -28,19 +28,18 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="RangeMaximumTooLargeException"></exception>
-        public ItemMaxRangeSetEffect(IList<string> parameters)
+        public ItemMinRangeModifierEffect(IList<string> parameters)
             : base(parameters)
         {
             this.Categories = ParseHelper.StringCSVParse(parameters, 0);
-            this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", true, true);
+            this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", false);
 
-            if (this.Value > 15)
-                throw new RangeMaximumTooLargeException("For performance reasons, item ranges in excess of 15 tiles are currently not allowed.");
+            if (this.Value >= 0)
+                throw new NegativeIntegerException("Param2", this.Value.ToString());
         }
 
         /// <summary>
-        /// Finds all items in <paramref name="unit"/>'s inventory with a category in <c>Categories</c> and sets their max range to <c>Value</c>.
+        /// Finds all items in <paramref name="unit"/>'s inventory with a category in <c>Categories</c> and lowers their min range by <c>Value</c>.
         /// </summary>
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
@@ -53,16 +52,13 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                 if (!this.Categories.Contains(item.Item.Category))
                     continue;
 
-                //Items with a max range of 0 are not affected
-                if (item.Item.Range.Maximum == 0)
+                //Items with a minimum range of 0 are not affected
+                if (item.Item.Range.Minimum == 0)
                     continue;
 
-                //Calculate the difference between the set value and the item's base max range 
-                int modifier = this.Value - item.Item.Range.Maximum;
-
-                //If there is a difference and it's larger than what we're already applying, use it
-                if (modifier > 0 && modifier > item.MaxRangeModifier)
-                    item.MaxRangeModifier = modifier;
+                //If this modifier is less than the one we're currently using, apply it
+                if(this.Value < item.MinRangeModifier)
+                    item.MinRangeModifier = this.Value;
             }
         }
     }

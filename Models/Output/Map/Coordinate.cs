@@ -80,7 +80,17 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <returns></returns>
         public int DistanceFrom(Coordinate coord)
         {
-            return Math.Abs(this.X - coord.X) + Math.Abs(this.Y - coord.Y);
+            return DistanceFrom(coord.X, coord.Y);
+        }
+
+        /// <summary>
+        /// Returns the Manhattan Distance (horizontal/vertical displacement) between this coordinate and the coordinate at <paramref name="x"/>, <paramref name="y"/>.
+        /// </summary>
+        /// <param name="coord"></param>
+        /// <returns></returns>
+        public int DistanceFrom(int x, int y)
+        {
+            return Math.Abs(this.X - x) + Math.Abs(this.Y - y);
         }
 
         /// <summary>

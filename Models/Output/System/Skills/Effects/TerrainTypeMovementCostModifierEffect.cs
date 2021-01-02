@@ -1,13 +1,16 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class TerrainTypeMovementCostModifierEffect : ISkillEffect
+    public class TerrainTypeMovementCostModifierEffect : SkillEffect
     {
         #region Attributes
+        protected override string SkillEffectName { get { return "TerrainTypeMovementCostModifier"; } }
+        protected override int ParameterCount { get { return 2; } }
 
         /// <summary>
         /// Param1. The terrain type grouping to look for <c>Tile</c>s in.
@@ -24,19 +27,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="SkillEffectMissingParameterException"></exception>
         public TerrainTypeMovementCostModifierEffect(IList<string> parameters)
+            : base(parameters)
         {
-            if (parameters.Count < 2)
-                throw new SkillEffectMissingParameterException("TerrainTypeMovementCostModifier", 2, parameters.Count);
-
             this.TerrainTypeGrouping = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
             this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", false);
-        }
-
-        public void Apply(Unit unit, Skill skill, IList<Unit> units)
-        {
-            //This skill has nothing to apply
         }
     }
 }

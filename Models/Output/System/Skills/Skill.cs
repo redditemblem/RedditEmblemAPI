@@ -39,7 +39,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// The effect the skill applies, if any.
         /// </summary>
         [JsonIgnore]
-        public ISkillEffect Effect { get; set; }
+        public SkillEffect Effect { get; set; }
 
         /// <summary>
         /// Constructor.
@@ -53,7 +53,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                                            ParseHelper.StringListParse(data, config.Effect.Parameters, true));
         }
 
-        private ISkillEffect BuildSkillEffect(string effectType, IList<string> parameters)
+        private SkillEffect BuildSkillEffect(string effectType, IList<string> parameters)
         {
             if (string.IsNullOrEmpty(effectType))
                 return null;
@@ -75,14 +75,22 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "TerrainTypeCombatStatModifier": return new TerrainTypeCombatStatModifierEffect(parameters);
                 case "TerrainTypeStatModifier": return new TerrainTypeStatModifierEffect(parameters);
                 //Unit Movement Range Effects
+                //Movement Costs
                 case "TerrainTypeMovementCostModifier": return new TerrainTypeMovementCostModifierEffect(parameters);
                 case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect(parameters);
                 case "WarpMovementCostModifier": return new WarpMovementCostModifierEffect(parameters);
                 case "WarpMovementCostSet": return new WarpMovementCostSetEffect(parameters);
+                //Affiliations
                 case "IgnoreUnitAffiliations": return new IgnoreUnitAffiliationsEffect(parameters);
                 case "HPBelowIgnoreUnitAffiliations": return new HPBelowIgnoreUnitAffiliationsEffect(parameters);
                 case "HPAboveIgnoreUnitAffiliations": return new HPAboveIgnoreUnitAffiliationsEffect(parameters);
-                //Item Range Effects
+                case "ObstructTileRadius": return new ObstructTileRadiusEffect(parameters);
+                case "HPBelowObstructTileRadius": return new HPBelowObstructTileRadiusEffect(parameters);
+                case "HPAboveObstructTileRadius": return new HPAboveObstructTileRadiusEffect(parameters);
+                //Unit Item Range Effects
+                case "ItemAllowMeleeRange": return new ItemAllowMeleeRangeEffect(parameters);
+                case "ItemMinRangeSet": return new ItemMinRangeSetEffect(parameters);
+                case "ItemMinRangeModifier": return new ItemMinRangeModifierEffect(parameters);
                 case "ItemMaxRangeSet": return new ItemMaxRangeSetEffect(parameters);
                 case "ItemMaxRangeModifier": return new ItemMaxRangeModifierEffect(parameters);
                 //Unit Radius Stat Effects

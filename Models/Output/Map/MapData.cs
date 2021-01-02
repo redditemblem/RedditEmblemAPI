@@ -14,7 +14,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Container object for data about the map.
         /// </summary>
-        public Map Map { get; set; }
+        public MapObj Map { get; set; }
 
         /// <summary>
         /// Container object for data about the system.
@@ -48,11 +48,11 @@ namespace RedditEmblemAPI.Models.Output.Map
 
             //Process data, order is important on these
             this.System = new SystemInfo(config.System);
-            this.Map = new Map(config.Map, this.System.TerrainTypes, this.System.TerrainEffects);
-            this.Units = UnitsHelper.Process(config.Units, this.System, this.Map.Tiles);
+            this.Map = new MapObj(config.Map, this.System.TerrainTypes, this.System.TerrainEffects);
+            this.Units = UnitsHelper.Process(config.Units, this.System, this.Map);
 
             //Calculate unit ranges
-            RangeHelper rangeHelper = new RangeHelper(this.Units, this.Map.Tiles);
+            RangeHelper rangeHelper = new RangeHelper(this.Units, this.Map);
             rangeHelper.CalculateUnitRanges();
 
             //Clean up

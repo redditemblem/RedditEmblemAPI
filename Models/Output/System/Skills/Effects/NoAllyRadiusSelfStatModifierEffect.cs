@@ -1,29 +1,33 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class NoAllyRadiusSelfStatModifierEffect : ISkillEffect
+    public class NoAllyRadiusSelfStatModifierEffect : SkillEffect
     {
         #region Attributes
+
+        protected override string SkillEffectName { get { return "NoAllyRadiusSelfStatModifier"; } }
+        protected override int ParameterCount { get { return 3; } }
 
         /// <summary>
         /// Param1. The range within this skill affects units.
         /// </summary>
-        public int Radius { get; set; }
+        private int Radius { get; set; }
 
         /// <summary>
         /// Param2. The unit stats to be affected.
         /// </summary>
-        public IList<string> Stats { get; set; }
+        private IList<string> Stats { get; set; }
 
         /// <summary>
         /// Param3. The values by which to modify the <c>Stats</c>.
         /// </summary>
-        public IList<int> Values { get; set; }
+        private IList<int> Values { get; set; }
 
         #endregion
 
@@ -31,15 +35,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// Constructor.
         /// </summary>
         /// <param name="parameters"></param>
-        /// <exception cref="SkillEffectMissingParameterException"></exception>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
         /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
         public NoAllyRadiusSelfStatModifierEffect(IList<string> parameters)
+            : base(parameters)
         {
-            if (parameters.Count < 3)
-                throw new SkillEffectMissingParameterException("NoAllyRadiusSelfStatModifier", 3, parameters.Count);
-
-            this.Radius = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
+            this.Radius = ParseHelper.SafeIntParse(parameters, 0, "Param1", true, true);
             this.Stats = ParseHelper.StringCSVParse(parameters, 1); //Param2
             this.Values = ParseHelper.IntCSVParse(parameters, 2, "Param3", false);
 
@@ -56,7 +57,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// Searches the <paramref name="units"/> list for friendly units within <c>Radius</c> tiles. If it finds one, adds the values in <c>Values</c> as modifiers to the items in <c>Stats</c>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        public void Apply(Unit unit, Skill skill, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             bool noAlliesInRange = true;
             foreach (Unit other in units)

@@ -1,35 +1,36 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class ItemMaxRangeModifierEffect : ISkillEffect
+    public class ItemMaxRangeModifierEffect : SkillEffect
     {
         #region Attributes
+
+        protected override string SkillEffectName { get { return "ItemMaxRangeModifier"; } }
+        protected override int ParameterCount { get { return 2; } }
 
         /// <summary>
         /// Param1. The list of <c>Item</c> categories to affect.
         /// </summary>
-        public IList<string> Categories { get; set; }
+        private IList<string> Categories { get; set; }
 
         /// <summary>
         /// Param2. The value by which to modifiy the <c>UnitInventoryItem</c>'s max range.
         /// </summary>
-        public int Value { get; set; }
+        private int Value { get; set; }
 
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="SkillEffectMissingParameterException"></exception>
         public ItemMaxRangeModifierEffect(IList<string> parameters)
+            : base(parameters)
         {
-            if (parameters.Count < 2)
-                throw new SkillEffectMissingParameterException("ItemMaxRangeModifier", 2, parameters.Count);
-
             this.Categories = ParseHelper.StringCSVParse(parameters, 0);
             this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", true, true);
         }
@@ -37,7 +38,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <summary>
         /// Finds all items in <paramref name="unit"/>'s inventory with a category in <c>Categories</c> and boosts their max range by <c>Value</c>.
         /// </summary>
-        public void Apply(Unit unit, Skill skill, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             foreach(UnitInventoryItem item in unit.Inventory)
             {

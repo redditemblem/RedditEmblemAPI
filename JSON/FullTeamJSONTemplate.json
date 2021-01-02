@@ -151,6 +151,8 @@
           "Value": 0
         }
       ],
+      "WarpType": 0, //Optional, required if WarpCost provided
+      "WarpCost": 0, //Optional, required if WarpType provided
       "BlocksItems": 0, //Required
       "StatModifiers": [ //Optional
         {

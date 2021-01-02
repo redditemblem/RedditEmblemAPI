@@ -73,6 +73,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public int MaxRangeModifier { get; set; }
 
+        /// <summary>
+        /// Flag indicating that the item can be used a 1 range even when its min and max range normally don't allow it.
+        /// </summary>
+        public bool AllowMeleeRange { get; set; }
+
         #endregion
 
         private static Regex usesRegex = new Regex(@"\([0-9]+\)"); //match item uses (ex. "(5)")
@@ -91,6 +96,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Uses = 0;
             this.MinRangeModifier = 0;
             this.MaxRangeModifier = 0;
+            this.AllowMeleeRange = false;
 
             string name = this.FullName;
 

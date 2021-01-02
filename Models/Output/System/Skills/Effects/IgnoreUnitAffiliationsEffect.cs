@@ -3,19 +3,22 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public class IgnoreUnitAffiliationsEffect : ISkillEffect, IIgnoreUnitAffiliations
+    public class IgnoreUnitAffiliationsEffect : SkillEffect, IIgnoreUnitAffiliations
     {
+        #region Attributes
+
+        protected override string SkillEffectName { get { return "IgnoreUnitAffiliations"; } }
+        protected override int ParameterCount { get { return 0; } }
+
+        #endregion
+
         /// <summary>
         /// Constructor.
         /// </summary>
         public IgnoreUnitAffiliationsEffect(IList<string> parameters)
+            : base(parameters)
         {
             //This effect has no parameters
-        }
-
-        public void Apply(Unit unit, Skill skill, IList<Unit> units)
-        {
-            //This effect has nothing to apply
         }
 
         public bool IsActive(Unit unit)

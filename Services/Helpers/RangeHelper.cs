@@ -14,12 +14,12 @@ namespace RedditEmblemAPI.Services.Helpers
     public class RangeHelper
     {
         private IList<Unit> Units;
-        private List<List<Tile>> Tiles;
+        private MapObj Map;
 
-        public RangeHelper(IList<Unit> units, List<List<Tile>> tiles)
+        public RangeHelper(IList<Unit> units, MapObj map)
         {
             this.Units = units;
-            this.Tiles = tiles;
+            this.Map = map;
         }
 
         public void CalculateUnitRanges()
@@ -41,7 +41,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     IList<Coordinate> utilRange = new List<Coordinate>();
 
                     IList<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.UtilizedStats.Any() && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
-                                                                    .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.DealsDamage))
+                                                                    .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.DealsDamage, i.AllowMeleeRange))
                                                                     .ToList();
                     if (itemRanges.Any())
                     {
@@ -76,19 +76,15 @@ namespace RedditEmblemAPI.Services.Helpers
             if (   remainingMov < 0
                 || currCoord.X < 1
                 || currCoord.Y < 1
-                || currCoord.X > this.Tiles.First().Count
-                || currCoord.Y > this.Tiles.Count
+                || currCoord.X > this.Map.TileWidth
+                || currCoord.Y > this.Map.TileHeight
                )
                 return;
 
-            Tile tile = GetTileByCoord(currCoord);
+            Tile tile = this.Map.GetTileByCoord(currCoord);
 
             //If there is a Unit occupying this tile, check for affiliation collisions
-            if (tile.Unit != null && parms.Unit.Name != tile.Unit.Name)
-            {
-                if (!parms.IgnoresAffiliations && parms.Unit.AffiliationObj.Grouping != tile.Unit.AffiliationObj.Grouping)
-                    return;
-            }
+            if (UnitIsBlocked(parms.Unit, tile.Unit, parms.IgnoresAffiliations)) return;
 
             //Test that the unit can move to this tile
             int moveCost;
@@ -117,10 +113,13 @@ namespace RedditEmblemAPI.Services.Helpers
             if (parms.Unit.UnitSize > 1 && !UnitCanAccessAllIntersectedTiles(parms, tile))
                 return;
 
+            //Document tile movement
             visitedCoords += "_" + currCoord.ToString() + "_";
-
             if (!parms.Unit.MovementRange.Contains(currCoord))
                 parms.Unit.MovementRange.Add(currCoord);
+
+            //Units may move onto obstructed tiles, but no further.
+            if (UnitIsBlocked(parms.Unit, tile.ObstructingUnits, parms.IgnoresAffiliations)) return;
 
             //Navigate in each cardinal direction, do not repeat tiles in this path
             //Left
@@ -144,8 +143,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 RecurseUnitRange(parms, down, remainingMov, visitedCoords, lastWarpUsed);
 
             //If this tile is a warp entrance, calculate the remaining range from each warp exit too.
-            if (     remainingMov > 0
-                 && (tile.TerrainTypeObj.WarpType == WarpType.Entrance || tile.TerrainTypeObj.WarpType == WarpType.Dual)
+            if (    (tile.TerrainTypeObj.WarpType == WarpType.Entrance || tile.TerrainTypeObj.WarpType == WarpType.Dual)
                  && (lastWarpUsed == null || tile.Coordinate != lastWarpUsed)
                )
             {
@@ -164,7 +162,6 @@ namespace RedditEmblemAPI.Services.Helpers
                     RecurseUnitRange(parms, warpExit.Coordinate, remainingMov - warpCost, string.Empty, warpExit.Coordinate);
                 }
             }
-
         }
 
         private void RecurseItemRange(ItemRangeParameters parms, Coordinate currCoord, int remainingRange, string visitedCoords, ref IList<Coordinate> atkRange, ref IList<Coordinate> utilRange)
@@ -174,12 +171,12 @@ namespace RedditEmblemAPI.Services.Helpers
             if (   remainingRange < 0 
                 || currCoord.X < 1
                 || currCoord.Y < 1
-                || currCoord.X > this.Tiles.First().Count
-                || currCoord.Y > this.Tiles.Count
+                || currCoord.X > this.Map.TileWidth
+                || currCoord.Y > this.Map.TileHeight
                )
                 return;
 
-            Tile tile = GetTileByCoord(currCoord);
+            Tile tile = this.Map.GetTileByCoord(currCoord);
 
             //Check if ranges can pass through this tile
             if (tile.TerrainTypeObj.BlocksItems)
@@ -193,11 +190,14 @@ namespace RedditEmblemAPI.Services.Helpers
                 int displacement = currCoord.DistanceFrom(parms.StartCoord);
                 int pathLength = parms.LargestRange - remainingRange;
 
-                IList<UnitItemRange> validRanges = parms.Ranges.Where(r => r.MinRange <= displacement //tile greater than min range away from unit
-                                                                        && r.MinRange <= pathLength //tile greater than min range down the path
-                                                                        && r.MaxRange >= displacement //tile less than max range from unit
-                                                                        && r.MaxRange >= pathLength) //tile less than max range down path
-                                                               .ToList();
+                IList<UnitItemRange> validRanges = parms.Ranges.Where(r => (r.MinRange <= displacement //tile greater than min range away from unit
+                                                                         && r.MinRange <= pathLength //tile greater than min range down the path
+                                                                         && r.MaxRange >= displacement //tile less than max range from unit
+                                                                         && r.MaxRange >= pathLength) //tile less than max range down path
+                                                                        || (displacement == 1
+                                                                         && pathLength == 1
+                                                                         && r.AllowMeleeRange) //unit can specially allow melee range for an item
+                                                                     ).ToList();
                 //Add to attacking range
                 if (validRanges.Any(r => r.DealsDamage) && !atkRange.Contains(currCoord))
                     atkRange.Add(currCoord);
@@ -228,6 +228,37 @@ namespace RedditEmblemAPI.Services.Helpers
                 RecurseItemRange(parms, down, remainingRange - 1, visitedCoords, ref atkRange, ref utilRange);
         }
 
+        private bool UnitIsBlocked(Unit movingUnit, IList<Unit> blockingUnits, bool ignoreAffiliations)
+        {
+            //If unit ignores affiliations, never be blocked
+            //Skip further logic
+            if (ignoreAffiliations)
+                return false;
+
+            return blockingUnits.Any(u => UnitIsBlocked(movingUnit, u, ignoreAffiliations));
+        }
+
+        private bool UnitIsBlocked(Unit movingUnit, Unit blockingUnit, bool ignoreAffiliations)
+        {
+            //If unit ignores affiliations, never be blocked
+            if (ignoreAffiliations)
+                return false;
+
+            //Check if both units exist
+            if (movingUnit == null || blockingUnit == null)
+                return false;
+
+            //Check if units are the same
+            if (movingUnit.Name == blockingUnit.Name)
+                return false;
+
+            //Check if units are in the same affiliation grouping
+            if(movingUnit.AffiliationObj.Grouping == blockingUnit.AffiliationObj.Grouping)
+                return false;
+
+            return true;
+        }
+
         private bool UnitCanAccessAllIntersectedTiles(UnitRangeParameters unitParms, Tile currentOriginTile)
         {
             int anchorOffset = (int)Math.Ceiling(unitParms.Unit.UnitSize / 2.0m) - 1;
@@ -235,12 +266,12 @@ namespace RedditEmblemAPI.Services.Helpers
             //Make sure the relative anchor doesn't fall off the map
             if( currentOriginTile.Coordinate.X - anchorOffset < 1
              || currentOriginTile.Coordinate.Y - anchorOffset < 1
-             || currentOriginTile.Coordinate.X - anchorOffset > this.Tiles.First().Count
-             || currentOriginTile.Coordinate.Y - anchorOffset > this.Tiles.Count
+             || currentOriginTile.Coordinate.X - anchorOffset > this.Map.TileWidth
+             || currentOriginTile.Coordinate.Y - anchorOffset > this.Map.TileHeight
               )
                 return false;
 
-            Tile relativeAnchorTile = GetTileByCoord(currentOriginTile.Coordinate.X - anchorOffset, currentOriginTile.Coordinate.Y - anchorOffset);
+            Tile relativeAnchorTile = this.Map.GetTileByCoord(currentOriginTile.Coordinate.X - anchorOffset, currentOriginTile.Coordinate.Y - anchorOffset);
 
             for (int y = 0; y < unitParms.Unit.UnitSize; y++)
             {
@@ -250,7 +281,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     if (currentOriginTile.Coordinate.X == relativeAnchorTile.Coordinate.X + x && currentOriginTile.Coordinate.Y == relativeAnchorTile.Coordinate.Y + y)
                         continue;
 
-                    Tile tile = GetTileByCoord(relativeAnchorTile.Coordinate.X + x, relativeAnchorTile.Coordinate.Y + y);
+                    Tile tile = this.Map.GetTileByCoord(relativeAnchorTile.Coordinate.X + x, relativeAnchorTile.Coordinate.Y + y);
 
                     //If there is a Unit occupying this tile, check for affiliation collisions
                     if (tile.Unit != null && unitParms.Unit.Name != tile.Unit.Name)
@@ -271,31 +302,6 @@ namespace RedditEmblemAPI.Services.Helpers
             }
 
             return true;
-        }
-        
-        /// <summary>
-        /// Fetches the tile with matching coordinates to <paramref name="coord"/>.
-        /// </summary>
-        /// <exception cref="TileOutOfBoundsException"></exception>
-        private Tile GetTileByCoord(Coordinate coord)
-        {
-            IList<Tile> row = this.Tiles.ElementAtOrDefault<IList<Tile>>(coord.Y - 1) ?? throw new TileOutOfBoundsException(coord.X, coord.Y);
-            Tile column = row.ElementAtOrDefault<Tile>(coord.X - 1) ?? throw new TileOutOfBoundsException(coord.X, coord.Y);
-
-            return column;
-        }
-
-
-        /// <summary>
-        /// Fetches the tile with matching coordinates to <paramref name="x"/> and <paramref name="y"/>.
-        /// </summary>
-        /// <exception cref="TileOutOfBoundsException"></exception>
-        private Tile GetTileByCoord(int x, int y)
-        {
-            IList<Tile> row = this.Tiles.ElementAtOrDefault<IList<Tile>>(y - 1) ?? throw new TileOutOfBoundsException(x, y);
-            Tile column = row.ElementAtOrDefault<Tile>(x - 1) ?? throw new TileOutOfBoundsException(x, y);
-
-            return column;
         }
     }
 
@@ -343,17 +349,22 @@ namespace RedditEmblemAPI.Services.Helpers
         }
     }
 
+    /// <summary>
+    /// Represents the range parameters of a specific <c>UnitInventoryItem</c>.
+    /// </summary>
     public struct UnitItemRange
     {
         public int MinRange;
         public int MaxRange;
         public bool DealsDamage;
+        public bool AllowMeleeRange;
 
-        public UnitItemRange(int minRange, int maxRange, bool dealsDamage)
+        public UnitItemRange(int minRange, int maxRange, bool dealsDamage, bool allowMeleeRange)
         {
             this.MinRange = minRange;
             this.MaxRange = maxRange;
             this.DealsDamage = dealsDamage;
+            this.AllowMeleeRange = allowMeleeRange;
         }
     }
 }
