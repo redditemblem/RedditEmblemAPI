@@ -233,6 +233,7 @@
       "Slots": [ 0 ] //Required
     },
     "Player": 0, //Optional
+    "PortraitURL": 0, //Optional
     "TextFields": [ 0 ], //Optional
     "UnitSize": 0, //Optional
     "HasMoved": 0, //Optional

@@ -42,6 +42,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         public string SpriteURL { get; set; }
 
         /// <summary>
+        /// The portrait image URL for the unit.
+        /// </summary>
+        public string PortraitURL { get; set; }
+
+        /// <summary>
         /// List of the unit's text fields.
         /// </summary>
         public IList<string> TextFields { get; set; }
@@ -244,6 +249,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             //Optional fields
             this.Player = ParseHelper.SafeStringParse(data, config.Player, "Player", false);
+            this.PortraitURL = ParseHelper.SafeStringParse(data, config.PortraitURL, "Portrait URL", false);
             this.UnitSize = ParseHelper.OptionalSafeIntParse(data, config.UnitSize, "Unit Size", true, true, 1);
             this.HasMoved = (ParseHelper.SafeStringParse(data, config.HasMoved, "Has Moved", false) == "Yes");
 

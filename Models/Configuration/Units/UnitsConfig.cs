@@ -85,6 +85,11 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public int Player { get; set; } = -1;
 
         /// <summary>
+        /// Optional. Cell index of the unit's portrait image URL value.
+        /// </summary>
+        public int PortraitURL { get; set; } = -1;
+
+        /// <summary>
         /// Optional. List of cell indexes for a unit's class values.
         /// </summary>
         public IList<int> Classes { get; set; } = new List<int>();

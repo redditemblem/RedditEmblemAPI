@@ -2,10 +2,14 @@
 using RedditEmblemAPI.Models.Configuration.System.Skills;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats;
 using RedditEmblemAPI.Services.Helpers;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills
 {
@@ -62,11 +66,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             {
                 //Unit Stat Effects
                 case "CombatStatModifier": return new CombatStatModifierEffect(parameters);
-                case "StatModifier": return new StatModifierEffect(parameters);
-                //Unit HP Effects
                 case "HPBelowCombatStatModifier": return new HPBelowCombatStatModifierEffect(parameters);
-                case "HPBelowStatModifier": return new HPBelowStatModifierEffect(parameters);
                 case "HPAboveCombatStatModifier": return new HPAboveCombatStatModifierEffect(parameters);
+                case "StatModifier": return new StatModifierEffect(parameters);
+                case "HPBelowStatModifier": return new HPBelowStatModifierEffect(parameters);
                 case "HPAboveStatModifier": return new HPAboveStatModifierEffect(parameters);
                 //Equipped Item Effects
                 case "EquippedCategoryCombatStatModifier": return new EquippedCategoryCombatStatModifierEffect(parameters);
@@ -75,18 +78,27 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "TerrainTypeCombatStatModifier": return new TerrainTypeCombatStatModifierEffect(parameters);
                 case "TerrainTypeStatModifier": return new TerrainTypeStatModifierEffect(parameters);
                 //Unit Movement Range Effects
-                //Movement Costs
+                    //Movement Costs
                 case "TerrainTypeMovementCostModifier": return new TerrainTypeMovementCostModifierEffect(parameters);
                 case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect(parameters);
                 case "WarpMovementCostModifier": return new WarpMovementCostModifierEffect(parameters);
                 case "WarpMovementCostSet": return new WarpMovementCostSetEffect(parameters);
-                //Affiliations
+                    //Affiliations
                 case "IgnoreUnitAffiliations": return new IgnoreUnitAffiliationsEffect(parameters);
                 case "HPBelowIgnoreUnitAffiliations": return new HPBelowIgnoreUnitAffiliationsEffect(parameters);
                 case "HPAboveIgnoreUnitAffiliations": return new HPAboveIgnoreUnitAffiliationsEffect(parameters);
                 case "ObstructTileRadius": return new ObstructTileRadiusEffect(parameters);
                 case "HPBelowObstructTileRadius": return new HPBelowObstructTileRadiusEffect(parameters);
                 case "HPAboveObstructTileRadius": return new HPAboveObstructTileRadiusEffect(parameters);
+                    //Teleportation
+                case "AllyRadiusTeleport": return new AllyRadiusTeleportEffect(parameters);
+                case "HPBelowAllyRadiusTeleport": return new HPBelowAllyRadiusTeleportEffect(parameters);
+                case "HPAboveAllyRadiusTeleport": return new HPAboveAllyRadiusTeleportEffect(parameters);
+                case "AllyHPBelowAllyRadiusTeleport": return new AllyHPBelowAllyRadiusTeleportEffect(parameters);
+                case "AllyHPAboveAllyRadiusTeleport": return new AllyHPAboveAllyRadiusTeleportEffect(parameters);
+                case "EnemyRadiusTeleport": return new EnemyRadiusTeleportEffect(parameters);
+                case "HPBelowEnemyRadiusTeleport": return new HPBelowEnemyRadiusTeleportEffect(parameters);
+                case "HPAboveEnemyRadiusTeleport": return new HPAboveEnemyRadiusTeleportEffect(parameters);
                 //Unit Item Range Effects
                 case "ItemAllowMeleeRange": return new ItemAllowMeleeRangeEffect(parameters);
                 case "ItemMinRangeSet": return new ItemMinRangeSetEffect(parameters);
@@ -94,12 +106,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "ItemMaxRangeSet": return new ItemMaxRangeSetEffect(parameters);
                 case "ItemMaxRangeModifier": return new ItemMaxRangeModifierEffect(parameters);
                 //Unit Radius Stat Effects
-                //Normal
+                    //Normal
                 case "AllyRadiusCombatStatModifier": return new AllyRadiusCombatStatModifierEffect(parameters);
                 case "AllyRadiusStatModifier": return new AllyRadiusStatModifierEffect(parameters);
                 case "EnemyRadiusCombatStatModifier": return new EnemyRadiusCombatStatModifierEffect(parameters);
                 case "EnemyRadiusStatModifier": return new EnemyRadiusStatModifierEffect(parameters);
-                //Inverted
+                    //Inverted
                 case "AllyRadiusSelfCombatStatModifier": return new AllyRadiusSelfCombatStatModifierEffect(parameters);
                 case "AllyRadiusSelfStatModifier": return new AllyRadiusSelfStatModifierEffect(parameters);
                 case "NoAllyRadiusSelfCombatStatModifier": return new NoAllyRadiusSelfCombatStatModifierEffect(parameters);

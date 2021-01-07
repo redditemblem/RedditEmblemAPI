@@ -299,21 +299,22 @@
     "Name": 0,
     "Player": 1,
     "SpriteURL": 2,
+    "PortraitURL": 5,
     "TextFields": [ 4 ],
-    "Level": 10,
-    "Classes": [ 5, 6 ],
-    "Affiliation": 13,
-    "Coordinate": 7,
-    "HasMoved": 8,
-    "UnitSize": 9,
-    "Experience": 11,
-    "HeldCurrency": 12,
+    "Level": 11,
+    "Classes": [ 6, 7 ],
+    "Affiliation": 14,
+    "Coordinate": 8,
+    "HasMoved": 9,
+    "UnitSize": 10,
+    "Experience": 12,
+    "HeldCurrency": 13,
     "HP": {
-      "Current": 16,
-      "Maximum": 17
+      "Current": 17,
+      "Maximum": 18
     },
-    "Tags": 14,
-    "Behavior":  15,
+    "Tags": 15,
+    "Behavior": 16,
     "CombatStats": [
       {
         "SourceName": "Atk",
@@ -335,26 +336,6 @@
     "Stats": [
       {
         "SourceName": "Str",
-        "BaseValue": 18,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 48
-          }
-        ]
-      },
-      {
-        "SourceName": "Def",
-        "BaseValue": 23,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 53
-          }
-        ]
-      },
-      {
-        "SourceName": "Mag",
         "BaseValue": 19,
         "Modifiers": [
           {
@@ -364,7 +345,7 @@
         ]
       },
       {
-        "SourceName": "Res",
+        "SourceName": "Def",
         "BaseValue": 24,
         "Modifiers": [
           {
@@ -374,27 +355,7 @@
         ]
       },
       {
-        "SourceName": "Lck",
-        "BaseValue": 22,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 52
-          }
-        ]
-      },
-      {
-        "SourceName": "Spd",
-        "BaseValue": 21,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 51
-          }
-        ]
-      },
-      {
-        "SourceName": "Skl",
+        "SourceName": "Mag",
         "BaseValue": 20,
         "Modifiers": [
           {
@@ -404,7 +365,7 @@
         ]
       },
       {
-        "SourceName": "Mov",
+        "SourceName": "Res",
         "BaseValue": 25,
         "Modifiers": [
           {
@@ -412,28 +373,68 @@
             "Value": 55
           }
         ]
+      },
+      {
+        "SourceName": "Lck",
+        "BaseValue": 23,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 53
+          }
+        ]
+      },
+      {
+        "SourceName": "Spd",
+        "BaseValue": 22,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 52
+          }
+        ]
+      },
+      {
+        "SourceName": "Skl",
+        "BaseValue": 21,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 51
+          }
+        ]
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 26,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 56
+          }
+        ]
       }
     ],
     "WeaponRanks": [
       {
-        "Type": 27,
-        "Rank": 28
+        "Type": 28,
+        "Rank": 29
       },
       {
-        "Type": 29,
-        "Rank": 30
+        "Type": 30,
+        "Rank": 31
       },
       {
-        "Type": 31,
-        "Rank": 32
+        "Type": 32,
+        "Rank": 33
       }
     ],
     "Inventory": {
-      "EquippedItem": 33,
-      "Slots": [ 34, 35, 36, 37, 38 ]
+      "EquippedItem": 34,
+      "Slots": [ 35, 36, 37, 38, 39 ]
     },
-    "Skills": [ 39, 40, 41, 42, 43, 44, 45, 46 ],
-    "StatusConditions": [ 57, 58, 59 ]
+    "Skills": [ 40, 41, 42, 43, 44, 45, 46, 47 ],
+    "StatusConditions": [ 58, 59, 60 ]
   },
   "Convoy": {
     "Query": {
