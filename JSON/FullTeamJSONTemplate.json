@@ -31,8 +31,7 @@
       "Query": {
         "Sheet": "",
         "Selection": "",
-        "Orientation": 1,
-        "AllowNullData": true //Important!
+        "Orientation": 1
       }
     }
   },

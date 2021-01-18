@@ -37,13 +37,41 @@ namespace RedditEmblemAPI.Services.Helpers
                     UnitRangeParameters unitParms = new UnitRangeParameters(unit);
                     RecurseUnitRange(unitParms, unit.OriginTile.Coordinate, unit.Stats["Mov"].FinalValue, string.Empty, null);
 
-                    //Calculate item range
+                    //Calculate item ranges
                     IList<Coordinate> atkRange = new List<Coordinate>();
                     IList<Coordinate> utilRange = new List<Coordinate>();
 
                     IList<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.UtilizedStats.Any() && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
                                                                     .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.DealsDamage, i.AllowMeleeRange))
                                                                     .ToList();
+                    //Check for whole map ranges
+                    if (itemRanges.Any(r => r.MaxRange >= 99))
+                    {
+                        bool applyAtk = itemRanges.Any(r => r.DealsDamage && r.MaxRange >= 99);
+                        bool applyUtil = itemRanges.Any(r => !r.DealsDamage && r.MaxRange >= 99);
+
+                        ApplyWholeMapItemRange(unit, applyAtk, applyUtil, ref atkRange, ref utilRange);
+
+                        //Remove all relevant ranges from list
+                        //Since we cover the whole map we don't need to address these individually later
+                        if (applyAtk)
+                        {
+                            while(itemRanges.Any(r => r.DealsDamage))
+                            {
+                                itemRanges.Remove(itemRanges.First(r => r.DealsDamage));
+                            }
+                        }
+
+                        if(applyUtil)
+                        {
+                            while (itemRanges.Any(r => !r.DealsDamage))
+                            {
+                                itemRanges.Remove(itemRanges.First(r => !r.DealsDamage));
+                            }
+                        }
+                    }
+
+                    //Check for regular ranges
                     if (itemRanges.Any())
                     {
                         foreach (Coordinate coord in unit.MovementRange)
@@ -229,6 +257,22 @@ namespace RedditEmblemAPI.Services.Helpers
                 RecurseItemRange(parms, down, remainingRange - 1, visitedCoords, ref atkRange, ref utilRange);
         }
 
+        private void ApplyWholeMapItemRange(Unit unit, bool applyAtk, bool applyUtil, ref IList<Coordinate> atkRange, ref IList<Coordinate> utilRange)
+        {
+            foreach(List<Tile> row in this.Map.Tiles)
+            {
+                foreach(Tile tile in row)
+                {
+                    //Only exclude tiles that the unit can move to or block items
+                    if (!unit.MovementRange.Contains(tile.Coordinate) && !tile.TerrainTypeObj.BlocksItems)
+                    {
+                        if (applyAtk) atkRange.Add(tile.Coordinate);
+                        if (applyUtil) utilRange.Add(tile.Coordinate);
+                    }
+                }
+            }
+        }
+
         private bool UnitIsBlocked(Unit movingUnit, IList<Unit> blockingUnits, bool ignoreAffiliations)
         {
             //If unit ignores affiliations, never be blocked
@@ -347,6 +391,10 @@ namespace RedditEmblemAPI.Services.Helpers
             this.StartCoord = startCoord;
             this.Ranges = ranges;
             this.LargestRange = this.Ranges.Select(r => r.MaxRange).OrderByDescending(r => r).FirstOrDefault();
+
+            //Safeguard just in case. We shouldn't ever get a 99 range here.
+            if (this.LargestRange >= 99)
+                throw new Exception("Safeguard reached. Attempting to calculate a 99 range when none should ever exist at this point.");
         }
     }
 

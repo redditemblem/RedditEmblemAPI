@@ -46,7 +46,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         /// <summary>
         /// Flag indicating whether or not this query should error if the data comes back null.
         /// </summary>
-        public bool AllowNullData { get; set; } = false;
+        public bool AllowNullData { get; set; } = true;
 
         #endregion
 

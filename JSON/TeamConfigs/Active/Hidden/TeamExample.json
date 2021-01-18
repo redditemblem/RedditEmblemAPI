@@ -31,8 +31,7 @@
       "Query": {
         "Sheet": "Map Effects",
         "Selection": "A1:ZZ",
-        "Orientation": 1,
-        "AllowNullData": true
+        "Orientation": 1
       }
     }
   },
@@ -452,6 +451,7 @@
       "Sheet": "Shop",
       "Selection": "A2:ZZ",
       "Orientation": 1
+
     },
     "Name": 0,
     "Stock": 1,

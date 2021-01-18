@@ -34,7 +34,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 throw new PositiveIntegerException("Maximum Range", maximum.ToString());
             if (minimum > maximum)
                 throw new MinimumGreaterThanMaximumException("Minimum Range", "Maximum Range");
-            if (maximum > 15)
+            if (maximum > 15 && maximum != 99)
                 throw new RangeMaximumTooLargeException("For performance reasons, item ranges in excess of 15 tiles are currently not allowed.");
 
             this.Minimum = minimum;
@@ -49,14 +49,8 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <param name="maximum">A numerical string value.</param>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
         public ItemRange(string minimum, string maximum)
-        {
-            this.Minimum = ParseHelper.SafeIntParse(minimum, "Minimum Range", true);
-            this.Maximum = ParseHelper.SafeIntParse(maximum, "Maximum Range", true);
-
-            if (this.Minimum > this.Maximum)
-                throw new MinimumGreaterThanMaximumException("Minimum Range", "Maximum Range");
-            if (this.Maximum > 15)
-                throw new RangeMaximumTooLargeException("For performance reasons, item ranges in excess of 15 tiles are currently not allowed.");
-        }
+            : this(ParseHelper.SafeIntParse(minimum, "Minimum Range", true),
+                   ParseHelper.SafeIntParse(maximum, "Maximum Range", true))
+        { }
     }
 }

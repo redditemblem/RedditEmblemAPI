@@ -35,6 +35,9 @@ namespace RedditEmblemAPI.Services.Helpers
                     string unitName = ParseHelper.SafeStringParse(unit, config.Name, "Name", false);
                     if (string.IsNullOrEmpty(unitName)) continue;
 
+                    if (units.Any(u => u.Name == unitName))
+                        throw new NonUniqueObjectNameException("unit");
+
                     units.Add(new Unit(config, unit, systemData));
                 }
                 catch (Exception ex)

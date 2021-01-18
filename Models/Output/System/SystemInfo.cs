@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Services.Helpers;
 using System;
@@ -151,7 +152,9 @@ namespace RedditEmblemAPI.Models.Output.System
                     IList<string> type = row.Select(r => r.ToString()).ToList();
                     string name = ParseHelper.SafeStringParse(type, config.TerrainTypes.Name, "Name", false);
                     if (string.IsNullOrEmpty(name)) continue;
-                    this.TerrainTypes.Add(name, new TerrainType(config.TerrainTypes, type));
+
+                    if (!this.TerrainTypes.TryAdd(name, new TerrainType(config.TerrainTypes, type)))
+                        throw new NonUniqueObjectNameException("terrain type");
                 }
                 catch (Exception ex)
                 {
@@ -167,7 +170,9 @@ namespace RedditEmblemAPI.Models.Output.System
                     IList<string> aff = row.Select(r => r.ToString()).ToList();
                     string name = ParseHelper.SafeStringParse(aff, config.Affiliations.Name, "Name", false);
                     if (string.IsNullOrEmpty(name)) continue;
-                    this.Affiliations.Add(name, new Affiliation(config.Affiliations, aff));
+
+                    if (!this.Affiliations.TryAdd(name, new Affiliation(config.Affiliations, aff)))
+                        throw new NonUniqueObjectNameException("affiliation");
                 }
                 catch (Exception ex)
                 {
@@ -183,7 +188,9 @@ namespace RedditEmblemAPI.Models.Output.System
                     IList<string> item = row.Select(r => r.ToString()).ToList();
                     string name = ParseHelper.SafeStringParse(item, config.Items.Name, "Name", false);
                     if (string.IsNullOrEmpty(name)) continue;
-                    this.Items.Add(name, new Item(config.Items, item));
+
+                    if (!this.Items.TryAdd(name, new Item(config.Items, item)))
+                        throw new NonUniqueObjectNameException("item");
                 }
                 catch (Exception ex)
                 {
@@ -208,7 +215,9 @@ namespace RedditEmblemAPI.Models.Output.System
                         IList<string> effect = row.Select(r => r.ToString()).ToList();
                         string name = ParseHelper.SafeStringParse(effect, config.TerrainEffects.Name, "Name", false);
                         if (string.IsNullOrEmpty(name)) continue;
-                        this.TerrainEffects.Add(name, new TerrainEffect(config.TerrainEffects, effect));
+
+                        if (!this.TerrainEffects.TryAdd(name, new TerrainEffect(config.TerrainEffects, effect)))
+                            throw new NonUniqueObjectNameException("terrain effect");
                     }
                     catch (Exception ex)
                     {
@@ -227,7 +236,9 @@ namespace RedditEmblemAPI.Models.Output.System
                         IList<string> cls = row.Select(r => r.ToString()).ToList();
                         string name = ParseHelper.SafeStringParse(cls, config.Classes.Name, "Name", false);
                         if (string.IsNullOrEmpty(name)) continue;
-                        this.Classes.Add(name, new Class(config.Classes, cls));
+
+                        if (!this.Classes.TryAdd(name, new Class(config.Classes, cls)))
+                            throw new NonUniqueObjectNameException("class");
                     }
                     catch (Exception ex)
                     {
@@ -246,7 +257,9 @@ namespace RedditEmblemAPI.Models.Output.System
                         IList<string> skill = row.Select(r => r.ToString()).ToList();
                         string name = ParseHelper.SafeStringParse(skill, config.Skills.Name, "Name", false);
                         if (string.IsNullOrEmpty(name)) continue;
-                        this.Skills.Add(name, new Skill(config.Skills, skill));
+                        
+                        if (!this.Skills.TryAdd(name, new Skill(config.Skills, skill)))
+                            throw new NonUniqueObjectNameException("skill");
                     }
                     catch (Exception ex)
                     {
@@ -265,7 +278,9 @@ namespace RedditEmblemAPI.Models.Output.System
                         IList<string> stat = row.Select(r => r.ToString()).ToList();
                         string name = ParseHelper.SafeStringParse(stat, config.StatusConditions.Name, "Name", false);
                         if (string.IsNullOrEmpty(name)) continue;
-                        this.StatusConditions.Add(name, new StatusCondition(config.StatusConditions, stat));
+
+                        if (!this.StatusConditions.TryAdd(name, new StatusCondition(config.StatusConditions, stat)))
+                            throw new NonUniqueObjectNameException("status condition");
                     }
                     catch (Exception ex)
                     {
@@ -284,7 +299,9 @@ namespace RedditEmblemAPI.Models.Output.System
                         IList<string> tag = row.Select(r => r.ToString()).ToList();
                         string name = ParseHelper.SafeStringParse(tag, config.Tags.Name, "Name", false);
                         if (string.IsNullOrEmpty(name)) continue;
-                        this.Tags.Add(name, new Tag(config.Tags, tag));
+
+                        if (!this.Tags.TryAdd(name, new Tag(config.Tags, tag)))
+                            throw new NonUniqueObjectNameException("tag");
                     }
                     catch (Exception ex)
                     {
