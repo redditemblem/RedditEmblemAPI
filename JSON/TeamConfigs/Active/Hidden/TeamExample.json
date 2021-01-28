@@ -458,5 +458,13 @@
     "Price": 2,
     "SalePrice": 3,
     "IsNew": 4
+  },
+  "Turns": {
+    "Query": {
+      "Sheet": "Turns",
+      "Selection": "A2:ZZ",
+      "Orientation": 1
+
+    }
   }
 }

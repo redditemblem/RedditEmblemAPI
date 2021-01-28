@@ -35,6 +35,20 @@ namespace RedditEmblemAPI.Controllers
             }
         }
 
+        [HttpGet("map/{teamName}/turns")]
+        public IActionResult GetTeamMapTurnData(string teamName)
+        {
+            try
+            {
+                var data = _sheetsService.LoadMapTurnData(teamName);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
         [HttpGet("convoy/{teamName}")]
         public IActionResult GetTeamConvoy(string teamName)
         {

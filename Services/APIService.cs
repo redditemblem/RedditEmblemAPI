@@ -9,6 +9,7 @@ using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Storage.Convoy;
 using RedditEmblemAPI.Models.Output.Storage.Shop;
 using RedditEmblemAPI.Models.Output.Teams;
+using RedditEmblemAPI.Models.Output.Turns;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,6 +37,21 @@ namespace RedditEmblemAPI.Services
             QueryGoogleSheets(config, config.GetMapBatchQueries());
 
             return new MapData(config);
+        }
+
+        /// <summary>
+        /// Returns JSON data for the turns submitted for a team's map.
+        /// </summary>
+        /// <param name="teamName"></param>
+        /// <returns></returns>
+        public TurnData LoadMapTurnData(string teamName)
+        {
+            JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
+            if (config.Turns == null)
+                throw new TurnsNotConfiguredException();
+            QueryGoogleSheets(config, config.GetMapTurnsBatchQueries());
+
+            return new TurnData(config);
         }
 
         /// <summary>

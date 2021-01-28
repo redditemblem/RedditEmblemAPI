@@ -5,6 +5,7 @@ using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Configuration.Shop;
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Configuration.Team;
+using RedditEmblemAPI.Models.Configuration.Turns;
 using RedditEmblemAPI.Models.Configuration.Units;
 using System.Collections.Generic;
 
@@ -55,6 +56,11 @@ namespace RedditEmblemAPI.Models.Configuration
         /// </summary>
         public ShopConfig Shop { get; set; } = null;
 
+        /// <summary>
+        /// Optional. Container object for turns configuration.
+        /// </summary>
+        public TurnConfig Turns { get; set; } = null;
+
         #endregion
 
         #region Batch Query Requests
@@ -86,6 +92,18 @@ namespace RedditEmblemAPI.Models.Configuration
             if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
 
             return queries;
+        }
+
+        public IList<Query> GetMapTurnsBatchQueries()
+        {
+            //Essential queries
+            IList<Query> queries = new List<Query>()
+            {
+                this.Turns.Query
+            };
+
+            return queries;
+
         }
 
         /// <summary>
