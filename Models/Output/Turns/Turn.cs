@@ -10,6 +10,8 @@ namespace RedditEmblemAPI.Models.Output.Turns
 
         public int AmendedByTurnID { get; private set; }
 
+        public IList<Turn> AmendedTurns { get; set; }
+
         public int TurnOrder { get; private set; }
 
         public string UnitName { get; private set; }
@@ -32,9 +34,11 @@ namespace RedditEmblemAPI.Models.Output.Turns
 
         public Turn(TurnConfig config, IList<string> data)
         {
+            this.AmendedTurns = new List<Turn>();
+
             this.TurnID = ParseHelper.SafeIntParse(data, config.TurnID, "TurnID", true, true);
             this.AmendedByTurnID = ParseHelper.OptionalSafeIntParse(data, config.AmendedByTurnID, "AmendedByTurnID", true, true, -1);
-            this.TurnOrder = ParseHelper.SafeIntParse(data, config.TurnOrder, "TurnOrder", true, true);
+            this.TurnOrder = ParseHelper.OptionalSafeIntParse(data, config.TurnOrder, "TurnOrder", true, true, -1);
 
             this.UnitName = ParseHelper.SafeStringParse(data, config.UnitName, "UnitName", true);
             this.PlayerName = ParseHelper.SafeStringParse(data, config.PlayerName, "PlayerName", true);

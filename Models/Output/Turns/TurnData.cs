@@ -27,6 +27,31 @@ namespace RedditEmblemAPI.Models.Output.Turns
                     throw new Exception("ERROR: " + (row.ElementAtOrDefault(config.Turns.TurnID) ?? string.Empty).ToString(), ex);
                 }
             }
+
+            //Create history stacks
+            foreach (Turn turn in this.SubmittedTurns.Where(t => t.AmendedByTurnID == -1))
+            {
+                IList<Turn> amendedList = new List<Turn>();
+                BuildAmendedTurnHistory(turn, amendedList);
+
+                turn.AmendedTurns = amendedList;
+            }
+
+            //Remove all the amended turns
+            while (this.SubmittedTurns.Any(t => t.AmendedByTurnID != -1))
+            {
+                this.SubmittedTurns.Remove(this.SubmittedTurns.First(t => t.AmendedByTurnID != -1));
+            }
+        }
+
+        private void BuildAmendedTurnHistory(Turn turn, IList<Turn> amendedList)
+        {
+            Turn amended = this.SubmittedTurns.FirstOrDefault(t => t.AmendedByTurnID == turn.TurnID);
+            if (amended == null)
+                return;
+
+            amendedList.Add(amended); //Add turn to the history stack
+            BuildAmendedTurnHistory(amended, amendedList);
         }
     }
 }
