@@ -1,4 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Configuration;
+using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace RedditEmblemAPI.Models.Output.Turns
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("ERROR: " + (row.ElementAtOrDefault(config.Turns.TurnID) ?? string.Empty).ToString(), ex);
+                    throw new TurnProcessingException((row.ElementAtOrDefault(config.Turns.TurnID) ?? string.Empty).ToString(), ex);
                 }
             }
 
@@ -37,7 +38,7 @@ namespace RedditEmblemAPI.Models.Output.Turns
                 turn.AmendedTurns = amendedList;
             }
 
-            //Remove all the amended turns
+            //Remove all the amended turns. We should have added them to the history stacks.
             while (this.SubmittedTurns.Any(t => t.AmendedByTurnID != -1))
             {
                 this.SubmittedTurns.Remove(this.SubmittedTurns.First(t => t.AmendedByTurnID != -1));
