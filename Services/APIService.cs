@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Exceptions.Query;
+using RedditEmblemAPI.Models.Input.Turns;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Storage.Convoy;
 using RedditEmblemAPI.Models.Output.Storage.Shop;
@@ -52,6 +53,34 @@ namespace RedditEmblemAPI.Services
             QueryGoogleSheets(config, config.GetMapTurnsBatchQueries());
 
             return new TurnData(config);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="teamName"></param>
+        public void CreateTeamMapTurn(string teamName, ClientTurnData postData)
+        {
+            JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
+            if (config.Turns == null)
+                throw new TurnsNotConfiguredException();
+
+            QueryGoogleSheets(config, config.GetMapTurnsBatchQueries());
+            TurnData existingData = new TurnData(config);
+
+            //Set the new turn's turn ID
+            postData.NewTurn.TurnID = existingData.SubmittedTurns.Select(t => t.TurnID).Max() + 1;
+
+            //Check turn order validity
+            int maxTurnOrder = existingData.SubmittedTurns.Select(t => t.TurnOrder).Max();
+            if (postData.NewTurn.TurnOrder > maxTurnOrder + 1)
+                throw new Exception("Invalid turn order");
+
+            if(postData.NewTurn.TurnOrder == maxTurnOrder + 1)
+            {
+                //If we're inserting a turn at the end of the list, just add it
+                PostGoogleSheets_CreateTurn(config, postData.NewTurn);
+            }
         }
 
         /// <summary>
@@ -216,6 +245,27 @@ namespace RedditEmblemAPI.Services
             {
                 throw new GoogleSheetsQueryFailedException(string.Join(", ", queries.Select(q => q.Sheet)), ex);
             } 
+        }
+
+        #endregion
+
+        #region Google Sheet Posts
+
+        private void PostGoogleSheets_CreateTurn(JSONConfiguration config, Turn newTurn)
+        {
+            SheetsService service = new SheetsService(new BaseClientService.Initializer()
+            {
+                ApplicationName = "RedditEmblemAPI",
+                ApiKey = Environment.GetEnvironmentVariable("APIKey")
+            });
+
+            ValueRange valueRange = new ValueRange();
+            valueRange.Values = newTurn.ToDataMatrix();
+
+            AppendRequest request = service.Spreadsheets.Values.Append(valueRange, config.Team.WorkbookID, string.Empty);
+            request.InsertDataOption = AppendRequest.InsertDataOptionEnum.INSERTROWS;
+            request.ValueInputOption = AppendRequest.ValueInputOptionEnum.RAW;
+            var response = request.Execute();
         }
 
         #endregion

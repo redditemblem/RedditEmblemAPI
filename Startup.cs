@@ -34,7 +34,9 @@ namespace RedditEmblemAPI
                 builder =>
                 {
                     builder.WithOrigins("http://127.0.0.1:8080",
-                                        "https://redditemblem.github.io");
+                                        "https://redditemblem.github.io")
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
                 });
             });
 

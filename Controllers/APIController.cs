@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RedditEmblemAPI.Services;
 using System;
 using RedditEmblemAPI.Models.Exceptions.Query;
+using RedditEmblemAPI.Models.Input.Turns;
 
 namespace RedditEmblemAPI.Controllers
 {
@@ -47,6 +48,24 @@ namespace RedditEmblemAPI.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
+        }
+
+        [HttpPost("map/{teamName}/turns/create")]
+        public IActionResult CreateTeamMapTurn(string teamName, [FromBody] ClientTurnData postData)
+        {
+            int statusCode;
+            try
+            {
+                _sheetsService.CreateTeamMapTurn(teamName, postData);
+                statusCode = StatusCodes.Status200OK;
+            }
+            catch(Exception ex)
+            {
+                statusCode = StatusCodes.Status500InternalServerError;
+            }
+
+            var data = _sheetsService.LoadMapTurnData(teamName);
+            return StatusCode(statusCode, data);
         }
 
         [HttpGet("convoy/{teamName}")]

@@ -30,11 +30,11 @@ namespace RedditEmblemAPI.Models.Configuration.Turns
 
         public readonly int Action = 7;
 
-        public readonly int Notes = 8;
+        public readonly int InCharacter = 8;
 
-        public readonly int InCharacter = 9;
+        public readonly int Processed = 9;
 
-        public readonly int Processed = 10;
+        public readonly int Cover = 10;
 
         #endregion
     }
