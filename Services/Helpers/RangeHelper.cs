@@ -128,6 +128,16 @@ namespace RedditEmblemAPI.Services.Helpers
             else if (moveCostMod != null && moveCost < 99)
                 moveCost += moveCostMod.Value;
 
+            if(tile.Unit != null && tile.Unit.AffiliationObj.Grouping == parms.Unit.AffiliationObj.Grouping && moveCost < 99)
+            {
+                //If tile is occupied by an ally, test if they have a skill that sets the move cost
+                //Only applies if value is less than natural move cost for unit
+                OriginAllyMovementCostSetEffect allyMovCostSet = tile.Unit.SkillList.Select(s => s.Effect).OfType<OriginAllyMovementCostSetEffect>().FirstOrDefault();
+                if (allyMovCostSet != null && allyMovCostSet.MovementCost < moveCost)
+                    moveCost = allyMovCostSet.MovementCost;
+            }
+
+            //Min/max value enforcement
             if (moveCost < 0) moveCost = 0;
             if (moveCost >= 99) return;
 

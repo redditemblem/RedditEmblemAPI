@@ -83,6 +83,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect(parameters);
                 case "WarpMovementCostModifier": return new WarpMovementCostModifierEffect(parameters);
                 case "WarpMovementCostSet": return new WarpMovementCostSetEffect(parameters);
+                case "OriginAllyMovementCostSet": return new OriginAllyMovementCostSetEffect(parameters);
                     //Affiliations
                 case "IgnoreUnitAffiliations": return new IgnoreUnitAffiliationsEffect(parameters);
                 case "HPBelowIgnoreUnitAffiliations": return new HPBelowIgnoreUnitAffiliationsEffect(parameters);
