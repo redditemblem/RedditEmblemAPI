@@ -11,7 +11,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "TerrainTypeCombatStatModifier"; } }
+        protected override string Name { get { return "TerrainTypeCombatStatModifier"; } }
         protected override int ParameterCount { get { return 3; } }
 
         /// <summary>

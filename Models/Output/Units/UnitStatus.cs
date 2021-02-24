@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 

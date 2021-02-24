@@ -196,7 +196,11 @@
       "SpriteURL": 2,
       "Type": 3,
       "Turns": 4,
-      "TextFields": [ 5 ]
+      "TextFields": [ 5 ],
+      "Effect": {
+        "Type": 6,
+        "Parameters": [ 7 ]
+      }
     },
     "TerrainTypes": {
       "Query": {

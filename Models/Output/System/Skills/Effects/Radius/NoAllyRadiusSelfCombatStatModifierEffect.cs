@@ -12,7 +12,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "NoAllyRadiusSelfCombatStatModifier"; } }
+        protected override string Name { get { return "NoAllyRadiusSelfCombatStatModifier"; } }
         protected override int ParameterCount { get { return 3; } }
 
         /// <summary>

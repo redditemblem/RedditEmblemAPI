@@ -45,6 +45,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
         /// </summary>
         public IList<int> TextFields { get; set; } = new List<int>();
 
+        /// <summary>
+        /// Optional. Container object for status condition effect configuration.
+        /// </summary>
+        public StatusConditionEffectConfig Effect { get; set; } = null;
+
         #endregion
     }
 }

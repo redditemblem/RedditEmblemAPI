@@ -10,7 +10,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "HPAboveEnemyRadiusTeleport"; } }
+        protected override string Name { get { return "HPAboveEnemyRadiusTeleport"; } }
 
         protected override int ParameterCount { get { return 3; } }
 

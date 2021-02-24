@@ -5,6 +5,7 @@ using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
+using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
 using RedditEmblemAPI.Models.Output.Units;
 using System;
 using System.Collections.Generic;
@@ -34,16 +35,21 @@ namespace RedditEmblemAPI.Services.Helpers
                         continue;
 
                     //Calculate movement range
+                    int movementVal = unit.Stats["Mov"].FinalValue;
+                    PreventMovementEffect preventMovEffect = unit.StatusConditions.Select(s => s.StatusObj.Effect).OfType<PreventMovementEffect>().FirstOrDefault();
+                    if (preventMovEffect != null) movementVal = 0;
+
                     UnitRangeParameters unitParms = new UnitRangeParameters(unit);
-                    RecurseUnitRange(unitParms, unit.OriginTile.Coordinate, unit.Stats["Mov"].FinalValue, string.Empty, null);
+                    RecurseUnitRange(unitParms, unit.OriginTile.Coordinate, movementVal, string.Empty, null);
 
                     //Calculate item ranges
                     IList<Coordinate> atkRange = new List<Coordinate>();
                     IList<Coordinate> utilRange = new List<Coordinate>();
 
-                    IList<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && i.Item.UtilizedStats.Any() && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
+                    IList<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && !i.IsUsePrevented && i.Item.UtilizedStats.Any() && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
                                                                     .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.DealsDamage, i.AllowMeleeRange))
                                                                     .ToList();
+
                     //Check for whole map ranges
                     if (itemRanges.Any(r => r.MaxRange >= 99))
                     {

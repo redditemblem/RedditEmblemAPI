@@ -53,8 +53,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
-            this.Effect = BuildSkillEffect(ParseHelper.SafeStringParse(data, config.Effect.Type, "Skill Effect Type", false),
-                                           ParseHelper.StringListParse(data, config.Effect.Parameters, true));
+
+            //Check if skill effects are configured
+            if (config.Effect != null)
+                this.Effect = BuildSkillEffect(ParseHelper.SafeStringParse(data, config.Effect.Type, "Skill Effect Type", false),
+                                               ParseHelper.StringListParse(data, config.Effect.Parameters, true));
+            else this.Effect = null;
         }
 
         private SkillEffect BuildSkillEffect(string effectType, IList<string> parameters)

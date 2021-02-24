@@ -7,7 +7,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "WarpMovementCostModifier"; } }
+        protected override string Name { get { return "WarpMovementCostModifier"; } }
         protected override int ParameterCount { get { return 2; } }
 
         /// <summary>

@@ -6,7 +6,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
     public class TerrainTypeMovementCostModifierEffect : SkillEffect
     {
         #region Attributes
-        protected override string SkillEffectName { get { return "TerrainTypeMovementCostModifier"; } }
+        protected override string Name { get { return "TerrainTypeMovementCostModifier"; } }
         protected override int ParameterCount { get { return 2; } }
 
         /// <summary>

@@ -8,6 +8,7 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills;
+using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;

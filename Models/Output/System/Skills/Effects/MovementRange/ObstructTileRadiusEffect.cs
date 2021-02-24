@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "ObstructTileRadius"; } }
+        protected override string Name { get { return "ObstructTileRadius"; } }
         protected override int ParameterCount { get { return 1; } }
 
         /// <summary>

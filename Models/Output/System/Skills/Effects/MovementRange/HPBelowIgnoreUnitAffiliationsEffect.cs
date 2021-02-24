@@ -8,7 +8,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
     {
         #region Attributes 
 
-        protected override string SkillEffectName { get { return "HPBelowIgnoreUnitAffiliations"; } }
+        protected override string Name { get { return "HPBelowIgnoreUnitAffiliations"; } }
         protected override int ParameterCount { get { return 1; } }
 
         /// <summary>

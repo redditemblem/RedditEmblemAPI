@@ -6,6 +6,7 @@ using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills;
+using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using RedditEmblemAPI.Models.Output.Units;
 using System;
 using System.Collections.Generic;
@@ -78,9 +79,10 @@ namespace RedditEmblemAPI.Services.Helpers
                 }
             }
 
-            //Apply skill effects
+            //Apply skill and status condition effects
             foreach(Unit unit in units)
             {
+                //Skill effects
                 try
                 {
                     foreach (Skill skill in unit.SkillList)
@@ -90,6 +92,18 @@ namespace RedditEmblemAPI.Services.Helpers
                 catch(Exception ex)
                 {
                     throw new UnitSkillEffectProcessingException(unit.Name, ex);
+                }
+
+                //Status condition effects
+                try
+                {
+                    foreach (UnitStatus status in unit.StatusConditions)
+                        if (status.StatusObj.Effect != null)
+                            status.StatusObj.Effect.Apply(unit);
+                }
+                catch(Exception ex)
+                {
+                    throw new UnitStatusConditionEffectProcessingException(unit.Name, ex);
                 }
             }
 

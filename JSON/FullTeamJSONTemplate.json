@@ -126,7 +126,11 @@
       "SpriteURL": 0, //Optional
       "Type": 0, //Required
       "Turns": 0, //Optional
-      "TextFields": [ 0 ] //Optional
+      "TextFields": [ 0 ], //Optional
+      "Effect": { //Optional
+        "Type": 0, //Required
+        "Parameters": [ 0 ] //Required
+      }
     },
     "Tags": { //Optional
       "Query": {

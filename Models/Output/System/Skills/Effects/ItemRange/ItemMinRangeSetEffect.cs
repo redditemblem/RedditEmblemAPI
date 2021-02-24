@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "ItemMinRangeSet"; } }
+        protected override string Name { get { return "ItemMinRangeSet"; } }
         protected override int ParameterCount { get { return 2; } }
 
         /// <summary>

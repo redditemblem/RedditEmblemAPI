@@ -12,7 +12,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
     {
         #region Attributes
 
-        protected abstract string SkillEffectName { get; }
+        protected abstract string Name { get; }
         protected abstract int ParameterCount { get; }
 
         #endregion
@@ -25,7 +25,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         {
             //Make sure enough parameters were passed in
             if (parameters.Count < this.ParameterCount)
-                throw new SkillEffectMissingParameterException(this.SkillEffectName, this.ParameterCount, parameters.Count);
+                throw new SkillEffectMissingParameterException(this.Name, this.ParameterCount, parameters.Count);
         }
 
         public virtual void Apply(Unit unit, Skill skill, MapObj Map, IList<Unit> units)

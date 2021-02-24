@@ -35,7 +35,8 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
-            this.ShowOnUnit = (ParseHelper.SafeStringParse(data, config.ShowOnUnit, "Show On Unit", false) == "Yes");
+            this.ShowOnUnit = (   ParseHelper.SafeStringParse(data, config.ShowOnUnit, "Show On Unit", false) == "Yes" 
+                               && !string.IsNullOrEmpty(this.SpriteURL) );
         }
     }
 }

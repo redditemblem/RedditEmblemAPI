@@ -47,6 +47,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         public bool IsDroppable { get; set; }
 
         /// <summary>
+        /// Flag indicating if an item cannot currently be used by the unit.
+        /// </summary>
+        public bool IsUsePrevented { get; set; }
+
+        /// <summary>
         /// The number of uses the item currently has remaining.
         /// </summary>
         public int Uses { get; set; }
@@ -90,9 +95,10 @@ namespace RedditEmblemAPI.Models.Output.Units
         public UnitInventoryItem(string fullItemName, IDictionary<string, Item> items)
         {
             this.FullName = fullItemName;
-            this.IsDroppable = false;
             this.CanEquip = false;
             this.IsEquipped = false;
+            this.IsDroppable = false;
+            this.IsUsePrevented = false;
             this.Uses = 0;
             this.MinRangeModifier = 0;
             this.MaxRangeModifier = 0;

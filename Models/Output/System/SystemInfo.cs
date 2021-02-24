@@ -3,6 +3,7 @@ using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Skills;
+using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
