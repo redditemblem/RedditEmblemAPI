@@ -99,7 +99,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     foreach (UnitStatus status in unit.StatusConditions)
                         if (status.StatusObj.Effect != null)
-                            status.StatusObj.Effect.Apply(unit);
+                            status.StatusObj.Effect.Apply(unit, status.StatusObj);
                 }
                 catch(Exception ex)
                 {

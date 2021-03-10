@@ -36,8 +36,8 @@ namespace RedditEmblemAPI.Services.Helpers
 
                     //Calculate movement range
                     int movementVal = unit.Stats["Mov"].FinalValue;
-                    PreventMovementEffect preventMovEffect = unit.StatusConditions.Select(s => s.StatusObj.Effect).OfType<PreventMovementEffect>().FirstOrDefault();
-                    if (preventMovEffect != null) movementVal = 0;
+                    OverrideMovementEffect overrideMovEffect = unit.StatusConditions.Select(s => s.StatusObj.Effect).OfType<OverrideMovementEffect>().FirstOrDefault();
+                    if (overrideMovEffect != null) movementVal = overrideMovEffect.MovementValue;
 
                     UnitRangeParameters unitParms = new UnitRangeParameters(unit);
                     RecurseUnitRange(unitParms, unit.OriginTile.Coordinate, movementVal, string.Empty, null);

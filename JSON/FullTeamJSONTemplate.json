@@ -129,7 +129,7 @@
       "TextFields": [ 0 ], //Optional
       "Effect": { //Optional
         "Type": 0, //Required
-        "Parameters": [ 0 ] //Required
+        "Parameters": [ 0, 0 ] //Required
       }
     },
     "Tags": { //Optional

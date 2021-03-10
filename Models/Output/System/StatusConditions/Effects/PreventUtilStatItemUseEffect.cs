@@ -29,7 +29,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
                 throw new RequiredValueNotProvidedException("Param1");
         }
 
-        public override void Apply(Unit unit)
+        public override void Apply(Unit unit, StatusCondition status)
         {
             //Mark use as prevented for all items with a utilized stat configured in UtilizedStats
             foreach(UnitInventoryItem item in unit.Inventory.Where(i => i != null && i.Item.UtilizedStats.Intersect(this.UtilizedStats).Any()))
