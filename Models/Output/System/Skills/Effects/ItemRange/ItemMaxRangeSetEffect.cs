@@ -32,7 +32,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
             : base(parameters)
         {
             this.Categories = ParseHelper.StringCSVParse(parameters, 0);
-            this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", true, true);
+            this.Value = ParseHelper.Int_NonZeroPositive(parameters, 1, "Param2");
 
             if (this.Value > 15)
                 throw new RangeMaximumTooLargeException("For performance reasons, item ranges in excess of 15 tiles are currently not allowed.");

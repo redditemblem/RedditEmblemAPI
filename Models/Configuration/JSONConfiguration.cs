@@ -101,6 +101,9 @@ namespace RedditEmblemAPI.Models.Configuration
                 this.Convoy.Query
             };
 
+            //Add optional queries
+            if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
+
             return queries;
         }
 
@@ -116,6 +119,9 @@ namespace RedditEmblemAPI.Models.Configuration
                 this.System.Items.Query,
                 this.Shop.Query
             };
+
+            //Add optional queries
+            if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
 
             return queries;
         }

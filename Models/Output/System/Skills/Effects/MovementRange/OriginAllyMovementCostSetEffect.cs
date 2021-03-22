@@ -21,7 +21,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public OriginAllyMovementCostSetEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.MovementCost = ParseHelper.SafeIntParse(parameters, 0, "Param1", true, false);
+            this.MovementCost = ParseHelper.Int_Positive(parameters, 0, "Param1");
         }
     }
 }

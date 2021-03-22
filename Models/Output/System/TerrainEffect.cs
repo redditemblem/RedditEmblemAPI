@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.TerrainEffects;
+using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Services.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -60,17 +63,16 @@ namespace RedditEmblemAPI.Models.Output.System
 
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", true);
-            this.Size = ParseHelper.OptionalSafeIntParse(data, config.Size, "Size", true, true, 1);
+            this.Size = ParseHelper.OptionalInt_NonZeroPositive(data, config.Size, "Size");
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
 
-            this.HPModifier = ParseHelper.OptionalSafeIntParse(data, config.HPModifier, "HP Modifier", false, false, 0);
+            this.HPModifier = ParseHelper.OptionalInt_Any(data, config.HPModifier, "HP Modifier");
 
             this.CombatStatModifiers = new Dictionary<string, int>();
             foreach(NamedStatConfig stat in config.CombatStatModifiers)
             {
-                int val = ParseHelper.SafeIntParse(data, stat.Value, stat.SourceName + " Modifier", false);
-                if (val == 0)
-                    continue;
+                int val = ParseHelper.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
+                if (val == 0) continue;
 
                 this.CombatStatModifiers.Add(stat.SourceName, val);
             }
@@ -79,12 +81,39 @@ namespace RedditEmblemAPI.Models.Output.System
             this.StatModifiers = new Dictionary<string, int>();
             foreach(NamedStatConfig stat in config.StatModifiers)
             {
-                int val = ParseHelper.SafeIntParse(data, stat.Value, stat.SourceName + " Modifier", false);
-                if (val == 0)
-                    continue;
+                int val = ParseHelper.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
+                if (val == 0) continue;
 
                 this.StatModifiers.Add(stat.SourceName, val);
             }
         }
+
+        #region Static Functions
+
+        public static IDictionary<string, TerrainEffect> BuildDictionary(TerrainEffectsConfig config)
+        {
+            IDictionary<string, TerrainEffect> terrainEffects = new Dictionary<string, TerrainEffect>();
+
+            foreach (IList<object> row in config.Query.Data)
+            {
+                try
+                {
+                    IList<string> effect = row.Select(r => r.ToString()).ToList();
+                    string name = ParseHelper.SafeStringParse(effect, config.Name, "Name", false);
+                    if (string.IsNullOrEmpty(name)) continue;
+
+                    if (!terrainEffects.TryAdd(name, new TerrainEffect(config, effect)))
+                        throw new NonUniqueObjectNameException("terrain effect");
+                }
+                catch (Exception ex)
+                {
+                    throw new TerrainEffectProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                }
+            }
+
+            return terrainEffects;
+        }
+
+        #endregion
     }
 }

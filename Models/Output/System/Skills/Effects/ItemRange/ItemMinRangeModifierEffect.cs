@@ -32,10 +32,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
             : base(parameters)
         {
             this.Categories = ParseHelper.StringCSVParse(parameters, 0);
-            this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", false);
-
-            if (this.Value >= 0)
-                throw new NegativeIntegerException("Param2", this.Value.ToString());
+            this.Value = ParseHelper.Int_Negative(parameters, 1, "Param2");
         }
 
         /// <summary>

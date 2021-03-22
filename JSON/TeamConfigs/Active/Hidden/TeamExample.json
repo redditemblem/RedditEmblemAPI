@@ -149,7 +149,8 @@
         "Minimum": 12,
         "Maximum": 13
       },
-      "TextFields": [ 30, 31 ]
+      "Tags": 30,
+      "TextFields": [ 31, 32 ]
     },
     "Skills": {
       "Query": {

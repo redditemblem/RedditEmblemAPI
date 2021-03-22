@@ -40,7 +40,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
         public NoAllyRadiusSelfCombatStatModifierEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.Radius = ParseHelper.SafeIntParse(parameters, 0, "Param1", true, true);
+            this.Radius = ParseHelper.Int_NonZeroPositive(parameters, 0, "Param1");
             this.Stats = ParseHelper.StringCSVParse(parameters, 1); //Param2
             this.Values = ParseHelper.IntCSVParse(parameters, 2, "Param3", false);
 

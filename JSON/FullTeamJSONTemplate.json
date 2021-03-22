@@ -98,6 +98,7 @@
         "Minimum": 0, //Required
         "Maximum": 0 //Required
       },
+      "Tags": 0, //Optional
       "TextFields": [] //Optional
     },
     "Skills": { //Optional, defaults to null

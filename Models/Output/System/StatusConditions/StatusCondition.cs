@@ -1,10 +1,13 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System.Statuses;
+using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 {
@@ -13,6 +16,8 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
     /// </summary>
     public class StatusCondition
     {
+        #region Attributes
+
         /// <summary>
         /// Flag indicating whether or not this status was found on a unit. Used to minify the output JSON.
         /// </summary>
@@ -50,6 +55,8 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         [JsonIgnore]
         public StatusConditionEffect Effect { get; set; }
 
+        #endregion
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -58,7 +65,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
             this.Type = ParseStatusConditionType(data, config.Type);
-            this.Turns = ParseHelper.OptionalSafeIntParse(data, config.Turns, "Turns", true, true, 0);
+            this.Turns = ParseHelper.OptionalInt_NonZeroPositive(data, config.Turns, "Turns", 0);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
 
             //Check if status condition effects are configured
@@ -99,6 +106,34 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 
             throw new UnmatchedStatusConditionEffectException(effectType);
         }
+
+        #region Static Functions
+
+        public static IDictionary<string, StatusCondition> BuildDictionary(StatusConditionConfig config)
+        {
+            IDictionary<string, StatusCondition> statusConditions = new Dictionary<string, StatusCondition>();
+
+            foreach (IList<object> row in config.Query.Data)
+            {
+                try
+                {
+                    IList<string> stat = row.Select(r => r.ToString()).ToList();
+                    string name = ParseHelper.SafeStringParse(stat, config.Name, "Name", false);
+                    if (string.IsNullOrEmpty(name)) continue;
+
+                    if (!statusConditions.TryAdd(name, new StatusCondition(config, stat)))
+                        throw new NonUniqueObjectNameException("status condition");
+                }
+                catch (Exception ex)
+                {
+                    throw new StatusConditionProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                }
+            }
+
+            return statusConditions;
+        }
+
+        #endregion
     }
 
     public enum StatusConditionType

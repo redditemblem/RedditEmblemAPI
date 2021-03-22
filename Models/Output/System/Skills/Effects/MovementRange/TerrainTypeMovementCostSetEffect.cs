@@ -33,8 +33,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public TerrainTypeMovementCostSetEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.TerrainTypeGrouping = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
-            this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", true);
+            this.TerrainTypeGrouping = ParseHelper.Int_Positive(parameters, 0, "Param1");
+            this.Value = ParseHelper.Int_Positive(parameters, 1, "Param2");
             this.CanOverride99MoveCost = (ParseHelper.SafeStringParse(parameters, 2, "Param3", true) == "Yes");
         }
     }

@@ -243,22 +243,21 @@ namespace RedditEmblemAPI.Models.Output.Units
             //Required fields
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", true);
-            this.Level = ParseHelper.SafeIntParse(data, config.Level, "Level", true);
+            this.Level = ParseHelper.Int_NonZeroPositive(data, config.Level, "Level");
             this.CoordinateString = ParseHelper.SafeStringParse(data, config.Coordinate, "Coordinate", false);
-            this.HP = new HP(data.ElementAtOrDefault<string>(config.HP.Current),
-                             data.ElementAtOrDefault<string>(config.HP.Maximum));
+            this.HP = new HP(data, config.HP.Current, config.HP.Maximum);
 
             //Optional fields
             this.Player = ParseHelper.SafeStringParse(data, config.Player, "Player", false);
             this.PortraitURL = ParseHelper.SafeStringParse(data, config.PortraitURL, "Portrait URL", false);
-            this.UnitSize = ParseHelper.OptionalSafeIntParse(data, config.UnitSize, "Unit Size", true, true, 1);
+            this.UnitSize = ParseHelper.OptionalInt_NonZeroPositive(data, config.UnitSize, "Unit Size");
             this.HasMoved = (ParseHelper.SafeStringParse(data, config.HasMoved, "Has Moved", false) == "Yes");
 
-            int experience = ParseHelper.OptionalSafeIntParse(data, config.Experience, "Experience", true, false, -1);
+            int experience = ParseHelper.OptionalInt_Positive(data, config.Experience, "Experience", -1);
             if(experience > -1) experience %= 100;
             this.Experience = experience;
 
-            this.HeldCurrency = ParseHelper.OptionalSafeIntParse(data, config.HeldCurrency, "Currency", true, false, 0);
+            this.HeldCurrency = ParseHelper.OptionalInt_Positive(data, config.HeldCurrency, "Currency");
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
             this.Tags = ParseHelper.StringCSVParse(data, config.Tags);
             this.Behavior = ParseHelper.SafeStringParse(data, config.Behavior, "Behavior", false);
@@ -336,12 +335,12 @@ namespace RedditEmblemAPI.Models.Output.Units
             foreach(ModifiedNamedStatConfig stat in config)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
-                temp.BaseValue = ParseHelper.SafeIntParse(data, stat.BaseValue, stat.SourceName, true);
+                temp.BaseValue = ParseHelper.Int_Positive(data, stat.BaseValue, stat.SourceName);
 
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.OptionalSafeIntParse(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName), false, false, 0);
+                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName));
                     if (val == 0) continue;
                     temp.Modifiers.Add(mod.SourceName, val);
                 }
@@ -355,12 +354,12 @@ namespace RedditEmblemAPI.Models.Output.Units
             foreach (ModifiedNamedStatConfig stat in config)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
-                temp.BaseValue = ParseHelper.SafeIntParse(data, stat.BaseValue, stat.SourceName, true);
+                temp.BaseValue = ParseHelper.Int_Positive(data, stat.BaseValue, stat.SourceName);
 
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.OptionalSafeIntParse(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName), false, false, 0);
+                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName));
                     if (val == 0) continue;
                     temp.Modifiers.Add(mod.SourceName, val);
                 }

@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System.Skills;
+using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange;
@@ -9,7 +11,9 @@ using RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats;
 using RedditEmblemAPI.Services.Helpers;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills
 {
@@ -18,6 +22,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
     /// </summary>
     public class Skill
     {
+        #region Attributes
+
         /// <summary>
         /// Flag indicating whether or not this skill was found on a unit. Used to minify the output JSON.
         /// </summary>
@@ -44,6 +50,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// </summary>
         [JsonIgnore]
         public SkillEffect Effect { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Constructor.
@@ -125,5 +133,33 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
 
             throw new UnmatchedSkillEffectException(effectType);
         }
+
+        #region Static Functions
+        
+        public static IDictionary<string, Skill> BuildDictionary(SkillsConfig config)
+        {
+            IDictionary<string, Skill> skills = new Dictionary<string, Skill>();
+
+            foreach (IList<object> row in config.Query.Data)
+            {
+                try
+                {
+                    IList<string> skill = row.Select(r => r.ToString()).ToList();
+                    string name = ParseHelper.SafeStringParse(skill, config.Name, "Name", false);
+                    if (string.IsNullOrEmpty(name)) continue;
+
+                    if (!skills.TryAdd(name, new Skill(config, skill)))
+                        throw new NonUniqueObjectNameException("skill");
+                }
+                catch (Exception ex)
+                {
+                    throw new SkillProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                }
+            }
+
+            return skills;
+        }
+        
+        #endregion
     }
 }

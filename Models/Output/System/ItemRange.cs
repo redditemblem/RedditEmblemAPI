@@ -1,6 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -48,9 +49,9 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <param name="minimum">A numerical string value.</param>
         /// <param name="maximum">A numerical string value.</param>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
-        public ItemRange(string minimum, string maximum)
-            : this(ParseHelper.SafeIntParse(minimum, "Minimum Range", true),
-                   ParseHelper.SafeIntParse(maximum, "Maximum Range", true))
+        public ItemRange(IList<string> data, int minimumIndex, int maximumIndex)
+            : this(ParseHelper.Int_Positive(data, minimumIndex, "Minimum Range"),
+                   ParseHelper.Int_Positive(data, maximumIndex, "Maximum Range"))
         { }
     }
 }

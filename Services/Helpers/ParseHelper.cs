@@ -12,74 +12,99 @@ namespace RedditEmblemAPI.Services.Helpers
         #region Numerical Parsing
 
         /// <summary>
-        /// Converts the value in <paramref name="data"/> at <paramref name="index"/> to an integer.
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer.
         /// </summary>
-        /// <param name="data"></param>
-        /// <param name="index"></param>
-        /// <param name="fieldName">The name of the numerical value as it should display in any thrown exception messages.</param>
-        /// <param name="isPositive">If true, an exception will be thrown if the numerical value is less than 0.</param>
-        /// <param name="isNonZero">If true, an exception will be thrown if <paramref name="number"/> is equal to or less than 0.</param>
-        /// <returns></returns>
-        public static int SafeIntParse(IList<string> data, int index, string fieldName, bool isPositive, bool isNonZero = false)
+        /// <exception cref="AnyIntegerException"></exception>
+        public static int Int_Any(IList<string> data, int index, string fieldName)
         {
-            return SafeIntParse(data.ElementAtOrDefault<string>(index), fieldName, isPositive, isNonZero);
+            string number = data.ElementAtOrDefault<string>(index);
+
+            int val;
+            if (!int.TryParse(number, out val))
+                throw new AnyIntegerException(fieldName, number);
+            return val;
         }
 
         /// <summary>
-        /// Converts the value of <paramref name="number"/> to an integer.
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is below 0.
         /// </summary>
-        /// <param name="number"></param>
-        /// <param name="fieldName">The name of the numerical value as it should display in any thrown exception messages.</param>
-        /// <param name="isPositive">If true, an exception will be thrown if <paramref name="number"/> is less than 0.</param>
-        /// <param name="isNonZero">If true, an exception will be thrown if <paramref name="number"/> is equal to or less than 0.</param>
-        /// <exception cref="AnyIntegerException"></exception>
         /// <exception cref="PositiveIntegerException"></exception>
-        /// <exception cref="NonZeroPositiveIntegerException"></exception>
-        public static int SafeIntParse(string number, string fieldName, bool isPositive, bool isNonZero = false)
+        public static int Int_Positive(IList<string> data, int index, string fieldName)
         {
+            string number = data.ElementAtOrDefault<string>(index);
+
             int val;
-            if (!int.TryParse(number, out val))
-            {
-                if (isPositive) throw new PositiveIntegerException(fieldName, number);
-                else throw new AnyIntegerException(fieldName, number);
-            }
-            else if (isPositive && !isNonZero && val < 0)
+            if (!int.TryParse(number, out val) || val < 0)
                 throw new PositiveIntegerException(fieldName, number);
-            else if (isNonZero && val <= 0)
+            return val;
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is below 1.
+        /// </summary>
+        /// <exception cref="NonZeroPositiveIntegerException"></exception>
+        public static int Int_NonZeroPositive(IList<string> data, int index, string fieldName)
+        {
+            string number = data.ElementAtOrDefault<string>(index);
+
+            int val;
+            if (!int.TryParse(number, out val) || val < 1)
                 throw new NonZeroPositiveIntegerException(fieldName, number);
             return val;
         }
 
         /// <summary>
-        /// Converts the value in <paramref name="data"/> at <paramref name="index"/> to an integer. If the value is null/empty, returns <paramref name="defaultValueIfNull"/> instead.
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is above -1.
         /// </summary>
-        /// <param name="data"></param>
-        /// <param name="index"></param>
-        /// <param name="fieldName">The name of the numerical value as it should display in any thrown exception messages.</param>
-        /// <param name="isPositive">If true, an exception will be thrown if the value in <paramref name="data"/> is less than 0.</param>
-        /// <param name="isNonZero">If true, an exception will be thrown if the value in <paramref name="data"/> is less than or equal to 0.</param>
-        /// <param name="defaultValueIfNull">The value to return if the value in <paramref name="data"/> is null or empty.</param>
-        /// <returns></returns>
-        public static int OptionalSafeIntParse(IList<string> data, int index, string fieldName, bool isPositive, bool isNonZero, int defaultValueIfNull)
+        /// <exception cref="NegativeIntegerException"></exception>
+        public static int Int_Negative(IList<string> data, int index, string fieldName)
         {
-            return OptionalSafeIntParse(data.ElementAtOrDefault<string>(index), fieldName, isPositive, isNonZero, defaultValueIfNull);
+            string number = data.ElementAtOrDefault<string>(index);
+
+            int val;
+            if (!int.TryParse(number, out val) || val > -1)
+                throw new NegativeIntegerException(fieldName, number);
+            return val;
         }
 
         /// <summary>
-        /// Converts the value of <paramref name="number"/> to an integer. If <paramref name="number"/> is null/empty, returns <paramref name="defaultValueIfNull"/> instead.
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer.
         /// </summary>
-        /// <param name="number"></param>
-        /// <param name="fieldName">The name of the numerical value as it should display in any thrown exception messages.</param>
-        /// <param name="isPositive">If true, an exception will be thrown if <paramref name="number"/> is less than 0.</param>
-        /// <param name="isNonZero">If true, an exception will be thrown if the value in <paramref name="number"/> is less than or equal to 0.</param>
-        /// <param name="defaultValueIfNull">The value to return if <paramref name="number"/> is null or empty.</param>
-        /// <returns></returns>
-        public static int OptionalSafeIntParse(string number, string fieldName, bool isPositive, bool isNonZero, int defaultValueIfNull)
+        public static int OptionalInt_Any(IList<string> data, int index, string fieldName, int defaultValueIfNull = 0)
         {
-            if (string.IsNullOrEmpty(number))
+            if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
                 return defaultValueIfNull;
+            return Int_Any(data, index, fieldName);
+        }
 
-            return SafeIntParse(number, fieldName, isPositive, isNonZero);
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is below 0.
+        /// </summary>
+        public static int OptionalInt_Positive(IList<string> data, int index, string fieldName, int defaultValueIfNull = 0)
+        {
+            if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
+                return defaultValueIfNull;
+            return Int_Positive(data, index, fieldName);
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is below 1.
+        /// </summary>
+        public static int OptionalInt_NonZeroPositive(IList<string> data, int index, string fieldName, int defaultValueIfNull = 1)
+        {
+            if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
+                return defaultValueIfNull;
+            return Int_NonZeroPositive(data, index, fieldName);
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is above -1.
+        /// </summary>
+        public static int OptionalInt_Negative(IList<string> data, int index, string fieldName, int defaultValueIfNull = -1)
+        {
+            if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
+                return defaultValueIfNull;
+            return Int_Negative(data, index, fieldName);
         }
 
         #endregion
