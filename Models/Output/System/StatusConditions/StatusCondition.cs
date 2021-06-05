@@ -99,9 +99,11 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
             switch (effectType)
             {
                 case "OverrideMovement": return new OverrideMovementEffect(parameters);
+                case "PreventAllItemUse": return new PreventAllItemUseEffect(parameters);
                 case "PreventUtilStatItemUse": return new PreventUtilStatItemUseEffect(parameters);
                 case "CombatStatModifier": return new CombatStatModifierEffect(parameters);
                 case "StatModifier": return new StatModifierEffect(parameters);
+                case "RemoveTag": return new RemoveTagEffect(parameters);
             }
 
             throw new UnmatchedStatusConditionEffectException(effectType);

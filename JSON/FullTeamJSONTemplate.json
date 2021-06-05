@@ -111,10 +111,8 @@
       "SpriteURL": 0, //Optional
       "TextFields": [], //Optional
       "Effect": { //Optional
-        "Type": 3,
-        "Parameter1": 4,
-        "Parameter2": 5,
-        "Parameter3": 6
+        "Type": 0,
+        "Parameters": [ 0, 0, 0 ]
       }
     },
     "StatusConditions": { //Optional
@@ -140,7 +138,8 @@
         "Orientation": 0
       },
       "Name": 0, //Required
-      "SpriteURL": 0 //Optional
+      "SpriteURL": 0, //Optional
+      "ShowOnUnit": 0 //Optional
     },
     "TerrainTypes": { //Required
       "Query": {
@@ -149,6 +148,13 @@
         "Orientation": 0
       },
       "Name": 0, //Required
+      "HPModifier": 0, //Optional
+      "CombatStatModifiers": [ //Optional
+        {
+          "SourceName": "Avo",
+          "Value": 1
+        }
+      ],
       "MovementCosts": [ //Required
         {
           "SourceName": "Mounted",
@@ -157,7 +163,8 @@
       ],
       "WarpType": 0, //Optional, required if WarpCost provided
       "WarpCost": 0, //Optional, required if WarpType provided
-      "BlocksItems": 0, //Required
+      "CannotStopOn": 0, //Optional
+      "BlocksItems": 0, //Optional
       "StatModifiers": [ //Optional
         {
           "SourceName": "Avo",
@@ -245,16 +252,18 @@
     "HeldCurrency": 0, //Optional
     "Tags": 0, //Optional
     "Behavior": 0, //Optional
-    "SystemStats": { //Optional
-      "SourceName": "Charge",
-      "BaseValue": 0,
-      "Modifiers": [
-        {
-          "SourceName": "",
-          "Value": 0
-        }
-      ]
-    },
+    "SystemStats": [ //Optional
+      {
+        "SourceName": "Charge",
+        "BaseValue": 0,
+        "Modifiers": [ //Required
+          {
+            "SourceName": "",
+            "Value": 0
+          }
+        ]
+      }
+    ],
     "Skills": [ 0 ], //Optional
     "StatusConditions": [ 0 ] //Optional
   },

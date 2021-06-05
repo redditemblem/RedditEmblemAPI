@@ -60,6 +60,12 @@ namespace RedditEmblemAPI.Models.Output.System
         public int WarpCost { get; set; }
 
         /// <summary>
+        /// Flag indicating whether or not units are allowed to end their unit range on this tile.
+        /// </summary>
+        [JsonIgnore]
+        public bool CannotStopOn { get; set; }
+
+        /// <summary>
         /// Flag indicating whether or not item ranges can pass through the terrain type.
         /// </summary>
         [JsonIgnore]
@@ -85,7 +91,8 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             this.Matched = false;
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.BlocksItems = (ParseHelper.SafeStringParse(data, config.BlocksItems, "Blocks Items", true) == "Yes");
+            this.CannotStopOn = (ParseHelper.SafeStringParse(data, config.CannotStopOn, "Cannot Stop On", false) == "Yes");
+            this.BlocksItems = (ParseHelper.SafeStringParse(data, config.BlocksItems, "Blocks Items", false) == "Yes");
             this.Groupings = ParseHelper.IntCSVParse(data, config.Groupings, "Groupings", true);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
 

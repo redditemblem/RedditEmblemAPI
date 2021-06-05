@@ -325,7 +325,8 @@ namespace RedditEmblemAPI.Models.Output.Units
                 {
                     if (systemUsesWeaponRanks && string.IsNullOrEmpty(rankLetter))
                         throw new WeaponRankMissingLetterException(rankType);
-                    this.WeaponRanks.Add(rankType, rankLetter);
+                    if(!this.WeaponRanks.TryAdd(rankType, rankLetter))
+                        throw new NonUniqueObjectNameException("weapon rank", rankType);
                 }
             }
         }
@@ -415,7 +416,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             string equippedItemName = ParseHelper.SafeStringParse(data, config.EquippedItem, "Equipped Item", false);
             if (!string.IsNullOrEmpty(equippedItemName))
             {
-                UnitInventoryItem equipped = this.Inventory.FirstOrDefault(i => i.FullName == equippedItemName);
+                UnitInventoryItem equipped = this.Inventory.FirstOrDefault(i => i != null && i.FullName == equippedItemName);
                 if (equipped == null)
                     throw new UnmatchedEquippedItemException(equippedItemName);
                 equipped.IsEquipped = true;
@@ -584,7 +585,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                     throw new UnrecognizedEquationVariableException(stat.Equation);
 
                 Expression expression = new Expression(equation);
-                this.CombatStats[stat.SourceName].BaseValue = Convert.ToInt32(expression.Evaluate());
+                this.CombatStats[stat.SourceName].BaseValue = Math.Max(0, Convert.ToInt32(expression.Evaluate()));
             }
         }
     

@@ -114,7 +114,7 @@
       "InventoryStatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 21
+          "Value": 22
         },
         {
           "SourceName": "Mag",
@@ -237,9 +237,10 @@
       ],
       "WarpType": 7,
       "WarpCost": 8,
-      "BlocksItems": 9,
-      "TextFields": [ 10 ],
-      "Groupings":  11
+      "CannotStopOn": 9,
+      "BlocksItems": 10,
+      "TextFields": [ 11 ],
+      "Groupings":  12
     },
     "TerrainEffects": {
       "Query": {

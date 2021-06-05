@@ -26,12 +26,6 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         [JsonRequired]
         public IList<NamedStatConfig> MovementCosts { get; set; }
 
-        /// <summary>
-        /// Required. Cell index for a terrain type's blocks items flag.
-        /// </summary>
-        [JsonRequired]
-        public int BlocksItems { get; set; }
-
         #endregion
 
         #region Optional Fields
@@ -60,6 +54,16 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         /// Optional. Cell index of a terrain type's warp cost.
         /// </summary>
         public int WarpCost { get; set; } = -1;
+
+        /// <summary>
+        /// Optional. Cell index for terrain type's cannot stop on flags.
+        /// </summary>
+        public int CannotStopOn { get; set; } = -1;
+
+        /// <summary>
+        /// Optional. Cell index for a terrain type's blocks items flag.
+        /// </summary>
+        public int BlocksItems { get; set; } = -1;
 
         /// <summary>
         /// Optional. Cell index of a terrain type's groupings value.

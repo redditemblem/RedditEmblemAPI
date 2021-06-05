@@ -160,7 +160,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             //Document tile movement
             visitedCoords += "_" + currCoord.ToString() + "_";
-            if (!parms.Unit.MovementRange.Contains(currCoord))
+            if (!parms.Unit.MovementRange.Contains(currCoord) && !tile.TerrainTypeObj.CannotStopOn)
                 parms.Unit.MovementRange.Add(currCoord);
 
             //Units may move onto obstructed tiles, but no further.
