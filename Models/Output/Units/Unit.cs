@@ -207,7 +207,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The <c>Tile</c> that this unit's range originates from.
         /// </summary>
         [JsonIgnore]
-        public Tile OriginTile { get; set; }
+        public IList<Tile> OriginTiles { get; set; }
 
         /// <summary>
         /// List of tiles that the unit is capable of moving to.
@@ -262,6 +262,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Tags = ParseHelper.StringCSVParse(data, config.Tags);
             this.Behavior = ParseHelper.SafeStringParse(data, config.Behavior, "Behavior", false);
 
+            this.OriginTiles = new List<Tile>();
             this.MovementRange = new List<Coordinate>();
             this.AttackRange = new List<Coordinate>();
             this.UtilityRange = new List<Coordinate>();

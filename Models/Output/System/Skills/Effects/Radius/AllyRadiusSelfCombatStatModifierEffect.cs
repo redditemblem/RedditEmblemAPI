@@ -60,14 +60,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             //If unit is not on the map, don't apply
-            if (unit.OriginTile == null)
+            if (unit.OriginTiles.Count == 0)
                 return;
 
             //Apply modifiers to unit if allies in range
             if (units.Any(u => u.Name != unit.Name //different unit name
                             && u.AffiliationObj.Grouping == unit.AffiliationObj.Grouping //same affiliation grouping
-                            && u.OriginTile != null
-                            && this.Radius >= unit.OriginTile.Coordinate.DistanceFrom(u.OriginTile.Coordinate)))
+                            && u.OriginTiles.Count > 0
+                            && u.OriginTiles.Any(o1 => unit.OriginTiles.Any(o2 => o2.Coordinate.DistanceFrom(o1.Coordinate) <= this.Radius))))
             {
                 ApplyUnitCombatStatModifiers(unit, skill.Name, this.Stats, this.Values);
             }

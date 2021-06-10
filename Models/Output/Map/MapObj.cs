@@ -347,6 +347,14 @@ namespace RedditEmblemAPI.Models.Output.Map
         }
 
         /// <summary>
+        /// Returns a list of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="centerTiles"/>.
+        /// </summary>
+        public List<Tile> GetTilesInRadius(IList<Tile> centerTiles, int radius)
+        {
+            return centerTiles.SelectMany(t => GetTilesInRadius(t.Coordinate, radius)).Except(centerTiles).ToList();
+        }
+
+        /// <summary>
         /// Returns a list of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="centerTile"/>.
         /// </summary>
         public List<Tile> GetTilesInRadius(Tile centerTile, int radius)

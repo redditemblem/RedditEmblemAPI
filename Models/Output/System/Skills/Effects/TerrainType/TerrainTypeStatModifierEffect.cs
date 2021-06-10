@@ -4,6 +4,7 @@ using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
 {
@@ -59,11 +60,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             //If unit is not on the map, don't apply
-            if (unit.OriginTile == null)
+            if (unit.OriginTiles.Count == 0)
                 return;
 
             //The terrain type must be in the defined grouping
-            if (!unit.OriginTile.TerrainTypeObj.Groupings.Contains(this.TerrainTypeGrouping))
+            if (!unit.OriginTiles.Any(o => o.TerrainTypeObj.Groupings.Contains(this.TerrainTypeGrouping)))
                 return;
 
             ApplyUnitStatModifiers(unit, skill.Name, this.Stats, this.Values);

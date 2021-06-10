@@ -103,7 +103,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                     continue;
 
                 //If no issues arose, add the tile to the unit's movement range
-                unit.MovementRange.Add(tile.Coordinate);
+                if(!unit.MovementRange.Contains(tile.Coordinate))
+                    unit.MovementRange.Add(tile.Coordinate);
             }
         }
 

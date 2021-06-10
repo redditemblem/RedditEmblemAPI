@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Output.Map;
+﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
@@ -48,16 +49,19 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             //If unit is not on the map, don't apply
-            if (unit.OriginTile == null)
+            if (unit.OriginTiles.Count == 0)
                 return;
+
+            if (unit.UnitSize > 1)
+                throw new SkillEffectMultitileUnitsNotSupportedException(this.Name);
 
             //Locate valid ally units and select tiles near them
             IList<Tile> tiles = units.Where(u => u.Name != unit.Name
                                               && u.AffiliationObj.Grouping == unit.AffiliationObj.Grouping
                                               && u.HP.Percentage >= this.HPPercentage
-                                              && u.OriginTile != null
-                                              && (u.OriginTile.Coordinate.DistanceFrom(unit.OriginTile.Coordinate) <= this.TeleportationRange || this.TeleportationRange == 99))
-                                     .SelectMany(u => map.GetTilesInRadius(u.OriginTile, this.Radius))
+                                              && u.OriginTiles.Count > 0
+                                              && (u.OriginTiles.Any(o1 => unit.OriginTiles.Any(o2 => o1.Coordinate.DistanceFrom(o2.Coordinate) <= this.TeleportationRange)) || this.TeleportationRange == 99))
+                                     .SelectMany(u => map.GetTilesInRadius(u.OriginTiles, this.Radius))
                                      .ToList();
 
             AddTeleportTargetsToUnitRange(unit, tiles);
