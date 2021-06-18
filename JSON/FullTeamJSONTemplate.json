@@ -96,7 +96,8 @@
       ],
       "Range": { //Required
         "Minimum": 0, //Required
-        "Maximum": 0 //Required
+        "Maximum": 0, //Required
+        "Shape": 0 //Optional
       },
       "Tags": 0, //Optional
       "TextFields": [] //Optional

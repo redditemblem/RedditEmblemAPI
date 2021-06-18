@@ -80,77 +80,78 @@
       "EquippedStatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 14
-        },
-        {
-          "SourceName": "Mag",
           "Value": 15
         },
         {
-          "SourceName": "Skl",
+          "SourceName": "Mag",
           "Value": 16
         },
         {
-          "SourceName": "Spd",
+          "SourceName": "Skl",
           "Value": 17
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Spd",
           "Value": 18
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Lck",
           "Value": 19
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Def",
           "Value": 20
         },
         {
-          "SourceName": "Mov",
+          "SourceName": "Res",
           "Value": 21
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 22
         }
       ],
       "InventoryStatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 22
-        },
-        {
-          "SourceName": "Mag",
           "Value": 23
         },
         {
-          "SourceName": "Skl",
+          "SourceName": "Mag",
           "Value": 24
         },
         {
-          "SourceName": "Spd",
+          "SourceName": "Skl",
           "Value": 25
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Spd",
           "Value": 26
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Lck",
           "Value": 27
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Def",
           "Value": 28
         },
         {
-          "SourceName": "Mov",
+          "SourceName": "Res",
           "Value": 29
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 30
         }
       ],
       "Range": {
         "Minimum": 12,
-        "Maximum": 13
+        "Maximum": 13,
+        "Shape": 14
       },
-      "Tags": 30,
-      "TextFields": [ 31, 32 ]
+      "Tags": 31,
+      "TextFields": [ 32, 33 ]
     },
     "Skills": {
       "Query": {

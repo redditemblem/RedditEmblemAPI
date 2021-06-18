@@ -106,7 +106,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.UtilizedStats = ParseHelper.StringCSVParse(data, config.UtilizedStats);
             this.DealsDamage = (ParseHelper.SafeStringParse(data, config.DealsDamage, "Deals Damage", true) == "Yes");
             this.MaxUses = ParseHelper.Int_Positive(data, config.Uses, "Uses");
-            this.Range = new ItemRange(data, config.Range.Minimum, config.Range.Maximum);
+            this.Range = new ItemRange(data, config.Range.Minimum, config.Range.Maximum, config.Range.Shape);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
 
             this.Tags = ParseHelper.StringCSVParse(data, config.Tags).Distinct().ToList();

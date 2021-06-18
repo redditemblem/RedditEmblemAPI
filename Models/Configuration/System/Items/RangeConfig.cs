@@ -22,5 +22,15 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         public int Maximum { get; set; }
 
         #endregion
+
+        #region Optional Fields
+
+        /// <summary>
+        /// Optional. Cell index of an item's range shape value.
+        /// </summary>
+        public int Shape { get; set; } = -1;
+
+
+        #endregion
     }
 }

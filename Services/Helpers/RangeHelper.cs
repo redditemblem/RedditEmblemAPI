@@ -1,6 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
-using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
@@ -47,7 +46,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     IList<Coordinate> utilRange = new List<Coordinate>();
 
                     IList<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && !i.IsUsePrevented && i.Item.UtilizedStats.Any() && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
-                                                                    .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.DealsDamage, i.AllowMeleeRange))
+                                                                    .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.Range.Shape, i.Item.DealsDamage, i.AllowMeleeRange))
                                                                     .ToList();
 
                     //Check for whole map ranges
@@ -257,17 +256,48 @@ namespace RedditEmblemAPI.Services.Helpers
             //Check for items that can reach this tile
             if (!parms.Unit.MovementRange.Contains(currCoord))
             {
-                int displacement = currCoord.DistanceFrom(parms.StartCoord);
+                int horzDisplacement = Math.Abs(currCoord.X - parms.StartCoord.X);
+                int verticalDisplacement = Math.Abs(currCoord.Y - parms.StartCoord.Y);
+                int totalDisplacement = currCoord.DistanceFrom(parms.StartCoord);
+                
                 int pathLength = parms.LargestRange - remainingRange;
 
-                IList<UnitItemRange> validRanges = parms.Ranges.Where(r => (r.MinRange <= displacement //tile greater than min range away from unit
-                                                                         && r.MinRange <= pathLength //tile greater than min range down the path
-                                                                         && r.MaxRange >= displacement //tile less than max range from unit
-                                                                         && r.MaxRange >= pathLength) //tile less than max range down path
-                                                                        || (displacement == 1
-                                                                         && pathLength == 1
-                                                                         && r.AllowMeleeRange) //unit can specially allow melee range for an item
-                                                                     ).ToList();
+                List<UnitItemRange> validRanges = new List<UnitItemRange>();
+                validRanges.AddRange(parms.Ranges.Where(r => r.Shape == ItemRangeShape.Standard
+                                                                        && ((r.MinRange <= totalDisplacement //tile greater than min range away from unit
+                                                                            && r.MinRange <= pathLength //tile greater than min range down the path
+                                                                            && r.MaxRange >= totalDisplacement //tile less than max range from unit
+                                                                            && r.MaxRange >= pathLength) //tile less than max range down path
+                                                                            || (totalDisplacement == 1 && pathLength == 1 && r.AllowMeleeRange) //unit can specially allow melee range for an item
+                                                                           )
+                                                                        ));
+                validRanges.AddRange(parms.Ranges.Where(r => r.Shape == ItemRangeShape.Square
+                                                                        && (((r.MinRange <= verticalDisplacement || r.MinRange <= horzDisplacement)
+                                                                              && r.MaxRange >= verticalDisplacement 
+                                                                              && r.MaxRange >= horzDisplacement)
+                                                                            || (totalDisplacement == 1 && pathLength == 1 && r.AllowMeleeRange) //unit can specially allow melee range for an item
+                                                                        )));
+                validRanges.AddRange(parms.Ranges.Where(r => r.Shape == ItemRangeShape.Cross
+                                                                        && (((horzDisplacement == 0 //tile vertically within range
+                                                                               && r.MinRange <= verticalDisplacement
+                                                                               && r.MaxRange >= verticalDisplacement)
+                                                                            || (verticalDisplacement == 0 //tile horizontally within range
+                                                                               && r.MinRange <= horzDisplacement
+                                                                               && r.MaxRange >= horzDisplacement)
+                                                                            && totalDisplacement == pathLength) //straight paths only
+                                                                           || (totalDisplacement == 1 && pathLength == 1 && r.AllowMeleeRange)
+                                                                           )
+                                                                        ));
+                validRanges.AddRange(parms.Ranges.Where(r => r.Shape == ItemRangeShape.Saltire
+                                                                        && ((horzDisplacement == verticalDisplacement
+                                                                               && r.MinRange <= verticalDisplacement
+                                                                               && r.MaxRange >= verticalDisplacement
+                                                                               && r.MinRange <= horzDisplacement
+                                                                               && r.MaxRange >= horzDisplacement
+                                                                               && totalDisplacement == pathLength) //straight paths only
+                                                                           || (totalDisplacement == 1 && pathLength == 1 && r.AllowMeleeRange)
+                                                                           )
+                                                                        ));
                 //Add to attacking range
                 if (validRanges.Any(r => r.DealsDamage) && !atkRange.Contains(currCoord))
                     atkRange.Add(currCoord);
@@ -386,7 +416,7 @@ namespace RedditEmblemAPI.Services.Helpers
             this.Unit = unit;
             this.StartCoord = startCoord;
             this.Ranges = ranges;
-            this.LargestRange = this.Ranges.Select(r => r.MaxRange).OrderByDescending(r => r).FirstOrDefault();
+            this.LargestRange = this.Ranges.Select(r => (r.Shape == ItemRangeShape.Square || r.Shape == ItemRangeShape.Saltire) ? r.MaxRange*2 : r.MaxRange).OrderByDescending(r => r).FirstOrDefault();
 
             //Safeguard just in case. We shouldn't ever get a 99 range here.
             if (this.LargestRange >= 99)
@@ -401,13 +431,15 @@ namespace RedditEmblemAPI.Services.Helpers
     {
         public int MinRange;
         public int MaxRange;
+        public ItemRangeShape Shape;
         public bool DealsDamage;
         public bool AllowMeleeRange;
 
-        public UnitItemRange(int minRange, int maxRange, bool dealsDamage, bool allowMeleeRange)
+        public UnitItemRange(int minRange, int maxRange, ItemRangeShape shape, bool dealsDamage, bool allowMeleeRange)
         {
             this.MinRange = minRange;
             this.MaxRange = maxRange;
+            this.Shape = shape;
             this.DealsDamage = dealsDamage;
             this.AllowMeleeRange = allowMeleeRange;
         }
