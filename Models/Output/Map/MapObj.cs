@@ -212,6 +212,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                             //Two-way bind warp group data
                             warpGroup.Add(temp);
                             temp.WarpGroup = warpGroup;
+                            temp.WarpGroupNumber = warpGroupNum;
                         }
 
                         currentRow.Add(temp);

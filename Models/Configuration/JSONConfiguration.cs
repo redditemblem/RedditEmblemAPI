@@ -88,6 +88,24 @@ namespace RedditEmblemAPI.Models.Configuration
             return queries;
         }
 
+
+        /// <summary>
+        /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
+        /// </summary>
+        /// <returns></returns>
+        public IList<Query> GetMapAnalysisBatchQueries()
+        {
+            //Essential queries
+            IList<Query> queries = new List<Query>()
+            {
+                this.Map.MapControls.Query,
+                this.Map.MapTiles.Query,
+                this.System.TerrainTypes.Query
+            };
+
+            return queries;
+        }
+
         /// <summary>
         /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
         /// </summary>

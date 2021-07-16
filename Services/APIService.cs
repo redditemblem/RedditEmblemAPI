@@ -39,6 +39,18 @@ namespace RedditEmblemAPI.Services
         }
 
         /// <summary>
+        /// Returns JSON data for displaying a team's map analysis.
+        /// </summary>
+        /// <param name="teamName"></param>
+        public MapData LoadMapAnalysis(string teamName)
+        {
+            JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
+            QueryGoogleSheets(config, config.GetMapAnalysisBatchQueries());
+
+            return new MapData(config);
+        }
+
+        /// <summary>
         /// Returns JSON data for displaying a team's convoy.
         /// </summary>
         /// <param name="teamName"></param>

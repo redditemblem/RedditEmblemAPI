@@ -10,6 +10,8 @@ namespace RedditEmblemAPI.Services
     {
         MapData LoadMapData(string teamName);
 
+        MapData LoadMapAnalysis(string teamName);
+
         ConvoyData LoadConvoyData(string teamName);
 
         ShopData LoadShopData(string teamName);

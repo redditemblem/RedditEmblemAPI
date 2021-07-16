@@ -80,6 +80,7 @@ namespace RedditEmblemAPI.Models.Output.System
         Standard = 0,
         Square = 1,
         Cross = 2,
-        Saltire = 3
+        Saltire = 3,
+        Star = 4
     }
 }

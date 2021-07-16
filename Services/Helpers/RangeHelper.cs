@@ -45,7 +45,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     IList<Coordinate> atkRange = new List<Coordinate>();
                     IList<Coordinate> utilRange = new List<Coordinate>();
 
-                    IList<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && !i.IsUsePrevented && i.Item.UtilizedStats.Any() && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
+                    IList<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && !i.IsUsePrevented && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
                                                                     .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.Range.Shape, i.Item.DealsDamage, i.AllowMeleeRange))
                                                                     .ToList();
 
@@ -277,7 +277,7 @@ namespace RedditEmblemAPI.Services.Helpers
                                                                               && r.MaxRange >= horzDisplacement)
                                                                             || (totalDisplacement == 1 && pathLength == 1 && r.AllowMeleeRange) //unit can specially allow melee range for an item
                                                                         )));
-                validRanges.AddRange(parms.Ranges.Where(r => r.Shape == ItemRangeShape.Cross
+                validRanges.AddRange(parms.Ranges.Where(r => (r.Shape == ItemRangeShape.Cross || r.Shape == ItemRangeShape.Star)
                                                                         && (((horzDisplacement == 0 //tile vertically within range
                                                                                && r.MinRange <= verticalDisplacement
                                                                                && r.MaxRange >= verticalDisplacement)
@@ -288,7 +288,7 @@ namespace RedditEmblemAPI.Services.Helpers
                                                                            || (totalDisplacement == 1 && pathLength == 1 && r.AllowMeleeRange)
                                                                            )
                                                                         ));
-                validRanges.AddRange(parms.Ranges.Where(r => r.Shape == ItemRangeShape.Saltire
+                validRanges.AddRange(parms.Ranges.Where(r => (r.Shape == ItemRangeShape.Saltire || r.Shape == ItemRangeShape.Star)
                                                                         && ((horzDisplacement == verticalDisplacement
                                                                                && r.MinRange <= verticalDisplacement
                                                                                && r.MaxRange >= verticalDisplacement
@@ -416,7 +416,7 @@ namespace RedditEmblemAPI.Services.Helpers
             this.Unit = unit;
             this.StartCoord = startCoord;
             this.Ranges = ranges;
-            this.LargestRange = this.Ranges.Select(r => (r.Shape == ItemRangeShape.Square || r.Shape == ItemRangeShape.Saltire) ? r.MaxRange*2 : r.MaxRange).OrderByDescending(r => r).FirstOrDefault();
+            this.LargestRange = this.Ranges.Select(r => (r.Shape == ItemRangeShape.Square || r.Shape == ItemRangeShape.Saltire || r.Shape == ItemRangeShape.Star) ? r.MaxRange*2 : r.MaxRange).OrderByDescending(r => r).FirstOrDefault();
 
             //Safeguard just in case. We shouldn't ever get a 99 range here.
             if (this.LargestRange >= 99)

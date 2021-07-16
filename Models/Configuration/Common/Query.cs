@@ -44,7 +44,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         #region Optional Fields
 
         /// <summary>
-        /// Flag indicating whether or not this query should error if the data comes back null.
+        /// Flag indicating whether or not this query should error if the data comes back null. Defaults to true.
         /// </summary>
         public bool AllowNullData { get; set; } = true;
 
@@ -54,7 +54,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         /// Not a JSON value. The matrix of objects returned from Google after execution of this query.
         /// </summary>
         [JsonIgnore]
-        public IList<IList<object>> Data { get; set; }
+        public IList<IList<object>> Data { get; set; } = new List<IList<object>>();
 
         /// <summary>
         /// Overridden. Returns the worksheet query in <c>Sheet!Selection</c> format for passing to the Google Sheets API.

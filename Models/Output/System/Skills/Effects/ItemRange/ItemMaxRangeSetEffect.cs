@@ -52,8 +52,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
                 if (!this.Categories.Contains(item.Item.Category))
                     continue;
 
-                //Items with a max range of 0 or 99 are not affected
-                if (item.Item.Range.Maximum == 0 || item.Item.Range.Maximum == 99)
+                //Items with a max range of 99 are not affected
+                if (item.Item.Range.Maximum == 99)
                     continue;
 
                 //Calculate the difference between the set value and the item's base max range 
