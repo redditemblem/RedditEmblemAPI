@@ -166,6 +166,7 @@
       "WarpCost": 0, //Optional, required if WarpType provided
       "CannotStopOn": 0, //Optional
       "BlocksItems": 0, //Optional
+      "Groupings": 0, //Optional
       "StatModifiers": [ //Optional
         {
           "SourceName": "Avo",

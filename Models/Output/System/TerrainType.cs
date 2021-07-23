@@ -62,13 +62,11 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Flag indicating whether or not units are allowed to end their unit range on this tile.
         /// </summary>
-        [JsonIgnore]
         public bool CannotStopOn { get; set; }
 
         /// <summary>
         /// Flag indicating whether or not item ranges can pass through the terrain type.
         /// </summary>
-        [JsonIgnore]
         public bool BlocksItems { get; set; }
 
         /// <summary>
