@@ -299,23 +299,129 @@
     "CombatStats": [
       {
         "SourceName": "Atk",
-        "Equation": "{WeaponUtilStat} + {WeaponStat[Mt]}"
+        "Equation": "{WeaponUtilStat} + {WeaponStat[Mt]}",
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 80
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 95
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 110
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 125
+          }
+        ]
       },
       {
         "SourceName": "Hit",
-        "Equation": "({UnitStat[Skl]} * 1.5) + ({UnitStat[Lck]} * .75) + {WeaponStat[Hit]}"
+        "Equation": "({UnitStat[Skl]} * 1.5) + ({UnitStat[Lck]} * .75) + {WeaponStat[Hit]}",
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 76
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 91
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 106
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 121
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 150
+          }
+        ]
       },
       {
         "SourceName": "Crit",
-        "Equation": "(({UnitStat[Skl]} - 4) * .5) + {WeaponStat[Crit]}"
+        "Equation": "(({UnitStat[Skl]} - 4) * .5) + {WeaponStat[Crit]}",
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 77
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 92
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 107
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 122
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 151
+          }
+        ]
       },
       {
         "SourceName": "Avo",
-        "Equation": "({UnitStat[Spd]} * 1.5) + ({UnitStat[Lck]} * .75) + {WeaponStat[Avo]}"
+        "Equation": "({UnitStat[Spd]} * 1.5) + ({UnitStat[Lck]} * .75) + {WeaponStat[Avo]}",
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 78
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 93
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 108
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 123
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 152
+          }
+        ]
       },
       {
         "SourceName": "CEva",
-        "Equation": "({UnitStat[Lck]} * .5) + {WeaponStat[CEva]}"
+        "Equation": "({UnitStat[Lck]} * .5) + {WeaponStat[CEva]}",
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 79
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 94
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 109
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 124
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 153
+          }
+        ]
       }
     ],
     "Stats": [

@@ -32,7 +32,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 try
                 {
                     //Ignore hidden units
-                    if (unit.Coordinate.X < 1 || unit.Coordinate.Y < 1)
+                    if (!unit.OriginTiles.Any())
                         continue;
 
                     //Calculate movement range

@@ -291,7 +291,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             BuildWeaponRanks(data, config.WeaponRanks, systemData.WeaponRanks.Any());
 
             this.CombatStats = new Dictionary<string, ModifiedStatValue>();
-            BuildCombatStats(config.CombatStats);
+            BuildCombatStats(data, config.CombatStats);
 
             this.SystemStats = new Dictionary<string, ModifiedStatValue>();
             BuildSystemStats(data, config.SystemStats);
@@ -513,11 +513,21 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Adds the stats from <paramref name="stats"/> into <c>CombatStats</c>. Does NOT calculate their values.
         /// </summary>
-        private void BuildCombatStats(IList<CalculatedStatConfig> stats)
+        private void BuildCombatStats(IList<string> data, IList<CalculatedStatConfig> stats)
         {
             foreach (CalculatedStatConfig stat in stats)
             {
-                this.CombatStats.Add(stat.SourceName, new ModifiedStatValue());
+                ModifiedStatValue temp = new ModifiedStatValue();
+
+                //Parse modifiers list
+                foreach (NamedStatConfig mod in stat.Modifiers)
+                {
+                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName));
+                    if (val == 0) continue;
+                    temp.Modifiers.Add(mod.SourceName, val);
+                }
+
+                this.CombatStats.Add(stat.SourceName, temp);
             }
         }
 

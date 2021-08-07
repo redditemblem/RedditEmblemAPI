@@ -54,7 +54,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     unit.Coordinate = new Coordinate(unit.CoordinateString);
                     AddUnitToMap(unit, map);
                 }
-                catch(CoordinateFormattingException ex)
+                catch (CoordinateFormattingException ex)
                 {
                     //If the coordinates aren't in an <x,y> format, check if it's the name of another unit.
                     Unit pair = units.FirstOrDefault(u => u.Name == unit.CoordinateString);
@@ -75,6 +75,27 @@ namespace RedditEmblemAPI.Services.Helpers
                     unit.PairedUnitObj = pair;
                     unit.IsBackOfPair = true;
                     unit.Coordinate = new Coordinate(-1, -1);
+                }
+            }
+
+            //If we're calculating paired unit ranges, go back and calculate their origin tiles
+            if (map.Constants.CalculatePairedUnitRanges)
+            {
+                foreach (Unit unit in units.Where(u => u.IsBackOfPair))
+                {
+                    Coordinate coord = unit.PairedUnitObj.Coordinate;
+                    for (int y = 0; y < unit.UnitSize; y++)
+                    {
+                        for (int x = 0; x < unit.UnitSize; x++)
+                        {
+                            Tile tile = map.GetTileByCoord(coord.X + x, coord.Y + y);
+                            unit.OriginTiles.Add(tile);
+                            unit.MovementRange.Add(tile.Coordinate);
+
+                            ApplyTileTerrainTypeToUnit(unit, tile);
+                            ApplyTileTerrainEffectsToUnit(unit, tile);
+                        }
+                    }
                 }
             }
 

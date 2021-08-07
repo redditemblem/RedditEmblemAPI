@@ -35,6 +35,11 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         /// </summary>
         public bool HasHeaderBottomRight { get; set; } = false;
 
+        /// <summary>
+        /// Optional. Flag signifying whether units in the back of pair-ups should have their ranges calculated.
+        /// </summary>
+        public bool CalculatePairedUnitRanges { get; set; } = true;
+
         #endregion
     }
 }

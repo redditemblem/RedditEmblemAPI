@@ -8,7 +8,8 @@
       "TileSize": 0, //Required
       "TileSpacing": 0, //Required
       "HasHeaderTopLeft": false, //Optional, defaults to false
-      "HasHeaderBottomRight": false //Optional, defaults to false
+      "HasHeaderBottomRight": false, //Optional, defaults to false
+      "CalculatePairedUnitRanges": true //Optional, defaults to true
     },
     "MapControls": {   //Required
       "Query": {
@@ -220,14 +221,20 @@
     "CombatStats": [ //Required
       {
         "SourceName": "",
-        "Equation": ""
+        "Equation": "",
+        "Modifiers": [ //Optional
+          {
+            "SourceName": "",
+            "Value": 0
+          }
+        ]
       }
     ],
     "Stats": [ //Required
       {
         "SourceName": "Mov", //"Mov" is a required stat
         "BaseValue": 0,
-        "Modifiers": [ //Required
+        "Modifiers": [ //Optional
           {
             "SourceName": "",
             "Value": 0
