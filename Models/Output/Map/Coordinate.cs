@@ -25,6 +25,15 @@ namespace RedditEmblemAPI.Models.Output.Map
         #region Constructors
 
         /// <summary>
+        /// Initializes the <c>Coordinate with 0,0 for the X and Y values.</c>
+        /// </summary>
+        public Coordinate()
+        {
+            this.X = 0;
+            this.Y = 0;
+        }
+
+        /// <summary>
         /// Initializes the <c>Coordinate</c> with the passed in <paramref name="x"/> and <paramref name="y"/> values.
         /// </summary>
         /// <param name="x"></param>

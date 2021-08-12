@@ -300,7 +300,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             BuildStats(data, config.Stats);
 
             this.Inventory = new List<UnitInventoryItem>();
-            BuildInventory(data, config.Inventory, systemData.Items, systemData.WeaponRanks);
+            BuildInventory(data, config.Inventory, systemData.Items, systemData.WeaponRanks, systemData.WeaponRankBonuses);
 
             this.SkillList = new List<Skill>();
             BuildSkills(data, config.Skills, systemData.Skills);
@@ -384,7 +384,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
         }
 
-        private void BuildInventory(IList<string> data, InventoryConfig config, IDictionary<string, Item> items, IList<string> weaponRanks)
+        private void BuildInventory(IList<string> data, InventoryConfig config, IDictionary<string, Item> items, IList<string> weaponRanks, IList<WeaponRankBonus> weaponRankBonuses)
         {
             foreach (int index in config.Slots)
             {
@@ -429,6 +429,33 @@ namespace RedditEmblemAPI.Models.Output.Units
                     if (!this.Stats.TryGetValue(stat, out mods))
                         throw new UnmatchedStatException(stat);
                     mods.Modifiers.Add(string.Format("{0} ({1})", equipped.FullName, "Eqp"), equipped.Item.EquippedStatModifiers[stat]);
+                }
+
+                //Check if we need to apply weapon rank bonuses for the equipped item
+                if (this.WeaponRanks.ContainsKey(equipped.Item.Category))
+                {
+                    string unitRank;
+                    this.WeaponRanks.TryGetValue(equipped.Item.Category, out unitRank);
+
+                    WeaponRankBonus bonus = weaponRankBonuses.FirstOrDefault(b => b.Category == equipped.Item.Category && b.Rank == unitRank);
+                    if(bonus != null)
+                    {
+                        foreach(string stat in bonus.CombatStatModifiers.Keys)
+                        {
+                            ModifiedStatValue mods;
+                            if (!this.CombatStats.TryGetValue(stat, out mods))
+                                throw new UnmatchedStatException(stat);
+                            mods.Modifiers.Add($"{equipped.Item.Category} {unitRank} Rank Bonus", bonus.CombatStatModifiers[stat]);
+                        }
+
+                        foreach (string stat in bonus.StatModifiers.Keys)
+                        {
+                            ModifiedStatValue mods;
+                            if (!this.Stats.TryGetValue(stat, out mods))
+                                throw new UnmatchedStatException(stat);
+                            mods.Modifiers.Add($"{equipped.Item.Category} {unitRank} Rank Bonus", bonus.StatModifiers[stat]);
+                        }
+                    }
                 }
             }
 

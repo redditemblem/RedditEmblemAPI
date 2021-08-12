@@ -153,6 +153,25 @@
       "Tags": 31,
       "TextFields": [ 32, 33 ]
     },
+    "WeaponRankBonuses": {
+      "Query": {
+        "Sheet": "Weapon Rank Bonuses",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Category": 0,
+      "Rank": 1,
+      "CombatStatModifiers": [
+        {
+          "SourceName": "Atk",
+          "Value": 2
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 3
+        }
+      ]
+    },
     "Skills": {
       "Query": {
         "Sheet": "Skills",
@@ -241,7 +260,7 @@
       "CannotStopOn": 9,
       "BlocksItems": 10,
       "TextFields": [ 11 ],
-      "Groupings":  12
+      "Groupings": 12
     },
     "TerrainEffects": {
       "Query": {

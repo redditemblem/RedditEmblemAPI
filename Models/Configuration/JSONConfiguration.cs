@@ -84,6 +84,7 @@ namespace RedditEmblemAPI.Models.Configuration
             if (this.System.Skills != null) queries.Add(this.System.Skills.Query);
             if (this.System.StatusConditions != null) queries.Add(this.System.StatusConditions.Query);
             if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
+            if (this.System.WeaponRankBonuses != null) queries.Add(this.System.WeaponRankBonuses.Query);
 
             return queries;
         }

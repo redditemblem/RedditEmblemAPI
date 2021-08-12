@@ -103,6 +103,27 @@
       "Tags": 0, //Optional
       "TextFields": [] //Optional
     },
+    "WeaponRankBonuses": { //Optional, defaults to null
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Category": 0, //Required
+      "Rank": 0, //Optional
+      "CombatStatModifiers": [ //Optional
+        {
+          "SourceName": "Atk",
+          "Value": 0
+        }
+      ],
+      "StatModifiers": [ //Optional
+        {
+          "SourceName": "Mov",
+          "Value": 0
+        }
+      ]
+    },
     "Skills": { //Optional, defaults to null
       "Query": {
         "Sheet": "",

@@ -70,6 +70,12 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public IDictionary<string, Tag> Tags { get; set; }
 
+        /// <summary>
+        /// Container list for data about weapon rank bonuses.
+        /// </summary>
+        [JsonIgnore]
+        public IList<WeaponRankBonus> WeaponRankBonuses { get; set; }
+
         #endregion
 
         /// <summary>
@@ -167,6 +173,9 @@ namespace RedditEmblemAPI.Models.Output.System
 
             if (config.Tags != null) this.Tags = Tag.BuildDictionary(config.Tags);
             else this.Tags = new Dictionary<string, Tag>();
+
+            if (config.WeaponRankBonuses != null) this.WeaponRankBonuses = WeaponRankBonus.BuildList(config.WeaponRankBonuses);
+            else this.WeaponRankBonuses = new List<WeaponRankBonus>();
         }
 
         #endregion

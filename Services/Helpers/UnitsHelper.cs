@@ -52,15 +52,19 @@ namespace RedditEmblemAPI.Services.Helpers
                 try
                 {
                     unit.Coordinate = new Coordinate(unit.CoordinateString);
-                    AddUnitToMap(unit, map);
+                    AddUnitToMap(unit, map, true);
                 }
                 catch (CoordinateFormattingException ex)
                 {
                     //If the coordinates aren't in an <x,y> format, check if it's the name of another unit.
                     Unit pair = units.FirstOrDefault(u => u.Name == unit.CoordinateString);
 
-                    if (pair == null || pair.Name == unit.Name)
+                    if (pair == null)
                         throw new UnitProcessingException(unit.Name, ex);
+
+                    //Unit is paired with itself
+                    if (pair.Name == unit.Name)
+                        throw new UnitProcessingException(unit.Name, new UnitPairedWithSelfException(unit.Name));
 
                     //Unit is already paired with someone
                     if (unit.PairedUnitObj != null)
@@ -74,29 +78,22 @@ namespace RedditEmblemAPI.Services.Helpers
                     pair.PairedUnitObj = unit;
                     unit.PairedUnitObj = pair;
                     unit.IsBackOfPair = true;
-                    unit.Coordinate = new Coordinate(-1, -1);
+                    unit.Coordinate = new Coordinate();
                 }
             }
 
-            //If we're calculating paired unit ranges, go back and calculate their origin tiles
-            if (map.Constants.CalculatePairedUnitRanges)
-            {
-                foreach (Unit unit in units.Where(u => u.IsBackOfPair))
-                {
-                    Coordinate coord = unit.PairedUnitObj.Coordinate;
-                    for (int y = 0; y < unit.UnitSize; y++)
-                    {
-                        for (int x = 0; x < unit.UnitSize; x++)
-                        {
-                            Tile tile = map.GetTileByCoord(coord.X + x, coord.Y + y);
-                            unit.OriginTiles.Add(tile);
-                            unit.MovementRange.Add(tile.Coordinate);
 
-                            ApplyTileTerrainTypeToUnit(unit, tile);
-                            ApplyTileTerrainEffectsToUnit(unit, tile);
-                        }
-                    }
-                }
+            foreach (Unit unit in units.Where(u => u.IsBackOfPair))
+            {
+                //Replace back unit coordinate with front unit coord
+                unit.Coordinate = unit.PairedUnitObj.Coordinate;
+
+                if (unit.Coordinate.X < 1 || unit.Coordinate.Y < 1)
+                    continue;
+
+                //If we're calculating paired unit ranges, add origin tiles
+                if (map.Constants.CalculatePairedUnitRanges)
+                    AddUnitToMap(unit, map, false);
             }
 
             //Apply skill and status condition effects
@@ -144,7 +141,11 @@ namespace RedditEmblemAPI.Services.Helpers
             return units;
         }
 
-        private static void AddUnitToMap(Unit unit, MapObj map)
+        /// <summary>
+        /// Calculates the anchor and origin tiles for <paramref name="unit"/>.
+        /// </summary>
+        /// <param name="applyTileBinding">Should be true for any unit that's not in pair-up.</param>
+        private static void AddUnitToMap(Unit unit, MapObj map, bool applyTileBinding)
         {
             //Ignore hidden units
             if (unit.Coordinate.X < 1 || unit.Coordinate.Y < 1)
@@ -157,22 +158,25 @@ namespace RedditEmblemAPI.Services.Helpers
                     Tile tile = map.GetTileByCoord(unit.Coordinate.X + x, unit.Coordinate.Y + y);
 
                     //Make sure this unit is not placed overlapping another
-                    if (tile.Unit != null && unit.Name != tile.Unit.Name)
+                    if (tile.Unit != null && unit.Name != tile.Unit.Name && applyTileBinding)
                         throw new UnitTileOverlapException(unit, tile.Unit, tile.Coordinate);
 
-                    tile.Unit = unit;
                     unit.OriginTiles.Add(tile);
-                    tile.IsUnitOrigin = true;
-
-                    if (x == 0 && y == 0)
-                    {
-                        //Mark the anchor tile
-                        unit.AnchorTile = tile;
-                        tile.IsUnitAnchor = true;
-                    }
-
                     unit.MovementRange.Add(tile.Coordinate);
 
+                    if (applyTileBinding)
+                    {
+                        tile.Unit = unit;
+                        tile.IsUnitOrigin = true;
+
+                        if (x == 0 && y == 0)
+                        {
+                            //Mark the anchor tile
+                            unit.AnchorTile = tile;
+                            tile.IsUnitAnchor = true;
+                        }
+                    }
+                    
                     //Apply terrain type effects from the origin tile.
                     ApplyTileTerrainTypeToUnit(unit, tile);
                     ApplyTileTerrainEffectsToUnit(unit, tile);
