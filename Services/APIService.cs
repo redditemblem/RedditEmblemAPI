@@ -9,6 +9,7 @@ using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Storage.Convoy;
 using RedditEmblemAPI.Models.Output.Storage.Shop;
 using RedditEmblemAPI.Models.Output.Teams;
+using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,6 +49,14 @@ namespace RedditEmblemAPI.Services
             QueryGoogleSheets(config, config.GetMapAnalysisBatchQueries());
 
             return new MapData(config);
+        }
+
+        public byte[] GenerateMapImage(string teamName)
+        {
+            JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
+            QueryGoogleSheets(config, config.GetMapImageGenerationBatchQueries());
+
+            return MapImageBuilder.Generate(config);
         }
 
         /// <summary>

@@ -107,6 +107,25 @@ namespace RedditEmblemAPI.Models.Configuration
             return queries;
         }
 
+
+        public IList<Query> GetMapImageGenerationBatchQueries()
+        {
+            //Essential queries
+            IList<Query> queries = new List<Query>()
+            {
+                this.Map.MapControls.Query,
+                this.Units.Query
+            };
+
+            //Add optional queries
+            if (this.Map.MapEffects != null) queries.Add(this.Map.MapEffects.Query);
+            if (this.System.TerrainEffects != null) queries.Add(this.System.TerrainEffects.Query);
+            if (this.System.StatusConditions != null) queries.Add(this.System.StatusConditions.Query);
+            if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
+
+            return queries;
+        }
+
         /// <summary>
         /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
         /// </summary>

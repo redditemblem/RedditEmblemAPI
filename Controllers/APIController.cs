@@ -53,6 +53,24 @@ namespace RedditEmblemAPI.Controllers
             }
         }
 
+        [HttpGet("map/generateimage/{teamName}")]
+        public IActionResult GenerateMapImage(string teamName)
+        {
+            try
+            {
+                byte[] imageData = _sheetsService.GenerateMapImage(teamName);
+                return File(imageData, "image/jpeg");
+            }
+            catch (MapDataLockedException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
         [HttpGet("convoy/{teamName}")]
         public IActionResult GetTeamConvoy(string teamName)
         {
