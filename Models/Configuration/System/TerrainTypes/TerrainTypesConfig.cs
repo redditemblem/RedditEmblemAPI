@@ -66,6 +66,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         public int BlocksItems { get; set; } = -1;
 
         /// <summary>
+        /// Optional. Cell index for a terrain type's affiliation restrictions value.
+        /// </summary>
+        public int RestrictAffiliations { get; set; } = -1;
+
+        /// <summary>
         /// Optional. Cell index of a terrain type's groupings value.
         /// </summary>
         public int Groupings { get; set; } = -1;

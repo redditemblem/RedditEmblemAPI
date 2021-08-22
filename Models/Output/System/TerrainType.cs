@@ -70,6 +70,18 @@ namespace RedditEmblemAPI.Models.Output.System
         public bool BlocksItems { get; set; }
 
         /// <summary>
+        /// List of affiliations that are capable of passing through the terrain type, if any.
+        /// </summary>
+        [JsonIgnore]
+        public IList<int> RestrictAffiliations { get; set; }
+
+        /// <summary>
+        /// Only for JSON serialization. True when there's any items in the <c>RestrictAffiliations</c> list.
+        /// </summary>
+        [JsonProperty]
+        private bool CanRestrictAffiliations { get { return this.RestrictAffiliations.Any(); } }
+
+        /// <summary>
         /// The groupings that the terrain type belongs to.
         /// </summary>
         [JsonIgnore]
@@ -91,6 +103,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.CannotStopOn = (ParseHelper.SafeStringParse(data, config.CannotStopOn, "Cannot Stop On", false) == "Yes");
             this.BlocksItems = (ParseHelper.SafeStringParse(data, config.BlocksItems, "Blocks Items", false) == "Yes");
+            this.RestrictAffiliations = ParseHelper.IntCSVParse(data, config.RestrictAffiliations, "Restrict Affiliations", true);
             this.Groupings = ParseHelper.IntCSVParse(data, config.Groupings, "Groupings", true);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
 

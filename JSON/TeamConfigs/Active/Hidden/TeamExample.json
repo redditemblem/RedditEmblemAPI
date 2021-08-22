@@ -259,8 +259,9 @@
       "WarpCost": 8,
       "CannotStopOn": 9,
       "BlocksItems": 10,
-      "TextFields": [ 11 ],
-      "Groupings": 12
+      "RestrictAffiliations": 11,
+      "TextFields": [ 12 ],
+      "Groupings": 13
     },
     "TerrainEffects": {
       "Query": {

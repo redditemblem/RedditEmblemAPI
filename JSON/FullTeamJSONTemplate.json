@@ -178,6 +178,12 @@
           "Value": 1
         }
       ],
+      "StatModifiers": [ //Optional
+        {
+          "SourceName": "Avo",
+          "Value": 0
+        }
+      ],
       "MovementCosts": [ //Required
         {
           "SourceName": "Mounted",
@@ -188,13 +194,8 @@
       "WarpCost": 0, //Optional, required if WarpType provided
       "CannotStopOn": 0, //Optional
       "BlocksItems": 0, //Optional
+      "RestrictAffiliations": 0, //Optional
       "Groupings": 0, //Optional
-      "StatModifiers": [ //Optional
-        {
-          "SourceName": "Avo",
-          "Value": 0
-        }
-      ],
       "TextFields": [ 0 ] //Optional
     },
     "TerrainEffects": { //Optional

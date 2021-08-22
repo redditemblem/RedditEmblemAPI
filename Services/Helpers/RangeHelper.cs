@@ -127,7 +127,11 @@ namespace RedditEmblemAPI.Services.Helpers
                 Tile tile = this.Map.GetTileByCoord(currCoords[i].Coordinate);
 
                 //If there is a Unit occupying this tile, check for affiliation collisions
-                if (UnitIsBlocked(parms.Unit, tile.Unit, parms.IgnoresAffiliations)) return;
+                //Check if this tile blocks units of a certain affiliation
+                if ( UnitIsBlocked(parms.Unit, tile.Unit, parms.IgnoresAffiliations) ||
+                    (tile.TerrainTypeObj.RestrictAffiliations.Any() && !tile.TerrainTypeObj.RestrictAffiliations.Contains(parms.Unit.AffiliationObj.Grouping))
+                   ) 
+                    return;
 
                 //Test that the unit can move to this tile
                 int moveCost;
