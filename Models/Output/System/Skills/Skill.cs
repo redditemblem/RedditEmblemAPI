@@ -59,7 +59,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         public Skill(SkillsConfig config, IList<string> data)
         {
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
+            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", false);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
 
             //Check if skill effects are configured

@@ -1,4 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -140,6 +141,44 @@ namespace RedditEmblemAPI.Services.Helpers
             }
 
             return value.Trim();
+        }
+
+        /// <summary>
+        /// Returns the value of the cell in <paramref name="data"/> at <paramref name="index"/> after validating that it is a formatted URL.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="index"></param>
+        /// <param name="fieldName">The name of the value as it should display in any thrown exception messages.</param>
+        /// <param name="isRequired">When true, an exception will be thrown if the value is out of range, null, or an empty string.</param>
+        /// <returns></returns>
+        public static string SafeURLParse(IList<string> data, int index, string fieldName, bool isRequired)
+        {
+            return SafeURLParse(data.ElementAtOrDefault<string>(index), fieldName, isRequired);
+        }
+
+        /// <summary>
+        /// Returns <paramref name="value"/> after validating that it is a formatted URL.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="fieldName">The name of the value as it should display in any thrown exception messages.</param>
+        /// <param name="isRequired">When true, an exception will be thrown if the value is null or an empty string.</param>
+        /// <returns></returns>
+        public static string SafeURLParse(string value, string fieldName, bool isRequired)
+        {
+            if(string.IsNullOrEmpty(value))
+            {
+                if (isRequired) throw new RequiredValueNotProvidedException(fieldName);
+                else return string.Empty;
+            }
+
+            value = value.Trim();
+
+            //Validate that this string is a URL
+            Uri uri;
+            if (!Uri.TryCreate(value, UriKind.Absolute, out uri) || !(uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+                throw new URLException(fieldName, value);
+
+            return value;
         }
 
         #endregion

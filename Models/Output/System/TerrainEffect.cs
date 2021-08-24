@@ -62,7 +62,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Matched = false;
 
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", true);
+            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", true);
             this.Size = ParseHelper.OptionalInt_NonZeroPositive(data, config.Size, "Size");
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
 

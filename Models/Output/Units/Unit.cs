@@ -242,14 +242,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         {
             //Required fields
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", true);
+            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", true);
             this.Level = ParseHelper.Int_NonZeroPositive(data, config.Level, "Level");
             this.CoordinateString = ParseHelper.SafeStringParse(data, config.Coordinate, "Coordinate", false);
             this.HP = new HP(data, config.HP.Current, config.HP.Maximum);
 
             //Optional fields
             this.Player = ParseHelper.SafeStringParse(data, config.Player, "Player", false);
-            this.PortraitURL = ParseHelper.SafeStringParse(data, config.PortraitURL, "Portrait URL", false);
+            this.PortraitURL = ParseHelper.SafeURLParse(data, config.PortraitURL, "Portrait URL", false);
             this.UnitSize = ParseHelper.OptionalInt_NonZeroPositive(data, config.UnitSize, "Unit Size");
             this.HasMoved = (ParseHelper.SafeStringParse(data, config.HasMoved, "Has Moved", false) == "Yes");
 

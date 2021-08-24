@@ -63,7 +63,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         public StatusCondition(StatusConditionConfig config, IList<string> data)
         {
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
+            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", false);
             this.Type = ParseStatusConditionType(data, config.Type);
             this.Turns = ParseHelper.OptionalInt_NonZeroPositive(data, config.Turns, "Turns", 0);
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);

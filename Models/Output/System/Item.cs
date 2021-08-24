@@ -100,7 +100,7 @@ namespace RedditEmblemAPI.Models.Output.System
         public Item(ItemsConfig config, IList<string> data, IDictionary<string, Tag> tags)
         {
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
+            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", false);
             this.Category = ParseHelper.SafeStringParse(data, config.Category, "Category", true);
             this.WeaponRank = ParseHelper.SafeStringParse(data, config.WeaponRank, "Weapon Rank", false);
             this.UtilizedStats = ParseHelper.StringCSVParse(data, config.UtilizedStats);

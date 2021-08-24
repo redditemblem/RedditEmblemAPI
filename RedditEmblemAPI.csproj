@@ -19,7 +19,4 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="JSON\TeamConfigs\Disabled\" />
-  </ItemGroup>
 </Project>

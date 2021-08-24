@@ -9,7 +9,8 @@
       "TileSpacing": 0, //Required
       "HasHeaderTopLeft": false, //Optional, defaults to false
       "HasHeaderBottomRight": false, //Optional, defaults to false
-      "CalculatePairedUnitRanges": true //Optional, defaults to true
+      "CalculatePairedUnitRanges": true, //Optional, defaults to true
+      "UnitMovementStatName": "Mov" //Optional, defaults to "Mov"
     },
     "MapControls": {   //Required
       "Query": {

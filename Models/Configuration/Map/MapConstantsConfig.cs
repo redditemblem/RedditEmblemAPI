@@ -40,6 +40,11 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         /// </summary>
         public bool CalculatePairedUnitRanges { get; set; } = true;
 
+        /// <summary>
+        /// Optional. The name of the Unit Stat to use as the movement stat when calculating ranges. Defaults to "Mov".
+        /// </summary>
+        public string UnitMovementStatName { get; set; } = "Mov";
+
         #endregion
     }
 }

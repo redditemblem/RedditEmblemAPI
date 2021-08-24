@@ -42,7 +42,7 @@ namespace RedditEmblemAPI.Models.Output.System
         public Tag(TagConfig config, IList<string> data)
         {
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.SpriteURL = ParseHelper.SafeStringParse(data, config.SpriteURL, "Sprite URL", false);
+            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", false);
             this.ShowOnUnit = (   ParseHelper.SafeStringParse(data, config.ShowOnUnit, "Show On Unit", false) == "Yes" 
                                && !string.IsNullOrEmpty(this.SpriteURL) );
         }
