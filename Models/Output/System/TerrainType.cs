@@ -129,7 +129,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.MovementCosts = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.MovementCosts)
             {
-                int val = ParseHelper.Int_NonZeroPositive(data, stat.Value, string.Format("{0} Movement Cost", stat.SourceName));
+                int val = ParseHelper.Int_NonZeroPositive(data, stat.Value, $"{stat.SourceName} Movement Cost");
                 this.MovementCosts.Add(stat.SourceName, val);
             }
 
@@ -142,21 +142,21 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Converts the string value of <paramref name="warpTypeName"/> into the corresponding <c>WarpType</c> object.
+        /// Converts the string value of <paramref name="warpType"/> into the corresponding <c>WarpType</c> object.
         /// </summary>
-        /// <param name="warpTypeName"></param>
+        /// <param name="warpType"></param>
         /// <exception cref="UnmatchedWarpTypeException"></exception>
         /// <returns></returns>
-        private WarpType GetWarpTypeEnum(string warpTypeName)
+        private WarpType GetWarpTypeEnum(string warpType)
         {
-            switch (warpTypeName)
-            {
-                case "": return WarpType.None;
-                case "Entrance": return WarpType.Entrance;
-                case "Exit": return WarpType.Exit;
-                case "Dual": return WarpType.Dual;
-                default: throw new UnmatchedWarpTypeException(warpTypeName);
-            }
+            if (string.IsNullOrEmpty(warpType))
+                return WarpType.None;
+
+            object warpEnum;
+            if (!Enum.TryParse(typeof(WarpType), warpType, out warpEnum))
+                throw new UnmatchedWarpTypeException(warpType);
+
+            return (WarpType)warpEnum;
         }
 
         #region Static Functions

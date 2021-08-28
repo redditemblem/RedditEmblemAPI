@@ -272,36 +272,37 @@
       "Name": 0,
       "SpriteURL": 1,
       "Size": 2,
-      "TextFields": [ 11 ],
-      "HPModifier": 3,
+      "Layer": 3,
+      "TextFields": [ 12 ],
+      "HPModifier": 4,
       "StatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 4
-        },
-        {
-          "SourceName": "Mag",
           "Value": 5
         },
         {
-          "SourceName": "Skl",
+          "SourceName": "Mag",
           "Value": 6
         },
         {
-          "SourceName": "Spd",
+          "SourceName": "Skl",
           "Value": 7
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Spd",
           "Value": 8
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Lck",
           "Value": 9
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Def",
           "Value": 10
+        },
+        {
+          "SourceName": "Res",
+          "Value": 11
         }
       ]
     },

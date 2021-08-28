@@ -342,7 +342,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName));
+                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
                     if (val == 0) continue;
                     temp.Modifiers.Add(mod.SourceName, val);
                 }
@@ -361,7 +361,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName));
+                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
                     if (val == 0) continue;
                     temp.Modifiers.Add(mod.SourceName, val);
                 }
@@ -428,7 +428,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                     ModifiedStatValue mods;
                     if (!this.Stats.TryGetValue(stat, out mods))
                         throw new UnmatchedStatException(stat);
-                    mods.Modifiers.Add(string.Format("{0} ({1})", equipped.FullName, "Eqp"), equipped.Item.EquippedStatModifiers[stat]);
+                    mods.Modifiers.Add($"{equipped.Item.Name} (Eqp)", equipped.Item.EquippedStatModifiers[stat]);
                 }
 
                 //Check if we need to apply weapon rank bonuses for the equipped item
@@ -467,7 +467,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                     ModifiedStatValue mods;
                     if (!this.Stats.TryGetValue(stat, out mods))
                         throw new UnmatchedStatException(stat);
-                    mods.Modifiers.Add(string.Format("{0} ({1})", inv.Item.Name, "Inv"), inv.Item.InventoryStatModifiers[stat]);
+                    mods.Modifiers.Add($"{inv.Item.Name} (Inv)", inv.Item.InventoryStatModifiers[stat]);
                 }
             }
         }
@@ -549,7 +549,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, string.Format("{0} {1}", stat.SourceName, mod.SourceName));
+                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
                     if (val == 0) continue;
                     temp.Modifiers.Add(mod.SourceName, val);
                 }

@@ -42,7 +42,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (minimum > maximum)
                 throw new MinimumGreaterThanMaximumException("Minimum Range", "Maximum Range");
             if (maximum > 15 && maximum != 99)
-                throw new RangeMaximumTooLargeException("For performance reasons, item ranges in excess of 15 tiles are currently not allowed.");
+                throw new ItemRangeMaximumTooLargeException(15);
 
             this.Minimum = minimum;
             this.Maximum = maximum;

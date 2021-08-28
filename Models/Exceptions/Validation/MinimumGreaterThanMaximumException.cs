@@ -10,7 +10,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
         /// <param name="minimumValueDescription"></param>
         /// <param name="maximumValueDescription"></param>
         public MinimumGreaterThanMaximumException(string minimumValueDescription, string maximumValueDescription)
-            : base(string.Format("The value of \"{0}\" cannot be less than the value of \"{1}\".", minimumValueDescription, maximumValueDescription))
+            : base($"The value of \"{minimumValueDescription}\" cannot be less than the value of \"{maximumValueDescription}\".")
         { }
     }
 }

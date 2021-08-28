@@ -36,6 +36,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainEffects
         public int Size { get; set; } = -1;
 
         /// <summary>
+        /// Optional. Cell index for a terrain effect's layer value.
+        /// </summary>
+        public int Layer { get; set; } = -1;
+
+        /// <summary>
         /// Optional. Cell index for a terrain effect's hit point modifier value.
         /// </summary>
         public int HPModifier { get; set; } = -1;

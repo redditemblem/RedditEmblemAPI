@@ -44,7 +44,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         #region Optional Fields
 
         /// <summary>
-        /// Flag indicating whether or not this query should error if the data comes back null. Defaults to true.
+        /// Optional. Flag indicating whether or not this query should error if the data comes back null. Defaults to true.
         /// </summary>
         public bool AllowNullData { get; set; } = true;
 
@@ -62,7 +62,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("{0}!{1}", this.Sheet, this.Selection);
+            return $"{this.Sheet}!{this.Selection}";
         }
     }
 }

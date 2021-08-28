@@ -208,6 +208,7 @@
       "Name": 0, //Required
       "SpriteURL": 0, //Required
       "Size": 0, //Optional
+      "Layer": 0, //Optional
       "HPModifier": 0, //Optional
       "CombatStatModifiers": [ //Optional
         {

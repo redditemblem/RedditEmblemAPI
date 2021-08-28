@@ -68,7 +68,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
                                                  && u.OriginTiles.Count > 0
                                                  && u.OriginTiles.Any(o1 => unit.OriginTiles.Any(o2 => o2.Coordinate.DistanceFrom(o1.Coordinate) <= this.Radius))))
             {
-                ApplyUnitStatModifiers(enemy, string.Format("{0}'s {1}", unit.Name, skill.Name), this.Stats, this.Values);
+                ApplyUnitStatModifiers(enemy, $"{unit.Name}'s {skill.Name}", this.Stats, this.Values);
             }
         }
     }

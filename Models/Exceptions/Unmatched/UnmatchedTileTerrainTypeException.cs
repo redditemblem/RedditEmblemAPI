@@ -13,7 +13,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Unmatched
         /// <param name="coord"></param>
         /// <param name="terrainName"></param>
         public UnmatchedTileTerrainTypeException(Coordinate coord, string terrainName)
-            : base(string.Format(ERROR, terrainName, coord.X, coord.Y ))
+            : base(string.Format(ERROR, terrainName, coord.X, coord.Y))
         { }
 
         /// <summary>

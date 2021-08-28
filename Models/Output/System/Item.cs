@@ -122,7 +122,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.EquippedStatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.EquippedStatModifiers)
             {
-                int val = ParseHelper.OptionalInt_Any(data, stat.Value, string.Format("{0} ({1})", stat.SourceName, "Equipped"));
+                int val = ParseHelper.OptionalInt_Any(data, stat.Value, $"{stat.SourceName} (Equipped)");
                 if (val == 0) continue;
                 this.EquippedStatModifiers.Add(stat.SourceName, val);
             }
@@ -130,7 +130,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.InventoryStatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.InventoryStatModifiers)
             {
-                int val = ParseHelper.OptionalInt_Any(data, stat.Value, string.Format("{0} ({1})", stat.SourceName, "Inventory"));
+                int val = ParseHelper.OptionalInt_Any(data, stat.Value, $"{stat.SourceName} (Inventory)");
                 if (val == 0) continue;
                 this.InventoryStatModifiers.Add(stat.SourceName, val);
             }

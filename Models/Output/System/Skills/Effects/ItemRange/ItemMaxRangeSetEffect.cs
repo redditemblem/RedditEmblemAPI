@@ -27,7 +27,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="RangeMaximumTooLargeException"></exception>
+        /// <exception cref="ItemRangeMaximumTooLargeException"></exception>
         public ItemMaxRangeSetEffect(IList<string> parameters)
             : base(parameters)
         {
@@ -35,7 +35,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
             this.Value = ParseHelper.Int_NonZeroPositive(parameters, 1, "Param2");
 
             if (this.Value > 15)
-                throw new RangeMaximumTooLargeException("For performance reasons, item ranges in excess of 15 tiles are currently not allowed.");
+                throw new ItemRangeMaximumTooLargeException(15);
         }
 
         /// <summary>

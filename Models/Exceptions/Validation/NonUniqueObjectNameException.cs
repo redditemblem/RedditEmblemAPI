@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
         /// </summary>
         /// <param name="objectType"></param>
         public NonUniqueObjectNameException(string objectType)
-            : base(string.Format("Another {0} with this name already exists. Please provide a unique name.", objectType))
+            : base($"Another {objectType} with this name already exists. Please provide a unique name.")
         { }
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
         /// </summary>
         /// <param name="objectType"></param>
         public NonUniqueObjectNameException(string objectType, string name)
-            : base(string.Format("Another {0} with the name \"{1}\" already exists. Please provide a unique name.", objectType, name))
+            : base($"Another {objectType} with the name \"{name}\" already exists. Please provide a unique name.")
         { }
     }
 }

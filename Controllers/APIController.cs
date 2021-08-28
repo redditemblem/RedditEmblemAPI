@@ -6,6 +6,9 @@ using RedditEmblemAPI.Models.Exceptions.Query;
 
 namespace RedditEmblemAPI.Controllers
 {
+    /// <summary>
+    /// Entry point for all API calls.
+    /// </summary>
     [Route("api")]
     [ApiController]
     public class APIController : ControllerBase

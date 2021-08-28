@@ -4,7 +4,7 @@ using System;
 namespace RedditEmblemAPI.Models.Output.Map
 {
     /// <summary>
-    /// Struct representing a coordinate pair on the map.
+    /// A coordinate pair (ex. "x,y") on the map.
     /// </summary>
     public class Coordinate
     {

@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Query
         /// </summary>
         /// <param name="fileName"></param>
         public TeamConfigurationNotFoundException(string fileName)
-            : base(string.Format("Configuration for the team \"{0}\" could not be located.", fileName.Replace(".json", string.Empty)))
+            : base($"Configuration for the team \"{fileName.Replace(".json", string.Empty)}\" could not be located.")
         { }
     }
 }
