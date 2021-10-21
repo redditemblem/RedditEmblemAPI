@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Services.Helpers
 {
@@ -10,6 +11,8 @@ namespace RedditEmblemAPI.Services.Helpers
     /// </summary>
     public static class ParseHelper
     {
+        private static Regex hexColorCodeRegex = new Regex(@"^#[0-9A-Fa-f]{6}$");
+
         #region Numerical Parsing
 
         /// <summary>
@@ -162,6 +165,8 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="value"></param>
         /// <param name="fieldName">The name of the value as it should display in any thrown exception messages.</param>
         /// <param name="isRequired">When true, an exception will be thrown if the value is null or an empty string.</param>
+        /// <exception cref="RequiredValueNotProvidedException"></exception>
+        /// <exception cref="URLException"></exception>
         /// <returns></returns>
         public static string SafeURLParse(string value, string fieldName, bool isRequired)
         {
@@ -177,6 +182,39 @@ namespace RedditEmblemAPI.Services.Helpers
             Uri uri;
             if (!Uri.TryCreate(value, UriKind.Absolute, out uri) || !(uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
                 throw new URLException(fieldName, value);
+
+            return value;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="index"></param>
+        /// <param name="fieldName"></param>
+        /// <param name="defaultValueIfNull"></param>
+        /// <returns></returns>
+        public static string SafeHexCodeParse(IList<string> data, int index, string fieldName, string defaultValueIfNull = "")
+        {
+            return SafeHexCodeParse(data.ElementAtOrDefault<string>(index), fieldName, defaultValueIfNull);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="fieldName"></param>
+        /// <param name="defaultValueIfNull"></param>
+        /// <returns></returns>
+        public static string SafeHexCodeParse(string value, string fieldName, string defaultValueIfNull = "")
+        {
+            if (string.IsNullOrEmpty(value))
+                return defaultValueIfNull;
+
+            value = value.Trim();
+
+            if (!hexColorCodeRegex.IsMatch(value))
+                throw new HexCodeException(fieldName, value);
 
             return value;
         }

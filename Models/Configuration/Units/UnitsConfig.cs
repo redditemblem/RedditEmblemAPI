@@ -130,6 +130,11 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public int Tags { get; set; } = -1;
 
         /// <summary>
+        /// Optional. Cell index of a unit's number color hex value.
+        /// </summary>
+        public int UnitNumberColor { get; set; } = -1;
+
+        /// <summary>
         /// Optional. Cell index of a unit's behavior description.
         /// </summary>
         public int Behavior { get; set; } = -1;

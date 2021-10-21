@@ -33,6 +33,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         public string UnitNumber { get; set; }
 
         /// <summary>
+        /// The hexadecimal color value to display the <c>UnitNumber</c> in.
+        /// </summary>
+        public string UnitNumberColor { get; set; }
+
+        /// <summary>
         /// The player that controls the unit.
         /// </summary>
         public string Player { get; set; }
@@ -270,7 +275,10 @@ namespace RedditEmblemAPI.Models.Output.Units
             //Find unit number
             Match numberMatch = unitNumberRegex.Match(this.Name);
             if (numberMatch.Success)
+            {
                 this.UnitNumber = numberMatch.Value.Trim();
+                this.UnitNumberColor = ParseHelper.SafeHexCodeParse(data, config.UnitNumberColor, "Unit Number Color", "#000000");
+            }
 
             //Match affiliation
             string affiliation = ParseHelper.SafeStringParse(data, config.Affiliation, "Affiliation", true);

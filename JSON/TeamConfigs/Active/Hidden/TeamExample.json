@@ -337,11 +337,12 @@
     "Experience": 12,
     "HeldCurrency": 13,
     "HP": {
-      "Current": 17,
-      "Maximum": 18
+      "Current": 18,
+      "Maximum": 19
     },
     "Tags": 15,
     "Behavior": 16,
+    "UnitNumberColor": 17,
     "CombatStats": [
       {
         "SourceName": "Atk",
@@ -363,26 +364,6 @@
     "Stats": [
       {
         "SourceName": "Str",
-        "BaseValue": 19,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 49
-          }
-        ]
-      },
-      {
-        "SourceName": "Def",
-        "BaseValue": 24,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 54
-          }
-        ]
-      },
-      {
-        "SourceName": "Mag",
         "BaseValue": 20,
         "Modifiers": [
           {
@@ -392,7 +373,7 @@
         ]
       },
       {
-        "SourceName": "Res",
+        "SourceName": "Def",
         "BaseValue": 25,
         "Modifiers": [
           {
@@ -402,27 +383,7 @@
         ]
       },
       {
-        "SourceName": "Lck",
-        "BaseValue": 23,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 53
-          }
-        ]
-      },
-      {
-        "SourceName": "Spd",
-        "BaseValue": 22,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 52
-          }
-        ]
-      },
-      {
-        "SourceName": "Skl",
+        "SourceName": "Mag",
         "BaseValue": 21,
         "Modifiers": [
           {
@@ -432,7 +393,7 @@
         ]
       },
       {
-        "SourceName": "Mov",
+        "SourceName": "Res",
         "BaseValue": 26,
         "Modifiers": [
           {
@@ -440,28 +401,68 @@
             "Value": 56
           }
         ]
+      },
+      {
+        "SourceName": "Lck",
+        "BaseValue": 24,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 54
+          }
+        ]
+      },
+      {
+        "SourceName": "Spd",
+        "BaseValue": 23,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 53
+          }
+        ]
+      },
+      {
+        "SourceName": "Skl",
+        "BaseValue": 22,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 52
+          }
+        ]
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 27,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 57
+          }
+        ]
       }
     ],
     "WeaponRanks": [
       {
-        "Type": 28,
-        "Rank": 29
+        "Type": 29,
+        "Rank": 30
       },
       {
-        "Type": 30,
-        "Rank": 31
+        "Type": 31,
+        "Rank": 32
       },
       {
-        "Type": 32,
-        "Rank": 33
+        "Type": 33,
+        "Rank": 34
       }
     ],
     "Inventory": {
-      "EquippedItem": 34,
-      "Slots": [ 35, 36, 37, 38, 39 ]
+      "EquippedItem": 35,
+      "Slots": [ 36, 37, 38, 39, 40 ]
     },
-    "Skills": [ 40, 41, 42, 43, 44, 45, 46, 47 ],
-    "StatusConditions": [ 58, 59, 60 ]
+    "Skills": [ 41, 42, 43, 44, 45, 46, 47, 48 ],
+    "StatusConditions": [ 59, 60, 61 ]
   },
   "Convoy": {
     "Query": {

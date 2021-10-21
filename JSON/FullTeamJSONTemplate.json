@@ -285,6 +285,7 @@
     "HeldCurrency": 0, //Optional
     "Tags": 0, //Optional
     "Behavior": 0, //Optional
+    "UnitNumberColor":  0, //Optional
     "SystemStats": [ //Optional
       {
         "SourceName": "Charge",
