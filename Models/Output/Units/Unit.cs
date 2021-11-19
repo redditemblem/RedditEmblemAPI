@@ -78,7 +78,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Only for JSON serialization. A list of the unit's classes.
         /// </summary>
         [JsonProperty]
-        private IList<string> Classes { get { return this.ClassList.Select(c => c.Name).ToList();  } }
+        private IList<string> Classes { get { return this.ClassList.Select(c => c.Name).ToList(); } }
 
         /// <summary>
         /// The unit's movement type. Only used if classes are not provided.
@@ -254,7 +254,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.HasMoved = (ParseHelper.SafeStringParse(data, config.HasMoved, "Has Moved", false) == "Yes");
 
             int experience = ParseHelper.OptionalInt_Positive(data, config.Experience, "Experience", -1);
-            if(experience > -1) experience %= 100;
+            if (experience > -1) experience %= 100;
             this.Experience = experience;
 
             this.HeldCurrency = ParseHelper.OptionalInt_Positive(data, config.HeldCurrency, "Currency");
@@ -309,7 +309,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             BuildStatusConditions(data, config.StatusConditions, systemData.StatusConditions);
 
             //If we have loaded tags, attempt to match. If not, just keep our plaintext list.
-            if(systemData.Tags.Count > 0)
+            if (systemData.Tags.Count > 0)
                 MatchTags(systemData.Tags);
         }
 
@@ -326,7 +326,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 {
                     if (systemUsesWeaponRanks && string.IsNullOrEmpty(rankLetter))
                         throw new WeaponRankMissingLetterException(rankType);
-                    if(!this.WeaponRanks.TryAdd(rankType, rankLetter))
+                    if (!this.WeaponRanks.TryAdd(rankType, rankLetter))
                         throw new NonUniqueObjectNameException("weapon rank", rankType);
                 }
             }
@@ -334,10 +334,10 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         private void BuildSystemStats(IList<string> data, IList<ModifiedNamedStatConfig> config)
         {
-            foreach(ModifiedNamedStatConfig stat in config)
+            foreach (ModifiedNamedStatConfig stat in config)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
-                temp.BaseValue = ParseHelper.Int_Positive(data, stat.BaseValue, stat.SourceName);
+                temp.BaseValue = ParseHelper.Int_Any(data, stat.BaseValue, stat.SourceName);
 
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
@@ -372,7 +372,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         private void BuildStatusConditions(IList<string> data, IList<int> indexes, IDictionary<string, StatusCondition> statuses)
         {
-            foreach(int index in indexes)
+            foreach (int index in indexes)
             {
                 //Skip blank cells
                 string name = ParseHelper.SafeStringParse(data, index, "Status Condition Name", false);
@@ -398,7 +398,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
                 //Check if the item can be equipped
                 string unitRank;
-                if(this.WeaponRanks.TryGetValue(item.Item.Category, out unitRank))
+                if (this.WeaponRanks.TryGetValue(item.Item.Category, out unitRank))
                 {
                     if (string.IsNullOrEmpty(unitRank)
                      || string.IsNullOrEmpty(item.Item.WeaponRank)
@@ -438,9 +438,9 @@ namespace RedditEmblemAPI.Models.Output.Units
                     this.WeaponRanks.TryGetValue(equipped.Item.Category, out unitRank);
 
                     WeaponRankBonus bonus = weaponRankBonuses.FirstOrDefault(b => b.Category == equipped.Item.Category && b.Rank == unitRank);
-                    if(bonus != null)
+                    if (bonus != null)
                     {
-                        foreach(string stat in bonus.CombatStatModifiers.Keys)
+                        foreach (string stat in bonus.CombatStatModifiers.Keys)
                         {
                             ModifiedStatValue mods;
                             if (!this.CombatStats.TryGetValue(stat, out mods))
@@ -505,7 +505,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 string className = ParseHelper.SafeStringParse(data, index, "Class Name", false);
                 if (string.IsNullOrEmpty(className))
                     continue;
-                
+
                 Class match;
                 if (!classes.TryGetValue(className, out match))
                     throw new UnmatchedClassException(className);
@@ -582,27 +582,27 @@ namespace RedditEmblemAPI.Models.Output.Units
                         if (!this.Stats.TryGetValue(match.Groups[1].Value, out unitStat))
                             throw new UnmatchedStatException(match.Groups[1].Value);
                         equation = equation.Replace(match.Groups[0].Value, unitStat.FinalValue.ToString());
-                    }   
+                    }
                 }
 
                 //{WeaponUtilStat}
                 if (equation.Contains("{WeaponUtilStat}"))
                 {
                     int weaponUtilStatValue = 0;
-                    if(equipped != null)
+                    if (equipped != null)
                     {
-                        foreach(string utilStatName in equipped.Item.UtilizedStats)
+                        foreach (string utilStatName in equipped.Item.UtilizedStats)
                         {
                             ModifiedStatValue weaponUtilStat;
                             if (!this.Stats.TryGetValue(utilStatName, out weaponUtilStat))
                                 throw new UnmatchedStatException(utilStatName);
 
                             //Take the greatest stat value of all the utilized stats
-                            if(weaponUtilStat.FinalValue > weaponUtilStatValue)
+                            if (weaponUtilStat.FinalValue > weaponUtilStatValue)
                                 weaponUtilStatValue = weaponUtilStat.FinalValue;
                         }
                     }
-                    equation = equation.Replace("{WeaponUtilStat}", weaponUtilStatValue.ToString()); 
+                    equation = equation.Replace("{WeaponUtilStat}", weaponUtilStatValue.ToString());
                 }
 
                 //{WeaponStat[...]}
@@ -626,7 +626,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 this.CombatStats[stat.SourceName].BaseValue = Math.Max(0, Convert.ToInt32(expression.Evaluate()));
             }
         }
-    
+
         public string GetUnitMovementType()
         {
             if (this.ClassList.Count > 0)
