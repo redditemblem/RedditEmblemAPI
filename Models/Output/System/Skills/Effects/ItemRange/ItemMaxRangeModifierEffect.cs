@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "ItemMaxRangeModifier"; } }
+        protected override string Name { get { return "ItemMaxRangeModifier"; } }
         protected override int ParameterCount { get { return 2; } }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
             : base(parameters)
         {
             this.Categories = ParseHelper.StringCSVParse(parameters, 0);
-            this.Value = ParseHelper.SafeIntParse(parameters, 1, "Param2", true, true);
+            this.Value = ParseHelper.Int_NonZeroPositive(parameters, 1, "Param2");
         }
 
         /// <summary>
@@ -48,8 +48,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
                 if (!this.Categories.Contains(item.Item.Category))
                     continue;
 
-                //Items with a max range of 0 or 99 are not affected
-                if (item.Item.Range.Maximum == 0 || item.Item.Range.Maximum == 99)
+                //Items with a max range of 99 are not affected
+                if (item.Item.Range.Maximum == 99)
                     continue;
 
                 //If this modifier is greater than the one we're currently using, apply it

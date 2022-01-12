@@ -5,6 +5,7 @@ using RedditEmblemAPI.Models.Exceptions.Query;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Services.Helpers;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -96,9 +97,11 @@ namespace RedditEmblemAPI.Models.Output.Map
             string mapImageURL = (values.ElementAtOrDefault(config.MapControls.MapImageURL) ?? string.Empty).ToString();
             if (string.IsNullOrEmpty(mapImageURL))
                 throw new MapImageURLNotFoundException(config.MapControls.Query.Sheet);
+            ParseHelper.SafeURLParse(mapImageURL, "Map Image URL", true); //validate URL
             this.MapImageURL = mapImageURL;
 
             this.ChapterPostURL = (values.ElementAtOrDefault(config.MapControls.ChapterPostURL) ?? string.Empty).ToString();
+            ParseHelper.SafeURLParse(this.ChapterPostURL, "Chapter Post URL", false); //validate URL
 
             GetMapDimensionsFromImage();
 
@@ -212,6 +215,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                             //Two-way bind warp group data
                             warpGroup.Add(temp);
                             temp.WarpGroup = warpGroup;
+                            temp.WarpGroupNumber = warpGroupNum;
                         }
 
                         currentRow.Add(temp);
@@ -344,6 +348,14 @@ namespace RedditEmblemAPI.Models.Output.Map
             Tile column = row.ElementAtOrDefault<Tile>(x - 1) ?? throw new TileOutOfBoundsException(x, y);
 
             return column;
+        }
+
+        /// <summary>
+        /// Returns a list of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="centerTiles"/>.
+        /// </summary>
+        public List<Tile> GetTilesInRadius(IList<Tile> centerTiles, int radius)
+        {
+            return centerTiles.SelectMany(t => GetTilesInRadius(t.Coordinate, radius)).Except(centerTiles).ToList();
         }
 
         /// <summary>

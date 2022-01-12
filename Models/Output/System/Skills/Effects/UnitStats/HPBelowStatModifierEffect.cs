@@ -10,7 +10,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
     public class HPBelowStatModifierEffect : SkillEffect
     {
         #region Attributes
-        protected override string SkillEffectName { get { return "HPBelowStatModifier"; } }
+        protected override string Name { get { return "HPBelowStatModifier"; } }
         protected override int ParameterCount { get { return 3; } }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         public HPBelowStatModifierEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.HPPercentage = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
+            this.HPPercentage = ParseHelper.Int_Positive(parameters, 0, "Param1");
             this.Stats = ParseHelper.StringCSVParse(parameters, 1); //Param2
             this.Values = ParseHelper.IntCSVParse(parameters, 2, "Param3", false);
 

@@ -7,6 +7,7 @@ using RedditEmblemAPI.Models.Configuration.System.Statuses;
 using RedditEmblemAPI.Models.Configuration.System.Tags;
 using RedditEmblemAPI.Models.Configuration.System.TerrainEffects;
 using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
+using RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System
@@ -69,6 +70,11 @@ namespace RedditEmblemAPI.Models.Configuration.System
         /// Optional. Container object for a system's tag configuration.
         /// </summary>
         public TagConfig Tags { get; set; } = null;
+
+        /// <summary>
+        /// Optional. Container object for a system's weapon rank bonus configuration.
+        /// </summary>
+        public WeaponRankBonusesConfig WeaponRankBonuses { get; set; } = null;
 
         /// <summary>
         /// Optional. Container object for a system's terrain effect configuration.

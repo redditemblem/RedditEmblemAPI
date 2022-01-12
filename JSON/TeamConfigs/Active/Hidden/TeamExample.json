@@ -80,76 +80,97 @@
       "EquippedStatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 14
-        },
-        {
-          "SourceName": "Mag",
           "Value": 15
         },
         {
-          "SourceName": "Skl",
+          "SourceName": "Mag",
           "Value": 16
         },
         {
-          "SourceName": "Spd",
+          "SourceName": "Skl",
           "Value": 17
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Spd",
           "Value": 18
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Lck",
           "Value": 19
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Def",
           "Value": 20
         },
         {
-          "SourceName": "Mov",
+          "SourceName": "Res",
           "Value": 21
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 22
         }
       ],
       "InventoryStatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 21
-        },
-        {
-          "SourceName": "Mag",
           "Value": 23
         },
         {
-          "SourceName": "Skl",
+          "SourceName": "Mag",
           "Value": 24
         },
         {
-          "SourceName": "Spd",
+          "SourceName": "Skl",
           "Value": 25
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Spd",
           "Value": 26
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Lck",
           "Value": 27
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Def",
           "Value": 28
         },
         {
-          "SourceName": "Mov",
+          "SourceName": "Res",
           "Value": 29
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 30
         }
       ],
       "Range": {
         "Minimum": 12,
-        "Maximum": 13
+        "Maximum": 13,
+        "Shape": 14
       },
-      "TextFields": [ 30, 31 ]
+      "Tags": 31,
+      "TextFields": [ 32, 33 ]
+    },
+    "WeaponRankBonuses": {
+      "Query": {
+        "Sheet": "Weapon Rank Bonuses",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Category": 0,
+      "Rank": 1,
+      "CombatStatModifiers": [
+        {
+          "SourceName": "Atk",
+          "Value": 2
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 3
+        }
+      ]
     },
     "Skills": {
       "Query": {
@@ -196,7 +217,11 @@
       "SpriteURL": 2,
       "Type": 3,
       "Turns": 4,
-      "TextFields": [ 5 ]
+      "TextFields": [ 5 ],
+      "Effect": {
+        "Type": 6,
+        "Parameters": [ 7, 8 ]
+      }
     },
     "TerrainTypes": {
       "Query": {
@@ -232,9 +257,11 @@
       ],
       "WarpType": 7,
       "WarpCost": 8,
-      "BlocksItems": 9,
-      "TextFields": [ 10 ],
-      "Groupings":  11
+      "CannotStopOn": 9,
+      "BlocksItems": 10,
+      "RestrictAffiliations": 11,
+      "TextFields": [ 12 ],
+      "Groupings": 13
     },
     "TerrainEffects": {
       "Query": {
@@ -245,36 +272,37 @@
       "Name": 0,
       "SpriteURL": 1,
       "Size": 2,
-      "TextFields": [ 11 ],
-      "HPModifier": 3,
+      "Layer": 3,
+      "TextFields": [ 12 ],
+      "HPModifier": 4,
       "StatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 4
-        },
-        {
-          "SourceName": "Mag",
           "Value": 5
         },
         {
-          "SourceName": "Skl",
+          "SourceName": "Mag",
           "Value": 6
         },
         {
-          "SourceName": "Spd",
+          "SourceName": "Skl",
           "Value": 7
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Spd",
           "Value": 8
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Lck",
           "Value": 9
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Def",
           "Value": 10
+        },
+        {
+          "SourceName": "Res",
+          "Value": 11
         }
       ]
     },

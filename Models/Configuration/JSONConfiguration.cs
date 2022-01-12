@@ -90,6 +90,25 @@ namespace RedditEmblemAPI.Models.Configuration
             if (this.System.Skills != null) queries.Add(this.System.Skills.Query);
             if (this.System.StatusConditions != null) queries.Add(this.System.StatusConditions.Query);
             if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
+            if (this.System.WeaponRankBonuses != null) queries.Add(this.System.WeaponRankBonuses.Query);
+
+            return queries;
+        }
+
+
+        /// <summary>
+        /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
+        /// </summary>
+        /// <returns></returns>
+        public IList<Query> GetMapAnalysisBatchQueries()
+        {
+            //Essential queries
+            IList<Query> queries = new List<Query>()
+            {
+                this.Map.MapControls.Query,
+                this.Map.MapTiles.Query,
+                this.System.TerrainTypes.Query
+            };
 
             return queries;
         }
@@ -119,6 +138,9 @@ namespace RedditEmblemAPI.Models.Configuration
                 this.Convoy.Query
             };
 
+            //Add optional queries
+            if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
+
             return queries;
         }
 
@@ -134,6 +156,9 @@ namespace RedditEmblemAPI.Models.Configuration
                 this.System.Items.Query,
                 this.Shop.Query
             };
+
+            //Add optional queries
+            if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
 
             return queries;
         }

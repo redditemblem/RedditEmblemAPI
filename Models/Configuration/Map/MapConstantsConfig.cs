@@ -26,14 +26,24 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Flag signifying the existence of a header on the map image.
+        /// Optional. Flag signifying the existence of a header on the map image. Defaults to false.
         /// </summary>
         public bool HasHeaderTopLeft { get; set; } = false;
 
         /// <summary>
-        /// Optional. Flag signifying the existence of a footer on the map image.
+        /// Optional. Flag signifying the existence of a footer on the map image. Defaults to false.
         /// </summary>
         public bool HasHeaderBottomRight { get; set; } = false;
+
+        /// <summary>
+        /// Optional. Flag signifying whether units in the back of pair-ups should have their ranges calculated. Defaults to true.
+        /// </summary>
+        public bool CalculatePairedUnitRanges { get; set; } = true;
+
+        /// <summary>
+        /// Optional. The name of the Unit Stat to use as the movement stat when calculating ranges. Defaults to "Mov".
+        /// </summary>
+        public string UnitMovementStatName { get; set; } = "Mov";
 
         #endregion
     }

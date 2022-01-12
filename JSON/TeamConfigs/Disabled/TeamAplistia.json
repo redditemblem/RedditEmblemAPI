@@ -1,0 +1,240 @@
+{
+  "Team": {
+    "Name": "Team Aplistia",
+    "WorkbookID": "1H7zM3bowxIA8_Qf3EGf8frNDWx0tuHNvdLRrn0kboM0"
+  },
+  "Map": {
+    "Constants": {
+      "TileSize": 96,
+      "TileSpacing": 0,
+      "HasHeaderTopLeft": false,
+      "HasHeaderBottomRight": false
+    },
+    "MapControls": {
+      "Query": {
+        "Sheet": "MAPS Info",
+        "Selection": "B1:B",
+        "Orientation": 2
+      },
+      "MapSwitch": 0,
+      "ChapterPostURL": 1,
+      "MapImageURL": 2
+    },
+    "MapTiles": {
+      "Query": {
+        "Sheet": "MAPS Terrain",
+        "Selection": "A1:T20",
+        "Orientation": 1
+      }
+    }
+  },
+  "System": {
+    "Items": {
+      "Query": {
+        "Sheet": "Weapons",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Category": 1,
+      "UtilizedStats": 18,
+      "DealsDamage": 30,
+      "Uses": 27,
+      "Stats": [
+        {
+          "SourceName": "Atk",
+          "Value": 5
+        }
+      ],
+      "Range": {
+        "Minimum": 28,
+        "Maximum": 29
+      },
+      "TextFields": [ 19 ]
+    },
+    "Skills": {
+      "Query": {
+        "Sheet": "MAPS Skills",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "TextFields": [ 1, 2 ],
+      "Effect": {
+        "Type": 3,
+        "Parameters": [ 4, 5, 6 ]
+      }
+    },
+    "Affiliations": {
+      "Query": {
+        "Sheet": "Affiliations",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Grouping": 1,
+      "TextFields": [ 2 ]
+    },
+    "StatusConditions": {
+      "Query": {
+        "Sheet": "Status Conditions",
+        "Selection": "B2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 2,
+      "Type": 1,
+      "TextFields": [ 3 ],
+      "Effect": {
+        "Type": 4,
+        "Parameters": [ 5, 6 ]
+      }
+    },
+    "TerrainTypes": {
+      "Query": {
+        "Sheet": "Terrain Types",
+        "Selection": "A2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "MovementCosts": [
+        {
+          "SourceName": "Infantry",
+          "Value": 1
+        },
+        {
+          "SourceName": "Cavalry",
+          "Value": 2
+        },
+        {
+          "SourceName": "Flier",
+          "Value": 3
+        },
+        {
+          "SourceName": "Armored",
+          "Value": 4
+        },
+        {
+          "SourceName": "Contraption",
+          "Value": 5
+        }
+      ],
+      "BlocksItems": 6,
+      "TextFields": [ 7 ]
+    },
+    "Tags": {
+      "Query": {
+        "Sheet": "Tags",
+        "Selection": "B2:ZZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1
+    }
+  },
+  "Units": {
+    "Query": {
+      "Sheet": "MAPS Units",
+      "Selection": "A3:ZZ",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "Player": 53,
+    "SpriteURL": 54,
+    "Level": 55,
+    "MovementType": 1,
+    "Affiliation": 57,
+    "Tags": 58,
+    "Behavior": 59,
+    "HasMoved": 51,
+    "Coordinate": 52,
+    "HP": {
+      "Current": 6,
+      "Maximum": 8
+    },
+    "CombatStats": [],
+    "SystemStats": [
+      {
+        "SourceName": "CD",
+        "BaseValue": 5
+      },
+      {
+        "SourceName": "SCC",
+        "BaseValue": 4
+      }
+    ],
+    "Stats": [
+      {
+        "SourceName": "Atk",
+        "BaseValue": 9,
+        "Modifiers": [
+          {
+            "SourceName": "Bonus",
+            "Value": 29
+          },
+          {
+            "SourceName": "Penalty",
+            "Value": 35
+          }
+        ]
+      },
+      {
+        "SourceName": "Spd",
+        "BaseValue": 10,
+        "Modifiers": [
+          {
+            "SourceName": "Bonus",
+            "Value": 30
+          },
+          {
+            "SourceName": "Penalty",
+            "Value": 36
+          }
+        ]
+      },
+      {
+        "SourceName": "Def",
+        "BaseValue": 11,
+        "Modifiers": [
+          {
+            "SourceName": "Bonus",
+            "Value": 31
+          },
+          {
+            "SourceName": "Penalty",
+            "Value": 37
+          }
+        ]
+      },
+      {
+        "SourceName": "Res",
+        "BaseValue": 12,
+        "Modifiers": [
+          {
+            "SourceName": "Bonus",
+            "Value": 32
+          },
+          {
+            "SourceName": "Penalty",
+            "Value": 38
+          }
+        ]
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 56
+      }
+    ],
+    "WeaponRanks": [
+      {
+        "Type": 2
+      }
+    ],
+    "StatusConditions": [ 40, 41, 42 ],
+    "Inventory": {
+      "EquippedItem": 43,
+      "Slots": [ 43, 50 ]
+    },
+    "Skills": [ 44, 45, 46, 47, 48, 49 ]
+  }
+}

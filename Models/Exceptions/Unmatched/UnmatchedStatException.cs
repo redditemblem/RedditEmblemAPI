@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Unmatched
         /// </summary>
         /// <param name="statName"></param>
         public UnmatchedStatException(string statName)
-            : base(string.Format("Could not locate a stat with the name \"{0}\".", statName))
+            : base($"Could not locate a stat with the name \"{statName}\".")
         { }
     }
 }

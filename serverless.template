@@ -8,13 +8,13 @@
       "Type": "AWS::Serverless::Function",
       "Properties": {
         "Handler": "RedditEmblemAPI::RedditEmblemAPI.LambdaEntryPoint::FunctionHandlerAsync",
-        "Runtime": "dotnetcore2.1",
+        "Runtime": "dotnetcore3.1",
         "CodeUri": "",
-        "MemorySize": 256,
+        "MemorySize": 2048,
         "Timeout": 30,
         "Role": null,
         "Policies": [
-          "AWSLambdaFullAccess"
+          "AWSLambda_FullAccess"
         ],
         "Environment": {
           "Variables": {

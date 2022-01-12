@@ -13,7 +13,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
         /// <param name="existingUnit">The unit already on the tile.</param>
         /// <param name="coord">The location where the conflict is occurring.</param>
         public UnitTileOverlapException(Unit overlappingUnit, Unit existingUnit, Coordinate coord)
-            : base(string.Format("Unit \"{0}\" cannot be placed overlapping unit \"{1}\" at map tile \"{2},{3}\".", overlappingUnit.Name, existingUnit.Name, coord.X, coord.Y))
+            : base($"Unit \"{overlappingUnit.Name}\" cannot be placed overlapping unit \"{existingUnit.Name}\" at map tile \"{coord.X},{coord.Y}\".")
         { }
     }
 }

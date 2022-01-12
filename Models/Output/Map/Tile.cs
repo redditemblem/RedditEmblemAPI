@@ -53,6 +53,11 @@ namespace RedditEmblemAPI.Models.Output.Map
         public IList<Tile> WarpGroup { get; set; }
 
         /// <summary>
+        /// Number associated with the warp group this tile is linked to.
+        /// </summary>
+        public int WarpGroupNumber { get; set; }
+
+        /// <summary>
         /// List of the terrain effects on this tile.
         /// </summary>
         public IList<TileTerrainEffect> TerrainEffects { get; set; }

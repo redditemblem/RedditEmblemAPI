@@ -20,12 +20,12 @@ namespace RedditEmblemAPI.Models.Configuration.System
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Flag indicating if the <c>CurrencySymbol</c> appears on the left of numerical values.
+        /// Optional. Flag indicating if the <c>CurrencySymbol</c> appears on the left of numerical values. Defaults to true.
         /// </summary>
         public bool IsSymbolLeftAligned { get; set; } = true;
 
         /// <summary>
-        /// Optional. Flag indicating if there should be a space between the <c>CurrencySymbol</c> and numerical values.
+        /// Optional. Flag indicating if there should be a space between the <c>CurrencySymbol</c> and numerical values. Defaults to false.
         /// </summary>
         public bool IncludeSpace { get; set; } = false;
 

@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
         /// </summary>
         /// <param name="warpGroupNum"></param>
         public InvalidWarpGroupException(string warpGroupNum)
-            : base(string.Format("Warp group \"{0}\" must contain at least one entrance and one exit to be valid.", warpGroupNum))
+            : base($"Warp group \"{warpGroupNum}\" must contain at least one entrance and one exit to be valid.")
         { }
     }
 }

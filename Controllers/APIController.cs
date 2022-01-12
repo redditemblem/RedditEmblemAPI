@@ -7,6 +7,9 @@ using RedditEmblemAPI.Models.Input.Turns;
 
 namespace RedditEmblemAPI.Controllers
 {
+    /// <summary>
+    /// Entry point for all API calls.
+    /// </summary>
     [Route("api")]
     [ApiController]
     public class APIController : ControllerBase
@@ -36,6 +39,24 @@ namespace RedditEmblemAPI.Controllers
             }
         }
 
+        [HttpGet("map/analyze/{teamName}")]
+        public IActionResult GetTeamMapAnalysis(string teamName)
+        {
+            try
+            {
+                var data = _sheetsService.LoadMapAnalysis(teamName);
+                return Ok(data);
+            }
+            catch (MapDataLockedException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+        
         [HttpGet("map/{teamName}/turns")]
         public IActionResult GetTeamMapTurnData(string teamName)
         {

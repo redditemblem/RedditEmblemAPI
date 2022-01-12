@@ -11,7 +11,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "StatModifier"; } }
+        protected override string Name { get { return "StatModifier"; } }
         protected override int ParameterCount { get { return 2; } }
 
         /// <summary>

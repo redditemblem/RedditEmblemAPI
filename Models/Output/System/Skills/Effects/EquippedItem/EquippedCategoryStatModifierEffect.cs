@@ -12,7 +12,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "EquippedCategoryStatModifier"; } }
+        protected override string Name { get { return "EquippedCategoryStatModifier"; } }
         protected override int ParameterCount { get { return 3; } }
 
         /// <summary>

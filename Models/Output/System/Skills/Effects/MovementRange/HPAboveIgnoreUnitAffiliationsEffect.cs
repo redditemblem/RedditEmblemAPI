@@ -8,7 +8,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "HPAboveIgnoreUnitAffiliations"; } }
+        protected override string Name { get { return "HPAboveIgnoreUnitAffiliations"; } }
         protected override int ParameterCount { get { return 1; } }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public HPAboveIgnoreUnitAffiliationsEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.HPPercentage = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
+            this.HPPercentage = ParseHelper.Int_Positive(parameters, 0, "Param1");
         }
 
         public bool IsActive(Unit unit)

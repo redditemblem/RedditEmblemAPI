@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "HPAboveObstructTileRadius"; } }
+        protected override string Name { get { return "HPAboveObstructTileRadius"; } }
         protected override int ParameterCount { get { return 2; } }
 
         /// <summary>
@@ -30,8 +30,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public HPAboveObstructTileRadiusEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.Radius = ParseHelper.SafeIntParse(parameters, 0, "Param1", true, true);
-            this.HPPercentage = ParseHelper.SafeIntParse(parameters, 1, "Param2", true);
+            this.Radius = ParseHelper.Int_NonZeroPositive(parameters, 0, "Param1");
+            this.HPPercentage = ParseHelper.Int_Positive(parameters, 1, "Param2");
         }
 
         /// <summary>
@@ -40,14 +40,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             //If unit is not on the map, don't apply
-            if (unit.OriginTile == null)
+            if (unit.OriginTiles.Count == 0)
                 return;
 
             //Unit HP percentage must be equal to or above the threshold
             if (unit.HP.Percentage < this.HPPercentage)
                 return;
 
-            List<Tile> radius = map.GetTilesInRadius(unit.OriginTile, this.Radius);
+            List<Tile> radius = map.GetTilesInRadius(unit.OriginTiles, this.Radius);
             radius.ForEach(t => t.ObstructingUnits.Add(unit));
         }
     }

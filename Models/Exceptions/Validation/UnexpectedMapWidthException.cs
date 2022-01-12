@@ -11,7 +11,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
         /// <param name="expectedWidth"></param>
         /// <param name="sheetName"></param>
         public UnexpectedMapWidthException(int actualWidth, int expectedWidth, string sheetName)
-            : base(string.Format("{0} tiles were found in a row from the \"{1}\" sheet when {2} were expected.", actualWidth, sheetName, expectedWidth))
+            : base($"{actualWidth} tiles were found in a row from the \"{sheetName}\" sheet when {expectedWidth} were expected.")
         { }
     }
 }

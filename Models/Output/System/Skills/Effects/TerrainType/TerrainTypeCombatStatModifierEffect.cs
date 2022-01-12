@@ -4,6 +4,7 @@ using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
 {
@@ -11,7 +12,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "TerrainTypeCombatStatModifier"; } }
+        protected override string Name { get { return "TerrainTypeCombatStatModifier"; } }
         protected override int ParameterCount { get { return 3; } }
 
         /// <summary>
@@ -39,7 +40,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
         public TerrainTypeCombatStatModifierEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.TerrainTypeGrouping = ParseHelper.SafeIntParse(parameters, 0, "Param1", true);
+            this.TerrainTypeGrouping = ParseHelper.Int_Positive(parameters, 0, "Param1");
             this.Stats = ParseHelper.StringCSVParse(parameters, 1); //Param2
             this.Values = ParseHelper.IntCSVParse(parameters, 2, "Param3", false);
 
@@ -59,11 +60,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             //If unit is not on the map, don't apply
-            if (unit.OriginTile == null)
+            if (unit.OriginTiles.Count == 0)
                 return;
 
             //The terrain type must be in the defined grouping
-            if (!unit.OriginTile.TerrainTypeObj.Groupings.Contains(this.TerrainTypeGrouping))
+            if (!unit.OriginTiles.Any(o => o.TerrainTypeObj.Groupings.Contains(this.TerrainTypeGrouping)))
                 return;
 
             ApplyUnitCombatStatModifiers(unit, skill.Name, this.Stats, this.Values);

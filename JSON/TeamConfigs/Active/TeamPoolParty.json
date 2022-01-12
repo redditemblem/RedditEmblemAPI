@@ -1,0 +1,698 @@
+{
+  "Team": {
+    "Name": "Team Pool Party",
+    "WorkbookID": "1F8NYM_8XtzeeUYEFFTpw4DclFnB-Y5CveKBUsbWoNBs"
+  },
+  "Map": {
+    "Constants": {
+      "TileSize": 32,
+      "TileSpacing": 0,
+      "HasHeaderTopLeft": true,
+      "HasHeaderBottomRight": true
+    },
+    "MapControls": {
+      "Query": {
+        "Sheet": "System",
+        "Selection": "B1:B",
+        "Orientation": 2
+      },
+      "MapSwitch": 0,
+      "MapImageURL": 2,
+      "ChapterPostURL": 1
+    },
+    "MapTiles": {
+      "Query": {
+        "Sheet": "Map Tiles",
+        "Selection": "A1:ZZ",
+        "Orientation": 1
+      }
+    },
+    "MapEffects": {
+      "Query": {
+        "Sheet": "Map Effects",
+        "Selection": "A1:ZZ",
+        "Orientation": 1
+      }
+    }
+  },
+  "System": {
+    "WeaponRanks": [ "E", "D", "C", "B", "A", "S" ],
+    "Currency": {
+      "CurrencySymbol": "G",
+      "IsSymbolLeftAligned": false,
+      "IncludeSpace": true
+    },
+    "Affiliations": {
+      "Query": {
+        "Sheet": "Unit Affiliations",
+        "Selection": "A2:C",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Grouping": 1,
+      "TextFields": [ 2 ]
+    },
+    "Classes": {
+      "Query": {
+        "Sheet": "Classes",
+        "Selection": "A2:AU",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "MovementType": 6,
+      "Tags": 5
+    },
+    "Items": {
+      "Query": {
+        "Sheet": "Items",
+        "Selection": "A2:AZ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 47,
+      "Category": 1,
+      "WeaponRank": 4,
+      "UtilizedStats": 2,
+      "DealsDamage": 46,
+      "Uses": 27,
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 7
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 8
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 9
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 12
+        },
+        {
+          "SourceName": "CEva",
+          "Value": 13
+        },
+        {
+          "SourceName": "OSpd",
+          "Value": 14
+        },
+        {
+          "SourceName": "DSpd",
+          "Value": 15
+        }
+      ],
+      "EquippedStatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 17
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 18
+        },
+        {
+          "SourceName": "Skl",
+          "Value": 19
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 20
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 21
+        },
+        {
+          "SourceName": "Def",
+          "Value": 22
+        },
+        {
+          "SourceName": "Res",
+          "Value": 23
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 24
+        }
+      ],
+      "Range": {
+        "Minimum": 5,
+        "Maximum": 6
+      },
+      "Tags": 44,
+      "TextFields": [ 25 ]
+    },
+    "WeaponRankBonuses": {
+      "Query": {
+        "Sheet": "Misc. Data",
+        "Selection": "B3:E",
+        "Orientation": 1
+      },
+      "Category": 0,
+      "Rank": 1,
+      "CombatStatModifiers": [
+        {
+          "SourceName": "Atk",
+          "Value": 2
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 3
+        }
+      ]
+    },
+    "Skills": {
+      "Query": {
+        "Sheet": "Skills",
+        "Selection": "A2:H",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "TextFields": [ 2 ],
+      "Effect": {
+        "Type": 4,
+        "Parameters": [ 5, 6, 7 ]
+      }
+    },
+    "StatusConditions": {
+      "Query": {
+        "Sheet": "Status Conditions",
+        "Selection": "B2:I",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "Type": 2,
+      "Turns": 3,
+      "TextFields": [ 4 ],
+      "Effect": {
+        "Type": 5,
+        "Parameters": [ 6, 7 ]
+      }
+    },
+    "Tags": {
+      "Query": {
+        "Sheet": "Tags",
+        "Selection": "B2:D",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "ShowOnUnit": 2
+    },
+    "TerrainTypes": {
+      "Query": {
+        "Sheet": "Terrain Types",
+        "Selection": "A2:O",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "HPModifier": 4,
+      "CombatStatModifiers": [
+        {
+          "SourceName": "Avo",
+          "Value": 1
+        }
+      ],
+      "MovementCosts": [
+        {
+          "SourceName": "Infantry",
+          "Value": 5
+        },
+        {
+          "SourceName": "Beast",
+          "Value": 6
+        },
+        {
+          "SourceName": "Mage",
+          "Value": 7
+        },
+        {
+          "SourceName": "Cavalry",
+          "Value": 8
+        },
+        {
+          "SourceName": "Flier",
+          "Value": 9
+        }
+      ],
+      "Groupings": 10,
+      "WarpType": 12,
+      "WarpCost": 13,
+      "BlocksItems": 11,
+      "StatModifiers": [
+        {
+          "SourceName": "Def",
+          "Value": 2
+        },
+        {
+          "SourceName": "Res",
+          "Value": 2
+        }
+      ],
+      "TextFields": [ 14 ]
+    },
+    "TerrainEffects": {
+      "Query": {
+        "Sheet": "Terrain Effects",
+        "Selection": "B2:M",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "Size": 2,
+      "HPModifier": 3,
+      "StatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 4
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 5
+        },
+        {
+          "SourceName": "Skl",
+          "Value": 6
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 7
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 8
+        },
+        {
+          "SourceName": "Def",
+          "Value": 9
+        },
+        {
+          "SourceName": "Res",
+          "Value": 10
+        }
+      ],
+      "TextFields": [ 11 ]
+    }
+  },
+  "Units": {
+    "Query": {
+      "Sheet": "Units",
+      "Selection": "B1:ZZ",
+      "Orientation": 2
+    },
+    "Name": 0,
+    "SpriteURL": 3,
+    "Level": 7,
+    "Classes": [ 5 ],
+    "Affiliation": 4,
+    "Coordinate": 11,
+    "HP": {
+      "Current": 36,
+      "Maximum": 38
+    },
+    "CombatStats": [
+      {
+        "SourceName": "Atk",
+        "Equation": "{WeaponUtilStat} + {WeaponStat[Mt]}",
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 80
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 95
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 110
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 125
+          }
+        ]
+      },
+      {
+        "SourceName": "Hit",
+        "Equation": "({UnitStat[Skl]} * 1.5) + ({UnitStat[Lck]} * .75) + {WeaponStat[Hit]}",
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 76
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 91
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 106
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 121
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 150
+          }
+        ]
+      },
+      {
+        "SourceName": "Crit",
+        "Equation": "(({UnitStat[Skl]} - 4) * .5) + {WeaponStat[Crit]}",
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 77
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 92
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 107
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 122
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 151
+          }
+        ]
+      },
+      {
+        "SourceName": "Avo",
+        "Equation": "({UnitStat[Spd]} * 1.5) + ({UnitStat[Lck]} * .75) + {WeaponStat[Avo]}",
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 78
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 93
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 108
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 123
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 152
+          }
+        ]
+      },
+      {
+        "SourceName": "CEva",
+        "Equation": "({UnitStat[Lck]} * .5) + {WeaponStat[CEva]}",
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 79
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 94
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 109
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 124
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 153
+          }
+        ]
+      }
+    ],
+    "Stats": [
+      {
+        "SourceName": "Str",
+        "BaseValue": 54,
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 68
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 83
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 98
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 113
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 142
+          }
+        ]
+      },
+      {
+        "SourceName": "Lck",
+        "BaseValue": 58,
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 72
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 87
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 102
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 117
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 146
+          }
+        ]
+      },
+      {
+        "SourceName": "Mag",
+        "BaseValue": 55,
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 69
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 84
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 99
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 114
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 143
+          }
+        ]
+      },
+      {
+        "SourceName": "Def",
+        "BaseValue": 59,
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 73
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 88
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 103
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 118
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 147
+          }
+        ]
+      },
+      {
+        "SourceName": "Skl",
+        "BaseValue": 56,
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 70
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 85
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 100
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 115
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 144
+          }
+        ]
+      },
+      {
+        "SourceName": "Res",
+        "BaseValue": 60,
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 74
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 89
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 104
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 119
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 148
+          }
+        ]
+      },
+      {
+        "SourceName": "Spd",
+        "BaseValue": 57,
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 71
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 86
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 101
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 116
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 145
+          }
+        ]
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 61,
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 75
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 90
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 105
+          },
+          {
+            "SourceName": "Long Debuffs",
+            "Value": 120
+          },
+          {
+            "SourceName": "Guard Stance",
+            "Value": 149
+          }
+        ]
+      }
+    ],
+    "WeaponRanks": [
+      {
+        "Type": 18,
+        "Rank": 19
+      },
+      {
+        "Type": 21,
+        "Rank": 22
+      },
+      {
+        "Type": 24,
+        "Rank": 25
+      }
+    ],
+    "Inventory": {
+      "EquippedItem": 27,
+      "Slots": [ 28, 29, 30, 31, 32 ]
+    },
+    "Player": 1,
+    "PortraitURL": 168,
+    "TextFields": [ 167 ],
+    "UnitSize": 166,
+    "HasMoved": 13,
+    "Experience": 9,
+    "HeldCurrency": 10,
+    "Tags": 165,
+    "Behavior": 169,
+    "SystemStats": [
+      {
+        "SourceName": "Recharge",
+        "BaseValue": 16,
+        "Modifiers": []
+      },
+      {
+        "SourceName": "Cur. Charge",
+        "BaseValue": 17,
+        "Modifiers": []
+      }
+    ],
+    "Skills": [ 155, 156, 157, 158, 159, 160, 161, 162 ],
+    "StatusConditions": [ 33, 34, 35 ]
+  }
+}

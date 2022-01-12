@@ -44,9 +44,9 @@ namespace RedditEmblemAPI.Models.Output.Turns
         {
             this.AmendedTurns = new List<Turn>();
 
-            this.TurnID = ParseHelper.SafeIntParse(data, config.TurnID, "TurnID", true, true);
-            this.AmendedByTurnID = ParseHelper.OptionalSafeIntParse(data, config.AmendedByTurnID, "AmendedByTurnID", true, true, -1);
-            this.TurnOrder = ParseHelper.OptionalSafeIntParse(data, config.TurnOrder, "TurnOrder", true, true, -1);
+            this.TurnID = ParseHelper.Int_NonZeroPositive(data, config.TurnID, "TurnID");
+            this.AmendedByTurnID = ParseHelper.OptionalInt_NonZeroPositive(data, config.AmendedByTurnID, "AmendedByTurnID", -1);
+            this.TurnOrder = ParseHelper.OptionalInt_NonZeroPositive(data, config.TurnOrder, "TurnOrder", -1);
 
             this.UnitName = ParseHelper.SafeStringParse(data, config.UnitName, "UnitName", true);
             this.PlayerName = ParseHelper.SafeStringParse(data, config.PlayerName, "PlayerName", true);

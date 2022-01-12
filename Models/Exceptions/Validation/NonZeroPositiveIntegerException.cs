@@ -3,10 +3,10 @@
     public class NonZeroPositiveIntegerException : IntegerException
     {
         /// <summary>
-        /// Thrown when a numerical value fails to parse and the expected result is a non-zero positive number.
+        /// Thrown when an integer fails to parse and the expected result is a non-zero positive number.
         /// </summary>
         public NonZeroPositiveIntegerException(string fieldName, string actualValue)
-            : base(fieldName, actualValue, "a non-zero, positive numerical value")
+            : base(fieldName, actualValue, "a non-zero, positive integer")
         { }
     }
 }

@@ -80,8 +80,8 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             match.Matched = true;
 
             this.Owner = ParseHelper.SafeStringParse(data, config.Owner, "Owner", false);
-            this.Value = ParseHelper.OptionalSafeIntParse(data, config.Value, "Value", true, false, -1);
-            this.Quantity = ParseHelper.OptionalSafeIntParse(data, config.Quantity, "Quantity", true, false, 1);
+            this.Value = ParseHelper.OptionalInt_Positive(data, config.Value, "Value", -1);
+            this.Quantity = ParseHelper.OptionalInt_NonZeroPositive(data, config.Quantity, "Quantity");
         }
     }
 }

@@ -11,7 +11,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
         /// <param name="expectedHeight"></param>
         /// <param name="sheetName"></param>
         public UnexpectedMapHeightException(int actualHeight, int expectedHeight, string sheetName)
-            : base(string.Format("{0} tile rows were found on the \"{1}\" sheet when {2} were expected.", actualHeight, sheetName, expectedHeight))
+            : base($"{actualHeight} tile rows were found on the \"{sheetName}\" sheet when {expectedHeight} were expected.")
         { }
     }
 }

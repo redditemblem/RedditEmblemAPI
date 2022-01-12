@@ -8,7 +8,9 @@
       "TileSize": 0, //Required
       "TileSpacing": 0, //Required
       "HasHeaderTopLeft": false, //Optional, defaults to false
-      "HasHeaderBottomRight": false //Optional, defaults to false
+      "HasHeaderBottomRight": false, //Optional, defaults to false
+      "CalculatePairedUnitRanges": true, //Optional, defaults to true
+      "UnitMovementStatName": "Mov" //Optional, defaults to "Mov"
     },
     "MapControls": {   //Required
       "Query": {
@@ -96,9 +98,32 @@
       ],
       "Range": { //Required
         "Minimum": 0, //Required
-        "Maximum": 0 //Required
+        "Maximum": 0, //Required
+        "Shape": 0 //Optional
       },
+      "Tags": 0, //Optional
       "TextFields": [] //Optional
+    },
+    "WeaponRankBonuses": { //Optional, defaults to null
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Category": 0, //Required
+      "Rank": 0, //Optional
+      "CombatStatModifiers": [ //Optional
+        {
+          "SourceName": "Atk",
+          "Value": 0
+        }
+      ],
+      "StatModifiers": [ //Optional
+        {
+          "SourceName": "Mov",
+          "Value": 0
+        }
+      ]
     },
     "Skills": { //Optional, defaults to null
       "Query": {
@@ -110,10 +135,8 @@
       "SpriteURL": 0, //Optional
       "TextFields": [], //Optional
       "Effect": { //Optional
-        "Type": 3,
-        "Parameter1": 4,
-        "Parameter2": 5,
-        "Parameter3": 6
+        "Type": 0,
+        "Parameters": [ 0, 0, 0 ]
       }
     },
     "StatusConditions": { //Optional
@@ -126,7 +149,11 @@
       "SpriteURL": 0, //Optional
       "Type": 0, //Required
       "Turns": 0, //Optional
-      "TextFields": [ 0 ] //Optional
+      "TextFields": [ 0 ], //Optional
+      "Effect": { //Optional
+        "Type": 0, //Required
+        "Parameters": [ 0, 0 ] //Required
+      }
     },
     "Tags": { //Optional
       "Query": {
@@ -135,7 +162,8 @@
         "Orientation": 0
       },
       "Name": 0, //Required
-      "SpriteURL": 0 //Optional
+      "SpriteURL": 0, //Optional
+      "ShowOnUnit": 0 //Optional
     },
     "TerrainTypes": { //Required
       "Query": {
@@ -144,6 +172,19 @@
         "Orientation": 0
       },
       "Name": 0, //Required
+      "HPModifier": 0, //Optional
+      "CombatStatModifiers": [ //Optional
+        {
+          "SourceName": "Avo",
+          "Value": 1
+        }
+      ],
+      "StatModifiers": [ //Optional
+        {
+          "SourceName": "Avo",
+          "Value": 0
+        }
+      ],
       "MovementCosts": [ //Required
         {
           "SourceName": "Mounted",
@@ -152,13 +193,10 @@
       ],
       "WarpType": 0, //Optional, required if WarpCost provided
       "WarpCost": 0, //Optional, required if WarpType provided
-      "BlocksItems": 0, //Required
-      "StatModifiers": [ //Optional
-        {
-          "SourceName": "Avo",
-          "Value": 0
-        }
-      ],
+      "CannotStopOn": 0, //Optional
+      "BlocksItems": 0, //Optional
+      "RestrictAffiliations": 0, //Optional
+      "Groupings": 0, //Optional
       "TextFields": [ 0 ] //Optional
     },
     "TerrainEffects": { //Optional
@@ -170,6 +208,7 @@
       "Name": 0, //Required
       "SpriteURL": 0, //Required
       "Size": 0, //Optional
+      "Layer": 0, //Optional
       "HPModifier": 0, //Optional
       "CombatStatModifiers": [ //Optional
         {
@@ -206,14 +245,20 @@
     "CombatStats": [ //Required
       {
         "SourceName": "",
-        "Equation": ""
+        "Equation": "",
+        "Modifiers": [ //Optional
+          {
+            "SourceName": "",
+            "Value": 0
+          }
+        ]
       }
     ],
     "Stats": [ //Required
       {
         "SourceName": "Mov", //"Mov" is a required stat
         "BaseValue": 0,
-        "Modifiers": [ //Required
+        "Modifiers": [ //Optional
           {
             "SourceName": "",
             "Value": 0
@@ -240,16 +285,18 @@
     "HeldCurrency": 0, //Optional
     "Tags": 0, //Optional
     "Behavior": 0, //Optional
-    "SystemStats": { //Optional
-      "SourceName": "Charge",
-      "BaseValue": 0,
-      "Modifiers": [
-        {
-          "SourceName": "",
-          "Value": 0
-        }
-      ]
-    },
+    "SystemStats": [ //Optional
+      {
+        "SourceName": "Charge",
+        "BaseValue": 0,
+        "Modifiers": [ //Required
+          {
+            "SourceName": "",
+            "Value": 0
+          }
+        ]
+      }
+    ],
     "Skills": [ 0 ], //Optional
     "StatusConditions": [ 0 ] //Optional
   },

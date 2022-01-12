@@ -1,6 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
@@ -27,36 +28,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         #region Constructors
 
         /// <summary>
-        /// Initializes the class with the passed in <paramref name="current"/> and <paramref name="maximum"/> values.
+        /// Initializes the class with the values in <paramref name="data"/> at <paramref name="currentIndex"/> and <paramref name="maximumIndex"/>.
         /// </summary>
-        /// <param name="current"></param>
-        /// <param name="maximum"></param>
-        /// <exception cref="PositiveIntegerException"></exception>
-        /// <exception cref="NonZeroPositiveIntegerException"></exception>
-        public HP(int current, int maximum)
+        public HP(IList<string> data, int currentIndex, int maximumIndex)
         {
-            if (current < 0)
-                throw new PositiveIntegerException("Current HP", current.ToString());
-            if (maximum <= 0)
-                throw new NonZeroPositiveIntegerException("Maximum HP", maximum.ToString());
-
-            this.Current = current;
-            this.Maximum = maximum;
-        }
-
-
-        /// <summary>
-        /// Initializes the class with the passed in <paramref name="current"/> and <paramref name="maximum"/> values.
-        /// </summary>
-        /// <param name="current">A numerical value.</param>
-        /// <param name="maximum">A numerical value.</param>
-        /// <exception cref="NonZeroPositiveIntegerException"></exception>
-        public HP(string current, string maximum)
-        {
-            int currentVal = ParseHelper.SafeIntParse(current, "Current HP", true, false);
+            int currentVal = ParseHelper.Int_Positive(data, currentIndex, "Current HP");
             this.Current = currentVal;
 
-            int maximumVal = ParseHelper.SafeIntParse(maximum, "Maximum HP", true, true);
+            int maximumVal = ParseHelper.Int_NonZeroPositive(data, maximumIndex, "Maximum HP");
             this.Maximum = maximumVal;
         }
 

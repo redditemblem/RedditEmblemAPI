@@ -8,10 +8,10 @@ namespace RedditEmblemAPI.Models.Exceptions.Processing
         /// <summary>
         /// Container exception thrown when an error occurs during the calculation of a unit's range(s).
         /// </summary>
-        /// <param name="unitName"></param>
+        /// <param name="unit"></param>
         /// <param name="innerException"></param>
         public RangeCalculationException(Unit unit, Exception innerException) 
-            : base(string.Format("An error occurred while calculating map ranges for unit \"{0}\".", unit.Name), innerException)
+            : base($"An error occurred while calculating map ranges for unit \"{unit.Name}\".", innerException)
         { }
     }
 }

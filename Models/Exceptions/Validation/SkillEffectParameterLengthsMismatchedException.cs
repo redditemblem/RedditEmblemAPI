@@ -8,7 +8,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
         /// Thrown when an <c>ISkillEffect</c>'s parameters have lists of differing lengths.
         /// </summary>
         public SkillEffectParameterLengthsMismatchedException(params string[] parameterFieldNames)
-            : base(string.Format("The parameters \"{0}\" must have the same number of items.", string.Join(',', parameterFieldNames)))
+            : base($"The parameters \"{string.Join(", ", parameterFieldNames)}\" must contain the same number of items.")
         { }
     }
 }

@@ -36,11 +36,6 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// </summary>
         public bool ShowShopLink { get; set; }
 
-        /// <summary>
-        /// The URL of the chapter post on Reddit.
-        /// </summary>
-        public string ChapterPostURL { get; set; }
-
         public MapData(JSONConfiguration config)
         {
             this.ShowConvoyLink = (config.Convoy != null);
@@ -49,6 +44,7 @@ namespace RedditEmblemAPI.Models.Output.Map
             //Process data, order is important on these
             this.System = new SystemInfo(config.System);
             this.Map = new MapObj(config.Map, this.System.TerrainTypes, this.System.TerrainEffects);
+
             this.Units = UnitsHelper.Process(config.Units, this.System, this.Map);
 
             //Calculate unit ranges

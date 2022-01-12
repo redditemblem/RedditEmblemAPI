@@ -1,6 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Services.Helpers;
 using System;
@@ -41,6 +42,11 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// </summary>
         public IDictionary<string, Item> Items { get; set; }
 
+        /// <summary>
+        /// Container dictionary for data about tags.
+        /// </summary>
+        public IDictionary<string, Tag> Tags { get; set; }
+
         #endregion
 
         /// <summary>
@@ -53,22 +59,10 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             this.Currency = config.System.Currency;
             this.ShowConvoyLink = (config.Convoy != null);
 
-            //Build the item list
-            this.Items = new Dictionary<string, Item>();
-            foreach (IList<object> row in config.System.Items.Query.Data)
-            {
-                try
-                {
-                    IList<string> item = row.Select(r => r.ToString()).ToList();
-                    string name = ParseHelper.SafeStringParse(item, config.System.Items.Name, "Name", false);
-                    if (string.IsNullOrEmpty(name)) continue;
-                    this.Items.Add(name, new Item(config.System.Items, item));
-                }
-                catch (Exception ex)
-                {
-                    throw new ItemProcessingException((row.ElementAtOrDefault(config.System.Items.Name) ?? string.Empty).ToString(), ex);
-                }
-            }
+            if (config.System.Tags != null) this.Tags = Tag.BuildDictionary(config.System.Tags);
+            else this.Tags = new Dictionary<string, Tag>();
+
+            this.Items = Item.BuildDictionary(config.System.Items, this.Tags);
 
             //Build the shop item list
             this.ShopItems = new List<ShopItem>();
@@ -119,6 +113,11 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             foreach (string key in this.Items.Keys.ToList())
                 if (!this.Items[key].Matched)
                     this.Items.Remove(key);
+
+            //Cull unused tags
+            foreach (string key in this.Tags.Keys.ToList())
+                if (!this.Tags[key].Matched)
+                    this.Tags.Remove(key);
         }
     }
 }

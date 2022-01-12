@@ -11,6 +11,7 @@ namespace RedditEmblemAPI.Services
     public interface IAPIService
     {
         MapData LoadMapData(string teamName);
+        MapData LoadMapAnalysis(string teamName);
         TurnData LoadMapTurnData(string teamName);
         void CreateTeamMapTurn(string teamName, ClientTurnData postData);
         ConvoyData LoadConvoyData(string teamName);

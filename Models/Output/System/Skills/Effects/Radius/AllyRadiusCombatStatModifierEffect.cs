@@ -12,7 +12,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
     {
         #region Attributes
 
-        protected override string SkillEffectName { get { return "AllyRadiusCombatStatModifier"; } }
+        protected override string Name { get { return "AllyRadiusCombatStatModifier"; } }
         protected override int ParameterCount { get { return 3; } }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
         public AllyRadiusCombatStatModifierEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.Radius = ParseHelper.SafeIntParse(parameters, 0, "Param1", true, true);
+            this.Radius = ParseHelper.Int_NonZeroPositive(parameters, 0, "Param1");
             this.Stats = ParseHelper.StringCSVParse(parameters, 1); //Param2
             this.Values = ParseHelper.IntCSVParse(parameters, 2, "Param3", false);
 
@@ -60,16 +60,16 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             //If unit is not on the map, don't apply
-            if (unit.OriginTile == null)
+            if (unit.OriginTiles.Count == 0)
                 return;
 
             //Apply modifiers to allies in range
             foreach (Unit ally in units.Where(u => u.Name != unit.Name //different names
                                                 && u.AffiliationObj.Grouping == unit.AffiliationObj.Grouping //same affiliation grouping
-                                                && u.OriginTile != null
-                                                && this.Radius >= unit.OriginTile.Coordinate.DistanceFrom(u.OriginTile.Coordinate)))
+                                                && u.OriginTiles.Count > 0
+                                                && u.OriginTiles.Any(o1 => unit.OriginTiles.Any(o2 => o2.Coordinate.DistanceFrom(o1.Coordinate) <= this.Radius))))
             {
-                ApplyUnitCombatStatModifiers(ally, string.Format("{0}'s {1}", unit.Name, skill.Name), this.Stats, this.Values);
+                ApplyUnitCombatStatModifiers(ally, $"{unit.Name}'s {skill.Name}", this.Stats, this.Values);
             }
         }
     }

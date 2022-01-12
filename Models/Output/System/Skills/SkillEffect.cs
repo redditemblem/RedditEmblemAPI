@@ -12,7 +12,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
     {
         #region Attributes
 
-        protected abstract string SkillEffectName { get; }
+        protected abstract string Name { get; }
         protected abstract int ParameterCount { get; }
 
         #endregion
@@ -25,7 +25,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         {
             //Make sure enough parameters were passed in
             if (parameters.Count < this.ParameterCount)
-                throw new SkillEffectMissingParameterException(this.SkillEffectName, this.ParameterCount, parameters.Count);
+                throw new SkillEffectMissingParameterException(this.Name, this.ParameterCount, parameters.Count);
         }
 
         public virtual void Apply(Unit unit, Skill skill, MapObj Map, IList<Unit> units)
@@ -103,7 +103,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                     continue;
 
                 //If no issues arose, add the tile to the unit's movement range
-                unit.MovementRange.Add(tile.Coordinate);
+                if(!unit.MovementRange.Contains(tile.Coordinate))
+                    unit.MovementRange.Add(tile.Coordinate);
             }
         }
 

@@ -4,9 +4,12 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
 {
     public class RequiredValueNotProvidedException : Exception
     {
-        //Thrown when a cell is blank instead of containing an expected value.
+        /// <summary>
+        /// Thrown when a cell is blank instead of containing an expected value.
+        /// </summary>
+        /// <param name="fieldName"></param>
         public RequiredValueNotProvidedException(string fieldName)
-            : base(string.Format("The field \"{0}\" contains no value, but is required to.", fieldName))
+            : base($"The field \"{fieldName}\" contains no value, but is required to.")
         { }
     }
 }
