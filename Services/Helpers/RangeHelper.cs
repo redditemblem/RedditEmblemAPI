@@ -47,7 +47,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     IList<Coordinate> atkRange = new List<Coordinate>();
                     IList<Coordinate> utilRange = new List<Coordinate>();
 
-                    IList<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && !i.IsUsePrevented && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
+                    IList<UnitItemRange> itemRanges = unit.Inventory.SelectMany(s => s.Items.Where(i => i != null && i.CanEquip && !i.IsUsePrevented && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0)))
                                                                     .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.Range.Shape, i.Item.DealsDamage, i.AllowMeleeRange))
                                                                     .ToList();
 

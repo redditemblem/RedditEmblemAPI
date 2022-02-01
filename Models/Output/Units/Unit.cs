@@ -148,9 +148,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         public IList<UnitStatus> StatusConditions { get; set; }
 
         /// <summary>
-        /// List of the items the unit is carrying.
+        /// List of the items the unit is carrying, broken down into sections.
         /// </summary>
-        public IList<UnitInventoryItem> Inventory { get; set; }
+        public IList<UnitInventorySection> Inventory { get; set; }
 
         /// <summary>
         /// List of the skills the unit possesses.
@@ -299,7 +299,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Stats = new Dictionary<string, ModifiedStatValue>();
             BuildStats(data, config.Stats);
 
-            this.Inventory = new List<UnitInventoryItem>();
+            this.Inventory = new List<UnitInventorySection>();
             BuildInventory(data, config.Inventory, systemData.Items, systemData.WeaponRanks, systemData.WeaponRankBonuses);
 
             this.SkillList = new List<Skill>();
@@ -386,90 +386,100 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         private void BuildInventory(IList<string> data, InventoryConfig config, IDictionary<string, Item> items, IList<string> weaponRanks, IList<WeaponRankBonus> weaponRankBonuses)
         {
-            foreach (int index in config.Slots)
+            foreach(InventorySectionConfig sectionConfig in config.Sections)
             {
-                string name = ParseHelper.SafeStringParse(data, index, "Item Name", false);
-                if (string.IsNullOrEmpty(name))
+                UnitInventorySection section = new UnitInventorySection(sectionConfig.SectionTitle);
+                this.Inventory.Add(section);
+
+                foreach (int index in sectionConfig.Slots)
                 {
-                    this.Inventory.Add(null);
-                    continue;
-                }
-                UnitInventoryItem item = new UnitInventoryItem(name, items);
-
-                //Check if the item can be equipped
-                string unitRank;
-                if (this.WeaponRanks.TryGetValue(item.Item.Category, out unitRank))
-                {
-                    if (string.IsNullOrEmpty(unitRank)
-                     || string.IsNullOrEmpty(item.Item.WeaponRank)
-                     || weaponRanks.IndexOf(unitRank) >= weaponRanks.IndexOf(item.Item.WeaponRank))
-                        item.CanEquip = true;
-                }
-                else if (string.IsNullOrEmpty(item.Item.WeaponRank) && !item.Item.UtilizedStats.Any())
-                {
-                    item.CanEquip = true;
-                }
-
-                this.Inventory.Add(item);
-            }
-
-            //Find the equipped item and flag it
-            string equippedItemName = ParseHelper.SafeStringParse(data, config.EquippedItem, "Equipped Item", false);
-            if (!string.IsNullOrEmpty(equippedItemName))
-            {
-                UnitInventoryItem equipped = this.Inventory.FirstOrDefault(i => i != null && i.FullName == equippedItemName);
-                if (equipped == null)
-                    throw new UnmatchedEquippedItemException(equippedItemName);
-                equipped.IsEquipped = true;
-
-                //Apply equipped stat modifiers
-                foreach (string stat in equipped.Item.EquippedStatModifiers.Keys)
-                {
-                    ModifiedStatValue mods;
-                    if (!this.Stats.TryGetValue(stat, out mods))
-                        throw new UnmatchedStatException(stat);
-                    mods.Modifiers.Add($"{equipped.Item.Name} (Eqp)", equipped.Item.EquippedStatModifiers[stat]);
-                }
-
-                //Check if we need to apply weapon rank bonuses for the equipped item
-                if (this.WeaponRanks.ContainsKey(equipped.Item.Category))
-                {
-                    string unitRank;
-                    this.WeaponRanks.TryGetValue(equipped.Item.Category, out unitRank);
-
-                    WeaponRankBonus bonus = weaponRankBonuses.FirstOrDefault(b => b.Category == equipped.Item.Category && b.Rank == unitRank);
-                    if (bonus != null)
+                    string name = ParseHelper.SafeStringParse(data, index, "Item Name", false);
+                    if (string.IsNullOrEmpty(name))
                     {
-                        foreach (string stat in bonus.CombatStatModifiers.Keys)
-                        {
-                            ModifiedStatValue mods;
-                            if (!this.CombatStats.TryGetValue(stat, out mods))
-                                throw new UnmatchedStatException(stat);
-                            mods.Modifiers.Add($"{equipped.Item.Category} {unitRank} Rank Bonus", bonus.CombatStatModifiers[stat]);
-                        }
+                        section.Items.Add(null);
+                        continue;
+                    }
+                    UnitInventoryItem item = new UnitInventoryItem(name, items);
 
-                        foreach (string stat in bonus.StatModifiers.Keys)
+                    //Check if the item can be equipped
+                    string unitRank;
+                    if (this.WeaponRanks.TryGetValue(item.Item.Category, out unitRank))
+                    {
+                        if (string.IsNullOrEmpty(unitRank)
+                         || string.IsNullOrEmpty(item.Item.WeaponRank)
+                         || weaponRanks.IndexOf(unitRank) >= weaponRanks.IndexOf(item.Item.WeaponRank))
+                            item.CanEquip = true;
+                    }
+                    else if (string.IsNullOrEmpty(item.Item.WeaponRank) && !item.Item.UtilizedStats.Any())
+                    {
+                        item.CanEquip = true;
+                    }
+
+                    section.Items.Add(item);
+                }
+
+                //Find the equipped item and flag it
+                foreach (int index in sectionConfig.EquippedItems)
+                {
+                    string equippedItemName = ParseHelper.SafeStringParse(data, index, "Equipped Item", false);
+                    if (!string.IsNullOrEmpty(equippedItemName))
+                    {
+                        UnitInventoryItem equipped = section.Items.FirstOrDefault(i => i != null && i.FullName == equippedItemName);
+                        if (equipped == null)
+                            throw new UnmatchedEquippedItemException(equippedItemName);
+                        equipped.IsEquipped = true;
+
+                        //Apply equipped stat modifiers
+                        foreach (string stat in equipped.Item.EquippedStatModifiers.Keys)
                         {
                             ModifiedStatValue mods;
                             if (!this.Stats.TryGetValue(stat, out mods))
                                 throw new UnmatchedStatException(stat);
-                            mods.Modifiers.Add($"{equipped.Item.Category} {unitRank} Rank Bonus", bonus.StatModifiers[stat]);
+                            mods.Modifiers.Add($"{equipped.Item.Name} (Eqp)", equipped.Item.EquippedStatModifiers[stat]);
                         }
+
+                        //Check if we need to apply weapon rank bonuses for the equipped item
+                        if (this.WeaponRanks.ContainsKey(equipped.Item.Category))
+                        {
+                            string unitRank;
+                            this.WeaponRanks.TryGetValue(equipped.Item.Category, out unitRank);
+
+                            WeaponRankBonus bonus = weaponRankBonuses.FirstOrDefault(b => b.Category == equipped.Item.Category && b.Rank == unitRank);
+                            if (bonus != null)
+                            {
+                                foreach (string stat in bonus.CombatStatModifiers.Keys)
+                                {
+                                    ModifiedStatValue mods;
+                                    if (!this.CombatStats.TryGetValue(stat, out mods))
+                                        throw new UnmatchedStatException(stat);
+                                    mods.Modifiers.Add($"{equipped.Item.Category} {unitRank} Rank Bonus", bonus.CombatStatModifiers[stat]);
+                                }
+
+                                foreach (string stat in bonus.StatModifiers.Keys)
+                                {
+                                    ModifiedStatValue mods;
+                                    if (!this.Stats.TryGetValue(stat, out mods))
+                                        throw new UnmatchedStatException(stat);
+                                    mods.Modifiers.Add($"{equipped.Item.Category} {unitRank} Rank Bonus", bonus.StatModifiers[stat]);
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                //Apply inventory stat modifiers for all nonequipped items
+                foreach (UnitInventoryItem inv in section.Items.Where(i => i != null && !i.IsEquipped))
+                {
+                    foreach (string stat in inv.Item.InventoryStatModifiers.Keys)
+                    {
+                        ModifiedStatValue mods;
+                        if (!this.Stats.TryGetValue(stat, out mods))
+                            throw new UnmatchedStatException(stat);
+                        mods.Modifiers.Add($"{inv.Item.Name} (Inv)", inv.Item.InventoryStatModifiers[stat]);
                     }
                 }
             }
 
-            //Apply inventory stat modifiers for all nonequipped items
-            foreach (UnitInventoryItem inv in this.Inventory.Where(i => i != null && !i.IsEquipped))
-            {
-                foreach (string stat in inv.Item.InventoryStatModifiers.Keys)
-                {
-                    ModifiedStatValue mods;
-                    if (!this.Stats.TryGetValue(stat, out mods))
-                        throw new UnmatchedStatException(stat);
-                    mods.Modifiers.Add($"{inv.Item.Name} (Inv)", inv.Item.InventoryStatModifiers[stat]);
-                }
-            }
         }
 
         /// <summary>
@@ -569,7 +579,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             foreach (CalculatedStatConfig stat in stats)
             {
                 string equation = stat.Equation;
-                UnitInventoryItem equipped = this.Inventory.SingleOrDefault(i => i != null && i.IsEquipped);
+                IList<UnitInventoryItem> equippedItems = this.Inventory.SelectMany(s => s.Items.Where(i => i != null && i.IsEquipped)).ToList();
 
                 //{UnitStat[...]}
                 //Replaced by values from the unit.Stats list
@@ -588,10 +598,12 @@ namespace RedditEmblemAPI.Models.Output.Units
                 //{WeaponUtilStat}
                 if (equation.Contains("{WeaponUtilStat}"))
                 {
-                    int weaponUtilStatValue = 0;
-                    if (equipped != null)
+                    int finalValue = 0;
+                    foreach(UnitInventoryItem item in equippedItems)
                     {
-                        foreach (string utilStatName in equipped.Item.UtilizedStats)
+                        int weaponUtilStatValue = 0;
+
+                        foreach (string utilStatName in item.Item.UtilizedStats)
                         {
                             ModifiedStatValue weaponUtilStat;
                             if (!this.Stats.TryGetValue(utilStatName, out weaponUtilStat))
@@ -601,8 +613,11 @@ namespace RedditEmblemAPI.Models.Output.Units
                             if (weaponUtilStat.FinalValue > weaponUtilStatValue)
                                 weaponUtilStatValue = weaponUtilStat.FinalValue;
                         }
+
+                        finalValue += weaponUtilStatValue;
                     }
-                    equation = equation.Replace("{WeaponUtilStat}", weaponUtilStatValue.ToString());
+
+                    equation = equation.Replace("{WeaponUtilStat}", finalValue.ToString());
                 }
 
                 //{WeaponStat[...]}
@@ -611,10 +626,16 @@ namespace RedditEmblemAPI.Models.Output.Units
                 {
                     foreach (Match match in weaponStatMatches)
                     {
-                        int weaponStatValue = 0;
-                        if (equipped != null && !equipped.Item.Stats.TryGetValue(match.Groups[1].Value, out weaponStatValue))
-                            throw new UnmatchedStatException(match.Groups[1].Value);
-                        equation = equation.Replace(match.Groups[0].Value, weaponStatValue.ToString());
+                        int finalValue = 0;
+                        foreach(UnitInventoryItem item in equippedItems)
+                        {
+                            int weaponStatValue = 0;
+                            if (!item.Item.Stats.TryGetValue(match.Groups[1].Value, out weaponStatValue))
+                                throw new UnmatchedStatException(match.Groups[1].Value);
+                            finalValue += weaponStatValue;
+                        }
+                        
+                        equation = equation.Replace(match.Groups[0].Value, finalValue.ToString());
                     }
                 }
 

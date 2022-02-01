@@ -61,12 +61,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
         /// <exception cref="UnmatchedStatException"></exception>
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
-            UnitInventoryItem equipped = unit.Inventory.SingleOrDefault(i => i != null && i.IsEquipped);
-            if (equipped == null)
+            IList<UnitInventoryItem> equippedItems = unit.Inventory.SelectMany(s => s.Items.Where(i => i != null && i.IsEquipped)).ToList();
+            if (equippedItems.Count() == 0)
                 return;
 
             //The equipped item's category must be in the category list
-            if (!this.Categories.Contains(equipped.Item.Category))
+            if (!equippedItems.Any(ei => this.Categories.Contains(ei.Item.Category)))
                 return;
 
             ApplyUnitCombatStatModifiers(unit, skill.Name, this.Stats, this.Values);

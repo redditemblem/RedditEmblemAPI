@@ -11,16 +11,19 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index of a unit's equipped item name.
+        /// Required. List of the sections in the inventory.
         /// </summary>
         [JsonRequired]
-        public int EquippedItem { get; set; }
+        public IList<InventorySectionConfig> Sections { get; set; }
+
+        #endregion
+
+        #region Optional Fields
 
         /// <summary>
-        /// Required. List of cell indexes for a unit's inventory items.
+        /// Optional. The overarching header title for the Inventory section in the UI. Defaults to "Inventory".
         /// </summary>
-        [JsonRequired]
-        public IList<int> Slots { get; set; }
+        public string InventoryTitle { get; set; } = "Inventory";
 
         #endregion
     }

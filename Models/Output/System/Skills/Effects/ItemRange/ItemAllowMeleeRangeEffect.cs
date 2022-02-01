@@ -34,20 +34,23 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// </summary>
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
-            foreach (UnitInventoryItem item in unit.Inventory)
+            foreach(UnitInventorySection section in unit.Inventory)
             {
-                if (item == null)
-                    continue;
+                foreach (UnitInventoryItem item in section.Items)
+                {
+                    if (item == null)
+                        continue;
 
-                //The item must have a listed category
-                if (!this.Categories.Contains(item.Item.Category))
-                    continue;
+                    //The item must have a listed category
+                    if (!this.Categories.Contains(item.Item.Category))
+                        continue;
 
-                //Items with a minimum range of 0 are not affected
-                if (item.Item.Range.Minimum == 0)
-                    continue;
+                    //Items with a minimum range of 0 are not affected
+                    if (item.Item.Range.Minimum == 0)
+                        continue;
 
-                item.AllowMeleeRange = true;
+                    item.AllowMeleeRange = true;
+                }
             }
         }
     }
