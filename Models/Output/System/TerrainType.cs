@@ -138,7 +138,7 @@ namespace RedditEmblemAPI.Models.Output.System
             {
                 this.WarpCost = ParseHelper.Int_Positive(data, config.WarpCost, "Warp Cost");
             }
-            else this.WarpCost = 0;
+            else this.WarpCost = -1;
         }
 
         /// <summary>

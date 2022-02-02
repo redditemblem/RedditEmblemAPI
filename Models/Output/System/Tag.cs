@@ -34,6 +34,12 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public bool ShowOnUnit { get; set; }
 
+        /// <summary>
+        /// The unit aura color for the tag.
+        /// </summary>
+        [JsonIgnore]
+        public string UnitAura { get; set; }
+
         #endregion
 
         /// <summary>
@@ -43,8 +49,9 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
             this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", false);
-            this.ShowOnUnit = (   ParseHelper.SafeStringParse(data, config.ShowOnUnit, "Show On Unit", false) == "Yes" 
-                               && !string.IsNullOrEmpty(this.SpriteURL) );
+            this.ShowOnUnit = (ParseHelper.SafeStringParse(data, config.ShowOnUnit, "Show On Unit", false) == "Yes"
+                               && !string.IsNullOrEmpty(this.SpriteURL));
+            this.UnitAura = ParseHelper.SafeHexParse(data, config.UnitAura, "Unit Aura", false);
         }
 
         #region Static Functions

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Services.Helpers
 {
@@ -165,7 +166,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <returns></returns>
         public static string SafeURLParse(string value, string fieldName, bool isRequired)
         {
-            if(string.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 if (isRequired) throw new RequiredValueNotProvidedException(fieldName);
                 else return string.Empty;
@@ -179,6 +180,38 @@ namespace RedditEmblemAPI.Services.Helpers
                 throw new URLException(fieldName, value);
 
             return value;
+        }
+
+        /// <summary>
+        /// Returns the value of the cell in <paramref name="data"/> at <paramref name="index"/> after validating that it is a hex code.
+        /// </summary>
+        public static string SafeHexParse(IList<string> data, int index, string fieldName, bool isRequired)
+        {
+            return SafeHexParse(data.ElementAtOrDefault<string>(index), fieldName, isRequired);
+        }
+
+        /// <summary>
+        /// Returns <paramref name="value"/> after validating that it is a hex code.
+        /// </summary>
+        public static string SafeHexParse(string value, string fieldName, bool isRequired)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                if (isRequired) throw new RequiredValueNotProvidedException(fieldName);
+                else return string.Empty;
+            }
+
+            value = value.Trim();
+
+            //Validate that this string is a hex code
+            Regex hexRegex = new Regex("^#?([0-9A-Fa-f]{6}$)");
+            Match match = hexRegex.Match(value);
+
+            if (!match.Success)
+                throw new HexException(fieldName, value);
+
+            //Return hex formatted with a # symbol
+            return $"#{match.Groups[1]}";
         }
 
         #endregion

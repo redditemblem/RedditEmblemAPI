@@ -118,6 +118,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         public IList<string> Tags { get; set; }
 
         /// <summary>
+        /// Hex code for the unit's aura.
+        /// </summary>
+        public string UnitAura { get; private set; }
+
+        /// <summary>
         /// Description of how the unit behaves.
         /// </summary>
         public string Behavior { get; set; }
@@ -527,6 +532,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <param name="tags"></param>
         private void MatchTags(IDictionary<string, Tag> tags)
         {
+            this.UnitAura = string.Empty;
+
             foreach (string tag in this.Tags)
             {
                 Tag match;
@@ -534,6 +541,10 @@ namespace RedditEmblemAPI.Models.Output.Units
                     throw new UnmatchedTagException(tag);
 
                 match.Matched = true;
+
+                //Set the first unit aura we come across, if any
+                if (string.IsNullOrEmpty(this.UnitAura) && !string.IsNullOrEmpty(match.UnitAura))
+                    this.UnitAura = match.UnitAura;
             }
         }
 

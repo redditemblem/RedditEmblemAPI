@@ -30,6 +30,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Tags
         /// </summary>
         public int ShowOnUnit { get; set; } = -1;
 
+        /// <summary>
+        /// Optional. Cell index for a tag's unit aura hex.
+        /// </summary>
+        public int UnitAura { get; set; } = -1;
+
         #endregion
     }
 }

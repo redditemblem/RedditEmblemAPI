@@ -163,7 +163,8 @@
       },
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
-      "ShowOnUnit": 0 //Optional
+      "ShowOnUnit": 0, //Optional
+      "UnitAura": 0 //Optional
     },
     "TerrainTypes": { //Required
       "Query": {

@@ -314,7 +314,8 @@
       },
       "Name": 0,
       "SpriteURL": 1,
-      "ShowOnUnit": 2
+      "ShowOnUnit": 2,
+      "UnitAura": 3
     }
   },
   "Units": {
@@ -458,7 +459,7 @@
     ],
     "Inventory": {
       "EquippedItem": 34,
-      "Slots": [ 35, 36, 37, 38, 39 ]
+          "Slots": [ 35, 36, 37, 38, 39 ]
     },
     "Skills": [ 40, 41, 42, 43, 44, 45, 46, 47 ],
     "StatusConditions": [ 58, 59, 60 ]
