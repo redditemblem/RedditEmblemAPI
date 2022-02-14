@@ -1,7 +1,9 @@
 ﻿using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
 {
@@ -34,11 +36,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             //If unit is not on the map, don't apply
-            if (unit.OriginTiles.Count == 0)
+            if (!unit.Location.IsOnMap())
                 return;
 
-            List<Tile> radius = map.GetTilesInRadius(unit.OriginTiles, this.Radius);
-            radius.ForEach(t => t.ObstructingUnits.Add(unit));
+            List<Tile> radius = map.GetTilesInRadius(unit.Location.OriginTiles, this.Radius);
+            radius.ForEach(t => t.UnitData.ObstructingUnits.Add(unit));
         }
     }
 }

@@ -1,11 +1,7 @@
-﻿using NCalc;
-using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Common;
+﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Units;
-using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.StatusConditions;
@@ -22,6 +18,8 @@ namespace RedditEmblemAPI.Models.Output.Units
     /// </summary>
     public class Unit
     {
+        #region Attributes
+
         /// <summary>
         /// The unit's name.
         /// </summary>
@@ -38,47 +36,25 @@ namespace RedditEmblemAPI.Models.Output.Units
         public string Player { get; set; }
 
         /// <summary>
-        /// The sprite image URL for the unit.
-        /// </summary>
-        public string SpriteURL { get; set; }
-
-        /// <summary>
-        /// The portrait image URL for the unit.
-        /// </summary>
-        public string PortraitURL { get; set; }
-
-        /// <summary>
         /// List of the unit's text fields.
         /// </summary>
         public IList<string> TextFields { get; set; }
 
         /// <summary>
-        /// Unparsed, raw coordinate string value.
+        /// Container for information about rendering a unit.
         /// </summary>
-        [JsonIgnore]
-        public string CoordinateString { get; set; }
+        public UnitSpriteData Sprite { get; set; }
 
         /// <summary>
-        /// The unit's location on the map.
+        /// Container for information about the unit's location on the map.
         /// </summary>
-        public Coordinate Coordinate { get; set; }
-
-        /// <summary>
-        /// The unit's current level.
-        /// </summary>
-        public int Level { get; set; }
+        public UnitLocationData Location { get; set; }
 
         /// <summary>
         /// A list of the unit's classes.
         /// </summary>
         [JsonIgnore]
         public IList<Class> ClassList { get; set; }
-
-        /// <summary>
-        /// Only for JSON serialization. A list of the unit's classes.
-        /// </summary>
-        [JsonProperty]
-        private IList<string> Classes { get { return this.ClassList.Select(c => c.Name).ToList(); } }
 
         /// <summary>
         /// The unit's movement type. Only used if classes are not provided.
@@ -92,25 +68,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         public Affiliation AffiliationObj { get; set; }
 
         /// <summary>
-        /// Only for JSON serialization. The unit's affiliation name.
+        /// Container for information about the unit's raw numbers.
         /// </summary>
-        [JsonProperty]
-        private string Affiliation { get { return AffiliationObj.Name; } }
-
-        /// <summary>
-        /// The unit's earned experience.
-        /// </summary>
-        public int Experience { get; set; }
-
-        /// <summary>
-        /// The amount of currency the unit has in their wallet.
-        /// </summary>
-        public int HeldCurrency { get; set; }
-
-        /// <summary>
-        /// Container object for HP values.
-        /// </summary>
-        public HP HP { get; set; }
+        public UnitStatsData Stats { get; set; }
 
         /// <summary>
         /// List of the unit's tags.
@@ -118,29 +78,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         public IList<string> Tags { get; set; }
 
         /// <summary>
-        /// Hex code for the unit's aura.
-        /// </summary>
-        public string UnitAura { get; private set; }
-
-        /// <summary>
         /// Description of how the unit behaves.
         /// </summary>
         public string Behavior { get; set; }
-
-        /// <summary>
-        /// Collection of the unit's calculated combat stats.
-        /// </summary>
-        public IDictionary<string, ModifiedStatValue> CombatStats { get; set; }
-
-        /// <summary>
-        /// Collection of the unit's system stats.
-        /// </summary>
-        public IDictionary<string, ModifiedStatValue> SystemStats { get; set; }
-
-        /// <summary>
-        /// Collection of the unit's stat values.
-        /// </summary>
-        public IDictionary<string, ModifiedStatValue> Stats { get; set; }
 
         /// <summary>
         /// Collection of the unit's weapon ranks.
@@ -164,79 +104,37 @@ namespace RedditEmblemAPI.Models.Output.Units
         public IList<Skill> SkillList { get; set; }
 
         /// <summary>
+        /// Container for information about a unit's movement/item ranges.
+        /// </summary>
+        public UnitRangeData Ranges { get; set; }
+
+        #region JSON Serialization Only
+
+        /// <summary>
+        /// Only for JSON serialization. A list of the unit's classes.
+        /// </summary>
+        [JsonProperty]
+        private IList<string> Classes { get { return this.ClassList.Select(c => c.Name).ToList(); } }
+
+        /// <summary>
+        /// Only for JSON serialization. The unit's affiliation name.
+        /// </summary>
+        [JsonProperty]
+        private string Affiliation { get { return AffiliationObj.Name; } }
+
+        /// <summary>
         /// Only for JSON serialization. A list of the unit's skills.
         /// </summary>
         [JsonProperty]
         private IList<string> Skills { get { return this.SkillList.Select(c => c.Name).ToList(); } }
 
-        #region Pair_Ups
+        #endregion JSON Serialization Only
 
-        /// <summary>
-        /// The <c>Unit</c> paired with the unit, if any.
-        /// </summary>
-        [JsonIgnore]
-        public Unit PairedUnitObj { get; set; }
-
-        //// <summary>
-        /// Only for JSON serialization. Returns the name of the <c>PairedUnit</c>. If <c>PairedUnit</c> is null, returns an empty string.
-        /// </summary>
-        [JsonProperty]
-        private string PairedUnit { get { return (this.PairedUnitObj == null ? string.Empty : this.PairedUnitObj.Name); } }
-
-        /// <summary>
-        /// Flag indicating if the unit is sitting in the back of a pair.
-        /// </summary>
-        public bool IsBackOfPair { get; set; }
-
-        #endregion
-
-        #region Movement_And_Range
-
-        /// <summary>
-        /// Flag indicating whether or not a unit's turn has been processed.
-        /// </summary>
-        public bool HasMoved { get; set; }
-
-        /// <summary>
-        /// The size of the unit in grid tiles. Defaults to 1.
-        /// </summary>
-        public int UnitSize { get; set; }
-
-        /// <summary>
-        /// The <c>Tile</c> that this unit is drawn at.
-        /// </summary>
-        [JsonIgnore]
-        public Tile AnchorTile { get; set; }
-
-        /// <summary>
-        /// The <c>Tile</c> that this unit's range originates from.
-        /// </summary>
-        [JsonIgnore]
-        public IList<Tile> OriginTiles { get; set; }
-
-        /// <summary>
-        /// List of tiles that the unit is capable of moving to.
-        /// </summary>
-        public IList<Coordinate> MovementRange { get; set; }
-
-        /// <summary>
-        /// List of tiles that the unit is capable of attacking.
-        /// </summary>
-        public IList<Coordinate> AttackRange { get; set; }
-
-        /// <summary>
-        /// List of tiles that the unit is capable of using a utility item on.
-        /// </summary>
-        public IList<Coordinate> UtilityRange { get; set; }
-
-        #endregion
+        #endregion Attributes
 
         #region Constants
 
         private static Regex unitNumberRegex = new Regex(@"\s([0-9]+$)"); //matches digits at the end of a string (ex. "Swordmaster _05_")
-
-        private static Regex unitStatRegex = new Regex(@"{UnitStat\[([A-Za-z]+)\]}"); //match unit stat name
-        private static Regex weaponStatRegex = new Regex(@"{WeaponStat\[([A-Za-z]+)\]}"); //match weapon stat name
 
         #endregion
 
@@ -245,72 +143,30 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public Unit(UnitsConfig config, IList<string> data, SystemInfo systemData)
         {
-            //Required fields
+            //Basic fields
             this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", true);
-            this.Level = ParseHelper.Int_NonZeroPositive(data, config.Level, "Level");
-            this.CoordinateString = ParseHelper.SafeStringParse(data, config.Coordinate, "Coordinate", false);
-            this.HP = new HP(data, config.HP.Current, config.HP.Maximum);
-
-            //Optional fields
+            this.UnitNumber = ExtractUnitNumberFromName(this.Name);
             this.Player = ParseHelper.SafeStringParse(data, config.Player, "Player", false);
-            this.PortraitURL = ParseHelper.SafeURLParse(data, config.PortraitURL, "Portrait URL", false);
-            this.UnitSize = ParseHelper.OptionalInt_NonZeroPositive(data, config.UnitSize, "Unit Size");
-            this.HasMoved = (ParseHelper.SafeStringParse(data, config.HasMoved, "Has Moved", false) == "Yes");
-
-            int experience = ParseHelper.OptionalInt_Positive(data, config.Experience, "Experience", -1);
-            if (experience > -1) experience %= 100;
-            this.Experience = experience;
-
-            this.HeldCurrency = ParseHelper.OptionalInt_Positive(data, config.HeldCurrency, "Currency");
             this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
             this.Tags = ParseHelper.StringCSVParse(data, config.Tags);
             this.Behavior = ParseHelper.SafeStringParse(data, config.Behavior, "Behavior", false);
 
-            this.OriginTiles = new List<Tile>();
-            this.MovementRange = new List<Coordinate>();
-            this.AttackRange = new List<Coordinate>();
-            this.UtilityRange = new List<Coordinate>();
+            //Complex container objects
+            this.Sprite = new UnitSpriteData(config, data);
+            this.Location = new UnitLocationData(config, data);
+            this.Stats = new UnitStatsData(config, data);
+            this.Ranges = new UnitRangeData();
 
-            //Find unit number
-            Match numberMatch = unitNumberRegex.Match(this.Name);
-            if (numberMatch.Success)
-                this.UnitNumber = numberMatch.Value.Trim();
-
-            //Match affiliation
-            string affiliation = ParseHelper.SafeStringParse(data, config.Affiliation, "Affiliation", true);
-            Affiliation affMatch;
-            if (!systemData.Affiliations.TryGetValue(affiliation, out affMatch))
-                throw new UnmatchedAffiliationException(affiliation);
-            this.AffiliationObj = affMatch;
-            affMatch.Matched = true;
-
-            this.ClassList = new List<Class>();
+            MatchAffiliation(data, config.Affiliation, systemData.Affiliations);
             BuildClasses(data, config.Classes, systemData.Classes);
 
             //If the system does not use classes, fall back on the MovementType attribute
             if (this.ClassList.Count == 0)
                 this.MovementType = ParseHelper.SafeStringParse(data, config.MovementType, "Movement Type", true);
 
-            this.WeaponRanks = new Dictionary<string, string>();
             BuildWeaponRanks(data, config.WeaponRanks, systemData.WeaponRanks.Any());
-
-            this.CombatStats = new Dictionary<string, ModifiedStatValue>();
-            BuildCombatStats(data, config.CombatStats);
-
-            this.SystemStats = new Dictionary<string, ModifiedStatValue>();
-            BuildSystemStats(data, config.SystemStats);
-
-            this.Stats = new Dictionary<string, ModifiedStatValue>();
-            BuildStats(data, config.Stats);
-
-            this.Inventory = new List<UnitInventoryItem>();
             BuildInventory(data, config.Inventory, systemData.Items, systemData.WeaponRanks, systemData.WeaponRankBonuses);
-
-            this.SkillList = new List<Skill>();
             BuildSkills(data, config.Skills, systemData.Skills);
-
-            this.StatusConditions = new List<UnitStatus>();
             BuildStatusConditions(data, config.StatusConditions, systemData.StatusConditions);
 
             //If we have loaded tags, attempt to match. If not, just keep our plaintext list.
@@ -322,6 +178,8 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         private void BuildWeaponRanks(IList<string> data, IList<UnitWeaponRanksConfig> config, bool systemUsesWeaponRanks)
         {
+            this.WeaponRanks = new Dictionary<string, string>();
+
             foreach (UnitWeaponRanksConfig rank in config)
             {
                 string rankType = ParseHelper.SafeStringParse(data, rank.Type, "Weapon Rank Type", false);
@@ -337,46 +195,10 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
         }
 
-        private void BuildSystemStats(IList<string> data, IList<ModifiedNamedStatConfig> config)
-        {
-            foreach (ModifiedNamedStatConfig stat in config)
-            {
-                ModifiedStatValue temp = new ModifiedStatValue();
-                temp.BaseValue = ParseHelper.Int_Any(data, stat.BaseValue, stat.SourceName);
-
-                //Parse modifiers list
-                foreach (NamedStatConfig mod in stat.Modifiers)
-                {
-                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
-                    if (val == 0) continue;
-                    temp.Modifiers.Add(mod.SourceName, val);
-                }
-
-                this.SystemStats.Add(stat.SourceName, temp);
-            }
-        }
-
-        private void BuildStats(IList<string> data, IList<ModifiedNamedStatConfig> config)
-        {
-            foreach (ModifiedNamedStatConfig stat in config)
-            {
-                ModifiedStatValue temp = new ModifiedStatValue();
-                temp.BaseValue = ParseHelper.Int_Positive(data, stat.BaseValue, stat.SourceName);
-
-                //Parse modifiers list
-                foreach (NamedStatConfig mod in stat.Modifiers)
-                {
-                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
-                    if (val == 0) continue;
-                    temp.Modifiers.Add(mod.SourceName, val);
-                }
-
-                this.Stats.Add(stat.SourceName, temp);
-            }
-        }
-
         private void BuildStatusConditions(IList<string> data, IList<int> indexes, IDictionary<string, StatusCondition> statuses)
         {
+            this.StatusConditions = new List<UnitStatus>();
+
             foreach (int index in indexes)
             {
                 //Skip blank cells
@@ -391,6 +213,8 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         private void BuildInventory(IList<string> data, InventoryConfig config, IDictionary<string, Item> items, IList<string> weaponRanks, IList<WeaponRankBonus> weaponRankBonuses)
         {
+            this.Inventory = new List<UnitInventoryItem>();
+
             foreach (int index in config.Slots)
             {
                 string name = ParseHelper.SafeStringParse(data, index, "Item Name", false);
@@ -431,7 +255,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 foreach (string stat in equipped.Item.EquippedStatModifiers.Keys)
                 {
                     ModifiedStatValue mods;
-                    if (!this.Stats.TryGetValue(stat, out mods))
+                    if (!this.Stats.General.TryGetValue(stat, out mods))
                         throw new UnmatchedStatException(stat);
                     mods.Modifiers.Add($"{equipped.Item.Name} (Eqp)", equipped.Item.EquippedStatModifiers[stat]);
                 }
@@ -448,7 +272,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                         foreach (string stat in bonus.CombatStatModifiers.Keys)
                         {
                             ModifiedStatValue mods;
-                            if (!this.CombatStats.TryGetValue(stat, out mods))
+                            if (!this.Stats.Combat.TryGetValue(stat, out mods))
                                 throw new UnmatchedStatException(stat);
                             mods.Modifiers.Add($"{equipped.Item.Category} {unitRank} Rank Bonus", bonus.CombatStatModifiers[stat]);
                         }
@@ -456,7 +280,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                         foreach (string stat in bonus.StatModifiers.Keys)
                         {
                             ModifiedStatValue mods;
-                            if (!this.Stats.TryGetValue(stat, out mods))
+                            if (!this.Stats.General.TryGetValue(stat, out mods))
                                 throw new UnmatchedStatException(stat);
                             mods.Modifiers.Add($"{equipped.Item.Category} {unitRank} Rank Bonus", bonus.StatModifiers[stat]);
                         }
@@ -470,7 +294,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 foreach (string stat in inv.Item.InventoryStatModifiers.Keys)
                 {
                     ModifiedStatValue mods;
-                    if (!this.Stats.TryGetValue(stat, out mods))
+                    if (!this.Stats.General.TryGetValue(stat, out mods))
                         throw new UnmatchedStatException(stat);
                     mods.Modifiers.Add($"{inv.Item.Name} (Inv)", inv.Item.InventoryStatModifiers[stat]);
                 }
@@ -483,6 +307,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <exception cref="UnmatchedSkillException"></exception>
         private void BuildSkills(IList<string> data, IList<int> indexes, IDictionary<string, Skill> skills)
         {
+            this.SkillList = new List<Skill>();
+
             foreach (int index in indexes)
             {
                 //Skip blank cells
@@ -505,6 +331,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <exception cref="UnmatchedClassException"></exception>
         private void BuildClasses(IList<string> data, IList<int> indexes, IDictionary<string, Class> classes)
         {
+            this.ClassList = new List<Class>();
+
             foreach (int index in indexes)
             {
                 string className = ParseHelper.SafeStringParse(data, index, "Class Name", false);
@@ -522,8 +350,22 @@ namespace RedditEmblemAPI.Models.Output.Units
                 this.Tags = this.Tags.Union(match.Tags).Distinct().ToList();
             }
 
-            if (indexes.Count > 0 && this.ClassList.Count < 1)
+            if (indexes.Count > 0 && !this.ClassList.Any())
                 throw new Exception("Unit must have at least one class defined.");
+        }
+
+        #endregion Build Functions
+
+        #region Match Functions
+
+        private void MatchAffiliation(IList<string> data, int affiliationIndex, IDictionary<string, Affiliation> affiliations)
+        {
+            string affiliation = ParseHelper.SafeStringParse(data, affiliationIndex, "Affiliation", true);
+            Affiliation affMatch;
+            if (!affiliations.TryGetValue(affiliation, out affMatch))
+                throw new UnmatchedAffiliationException(affiliation);
+            this.AffiliationObj = affMatch;
+            affMatch.Matched = true;
         }
 
         /// <summary>
@@ -532,8 +374,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <param name="tags"></param>
         private void MatchTags(IDictionary<string, Tag> tags)
         {
-            this.UnitAura = string.Empty;
-
             foreach (string tag in this.Tags)
             {
                 Tag match;
@@ -543,99 +383,19 @@ namespace RedditEmblemAPI.Models.Output.Units
                 match.Matched = true;
 
                 //Set the first unit aura we come across, if any
-                if (string.IsNullOrEmpty(this.UnitAura) && !string.IsNullOrEmpty(match.UnitAura))
-                    this.UnitAura = match.UnitAura;
+                if (string.IsNullOrEmpty(this.Sprite.Aura) && !string.IsNullOrEmpty(match.UnitAura))
+                    this.Sprite.Aura = match.UnitAura;
             }
         }
 
-        /// <summary>
-        /// Adds the stats from <paramref name="stats"/> into <c>CombatStats</c>. Does NOT calculate their values.
-        /// </summary>
-        private void BuildCombatStats(IList<string> data, IList<CalculatedStatConfig> stats)
+        #endregion Match Functions
+
+        private string ExtractUnitNumberFromName(string name)
         {
-            foreach (CalculatedStatConfig stat in stats)
-            {
-                ModifiedStatValue temp = new ModifiedStatValue();
-
-                //Parse modifiers list
-                foreach (NamedStatConfig mod in stat.Modifiers)
-                {
-                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
-                    if (val == 0) continue;
-                    temp.Modifiers.Add(mod.SourceName, val);
-                }
-
-                this.CombatStats.Add(stat.SourceName, temp);
-            }
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Assembles and executes the equations in <paramref name="stats"/>.
-        /// </summary>
-        /// <param name="stats"></param>
-        public void CalculateCombatStats(IList<CalculatedStatConfig> stats)
-        {
-            foreach (CalculatedStatConfig stat in stats)
-            {
-                string equation = stat.Equation;
-                UnitInventoryItem equipped = this.Inventory.SingleOrDefault(i => i != null && i.IsEquipped);
-
-                //{UnitStat[...]}
-                //Replaced by values from the unit.Stats list
-                MatchCollection unitStatMatches = unitStatRegex.Matches(equation);
-                if (unitStatMatches.Count > 0)
-                {
-                    foreach (Match match in unitStatMatches)
-                    {
-                        ModifiedStatValue unitStat;
-                        if (!this.Stats.TryGetValue(match.Groups[1].Value, out unitStat))
-                            throw new UnmatchedStatException(match.Groups[1].Value);
-                        equation = equation.Replace(match.Groups[0].Value, unitStat.FinalValue.ToString());
-                    }
-                }
-
-                //{WeaponUtilStat}
-                if (equation.Contains("{WeaponUtilStat}"))
-                {
-                    int weaponUtilStatValue = 0;
-                    if (equipped != null)
-                    {
-                        foreach (string utilStatName in equipped.Item.UtilizedStats)
-                        {
-                            ModifiedStatValue weaponUtilStat;
-                            if (!this.Stats.TryGetValue(utilStatName, out weaponUtilStat))
-                                throw new UnmatchedStatException(utilStatName);
-
-                            //Take the greatest stat value of all the utilized stats
-                            if (weaponUtilStat.FinalValue > weaponUtilStatValue)
-                                weaponUtilStatValue = weaponUtilStat.FinalValue;
-                        }
-                    }
-                    equation = equation.Replace("{WeaponUtilStat}", weaponUtilStatValue.ToString());
-                }
-
-                //{WeaponStat[...]}
-                MatchCollection weaponStatMatches = weaponStatRegex.Matches(equation);
-                if (weaponStatMatches.Count > 0)
-                {
-                    foreach (Match match in weaponStatMatches)
-                    {
-                        int weaponStatValue = 0;
-                        if (equipped != null && !equipped.Item.Stats.TryGetValue(match.Groups[1].Value, out weaponStatValue))
-                            throw new UnmatchedStatException(match.Groups[1].Value);
-                        equation = equation.Replace(match.Groups[0].Value, weaponStatValue.ToString());
-                    }
-                }
-
-                //Throw an error if anything remains unparsed
-                if (equation.Contains("{") || equation.Contains("}"))
-                    throw new UnrecognizedEquationVariableException(stat.Equation);
-
-                Expression expression = new Expression(equation);
-                this.CombatStats[stat.SourceName].BaseValue = Math.Max(0, Convert.ToInt32(expression.Evaluate()));
-            }
+            Match numberMatch = unitNumberRegex.Match(name);
+            if (numberMatch.Success)
+                return numberMatch.Value.Trim();
+            return String.Empty;
         }
 
         public string GetUnitMovementType()

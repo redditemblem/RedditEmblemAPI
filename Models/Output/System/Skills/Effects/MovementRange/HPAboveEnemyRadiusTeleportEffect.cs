@@ -1,5 +1,6 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
@@ -46,21 +47,21 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             //If unit is not on the map, don't apply
-            if (unit.OriginTiles.Count == 0)
+            if (!unit.Location.IsOnMap())
                 return;
 
             //Unit must have an HP percentage above the configured value
-            if (unit.HP.Percentage < this.HPPercentage)
+            if (unit.Stats.HP.Percentage < this.HPPercentage)
                 return;
 
-            if (unit.UnitSize > 1)
+            if (unit.Location.UnitSize > 1)
                 throw new SkillEffectMultitileUnitsNotSupportedException(this.Name);
 
             //Locate valid enemy units and select tiles near them
             IList<Tile> tiles = units.Where(u => u.AffiliationObj.Grouping != unit.AffiliationObj.Grouping
-                                              && u.OriginTiles.Count > 0
-                                              && (u.OriginTiles.Any(o1 => unit.OriginTiles.Any(o2 => o1.Coordinate.DistanceFrom(o2.Coordinate) <= this.TeleportationRange)) || this.TeleportationRange == 99))
-                                     .SelectMany(u => map.GetTilesInRadius(u.OriginTiles, this.Radius))
+                                              && u.Location.IsOnMap()
+                                              && (u.Location.OriginTiles.Any(o1 => unit.Location.OriginTiles.Any(o2 => o1.Coordinate.DistanceFrom(o2.Coordinate) <= this.TeleportationRange)) || this.TeleportationRange == 99))
+                                     .SelectMany(u => map.GetTilesInRadius(u.Location.OriginTiles, this.Radius))
                                      .ToList();
 
             AddTeleportTargetsToUnitRange(unit, tiles);

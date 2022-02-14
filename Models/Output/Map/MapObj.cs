@@ -4,6 +4,7 @@ using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Query;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Services.Helpers;
 using SkiaSharp;
@@ -214,8 +215,8 @@ namespace RedditEmblemAPI.Models.Output.Map
 
                             //Two-way bind warp group data
                             warpGroup.Add(temp);
-                            temp.WarpGroup = warpGroup;
-                            temp.WarpGroupNumber = warpGroupNum;
+                            temp.WarpData.WarpGroup = warpGroup;
+                            temp.WarpData.WarpGroupNumber = warpGroupNum;
                         }
 
                         currentRow.Add(temp);

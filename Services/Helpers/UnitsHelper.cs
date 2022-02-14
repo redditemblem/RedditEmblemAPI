@@ -4,6 +4,7 @@ using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.Units;
@@ -51,13 +52,13 @@ namespace RedditEmblemAPI.Services.Helpers
             {
                 try
                 {
-                    unit.Coordinate = new Coordinate(unit.CoordinateString);
+                    unit.Location.Coordinate = new Coordinate(unit.Location.CoordinateString);
                     AddUnitToMap(unit, map, true);
                 }
                 catch (CoordinateFormattingException ex)
                 {
                     //If the coordinates aren't in an <x,y> format, check if it's the name of another unit.
-                    Unit pair = units.FirstOrDefault(u => u.Name == unit.CoordinateString);
+                    Unit pair = units.FirstOrDefault(u => u.Name == unit.Location.CoordinateString);
 
                     if (pair == null)
                         throw new UnitProcessingException(unit.Name, ex);
@@ -67,28 +68,28 @@ namespace RedditEmblemAPI.Services.Helpers
                         throw new UnitProcessingException(unit.Name, new UnitPairedWithSelfException(unit.Name));
 
                     //Unit is already paired with someone
-                    if (unit.PairedUnitObj != null)
-                        throw new UnitProcessingException(unit.Name, new UnitAlreadyPairedException(unit.Name, unit.PairedUnitObj.Name, pair.Name));
+                    if (unit.Location.PairedUnitObj != null)
+                        throw new UnitProcessingException(unit.Name, new UnitAlreadyPairedException(unit.Name, unit.Location.PairedUnitObj.Name, pair.Name));
 
                     //Paired unit is already paired with someone
-                    if (pair.PairedUnitObj != null)
-                        throw new UnitProcessingException(unit.Name, new UnitAlreadyPairedException(pair.Name, pair.PairedUnitObj.Name, unit.Name));
+                    if (pair.Location.PairedUnitObj != null)
+                        throw new UnitProcessingException(unit.Name, new UnitAlreadyPairedException(pair.Name, pair.Location.PairedUnitObj.Name, unit.Name));
 
                     //Bind paired units together
-                    pair.PairedUnitObj = unit;
-                    unit.PairedUnitObj = pair;
-                    unit.IsBackOfPair = true;
-                    unit.Coordinate = new Coordinate();
+                    pair.Location.PairedUnitObj = unit;
+                    unit.Location.PairedUnitObj = pair;
+                    unit.Location.IsBackOfPair = true;
+                    unit.Location.Coordinate = new Coordinate();
                 }
             }
 
 
-            foreach (Unit unit in units.Where(u => u.IsBackOfPair))
+            foreach (Unit unit in units.Where(u => u.Location.IsBackOfPair))
             {
                 //Replace back unit coordinate with front unit coord
-                unit.Coordinate = unit.PairedUnitObj.Coordinate;
+                unit.Location.Coordinate = unit.Location.PairedUnitObj.Location.Coordinate;
 
-                if (unit.Coordinate.X < 1 || unit.Coordinate.Y < 1)
+                if (unit.Location.Coordinate.X < 1 || unit.Location.Coordinate.Y < 1)
                     continue;
 
                 //If we're calculating paired unit ranges, add origin tiles
@@ -130,7 +131,7 @@ namespace RedditEmblemAPI.Services.Helpers
             {
                 try
                 {
-                    unit.CalculateCombatStats(config.CombatStats);
+                    unit.Stats.CalculateCombatStats(config.CombatStats, unit.Inventory);
                 }
                 catch (Exception ex)
                 {
@@ -148,32 +149,32 @@ namespace RedditEmblemAPI.Services.Helpers
         private static void AddUnitToMap(Unit unit, MapObj map, bool applyTileBinding)
         {
             //Ignore hidden units
-            if (unit.Coordinate.X < 1 || unit.Coordinate.Y < 1)
+            if (unit.Location.Coordinate.X < 1 || unit.Location.Coordinate.Y < 1)
                 return;
 
-            for (int y = 0; y < unit.UnitSize; y++)
+            for (int y = 0; y < unit.Location.UnitSize; y++)
             {
-                for (int x = 0; x < unit.UnitSize; x++)
+                for (int x = 0; x < unit.Location.UnitSize; x++)
                 {
-                    Tile tile = map.GetTileByCoord(unit.Coordinate.X + x, unit.Coordinate.Y + y);
+                    Tile tile = map.GetTileByCoord(unit.Location.Coordinate.X + x, unit.Location.Coordinate.Y + y);
 
                     //Make sure this unit is not placed overlapping another
-                    if (tile.Unit != null && unit.Name != tile.Unit.Name && applyTileBinding)
-                        throw new UnitTileOverlapException(unit, tile.Unit, tile.Coordinate);
+                    if (tile.UnitData.Unit != null && unit.Name != tile.UnitData.Unit.Name && applyTileBinding)
+                        throw new UnitTileOverlapException(unit, tile.UnitData.Unit, tile.Coordinate);
 
-                    unit.OriginTiles.Add(tile);
-                    unit.MovementRange.Add(tile.Coordinate);
+                    unit.Location.OriginTiles.Add(tile);
+                    unit.Ranges.Movement.Add(tile.Coordinate);
 
                     if (applyTileBinding)
                     {
-                        tile.Unit = unit;
-                        tile.IsUnitOrigin = true;
+                        tile.UnitData.Unit = unit;
+                        tile.UnitData.IsUnitOrigin = true;
 
                         if (x == 0 && y == 0)
                         {
                             //Mark the anchor tile
-                            unit.AnchorTile = tile;
-                            tile.IsUnitAnchor = true;
+                            unit.Location.AnchorTile = tile;
+                            tile.UnitData.IsUnitAnchor = true;
                         }
                     }
                     
@@ -190,7 +191,7 @@ namespace RedditEmblemAPI.Services.Helpers
             foreach (KeyValuePair<string, int> modifier in tile.TerrainTypeObj.CombatStatModifiers)
             {
                 ModifiedStatValue stat;
-                if (!unit.CombatStats.TryGetValue(modifier.Key, out stat))
+                if (!unit.Stats.Combat.TryGetValue(modifier.Key, out stat))
                     throw new UnmatchedStatException(modifier.Key);
                 stat.Modifiers.TryAdd(tile.TerrainTypeObj.Name, modifier.Value);
             }
@@ -199,7 +200,7 @@ namespace RedditEmblemAPI.Services.Helpers
             foreach (KeyValuePair<string, int> modifier in tile.TerrainTypeObj.StatModifiers)
             {
                 ModifiedStatValue stat;
-                if (!unit.Stats.TryGetValue(modifier.Key, out stat))
+                if (!unit.Stats.General.TryGetValue(modifier.Key, out stat))
                     throw new UnmatchedStatException(modifier.Key);
                 stat.Modifiers.TryAdd(tile.TerrainTypeObj.Name, modifier.Value);
             }
@@ -213,7 +214,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 foreach(KeyValuePair<string, int> modifier in effect.TerrainEffect.CombatStatModifiers)
                 {
                     ModifiedStatValue stat;
-                    if (!unit.CombatStats.TryGetValue(modifier.Key, out stat))
+                    if (!unit.Stats.Combat.TryGetValue(modifier.Key, out stat))
                         throw new UnmatchedStatException(modifier.Key);
                     stat.Modifiers.TryAdd(effect.TerrainEffect.Name, modifier.Value);
                 }
@@ -222,7 +223,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 foreach (KeyValuePair<string, int> modifier in effect.TerrainEffect.StatModifiers)
                 {
                     ModifiedStatValue stat;
-                    if (!unit.Stats.TryGetValue(modifier.Key, out stat))
+                    if (!unit.Stats.General.TryGetValue(modifier.Key, out stat))
                         throw new UnmatchedStatException(modifier.Key);
                     stat.Modifiers.TryAdd(effect.TerrainEffect.Name, modifier.Value);
                 }

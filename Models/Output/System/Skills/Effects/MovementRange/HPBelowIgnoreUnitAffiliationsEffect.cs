@@ -30,7 +30,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public bool IsActive(Unit unit)
         {
             //HP percentage must be equal to or greater than unit HP percentage
-            return this.HPPercentage >= unit.HP.Percentage;
+            return this.HPPercentage >= unit.Stats.HP.Percentage;
         }
     }
 }

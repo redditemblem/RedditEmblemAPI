@@ -60,11 +60,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             //If unit is not on the map, don't apply
-            if (unit.OriginTiles.Count == 0)
+            if (!unit.Location.IsOnMap())
                 return;
 
             //The terrain type must be in the defined grouping
-            if (!unit.OriginTiles.Any(o => o.TerrainTypeObj.Groupings.Contains(this.TerrainTypeGrouping)))
+            if (!unit.Location.OriginTiles.Any(o => o.TerrainTypeObj.Groupings.Contains(this.TerrainTypeGrouping)))
                 return;
 
             ApplyUnitStatModifiers(unit, skill.Name, this.Stats, this.Values);

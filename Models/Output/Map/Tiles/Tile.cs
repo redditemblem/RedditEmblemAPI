@@ -2,9 +2,8 @@
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.Units;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace RedditEmblemAPI.Models.Output.Map
+namespace RedditEmblemAPI.Models.Output.Map.Tiles
 {
     /// <summary>
     /// Object representing a single tile on the <c>Map</c>.
@@ -19,43 +18,20 @@ namespace RedditEmblemAPI.Models.Output.Map
         public Coordinate Coordinate { get; set; }
 
         /// <summary>
-        /// The unit occupying this tile, if any.
-        /// </summary>
-        [JsonIgnore]
-        public Unit Unit { get; set; }
-
-        /// <summary>
-        /// Flag indicating if the <c>Unit</c> occupying this tile is anchored here. Units will be drawn at the anchor tile.
-        /// </summary>
-        public bool IsUnitAnchor { get; set; }
-
-        /// <summary>
-        /// Flag indicating if the <c>Unit</c> occupying this tile originates here. Units will have their range calculated from the origin tile.
-        /// </summary>
-        public bool IsUnitOrigin { get; set; }
-
-        /// <summary>
-        /// The nearby <c>Unit</c>s obstructing this tile, if any.
-        /// </summary>
-        [JsonIgnore]
-        public IList<Unit> ObstructingUnits { get; set; }
-
-        /// <summary>
         /// The terrain type of this tile.
         /// </summary>
         [JsonIgnore]
         public TerrainType TerrainTypeObj { get; set; }
 
         /// <summary>
-        /// List of warp tiles this tile is linked to.
+        /// Container for information about this tile's unit properties.
         /// </summary>
-        [JsonIgnore]
-        public IList<Tile> WarpGroup { get; set; }
+        public TileUnitData UnitData { get; set; }
 
         /// <summary>
-        /// Number associated with the warp group this tile is linked to.
+        /// Container for information about this tile's warp properties.
         /// </summary>
-        public int WarpGroupNumber { get; set; }
+        public TileWarpData WarpData { get; set; }
 
         /// <summary>
         /// List of the terrain effects on this tile.
@@ -65,28 +41,10 @@ namespace RedditEmblemAPI.Models.Output.Map
         #region JSON Serialization Only
 
         /// <summary>
-        /// Only for JSON serialization. Returns the name of the <c>Unit</c> on this tile. If <c>Unit</c> is null, returns an empty string.
-        /// </summary>
-        [JsonProperty]
-        private string OccupyingUnitName { get { return (this.Unit == null ? string.Empty : this.Unit.Name); } }
-
-        /// <summary>
-        /// Only for JSON serialization. Returns the name of the paired <c>Unit</c> on this tile. If <c>Unit</c> is null or there is no paired unit, returns an empty string.
-        /// </summary>
-        [JsonProperty]
-        private string PairedUnitName { get { return (this.Unit == null || this.Unit.PairedUnitObj == null ? string.Empty : this.Unit.PairedUnitObj.Name); } }
-
-        /// <summary>
         /// Only for JSON serialization. Returns the name of the <c>TerrainType</c> of this tile.
         /// </summary>
         [JsonProperty]
         private string TerrainType { get { return this.TerrainTypeObj.Name; } }
-
-        /// <summary>
-        /// Only for JSON serialization. Flag indicating if this tile has been placed in a warp group.
-        /// </summary>
-        [JsonProperty]
-        private bool InWarpGroup { get { return this.WarpGroup.Count > 0; } }
 
         /// <summary>
         /// Only for JSON serialization. The number of units with displayed movement on this tile.
@@ -120,12 +78,10 @@ namespace RedditEmblemAPI.Models.Output.Map
         public Tile(int x, int y, TerrainType terrainType)
         {
             this.Coordinate = new Coordinate(x, y);
-
-            this.Unit = null;
-            this.ObstructingUnits = new List<Unit>();
-
             this.TerrainTypeObj = terrainType;
-            this.WarpGroup = new List<Tile>();
+
+            this.UnitData = new TileUnitData();
+            this.WarpData = new TileWarpData();
             this.TerrainEffects = new List<TileTerrainEffect>();
         }
 

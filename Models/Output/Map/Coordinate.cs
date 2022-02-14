@@ -6,7 +6,7 @@ namespace RedditEmblemAPI.Models.Output.Map
     /// <summary>
     /// A coordinate pair (ex. "x,y") on the map.
     /// </summary>
-    public class Coordinate
+    public class Coordinate 
     {
         #region Attributes
 
@@ -113,7 +113,7 @@ namespace RedditEmblemAPI.Models.Output.Map
 
         #region Equivalence Functions
 
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             return Equals((Coordinate)obj);
         }

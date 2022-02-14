@@ -1,6 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
@@ -32,16 +33,16 @@ namespace RedditEmblemAPI.Services.Helpers
                 try
                 {
                     //Ignore hidden units
-                    if (!unit.OriginTiles.Any())
+                    if (!unit.Location.OriginTiles.Any())
                         continue;
 
                     //Calculate movement range
-                    int movementVal = unit.Stats[this.Map.Constants.UnitMovementStatName].FinalValue;
+                    int movementVal = unit.Stats.General[this.Map.Constants.UnitMovementStatName].FinalValue;
                     OverrideMovementEffect overrideMovEffect = unit.StatusConditions.Select(s => s.StatusObj.Effect).OfType<OverrideMovementEffect>().FirstOrDefault();
                     if (overrideMovEffect != null) movementVal = overrideMovEffect.MovementValue;
 
                     UnitRangeParameters unitParms = new UnitRangeParameters(unit);
-                    RecurseUnitRange(unitParms, unit.OriginTiles.Select(o => new MovementCoordSet(movementVal, o.Coordinate)).ToList(), string.Empty, null);
+                    RecurseUnitRange(unitParms, unit.Location.OriginTiles.Select(o => new MovementCoordSet(movementVal, o.Coordinate)).ToList(), string.Empty, null);
 
                     //Calculate item ranges
                     IList<Coordinate> atkRange = new List<Coordinate>();
@@ -81,7 +82,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     //Check for regular ranges
                     if (itemRanges.Any())
                     {
-                        foreach (Coordinate coord in unit.MovementRange)
+                        foreach (Coordinate coord in unit.Ranges.Movement)
                         {
                             foreach(ItemRangeDirection direction in RANGE_DIRECTIONS)
                             {
@@ -99,8 +100,8 @@ namespace RedditEmblemAPI.Services.Helpers
                         }
                     }
 
-                    unit.AttackRange = atkRange;
-                    unit.UtilityRange = utilRange;
+                    unit.Ranges.Attack = atkRange;
+                    unit.Ranges.Utility = utilRange;
                 }
                 catch (Exception ex)
                 {
@@ -128,7 +129,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
                 //If there is a Unit occupying this tile, check for affiliation collisions
                 //Check if this tile blocks units of a certain affiliation
-                if ( UnitIsBlocked(parms.Unit, tile.Unit, parms.IgnoresAffiliations) ||
+                if ( UnitIsBlocked(parms.Unit, tile.UnitData.Unit, parms.IgnoresAffiliations) ||
                     (tile.TerrainTypeObj.RestrictAffiliations.Any() && !tile.TerrainTypeObj.RestrictAffiliations.Contains(parms.Unit.AffiliationObj.Grouping))
                    ) 
                     return;
@@ -146,11 +147,11 @@ namespace RedditEmblemAPI.Services.Helpers
                 else if (moveCostMod != null && moveCost < 99)
                     moveCost += moveCostMod.Value;
 
-                if (tile.Unit != null && tile.Unit.AffiliationObj.Grouping == parms.Unit.AffiliationObj.Grouping && moveCost < 99)
+                if (tile.UnitData.Unit != null && tile.UnitData.Unit.AffiliationObj.Grouping == parms.Unit.AffiliationObj.Grouping && moveCost < 99)
                 {
                     //If tile is occupied by an ally, test if they have a skill that sets the move cost
                     //Only applies if value is less than natural move cost for unit
-                    OriginAllyMovementCostSetEffect allyMovCostSet = tile.Unit.SkillList.Select(s => s.Effect).OfType<OriginAllyMovementCostSetEffect>().FirstOrDefault();
+                    OriginAllyMovementCostSetEffect allyMovCostSet = tile.UnitData.Unit.SkillList.Select(s => s.Effect).OfType<OriginAllyMovementCostSetEffect>().FirstOrDefault();
                     if (allyMovCostSet != null && allyMovCostSet.MovementCost < moveCost)
                         moveCost = allyMovCostSet.MovementCost;
                 }
@@ -176,12 +177,12 @@ namespace RedditEmblemAPI.Services.Helpers
             if (!tiles.Any(t => t.TerrainTypeObj.CannotStopOn))
             {
                 foreach (Tile tile in tiles)
-                    if (!parms.Unit.MovementRange.Contains(tile.Coordinate))
-                        parms.Unit.MovementRange.Add(tile.Coordinate);
+                    if (!parms.Unit.Ranges.Movement.Contains(tile.Coordinate))
+                        parms.Unit.Ranges.Movement.Add(tile.Coordinate);
             }
 
             //Units may move onto obstructed tiles, but no further.
-            if (tiles.Any(t => UnitIsBlocked(parms.Unit, t.ObstructingUnits, parms.IgnoresAffiliations))) return;
+            if (tiles.Any(t => UnitIsBlocked(parms.Unit, t.UnitData.ObstructingUnits, parms.IgnoresAffiliations))) return;
 
 
             //Navigate in each cardinal direction, do not repeat tiles in this path
@@ -225,13 +226,13 @@ namespace RedditEmblemAPI.Services.Helpers
 
                 if (warpCost < 0) warpCost = 0;
 
-                foreach (Tile warpExit in warp.WarpGroup.Where(t => warp.Coordinate != t.Coordinate && (t.TerrainTypeObj.WarpType == WarpType.Exit || t.TerrainTypeObj.WarpType == WarpType.Dual)))
+                foreach (Tile warpExit in warp.WarpData.WarpGroup.Where(t => warp.Coordinate != t.Coordinate && (t.TerrainTypeObj.WarpType == WarpType.Exit || t.TerrainTypeObj.WarpType == WarpType.Dual)))
                 {
                     //Calculate range from warp exit in all possible unit orientations, starting with the anchor tile
                     Coordinate currAnchor = currCoords.First().Coordinate;
-                    for (int y = 0; y < parms.Unit.UnitSize; y++)
+                    for (int y = 0; y < parms.Unit.Location.UnitSize; y++)
                     {
-                        for (int x = 0; x < parms.Unit.UnitSize; x++)
+                        for (int x = 0; x < parms.Unit.Location.UnitSize; x++)
                         {
                             RecurseUnitRange(parms,
                                              currCoords.Select(c => new MovementCoordSet(c.RemainingMov - warpCost, new Coordinate(warpExit.Coordinate.X + Math.Abs(currAnchor.X - c.Coordinate.X) - x, warpExit.Coordinate.Y + Math.Abs(currAnchor.Y - c.Coordinate.Y) - y))).ToList(),
@@ -264,7 +265,7 @@ namespace RedditEmblemAPI.Services.Helpers
             visitedCoords += "_" + currCoord.ToString() + "_";
 
             //Check for items that can reach this tile
-            if (!parms.Unit.MovementRange.Contains(currCoord))
+            if (!parms.Unit.Ranges.Movement.Contains(currCoord))
             {
                 int horzDisplacement = Math.Abs(currCoord.X - parms.StartCoord.X);
                 int verticalDisplacement = Math.Abs(currCoord.Y - parms.StartCoord.Y);
@@ -358,7 +359,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 foreach (Tile tile in row)
                 {
                     //Only exclude tiles that the unit can move to or block items
-                    if (!unit.MovementRange.Contains(tile.Coordinate) && !tile.TerrainTypeObj.BlocksItems)
+                    if (!unit.Ranges.Movement.Contains(tile.Coordinate) && !tile.TerrainTypeObj.BlocksItems)
                     {
                         if (applyAtk) atkRange.Add(tile.Coordinate);
                         if (applyUtil) utilRange.Add(tile.Coordinate);

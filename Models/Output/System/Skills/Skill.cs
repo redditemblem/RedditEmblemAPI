@@ -7,6 +7,7 @@ using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects.PairUp;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats;
@@ -129,6 +130,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "AllyRadiusSelfStatModifier": return new AllyRadiusSelfStatModifierEffect(parameters);
                 case "NoAllyRadiusSelfCombatStatModifier": return new NoAllyRadiusSelfCombatStatModifierEffect(parameters);
                 case "NoAllyRadiusSelfStatModifier": return new NoAllyRadiusSelfStatModifierEffect(parameters);
+                //Pair Up Effects
+                case "InPairUpFrontCombatStatModifier": return new InPairUpFrontCombatStatModifierEffect(parameters);
+                case "InPairUpFrontStatModifier": return new InPairUpFrontStatModifierEffect(parameters);
+                case "InPairUpBackAllyCombatStatModifier": return new InPairUpBackAllyCombatStatModifierEffect(parameters);
+                case "InPairUpBackAllyStatModifier": return new InPairUpBackAllyStatModifierEffect(parameters);
             }
 
             throw new UnmatchedSkillEffectException(effectType);

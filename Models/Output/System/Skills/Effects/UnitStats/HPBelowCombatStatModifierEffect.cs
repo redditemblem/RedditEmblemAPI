@@ -59,7 +59,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             //HP percentage must be equal to or below threshold
-            if (unit.HP.Percentage > this.HPPercentage)
+            if (unit.Stats.HP.Percentage > this.HPPercentage)
                 return;
 
             ApplyUnitCombatStatModifiers(unit, skill.Name, this.Stats, this.Values);

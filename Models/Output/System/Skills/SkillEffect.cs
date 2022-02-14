@@ -1,6 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
 using RedditEmblemAPI.Models.Output.Units;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                 if (value == 0) continue;
 
                 ModifiedStatValue stat;
-                if (!unit.CombatStats.TryGetValue(statName, out stat))
+                if (!unit.Stats.Combat.TryGetValue(statName, out stat))
                     throw new UnmatchedStatException(statName);
                 stat.Modifiers.Add(modifierName, value);
             }
@@ -69,7 +70,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                 if (value == 0) continue;
 
                 ModifiedStatValue stat;
-                if (!unit.Stats.TryGetValue(statName, out stat))
+                if (!unit.Stats.General.TryGetValue(statName, out stat))
                     throw new UnmatchedStatException(statName);
                 stat.Modifiers.Add(modifierName, value);
             }
@@ -99,12 +100,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                 }
 
                 //Check for an enemy unit already occupying this tile
-                if (tile.Unit != null && tile.Unit.AffiliationObj.Grouping != unit.AffiliationObj.Grouping)
+                if (tile.UnitData.Unit != null && tile.UnitData.Unit.AffiliationObj.Grouping != unit.AffiliationObj.Grouping)
                     continue;
 
                 //If no issues arose, add the tile to the unit's movement range
-                if(!unit.MovementRange.Contains(tile.Coordinate))
-                    unit.MovementRange.Add(tile.Coordinate);
+                if(!unit.Ranges.Movement.Contains(tile.Coordinate))
+                    unit.Ranges.Movement.Add(tile.Coordinate);
             }
         }
 
