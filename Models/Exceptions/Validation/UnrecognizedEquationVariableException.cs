@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
         /// </summary>
         /// <param name="equation"></param>
         public UnrecognizedEquationVariableException(string equation)
-            : base($"The equation \"{equation}\" contains an unrecognized variable.")
+            : base($"The equation \"{equation}\" contains an unrecognized or improperly formatted variable.")
         { }
     }
 }

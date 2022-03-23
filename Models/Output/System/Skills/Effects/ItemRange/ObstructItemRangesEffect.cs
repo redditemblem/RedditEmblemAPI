@@ -5,17 +5,17 @@ using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
+namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
 {
-    public class ObstructTileRadiusEffect : SkillEffect
+    public class ObstructItemRangesEffect : SkillEffect
     {
         #region Attributes
 
-        protected override string Name { get { return "ObstructTileRadius"; } }
+        protected override string Name { get { return "ObstructItemRanges"; } }
         protected override int ParameterCount { get { return 1; } }
 
         /// <summary>
-        /// Param1. The range within this skill affects units.
+        /// Param1. The range within this skill affects item ranges.
         /// </summary>
         private int Radius { get; set; }
 
@@ -24,23 +24,23 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ObstructTileRadiusEffect(IList<string> parameters)
+        public ObstructItemRangesEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.Radius = ParseHelper.Int_NonZeroPositive(parameters, 0, "Param1");
+            this.Radius = ParseHelper.Int_Positive(parameters, 0, "Param1");
         }
 
         /// <summary>
-        /// Marks all tiles within <c>this.Radius</c> tiles of <paramref name="unit"/>'s origin as obstructed.
+        /// ddfdf
         /// </summary>
         public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
-            //If unit is not on the map, don't apply
+            //Ignore units not on the map
             if (!unit.Location.IsOnMap())
                 return;
 
-            List<Tile> radius = map.GetTilesInRadius(unit.Location.OriginTiles, this.Radius);
-            radius.ForEach(t => t.UnitData.UnitsObstructingMovement.Add(unit));
+            List<Tile> radius = map.GetTilesInRadius(unit.Location.OriginTiles, this.Radius).Union(unit.Location.OriginTiles).ToList();
+            radius.ForEach(t => t.UnitData.UnitsObstructingItems.Add(unit));
         }
     }
 }

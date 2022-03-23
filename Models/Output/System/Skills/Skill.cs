@@ -84,6 +84,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "StatModifier": return new StatModifierEffect(parameters);
                 case "HPBelowStatModifier": return new HPBelowStatModifierEffect(parameters);
                 case "HPAboveStatModifier": return new HPAboveStatModifierEffect(parameters);
+                case "ReplaceCombatStatFormulaVariable": return new ReplaceCombatStatFormulaVariableEffect(parameters);
                 //Equipped Item Effects
                 case "EquippedCategoryCombatStatModifier": return new EquippedCategoryCombatStatModifierEffect(parameters);
                 case "EquippedCategoryStatModifier": return new EquippedCategoryStatModifierEffect(parameters);
@@ -96,7 +97,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect(parameters);
                 case "WarpMovementCostModifier": return new WarpMovementCostModifierEffect(parameters);
                 case "WarpMovementCostSet": return new WarpMovementCostSetEffect(parameters);
-                case "OriginAllyMovementCostSet": return new OriginAllyMovementCostSetEffect(parameters);
+                case "RadiusAllyMovementCostSet":  return new RadiusAllyMovementCostSetEffect(parameters);
                     //Affiliations
                 case "IgnoreUnitAffiliations": return new IgnoreUnitAffiliationsEffect(parameters);
                 case "HPBelowIgnoreUnitAffiliations": return new HPBelowIgnoreUnitAffiliationsEffect(parameters);
@@ -119,6 +120,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "ItemMinRangeModifier": return new ItemMinRangeModifierEffect(parameters);
                 case "ItemMaxRangeSet": return new ItemMaxRangeSetEffect(parameters);
                 case "ItemMaxRangeModifier": return new ItemMaxRangeModifierEffect(parameters);
+                case "ObstructItemRanges": return new ObstructItemRangesEffect(parameters);
                 //Unit Radius Stat Effects
                     //Normal
                 case "AllyRadiusCombatStatModifier": return new AllyRadiusCombatStatModifierEffect(parameters);

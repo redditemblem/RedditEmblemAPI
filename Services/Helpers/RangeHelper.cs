@@ -147,13 +147,16 @@ namespace RedditEmblemAPI.Services.Helpers
                 else if (moveCostMod != null && moveCost < 99)
                     moveCost += moveCostMod.Value;
 
-                if (tile.UnitData.Unit != null && tile.UnitData.Unit.AffiliationObj.Grouping == parms.Unit.AffiliationObj.Grouping && moveCost < 99)
+                //Check if nearby units can affect the movement costs of this tile
+                if(moveCost < 99 && tile.UnitData.UnitsAffectingMovementCosts.Any())
                 {
-                    //If tile is occupied by an ally, test if they have a skill that sets the move cost
-                    //Only applies if value is less than natural move cost for unit
-                    OriginAllyMovementCostSetEffect allyMovCostSet = tile.UnitData.Unit.SkillList.Select(s => s.Effect).OfType<OriginAllyMovementCostSetEffect>().FirstOrDefault();
-                    if (allyMovCostSet != null && allyMovCostSet.MovementCost < moveCost)
-                        moveCost = allyMovCostSet.MovementCost;
+                    IList<IAffectMovementCost> activeEffects = tile.UnitData.UnitsAffectingMovementCosts.SelectMany(u => u.SkillList.Select(s => s.Effect).OfType<IAffectMovementCost>().Where(e => e.IsActive(u, parms.Unit))).ToList();
+                    if (activeEffects.Any())
+                    {
+                        int minEffectMovCost = activeEffects.Min(e => e.GetMovementCost());
+                        if (minEffectMovCost < moveCost)
+                            moveCost = minEffectMovCost;
+                    }
                 }
 
                 //Min/max value enforcement
@@ -182,7 +185,7 @@ namespace RedditEmblemAPI.Services.Helpers
             }
 
             //Units may move onto obstructed tiles, but no further.
-            if (tiles.Any(t => UnitIsBlocked(parms.Unit, t.UnitData.ObstructingUnits, parms.IgnoresAffiliations))) return;
+            if (tiles.Any(t => UnitIsBlocked(parms.Unit, t.UnitData.UnitsObstructingMovement, parms.IgnoresAffiliations))) return;
 
 
             //Navigate in each cardinal direction, do not repeat tiles in this path
@@ -262,8 +265,6 @@ namespace RedditEmblemAPI.Services.Helpers
             if (tile.TerrainTypeObj.BlocksItems)
                 return;
 
-            visitedCoords += "_" + currCoord.ToString() + "_";
-
             //Check for items that can reach this tile
             if (!parms.Unit.Ranges.Movement.Contains(currCoord))
             {
@@ -316,6 +317,16 @@ namespace RedditEmblemAPI.Services.Helpers
                 else if (validRanges.Any(r => !r.DealsDamage) && !utilRange.Contains(currCoord))
                     utilRange.Add(currCoord);
             }
+
+            //Don't make these checks on the starting tile
+            if (!string.IsNullOrEmpty(visitedCoords))
+            {
+                //Check if range can continue past this point
+                if (tile.UnitData.UnitsObstructingItems.Any(u => u.AffiliationObj.Grouping != parms.Unit.AffiliationObj.Grouping))
+                    return;
+            }
+
+            visitedCoords += "_" + currCoord.ToString() + "_";
 
             //Navigate in each cardinal direction, do not repeat tiles in this path
             //Left
@@ -392,11 +403,12 @@ namespace RedditEmblemAPI.Services.Helpers
             if (movingUnit.Name == blockingUnit.Name)
                 return false;
 
-            //Check if units are in the same affiliation grouping
-            if (movingUnit.AffiliationObj.Grouping == blockingUnit.AffiliationObj.Grouping)
+            //Check if the blocking unit is inflicted with a relevant status condition
+            if (blockingUnit.StatusConditions.Select(sc => sc.StatusObj.Effect).OfType<DoesNotBlockEnemyAffiliationsEffect>().Any())
                 return false;
 
-            return true;
+            //Finally, check if units are not in the same affiliation grouping
+            return movingUnit.AffiliationObj.Grouping != blockingUnit.AffiliationObj.Grouping;
         }
     }
 

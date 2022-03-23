@@ -29,7 +29,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                 throw new SkillEffectMissingParameterException(this.Name, this.ParameterCount, parameters.Count);
         }
 
-        public virtual void Apply(Unit unit, Skill skill, MapObj Map, IList<Unit> units)
+        public virtual void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
         {
             //By default, the effect applies nothing
         }

@@ -23,16 +23,28 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         public bool IsUnitAnchor { get; set; }
 
         /// <summary>
-        /// Flag indicating if the <c>Unit</c> occupying this tile originates here. Units will have their range calculated from the origin tile.
+        /// Flag indicating if the <c>Unit</c> occupying this tile originates here. Units will have their range calculated from their origin tiles.
         /// </summary>
         [JsonIgnore]
         public bool IsUnitOrigin { get; set; }
 
         /// <summary>
-        /// The nearby <c>Unit</c>s obstructing this tile, if any.
+        /// The nearby <c>Unit</c>s obstructing movement through this tile, if any.
         /// </summary>
         [JsonIgnore]
-        public IList<Unit> ObstructingUnits { get; set; }
+        public IList<Unit> UnitsObstructingMovement { get; set; }
+
+        /// <summary>
+        /// The nearby <c>Unit</c>s obstructing item ranges through this tile, if any.
+        /// </summary>
+        [JsonIgnore]
+        public IList<Unit> UnitsObstructingItems { get; set; }
+
+        /// <summary>
+        /// The nearby <c>Unit</c>s adjusting the movement costs of this tile, if any.
+        /// </summary>
+        [JsonIgnore]
+        public IList<Unit> UnitsAffectingMovementCosts { get; set; }
 
         #region JSON Serialization Only
 
@@ -58,8 +70,9 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         public TileUnitData()
         {
             this.Unit = null;
-            this.ObstructingUnits = new List<Unit>();
-
+            this.UnitsObstructingMovement = new List<Unit>();
+            this.UnitsObstructingItems = new List<Unit>();
+            this.UnitsAffectingMovementCosts = new List<Unit>();
         }
     }
 }

@@ -7,6 +7,7 @@ using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats;
 using RedditEmblemAPI.Models.Output.Units;
 using System;
 using System.Collections.Generic;
@@ -131,11 +132,12 @@ namespace RedditEmblemAPI.Services.Helpers
             {
                 try
                 {
-                    unit.Stats.CalculateCombatStats(config.CombatStats, unit.Inventory);
+                    unit.Stats.CalculateCombatStats(config.CombatStats, unit.Inventory, 
+                        unit.SkillList.Select(s => s.Effect).OfType<ReplaceCombatStatFormulaVariableEffect>().ToList());
                 }
                 catch (Exception ex)
                 {
-                    throw new UnitProcessingException(unit.Name, ex);
+                    throw new UnitCombatStatFormulaProcessingException(unit.Name, ex);
                 }
             }
 

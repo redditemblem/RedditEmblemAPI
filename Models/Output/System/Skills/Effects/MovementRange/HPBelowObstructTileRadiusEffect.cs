@@ -52,7 +52,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
                 return;
 
             List<Tile> radius = map.GetTilesInRadius(unit.Location.OriginTiles, this.Radius);
-            radius.ForEach(t => t.UnitData.ObstructingUnits.Add(unit));
+            radius.ForEach(t => t.UnitData.UnitsObstructingMovement.Add(unit));
         }
     }
 }

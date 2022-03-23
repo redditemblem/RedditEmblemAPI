@@ -4,6 +4,7 @@ using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -58,8 +59,8 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #region Constants
 
-        private static Regex unitStatRegex = new Regex(@"{UnitStat\[([A-Za-z]+)\]}"); //match unit stat name
-        private static Regex weaponStatRegex = new Regex(@"{WeaponStat\[([A-Za-z]+)\]}"); //match weapon stat name
+        private static Regex unitStatRegex = new Regex(@"{UnitStat\[([A-Za-z,]+)\]}"); //match unit stat name
+        private static Regex weaponStatRegex = new Regex(@"{WeaponStat\[([A-Za-z,]+)\]}"); //match weapon stat name
 
         #endregion Constants
 
@@ -155,25 +156,46 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Assembles and executes the equations in <paramref name="stats"/>.
         /// </summary>
-        public void CalculateCombatStats(IList<CalculatedStatConfig> stats, IList<UnitInventoryItem> unitInventory)
+        public void CalculateCombatStats(IList<CalculatedStatConfig> stats, IList<UnitInventoryItem> unitInventory, IList<ReplaceCombatStatFormulaVariableEffect> replacementEffects)
         {
             foreach (CalculatedStatConfig stat in stats)
             {
                 string equation = stat.Equation;
                 UnitInventoryItem equipped = unitInventory.SingleOrDefault(i => i != null && i.IsEquipped);
 
+                //First, check if skill effects replace any formula variables
+                foreach(ReplaceCombatStatFormulaVariableEffect effect in replacementEffects.Where(re => re.Stats.Contains(stat.SourceName)))
+                {
+                    for (int i = 0; i < effect.VariablesToReplace.Count; i++)
+                        equation = equation.Replace(effect.VariablesToReplace[i], effect.VariablesToUse[i]);
+                }
+
                 //{UnitStat[...]}
-                //Replaced by values from the Basic stat list
+                //Replaced by values from the General stat list
                 MatchCollection unitStatMatches = unitStatRegex.Matches(equation);
                 if (unitStatMatches.Count > 0)
                 {
                     foreach (Match match in unitStatMatches)
                     {
-                        ModifiedStatValue unitStat;
-                        if (!this.General.TryGetValue(match.Groups[1].Value, out unitStat))
-                            throw new UnmatchedStatException(match.Groups[1].Value);
-                        equation = equation.Replace(match.Groups[0].Value, unitStat.FinalValue.ToString());
+                        int maximumStatValue = int.MinValue;
+                        foreach(string statSplit in match.Groups[1].Value.Split(","))
+                        {
+                            ModifiedStatValue unitStat;
+                            if (!this.General.TryGetValue(statSplit, out unitStat))
+                                throw new UnmatchedStatException(statSplit);
+
+                            if(maximumStatValue < unitStat.FinalValue)
+                                maximumStatValue = unitStat.FinalValue;
+                        }
+                        
+                        equation = equation.Replace(match.Groups[0].Value, maximumStatValue.ToString());
                     }
+                }
+
+                //{UnitLevel}
+                if (equation.Contains("{UnitLevel}"))
+                {
+                    equation = equation.Replace("{UnitLevel}", this.Level.ToString());
                 }
 
                 //{WeaponUtilStat}
@@ -202,19 +224,43 @@ namespace RedditEmblemAPI.Models.Output.Units
                 {
                     foreach (Match match in weaponStatMatches)
                     {
-                        int weaponStatValue = 0;
-                        if (equipped != null && !equipped.Item.Stats.TryGetValue(match.Groups[1].Value, out weaponStatValue))
-                            throw new UnmatchedStatException(match.Groups[1].Value);
-                        equation = equation.Replace(match.Groups[0].Value, weaponStatValue.ToString());
+                        int maximumStatValue = int.MinValue;
+
+                        if(equipped != null)
+                        {
+                            foreach (string statSplit in match.Groups[1].Value.Split(","))
+                            {
+                                int statValue;
+                                if (!equipped.Item.Stats.TryGetValue(statSplit, out statValue))
+                                    throw new UnmatchedStatException(statSplit);
+
+                                if (maximumStatValue < statValue)
+                                    maximumStatValue = statValue;
+                            }
+                        }
+                        else
+                        {
+                            //If there is no equipped item, default value to 0.
+                            maximumStatValue = 0;
+                        }
+
+                        equation = equation.Replace(match.Groups[0].Value, maximumStatValue.ToString());
                     }
                 }
 
                 //Throw an error if anything remains unparsed
                 if (equation.Contains("{") || equation.Contains("}"))
-                    throw new UnrecognizedEquationVariableException(stat.Equation);
+                    throw new UnrecognizedEquationVariableException(equation);
 
-                Expression expression = new Expression(equation);
-                this.Combat[stat.SourceName].BaseValue = Math.Max(0, Convert.ToInt32(expression.Evaluate()));
+                try
+                {
+                    Expression expression = new Expression(equation);
+                    this.Combat[stat.SourceName].BaseValue = Math.Max(0, Convert.ToInt32(expression.Evaluate()));
+                }
+                catch(Exception ex)
+                {
+                    throw new EquationEvaluationErrorException(equation);
+                }
             }
         }
 
