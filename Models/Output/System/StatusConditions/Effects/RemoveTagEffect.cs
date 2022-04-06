@@ -19,7 +19,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         public RemoveTagEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.Tags = ParseHelper.StringCSVParse(parameters, 0); //Param1
+            this.Tags = DataParser.List_StringCSV(parameters, 0); //Param1
 
             if (this.Tags.Count == 0)
                 throw new RequiredValueNotProvidedException("Param1");

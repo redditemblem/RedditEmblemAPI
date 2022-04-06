@@ -80,78 +80,79 @@
       "EquippedStatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 15
-        },
-        {
-          "SourceName": "Mag",
           "Value": 16
         },
         {
-          "SourceName": "Skl",
+          "SourceName": "Mag",
           "Value": 17
         },
         {
-          "SourceName": "Spd",
+          "SourceName": "Skl",
           "Value": 18
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Spd",
           "Value": 19
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Lck",
           "Value": 20
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Def",
           "Value": 21
         },
         {
-          "SourceName": "Mov",
+          "SourceName": "Res",
           "Value": 22
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 23
         }
       ],
       "InventoryStatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 23
-        },
-        {
-          "SourceName": "Mag",
           "Value": 24
         },
         {
-          "SourceName": "Skl",
+          "SourceName": "Mag",
           "Value": 25
         },
         {
-          "SourceName": "Spd",
+          "SourceName": "Skl",
           "Value": 26
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Spd",
           "Value": 27
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Lck",
           "Value": 28
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Def",
           "Value": 29
         },
         {
-          "SourceName": "Mov",
+          "SourceName": "Res",
           "Value": 30
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 31
         }
       ],
-      "Range": {
-        "Minimum": 12,
-        "Maximum": 13,
-        "Shape": 14
-      },
-      "Tags": 31,
-      "TextFields": [ 32, 33 ]
+        "Range": {
+            "Minimum": 12,
+            "Maximum": 13,
+            "Shape": 14,
+            "CanOnlyUseBeforeMovement": 15
+        },
+      "Tags": 32,
+      "TextFields": [ 33, 34 ]
     },
     "WeaponRankBonuses": {
       "Query": {

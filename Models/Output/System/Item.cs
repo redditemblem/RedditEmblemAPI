@@ -99,30 +99,30 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <exception cref="AnyIntegerException"></exception>
         public Item(ItemsConfig config, IList<string> data, IDictionary<string, Tag> tags)
         {
-            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", false);
-            this.Category = ParseHelper.SafeStringParse(data, config.Category, "Category", true);
-            this.WeaponRank = ParseHelper.SafeStringParse(data, config.WeaponRank, "Weapon Rank", false);
-            this.UtilizedStats = ParseHelper.StringCSVParse(data, config.UtilizedStats);
-            this.DealsDamage = (ParseHelper.SafeStringParse(data, config.DealsDamage, "Deals Damage", true) == "Yes");
-            this.MaxUses = ParseHelper.Int_Positive(data, config.Uses, "Uses");
-            this.Range = new ItemRange(data, config.Range.Minimum, config.Range.Maximum, config.Range.Shape);
-            this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
+            this.Name = DataParser.String(data, config.Name, "Name");
+            this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
+            this.Category = DataParser.String(data, config.Category, "Category");
+            this.WeaponRank = DataParser.OptionalString(data, config.WeaponRank, "Weapon Rank");
+            this.UtilizedStats = DataParser.List_StringCSV(data, config.UtilizedStats);
+            this.DealsDamage = DataParser.OptionalBoolean_YesNo(data, config.DealsDamage, "Deals Damage");
+            this.MaxUses = DataParser.Int_Positive(data, config.Uses, "Uses");
+            this.Range = new ItemRange(config.Range, data);
+            this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
-            this.Tags = ParseHelper.StringCSVParse(data, config.Tags).Distinct().ToList();
+            this.Tags = DataParser.List_StringCSV(data, config.Tags).Distinct().ToList();
             MatchTags(tags);
 
             this.Stats = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.Stats)
             {
-                int val = ParseHelper.Int_Any(data, stat.Value, stat.SourceName);
+                int val = DataParser.Int_Any(data, stat.Value, stat.SourceName);
                 this.Stats.Add(stat.SourceName, val);
             }
 
             this.EquippedStatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.EquippedStatModifiers)
             {
-                int val = ParseHelper.OptionalInt_Any(data, stat.Value, $"{stat.SourceName} (Equipped)");
+                int val = DataParser.OptionalInt_Any(data, stat.Value, $"{stat.SourceName} (Equipped)");
                 if (val == 0) continue;
                 this.EquippedStatModifiers.Add(stat.SourceName, val);
             }
@@ -130,7 +130,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.InventoryStatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.InventoryStatModifiers)
             {
-                int val = ParseHelper.OptionalInt_Any(data, stat.Value, $"{stat.SourceName} (Inventory)");
+                int val = DataParser.OptionalInt_Any(data, stat.Value, $"{stat.SourceName} (Inventory)");
                 if (val == 0) continue;
                 this.InventoryStatModifiers.Add(stat.SourceName, val);
             }
@@ -163,7 +163,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 try
                 {
                     IList<string> item = row.Select(r => r.ToString()).ToList();
-                    string name = ParseHelper.SafeStringParse(item, config.Name, "Name", false);
+                    string name = DataParser.OptionalString(item, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!items.TryAdd(name, new Item(config, item, tags)))

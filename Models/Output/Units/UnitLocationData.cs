@@ -74,8 +74,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         {
             this.OriginTiles = new List<Tile>();
 
-            this.CoordinateString = ParseHelper.SafeStringParse(data, config.Coordinate, "Coordinate", false);
-            this.UnitSize = ParseHelper.OptionalInt_NonZeroPositive(data, config.UnitSize, "Unit Size");
+            this.CoordinateString = DataParser.OptionalString(data, config.Coordinate, "Coordinate");
+            this.UnitSize = DataParser.OptionalInt_NonZeroPositive(data, config.UnitSize, "Unit Size");
         }
 
         #region Functions

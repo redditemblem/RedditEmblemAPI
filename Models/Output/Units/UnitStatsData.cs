@@ -69,13 +69,13 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public UnitStatsData(UnitsConfig config, IList<string> data)
         {
-            this.Level = ParseHelper.Int_NonZeroPositive(data, config.Level, "Level");
+            this.Level = DataParser.Int_NonZeroPositive(data, config.Level, "Level");
 
-            int experience = ParseHelper.OptionalInt_Positive(data, config.Experience, "Experience", -1);
+            int experience = DataParser.OptionalInt_Positive(data, config.Experience, "Experience", -1);
             if (experience > -1) experience %= 100;
             this.Experience = experience;
 
-            this.HeldCurrency = ParseHelper.OptionalInt_Positive(data, config.HeldCurrency, "Currency");
+            this.HeldCurrency = DataParser.OptionalInt_Positive(data, config.HeldCurrency, "Currency");
             this.HP = new HP(data, config.HP.Current, config.HP.Maximum);
 
             //Build stat dictionaries
@@ -100,7 +100,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
+                    int val = DataParser.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
                     if (val == 0) continue;
                     temp.Modifiers.Add(mod.SourceName, val);
                 }
@@ -116,12 +116,12 @@ namespace RedditEmblemAPI.Models.Output.Units
             foreach (ModifiedNamedStatConfig stat in config)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
-                temp.BaseValue = ParseHelper.Int_Any(data, stat.BaseValue, stat.SourceName);
+                temp.BaseValue = DataParser.Int_Any(data, stat.BaseValue, stat.SourceName);
 
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
+                    int val = DataParser.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
                     if (val == 0) continue;
                     temp.Modifiers.Add(mod.SourceName, val);
                 }
@@ -137,12 +137,12 @@ namespace RedditEmblemAPI.Models.Output.Units
             foreach (ModifiedNamedStatConfig stat in config)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
-                temp.BaseValue = ParseHelper.Int_Positive(data, stat.BaseValue, stat.SourceName);
+                temp.BaseValue = DataParser.Int_Positive(data, stat.BaseValue, stat.SourceName);
 
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
                 {
-                    int val = ParseHelper.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
+                    int val = DataParser.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
                     if (val == 0) continue;
                     temp.Modifiers.Add(mod.SourceName, val);
                 }

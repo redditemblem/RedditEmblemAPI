@@ -26,6 +26,10 @@ namespace RedditEmblemAPI.Services.Helpers
             this.Map = map;
         }
 
+        /// <summary>
+        /// Calculates both movement and item ranges for all units in <c>Units</c>.
+        /// </summary>
+        /// <exception cref="RangeCalculationException"></exception>
         public void CalculateUnitRanges()
         {
             foreach (Unit unit in this.Units)
@@ -36,78 +40,30 @@ namespace RedditEmblemAPI.Services.Helpers
                     if (!unit.Location.OriginTiles.Any())
                         continue;
 
-                    //Calculate movement range
-                    int movementVal = unit.Stats.General[this.Map.Constants.UnitMovementStatName].FinalValue;
-                    OverrideMovementEffect overrideMovEffect = unit.StatusConditions.Select(s => s.StatusObj.Effect).OfType<OverrideMovementEffect>().FirstOrDefault();
-                    if (overrideMovEffect != null) movementVal = overrideMovEffect.MovementValue;
-
-                    UnitRangeParameters unitParms = new UnitRangeParameters(unit);
-                    RecurseUnitRange(unitParms, unit.Location.OriginTiles.Select(o => new MovementCoordSet(movementVal, o.Coordinate)).ToList(), string.Empty, null);
-
-                    //Calculate item ranges
-                    IList<Coordinate> atkRange = new List<Coordinate>();
-                    IList<Coordinate> utilRange = new List<Coordinate>();
-
-                    IList<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && !i.IsUsePrevented && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
-                                                                    .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.Range.Shape, i.Item.DealsDamage, i.AllowMeleeRange))
-                                                                    .ToList();
-
-                    //Check for whole map ranges
-                    if (itemRanges.Any(r => r.MaxRange >= 99))
-                    {
-                        bool applyAtk = itemRanges.Any(r => r.DealsDamage && r.MaxRange >= 99);
-                        bool applyUtil = itemRanges.Any(r => !r.DealsDamage && r.MaxRange >= 99);
-
-                        ApplyWholeMapItemRange(unit, applyAtk, applyUtil, ref atkRange, ref utilRange);
-
-                        //Remove all relevant ranges from list
-                        //Since we cover the whole map we don't need to address these individually later
-                        if (applyAtk)
-                        {
-                            while (itemRanges.Any(r => r.DealsDamage))
-                            {
-                                itemRanges.Remove(itemRanges.First(r => r.DealsDamage));
-                            }
-                        }
-
-                        if (applyUtil)
-                        {
-                            while (itemRanges.Any(r => !r.DealsDamage))
-                            {
-                                itemRanges.Remove(itemRanges.First(r => !r.DealsDamage));
-                            }
-                        }
-                    }
-
-                    //Check for regular ranges
-                    if (itemRanges.Any())
-                    {
-                        foreach (Coordinate coord in unit.Ranges.Movement)
-                        {
-                            foreach(ItemRangeDirection direction in RANGE_DIRECTIONS)
-                            {
-                                //Calculate attack range
-                                ItemRangeParameters rangeParms = new ItemRangeParameters(unit, coord, itemRanges, direction);
-                                RecurseItemRange(rangeParms,
-                                                 coord,
-                                                 rangeParms.LargestRange,
-                                                 string.Empty,
-                                                 ref atkRange,
-                                                 ref utilRange
-                                                );
-                            }
-
-                        }
-                    }
-
-                    unit.Ranges.Attack = atkRange;
-                    unit.Ranges.Utility = utilRange;
+                    CalculateUnitMovementRange(unit);
+                    CalculateUnitItemRanges(unit);
                 }
                 catch (Exception ex)
                 {
                     throw new RangeCalculationException(unit, ex);
                 }
             }
+        }
+
+        #region Movement Range Calculation
+
+        /// <summary>
+        /// Calculates the movement range for <paramref name="unit"/>.
+        /// </summary>
+        private void CalculateUnitMovementRange(Unit unit)
+        {
+            int movementVal = unit.Stats.General[this.Map.Constants.UnitMovementStatName].FinalValue;
+            OverrideMovementEffect overrideMovEffect = unit.StatusConditions.Select(s => s.StatusObj.Effect).OfType<OverrideMovementEffect>().FirstOrDefault();
+            if (overrideMovEffect != null) movementVal = overrideMovEffect.MovementValue;
+
+            UnitRangeParameters unitParms = new UnitRangeParameters(unit);
+            RecurseUnitRange(unitParms, unit.Location.OriginTiles.Select(o => new MovementCoordSet(movementVal, o.Coordinate)).ToList(), string.Empty, null);
+
         }
 
         private void RecurseUnitRange(UnitRangeParameters parms, IList<MovementCoordSet> currCoords, string visitedCoords, Coordinate lastWarpUsed)
@@ -129,9 +85,9 @@ namespace RedditEmblemAPI.Services.Helpers
 
                 //If there is a Unit occupying this tile, check for affiliation collisions
                 //Check if this tile blocks units of a certain affiliation
-                if ( UnitIsBlocked(parms.Unit, tile.UnitData.Unit, parms.IgnoresAffiliations) ||
+                if (UnitIsBlocked(parms.Unit, tile.UnitData.Unit, parms.IgnoresAffiliations) ||
                     (tile.TerrainTypeObj.RestrictAffiliations.Any() && !tile.TerrainTypeObj.RestrictAffiliations.Contains(parms.Unit.AffiliationObj.Grouping))
-                   ) 
+                   )
                     return;
 
                 //Test that the unit can move to this tile
@@ -148,7 +104,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     moveCost += moveCostMod.Value;
 
                 //Check if nearby units can affect the movement costs of this tile
-                if(moveCost < 99 && tile.UnitData.UnitsAffectingMovementCosts.Any())
+                if (moveCost < 99 && tile.UnitData.UnitsAffectingMovementCosts.Any())
                 {
                     IList<IAffectMovementCost> activeEffects = tile.UnitData.UnitsAffectingMovementCosts.SelectMany(u => u.SkillList.Select(s => s.Effect).OfType<IAffectMovementCost>().Where(e => e.IsActive(u, parms.Unit))).ToList();
                     if (activeEffects.Any())
@@ -245,6 +201,89 @@ namespace RedditEmblemAPI.Services.Helpers
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns true if <paramref name="movingUnit"/> is blocked by any of the units in <paramref name="blockingUnits"/>.
+        /// </summary>
+        private bool UnitIsBlocked(Unit movingUnit, IList<Unit> blockingUnits, bool ignoreAffiliations)
+        {
+            //If unit ignores affiliations, never be blocked
+            //Skip further logic
+            if (ignoreAffiliations)
+                return false;
+
+            return blockingUnits.Any(u => UnitIsBlocked(movingUnit, u, ignoreAffiliations));
+        }
+
+        /// <summary>
+        /// Returns true if <paramref name="movingUnit"/> is blocked by <paramref name="blockingUnit"/>.
+        /// </summary>
+        private bool UnitIsBlocked(Unit movingUnit, Unit blockingUnit, bool ignoreAffiliations)
+        {
+            //If unit ignores affiliations, never be blocked
+            if (ignoreAffiliations)
+                return false;
+
+            //Check if both units exist
+            if (movingUnit == null || blockingUnit == null)
+                return false;
+
+            //Check if units are the same
+            if (movingUnit.Name == blockingUnit.Name)
+                return false;
+
+            //Check if the blocking unit is inflicted with a relevant status condition
+            if (blockingUnit.StatusConditions.Select(sc => sc.StatusObj.Effect).OfType<DoesNotBlockEnemyAffiliationsEffect>().Any())
+                return false;
+
+            //Finally, check if units are not in the same affiliation grouping
+            return movingUnit.AffiliationObj.Grouping != blockingUnit.AffiliationObj.Grouping;
+        }
+
+        #endregion Movement Range Calculation
+
+        #region Item Range Calculation
+
+        /// <summary>
+        /// Calculates all item ranges for <paramref name="unit"/>.
+        /// </summary>
+        private void CalculateUnitItemRanges(Unit unit)
+        {
+            IList<Coordinate> atkRange = new List<Coordinate>();
+            IList<Coordinate> utilRange = new List<Coordinate>();
+
+            //Transpose item data into the struct we're using for recursion
+            IList<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && !i.IsUsePrevented && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
+                                                            .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.Range.Shape, i.Item.Range.CanOnlyUseBeforeMovement, i.Item.DealsDamage, i.AllowMeleeRange))
+                                                            .ToList();
+
+            //Check for special case ranges
+            ApplyWholeMapItemRanges(unit, itemRanges, ref atkRange, ref utilRange);
+            ApplyNoUnitMovementItemRanges(unit, itemRanges, ref atkRange, ref utilRange);
+
+            //Calculate any remainging ranges normally
+            if (itemRanges.Any())
+            {
+                foreach (Coordinate coord in unit.Ranges.Movement)
+                {
+                    foreach (ItemRangeDirection direction in RANGE_DIRECTIONS)
+                    {
+                        ItemRangeParameters rangeParms = new ItemRangeParameters(unit, coord, itemRanges, direction);
+                        RecurseItemRange(rangeParms,
+                                         coord,
+                                         rangeParms.LargestRange,
+                                         string.Empty,
+                                         ref atkRange,
+                                         ref utilRange
+                                        );
+                    }
+
+                }
+            }
+
+            unit.Ranges.Attack = atkRange;
+            unit.Ranges.Utility = utilRange;
         }
 
         private void RecurseItemRange(ItemRangeParameters parms, Coordinate currCoord, int remainingRange, string visitedCoords, ref IList<Coordinate> atkRange, ref IList<Coordinate> utilRange)
@@ -363,8 +402,15 @@ namespace RedditEmblemAPI.Services.Helpers
             }
         }
 
-        private void ApplyWholeMapItemRange(Unit unit, bool applyAtk, bool applyUtil, ref IList<Coordinate> atkRange, ref IList<Coordinate> utilRange)
+        private void ApplyWholeMapItemRanges(Unit unit, IList<UnitItemRange> itemRanges, ref IList<Coordinate> atkRange, ref IList<Coordinate> utilRange)
         {
+            //Only continue if we have at least one item with a max range of 99.
+            if (!itemRanges.Any(r => r.MaxRange >= 99))
+                return;
+
+            bool applyAtk = itemRanges.Any(r => r.DealsDamage && r.MaxRange >= 99);
+            bool applyUtil = itemRanges.Any(r => !r.DealsDamage && r.MaxRange >= 99);
+
             foreach (List<Tile> row in this.Map.Tiles)
             {
                 foreach (Tile tile in row)
@@ -377,39 +423,59 @@ namespace RedditEmblemAPI.Services.Helpers
                     }
                 }
             }
+
+            //Remove all relevant ranges from list
+            //Since we cover the whole map we don't need to address these individually later
+            if (applyAtk)
+            {
+                while (itemRanges.Any(r => r.DealsDamage))
+                {
+                    itemRanges.Remove(itemRanges.First(r => r.DealsDamage));
+                }
+            }
+
+            if (applyUtil)
+            {
+                while (itemRanges.Any(r => !r.DealsDamage))
+                {
+                    itemRanges.Remove(itemRanges.First(r => !r.DealsDamage));
+                }
+            }
         }
 
-        private bool UnitIsBlocked(Unit movingUnit, IList<Unit> blockingUnits, bool ignoreAffiliations)
+        private void ApplyNoUnitMovementItemRanges(Unit unit, IList<UnitItemRange> itemRanges, ref IList<Coordinate> atkRange, ref IList<Coordinate> utilRange)
         {
-            //If unit ignores affiliations, never be blocked
-            //Skip further logic
-            if (ignoreAffiliations)
-                return false;
+            //Only continue if we have at least one item that can only be used before movement
+            if (!itemRanges.Any(r => r.CanOnlyUseBeforeMovement))
+                return;
 
-            return blockingUnits.Any(u => UnitIsBlocked(movingUnit, u, ignoreAffiliations));
+            IList<UnitItemRange> noMovementItemRanges = itemRanges.Where(r => r.CanOnlyUseBeforeMovement).ToList();
+
+            //Only calculate the item ranges for these items from the unit's origin tiles, not their whole movement range
+            foreach (Coordinate coord in unit.Location.OriginTiles.Select(t => t.Coordinate))
+            {
+                foreach (ItemRangeDirection direction in RANGE_DIRECTIONS)
+                {
+                    ItemRangeParameters rangeParms = new ItemRangeParameters(unit, coord, noMovementItemRanges, direction);
+                    RecurseItemRange(rangeParms,
+                                     coord,
+                                     rangeParms.LargestRange,
+                                     string.Empty,
+                                     ref atkRange,
+                                     ref utilRange
+                                    );
+                }
+            }
+
+            //Remove all items from the list so they aren't processed again
+            while(itemRanges.Any(r => r.CanOnlyUseBeforeMovement))
+            {
+                itemRanges.Remove(itemRanges.First(r => r.CanOnlyUseBeforeMovement));
+            }
         }
 
-        private bool UnitIsBlocked(Unit movingUnit, Unit blockingUnit, bool ignoreAffiliations)
-        {
-            //If unit ignores affiliations, never be blocked
-            if (ignoreAffiliations)
-                return false;
+        #endregion Item Range Calculation
 
-            //Check if both units exist
-            if (movingUnit == null || blockingUnit == null)
-                return false;
-
-            //Check if units are the same
-            if (movingUnit.Name == blockingUnit.Name)
-                return false;
-
-            //Check if the blocking unit is inflicted with a relevant status condition
-            if (blockingUnit.StatusConditions.Select(sc => sc.StatusObj.Effect).OfType<DoesNotBlockEnemyAffiliationsEffect>().Any())
-                return false;
-
-            //Finally, check if units are not in the same affiliation grouping
-            return movingUnit.AffiliationObj.Grouping != blockingUnit.AffiliationObj.Grouping;
-        }
     }
 
     public struct UnitRangeParameters
@@ -470,14 +536,16 @@ namespace RedditEmblemAPI.Services.Helpers
         public int MinRange;
         public int MaxRange;
         public ItemRangeShape Shape;
+        public bool CanOnlyUseBeforeMovement;
         public bool DealsDamage;
         public bool AllowMeleeRange;
 
-        public UnitItemRange(int minRange, int maxRange, ItemRangeShape shape, bool dealsDamage, bool allowMeleeRange)
+        public UnitItemRange(int minRange, int maxRange, ItemRangeShape shape, bool canOnlyBeUsedBeforeMovement, bool dealsDamage, bool allowMeleeRange)
         {
             this.MinRange = minRange;
             this.MaxRange = maxRange;
             this.Shape = shape;
+            this.CanOnlyUseBeforeMovement = canOnlyBeUsedBeforeMovement;
             this.DealsDamage = dealsDamage;
             this.AllowMeleeRange = allowMeleeRange;
         }

@@ -32,10 +32,10 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public HP(IList<string> data, int currentIndex, int maximumIndex)
         {
-            int currentVal = ParseHelper.Int_Positive(data, currentIndex, "Current HP");
+            int currentVal = DataParser.Int_Positive(data, currentIndex, "Current HP");
             this.Current = currentVal;
 
-            int maximumVal = ParseHelper.Int_NonZeroPositive(data, maximumIndex, "Maximum HP");
+            int maximumVal = DataParser.Int_NonZeroPositive(data, maximumIndex, "Maximum HP");
             this.Maximum = maximumVal;
         }
 

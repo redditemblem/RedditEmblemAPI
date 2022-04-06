@@ -71,7 +71,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
                 try
                 {
                     IList<string> item = row.Select(r => r.ToString()).ToList();
-                    string name = ParseHelper.SafeStringParse(item, config.Shop.Name, "Name", false);
+                    string name = DataParser.OptionalString(item, config.Shop.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
                     this.ShopItems.Add(new ShopItem(config.Shop, item, this.Items));
                 }

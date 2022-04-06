@@ -41,9 +41,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
         public NoAllyRadiusSelfStatModifierEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.Radius = ParseHelper.Int_NonZeroPositive(parameters, 0, "Param1");
-            this.Stats = ParseHelper.StringCSVParse(parameters, 1); //Param2
-            this.Values = ParseHelper.IntCSVParse(parameters, 2, "Param3", false);
+            this.Radius = DataParser.Int_NonZeroPositive(parameters, 0, "Param1");
+            this.Stats = DataParser.List_StringCSV(parameters, 1); //Param2
+            this.Values = DataParser.List_IntCSV(parameters, 2, "Param3", false);
 
             if (this.Stats.Count == 0)
                 throw new RequiredValueNotProvidedException("Param2");

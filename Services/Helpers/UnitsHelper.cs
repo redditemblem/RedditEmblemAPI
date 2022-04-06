@@ -34,7 +34,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     //Convert objects to strings
                     IList<string> unit = row.Select(r => r.ToString()).ToList();
-                    string unitName = ParseHelper.SafeStringParse(unit, config.Name, "Name", false);
+                    string unitName = DataParser.OptionalString(unit, config.Name, "Name");
                     if (string.IsNullOrEmpty(unitName)) continue;
 
                     if (units.Any(u => u.Name == unitName))

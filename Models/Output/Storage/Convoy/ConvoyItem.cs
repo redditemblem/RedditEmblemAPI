@@ -55,7 +55,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// <exception cref="UnmatchedItemException"></exception>
         public ConvoyItem(ConvoyConfig config, IList<string> data, IDictionary<string, Item> items)
         {
-            this.FullName = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
+            this.FullName = DataParser.String(data, config.Name, "Name");
             this.Uses = 0;
 
             string name = this.FullName;
@@ -79,9 +79,9 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             this.Item = match;
             match.Matched = true;
 
-            this.Owner = ParseHelper.SafeStringParse(data, config.Owner, "Owner", false);
-            this.Value = ParseHelper.OptionalInt_Positive(data, config.Value, "Value", -1);
-            this.Quantity = ParseHelper.OptionalInt_NonZeroPositive(data, config.Quantity, "Quantity");
+            this.Owner = DataParser.OptionalString(data, config.Owner, "Owner");
+            this.Value = DataParser.OptionalInt_Positive(data, config.Value, "Value", -1);
+            this.Quantity = DataParser.OptionalInt_NonZeroPositive(data, config.Quantity, "Quantity");
         }
     }
 }

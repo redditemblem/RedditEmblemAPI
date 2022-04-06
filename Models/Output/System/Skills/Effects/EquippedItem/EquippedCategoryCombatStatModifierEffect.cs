@@ -40,9 +40,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
         public EquippedCategoryCombatStatModifierEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.Categories = ParseHelper.StringCSVParse(parameters, 0);
-            this.Stats = ParseHelper.StringCSVParse(parameters, 1); //Param2
-            this.Values = ParseHelper.IntCSVParse(parameters, 2, "Param3", false);
+            this.Categories = DataParser.List_StringCSV(parameters, 0);
+            this.Stats = DataParser.List_StringCSV(parameters, 1); //Param2
+            this.Values = DataParser.List_IntCSV(parameters, 2, "Param3", false);
 
             if (this.Categories.Count == 0)
                 throw new RequiredValueNotProvidedException("Param1");

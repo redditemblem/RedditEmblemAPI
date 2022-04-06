@@ -12,7 +12,7 @@
       "CalculatePairedUnitRanges": true, //Optional, defaults to true
       "UnitMovementStatName": "Mov" //Optional, defaults to "Mov"
     },
-    "MapControls": {   //Required
+    "MapControls": { //Required
       "Query": {
         "Sheet": "",
         "Selection": "",
@@ -99,7 +99,8 @@
       "Range": { //Required
         "Minimum": 0, //Required
         "Maximum": 0, //Required
-        "Shape": 0 //Optional
+        "Shape": 0, //Optional
+        "CanOnlyUseBeforeMovement": 0 //Optional
       },
       "Tags": 0, //Optional
       "TextFields": [] //Optional

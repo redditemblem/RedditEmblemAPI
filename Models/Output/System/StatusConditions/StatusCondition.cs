@@ -62,16 +62,16 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// </summary>
         public StatusCondition(StatusConditionConfig config, IList<string> data)
         {
-            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", false);
+            this.Name = DataParser.String(data, config.Name, "Name");
+            this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.Type = ParseStatusConditionType(data, config.Type);
-            this.Turns = ParseHelper.OptionalInt_NonZeroPositive(data, config.Turns, "Turns", 0);
-            this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
+            this.Turns = DataParser.OptionalInt_NonZeroPositive(data, config.Turns, "Turns", 0);
+            this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
             //Check if status condition effects are configured
             if (config.Effect != null)
-                this.Effect = BuildStatusConditionEffect(ParseHelper.SafeStringParse(data, config.Effect.Type, "Status Condition Effect Type", false),
-                                                         ParseHelper.StringListParse(data, config.Effect.Parameters, true));
+                this.Effect = BuildStatusConditionEffect(DataParser.OptionalString(data, config.Effect.Type, "Status Condition Effect Type"),
+                                                         DataParser.List_Strings(data, config.Effect.Parameters, true));
             else this.Effect = null;
         }
 
@@ -81,7 +81,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// <exception cref="UnmatchedStatusConditionTypeException"></exception>
         private StatusConditionType ParseStatusConditionType(IList<string> data, int index)
         {
-            string name = ParseHelper.SafeStringParse(data, index, "Type", true);
+            string name = DataParser.String(data, index, "Type");
             switch (name)
             {
                 case "Positive": return StatusConditionType.Positive;
@@ -121,7 +121,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
                 try
                 {
                     IList<string> stat = row.Select(r => r.ToString()).ToList();
-                    string name = ParseHelper.SafeStringParse(stat, config.Name, "Name", false);
+                    string name = DataParser.OptionalString(stat, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!statusConditions.TryAdd(name, new StatusCondition(config, stat)))

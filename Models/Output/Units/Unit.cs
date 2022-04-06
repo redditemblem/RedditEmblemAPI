@@ -144,12 +144,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         public Unit(UnitsConfig config, IList<string> data, SystemInfo systemData)
         {
             //Basic fields
-            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
+            this.Name = DataParser.String(data, config.Name, "Name");
             this.UnitNumber = ExtractUnitNumberFromName(this.Name);
-            this.Player = ParseHelper.SafeStringParse(data, config.Player, "Player", false);
-            this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
-            this.Tags = ParseHelper.StringCSVParse(data, config.Tags);
-            this.Behavior = ParseHelper.SafeStringParse(data, config.Behavior, "Behavior", false);
+            this.Player = DataParser.OptionalString(data, config.Player, "Player");
+            this.TextFields = DataParser.List_Strings(data, config.TextFields);
+            this.Tags = DataParser.List_StringCSV(data, config.Tags);
+            this.Behavior = DataParser.OptionalString(data, config.Behavior, "Behavior");
 
             //Complex container objects
             this.Sprite = new UnitSpriteData(config, data);
@@ -162,7 +162,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             //If the system does not use classes, fall back on the MovementType attribute
             if (this.ClassList.Count == 0)
-                this.MovementType = ParseHelper.SafeStringParse(data, config.MovementType, "Movement Type", true);
+                this.MovementType = DataParser.String(data, config.MovementType, "Movement Type");
 
             BuildWeaponRanks(data, config.WeaponRanks, systemData.WeaponRanks.Any());
             BuildInventory(data, config.Inventory, systemData.Items, systemData.WeaponRanks, systemData.WeaponRankBonuses);
@@ -182,8 +182,8 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             foreach (UnitWeaponRanksConfig rank in config)
             {
-                string rankType = ParseHelper.SafeStringParse(data, rank.Type, "Weapon Rank Type", false);
-                string rankLetter = ParseHelper.SafeStringParse(data, rank.Rank, "Weapon Rank Letter", false);
+                string rankType = DataParser.OptionalString(data, rank.Type, "Weapon Rank Type");
+                string rankLetter = DataParser.OptionalString(data, rank.Rank, "Weapon Rank Letter");
 
                 if (!string.IsNullOrEmpty(rankType))
                 {
@@ -202,7 +202,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             foreach (int index in indexes)
             {
                 //Skip blank cells
-                string name = ParseHelper.SafeStringParse(data, index, "Status Condition Name", false);
+                string name = DataParser.OptionalString(data, index, "Status Condition Name");
                 if (string.IsNullOrEmpty(name))
                     continue;
 
@@ -217,7 +217,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             foreach (int index in config.Slots)
             {
-                string name = ParseHelper.SafeStringParse(data, index, "Item Name", false);
+                string name = DataParser.OptionalString(data, index, "Item Name");
                 if (string.IsNullOrEmpty(name))
                 {
                     this.Inventory.Add(null);
@@ -243,7 +243,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             //Find the equipped item and flag it
-            string equippedItemName = ParseHelper.SafeStringParse(data, config.EquippedItem, "Equipped Item", false);
+            string equippedItemName = DataParser.OptionalString(data, config.EquippedItem, "Equipped Item");
             if (!string.IsNullOrEmpty(equippedItemName))
             {
                 UnitInventoryItem equipped = this.Inventory.FirstOrDefault(i => i != null && i.FullName == equippedItemName);
@@ -312,7 +312,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             foreach (int index in indexes)
             {
                 //Skip blank cells
-                string name = ParseHelper.SafeStringParse(data, index, "Skill Name", false);
+                string name = DataParser.OptionalString(data, index, "Skill Name");
                 if (string.IsNullOrEmpty(name))
                     continue;
 
@@ -335,7 +335,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             foreach (int index in indexes)
             {
-                string className = ParseHelper.SafeStringParse(data, index, "Class Name", false);
+                string className = DataParser.OptionalString(data, index, "Class Name");
                 if (string.IsNullOrEmpty(className))
                     continue;
 
@@ -360,7 +360,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         private void MatchAffiliation(IList<string> data, int affiliationIndex, IDictionary<string, Affiliation> affiliations)
         {
-            string affiliation = ParseHelper.SafeStringParse(data, affiliationIndex, "Affiliation", true);
+            string affiliation = DataParser.String(data, affiliationIndex, "Affiliation");
             Affiliation affMatch;
             if (!affiliations.TryGetValue(affiliation, out affMatch))
                 throw new UnmatchedAffiliationException(affiliation);

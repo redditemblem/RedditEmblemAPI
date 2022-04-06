@@ -38,9 +38,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public UnitSpriteData(UnitsConfig config, IList<string> data)
         {
-            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", true);
-            this.PortraitURL = ParseHelper.SafeURLParse(data, config.PortraitURL, "Portrait URL", false);
-            this.HasMoved = (ParseHelper.SafeStringParse(data, config.HasMoved, "Has Moved", false) == "Yes");
+            this.SpriteURL = DataParser.String_URL(data, config.SpriteURL, "Sprite URL");
+            this.PortraitURL = DataParser.OptionalString_URL(data, config.PortraitURL, "Portrait URL");
+            this.HasMoved = DataParser.OptionalBoolean_YesNo(data, config.HasMoved, "Has Moved");
             this.Aura = string.Empty;
         }
     }

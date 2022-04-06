@@ -26,7 +26,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         public ItemAllowMeleeRangeEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.Categories = ParseHelper.StringCSVParse(parameters, 0);
+            this.Categories = DataParser.List_StringCSV(parameters, 0);
         }
 
         /// <summary>

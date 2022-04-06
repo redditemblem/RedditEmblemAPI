@@ -98,11 +98,11 @@ namespace RedditEmblemAPI.Models.Output.Map
             string mapImageURL = (values.ElementAtOrDefault(config.MapControls.MapImageURL) ?? string.Empty).ToString();
             if (string.IsNullOrEmpty(mapImageURL))
                 throw new MapImageURLNotFoundException(config.MapControls.Query.Sheet);
-            ParseHelper.SafeURLParse(mapImageURL, "Map Image URL", true); //validate URL
+            DataParser.String_URL(mapImageURL, "Map Image URL"); //validate URL
             this.MapImageURL = mapImageURL;
 
             this.ChapterPostURL = (values.ElementAtOrDefault(config.MapControls.ChapterPostURL) ?? string.Empty).ToString();
-            ParseHelper.SafeURLParse(this.ChapterPostURL, "Chapter Post URL", false); //validate URL
+            DataParser.OptionalString_URL(this.ChapterPostURL, "Chapter Post URL"); //validate URL
 
             GetMapDimensionsFromImage();
 

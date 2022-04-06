@@ -43,9 +43,9 @@ namespace RedditEmblemAPI.Models.Output.System
         public Affiliation(AffiliationsConfig config, IList<string> data)
         {
             this.Matched = false;
-            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.Grouping = ParseHelper.Int_NonZeroPositive(data, config.Grouping, "Grouping");
-            this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
+            this.Name = DataParser.String(data, config.Name, "Name");
+            this.Grouping = DataParser.Int_NonZeroPositive(data, config.Grouping, "Grouping");
+            this.TextFields = DataParser.List_Strings(data, config.TextFields);
         }
 
         #region Static Functions
@@ -59,7 +59,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 try
                 {
                     IList<string> aff = row.Select(r => r.ToString()).ToList();
-                    string name = ParseHelper.SafeStringParse(aff, config.Name, "Name", false);
+                    string name = DataParser.OptionalString(aff, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!affiliations.TryAdd(name, new Affiliation(config, aff)))

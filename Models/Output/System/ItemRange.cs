@@ -1,4 +1,6 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Unmatched;
+﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Configuration.System.Items;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Services.Helpers;
 using System;
@@ -24,16 +26,20 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// The shape of the item's range
         /// </summary>
-        public ItemRangeShape Shape { get; private set; } 
+        public ItemRangeShape Shape { get; private set; }
 
         /// <summary>
-        /// Initializes the class with the passed in <paramref name="minimum"/> and <paramref name="maximum"/> values.
+        /// Flag that indicates when an item can only be used before a unit has moved.
         /// </summary>
-        /// <param name="minimum"></param>
-        /// <param name="maximum"></param>
+        [JsonIgnore]
+        public bool CanOnlyUseBeforeMovement { get; private set; }
+
+        /// <summary>
+        /// Initializes the class with the passed in values.
+        /// </summary>
         /// <exception cref="PositiveIntegerException"></exception>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
-        public ItemRange(int minimum, int maximum, string shape)
+        public ItemRange(int minimum, int maximum, string shape, bool canOnlyUseBeforeMovement)
         {
             if (minimum < 0)
                 throw new PositiveIntegerException("Minimum Range", minimum.ToString());
@@ -47,6 +53,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Minimum = minimum;
             this.Maximum = maximum;
             this.Shape = GetItemRangeShape(shape);
+            this.CanOnlyUseBeforeMovement = canOnlyUseBeforeMovement;
         }
 
 
@@ -56,10 +63,11 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <param name="minimum">A numerical string value.</param>
         /// <param name="maximum">A numerical string value.</param>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
-        public ItemRange(IList<string> data, int minimumIndex, int maximumIndex, int shapeIndex)
-            : this(ParseHelper.Int_Positive(data, minimumIndex, "Minimum Range"),
-                   ParseHelper.Int_Positive(data, maximumIndex, "Maximum Range"),
-                   ParseHelper.SafeStringParse(data, shapeIndex, "Range Shape", false))
+        public ItemRange(RangeConfig config, IList<string> data)
+            : this(DataParser.Int_Positive(data, config.Minimum, "Minimum Range"),
+                   DataParser.Int_Positive(data, config.Maximum, "Maximum Range"),
+                   DataParser.OptionalString(data, config.Shape, "Range Shape"),
+                   DataParser.OptionalBoolean_YesNo(data, config.CanOnlyUseBeforeMovement, "Can Only Use Before Movement"))
         { }
 
         private ItemRangeShape GetItemRangeShape(string shape)

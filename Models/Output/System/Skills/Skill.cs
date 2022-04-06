@@ -59,14 +59,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// </summary>
         public Skill(SkillsConfig config, IList<string> data)
         {
-            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", false);
-            this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
+            this.Name = DataParser.String(data, config.Name, "Name");
+            this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
+            this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
             //Check if skill effects are configured
             if (config.Effect != null)
-                this.Effect = BuildSkillEffect(ParseHelper.SafeStringParse(data, config.Effect.Type, "Skill Effect Type", false),
-                                               ParseHelper.StringListParse(data, config.Effect.Parameters, true));
+                this.Effect = BuildSkillEffect(DataParser.OptionalString(data, config.Effect.Type, "Skill Effect Type"),
+                                               DataParser.List_Strings(data, config.Effect.Parameters, true));
             else this.Effect = null;
         }
 
@@ -153,7 +153,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 try
                 {
                     IList<string> skill = row.Select(r => r.ToString()).ToList();
-                    string name = ParseHelper.SafeStringParse(skill, config.Name, "Name", false);
+                    string name = DataParser.OptionalString(skill, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!skills.TryAdd(name, new Skill(config, skill)))

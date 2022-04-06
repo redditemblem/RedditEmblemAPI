@@ -23,7 +23,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         public PreventUtilStatItemUseEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.UtilizedStats = ParseHelper.StringCSVParse(parameters, 0);
+            this.UtilizedStats = DataParser.List_StringCSV(parameters, 0);
 
             if (this.UtilizedStats.Count == 0)
                 throw new RequiredValueNotProvidedException("Param1");

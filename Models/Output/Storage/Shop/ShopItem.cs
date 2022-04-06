@@ -58,7 +58,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// <exception cref="UnmatchedItemException"></exception>
         public ShopItem(ShopConfig config, IList<string> data, IDictionary<string, Item> items)
         {
-            this.FullName = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
+            this.FullName = DataParser.String(data, config.Name, "Name");
 
             Item match;
             if (!items.TryGetValue(this.FullName, out match))
@@ -66,10 +66,10 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             this.Item = match;
             match.Matched = true;
 
-            this.Price = ParseHelper.Int_Positive(data, config.Price, "Price");
-            this.SalePrice = ParseHelper.OptionalInt_Positive(data, config.SalePrice, "Sale Price", this.Price);
-            this.Stock = ParseHelper.Int_Positive(data, config.Stock, "Stock");
-            this.IsNew = (ParseHelper.SafeStringParse(data, config.IsNew, "Is New", false) == "Yes");
+            this.Price = DataParser.Int_Positive(data, config.Price, "Price");
+            this.SalePrice = DataParser.OptionalInt_Positive(data, config.SalePrice, "Sale Price", this.Price);
+            this.Stock = DataParser.Int_Positive(data, config.Stock, "Stock");
+            this.IsNew = DataParser.OptionalBoolean_YesNo(data, config.IsNew, "Is New");
         }
     }
 }

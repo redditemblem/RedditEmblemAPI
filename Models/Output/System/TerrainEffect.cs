@@ -67,18 +67,18 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             this.Matched = false;
 
-            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", true);
-            this.Size = ParseHelper.OptionalInt_NonZeroPositive(data, config.Size, "Size");
+            this.Name = DataParser.String(data, config.Name, "Name");
+            this.SpriteURL = DataParser.String_URL(data, config.SpriteURL, "Sprite URL");
+            this.Size = DataParser.OptionalInt_NonZeroPositive(data, config.Size, "Size");
             this.Layer = GetTerrainEffectLayerEnum(data.ElementAtOrDefault<string>(config.Layer));
-            this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
+            this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
-            this.HPModifier = ParseHelper.OptionalInt_Any(data, config.HPModifier, "HP Modifier");
+            this.HPModifier = DataParser.OptionalInt_Any(data, config.HPModifier, "HP Modifier");
 
             this.CombatStatModifiers = new Dictionary<string, int>();
             foreach(NamedStatConfig stat in config.CombatStatModifiers)
             {
-                int val = ParseHelper.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
+                int val = DataParser.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
                 if (val == 0) continue;
 
                 this.CombatStatModifiers.Add(stat.SourceName, val);
@@ -88,7 +88,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.StatModifiers = new Dictionary<string, int>();
             foreach(NamedStatConfig stat in config.StatModifiers)
             {
-                int val = ParseHelper.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
+                int val = DataParser.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
                 if (val == 0) continue;
 
                 this.StatModifiers.Add(stat.SourceName, val);
@@ -124,7 +124,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 try
                 {
                     IList<string> effect = row.Select(r => r.ToString()).ToList();
-                    string name = ParseHelper.SafeStringParse(effect, config.Name, "Name", false);
+                    string name = DataParser.OptionalString(effect, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!terrainEffects.TryAdd(name, new TerrainEffect(config, effect)))

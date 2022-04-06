@@ -40,13 +40,13 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public WeaponRankBonus(WeaponRankBonusesConfig config, IList<string> data)
         {
-            this.Category = ParseHelper.SafeStringParse(data, config.Category, "Category", true);
-            this.Rank = ParseHelper.SafeStringParse(data, config.Rank, "Rank", false);
+            this.Category = DataParser.String(data, config.Category, "Category");
+            this.Rank = DataParser.OptionalString(data, config.Rank, "Rank");
 
             this.CombatStatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.CombatStatModifiers)
             {
-                int val = ParseHelper.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
+                int val = DataParser.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
                 if (val == 0) continue;
 
                 this.CombatStatModifiers.Add(stat.SourceName, val);
@@ -56,7 +56,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.StatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.StatModifiers)
             {
-                int val = ParseHelper.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
+                int val = DataParser.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
                 if (val == 0) continue;
 
                 this.StatModifiers.Add(stat.SourceName, val);
@@ -74,8 +74,8 @@ namespace RedditEmblemAPI.Models.Output.System
                 try
                 {
                     IList<string> bonus = row.Select(r => r.ToString()).ToList();
-                    string category = ParseHelper.SafeStringParse(bonus, config.Category, "Category", false);
-                    string rank = ParseHelper.SafeStringParse(bonus, config.Rank, "Rank", false);
+                    string category = DataParser.OptionalString(bonus, config.Category, "Category");
+                    string rank = DataParser.OptionalString(bonus, config.Rank, "Rank");
 
                     if (string.IsNullOrEmpty(category)) continue;
 

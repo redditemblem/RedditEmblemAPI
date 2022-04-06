@@ -31,8 +31,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         public ItemMinRangeModifierEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.Categories = ParseHelper.StringCSVParse(parameters, 0);
-            this.Value = ParseHelper.Int_Negative(parameters, 1, "Param2");
+            this.Categories = DataParser.List_StringCSV(parameters, 0);
+            this.Value = DataParser.Int_Negative(parameters, 1, "Param2");
         }
 
         /// <summary>

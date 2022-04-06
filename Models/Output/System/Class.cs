@@ -48,11 +48,11 @@ namespace RedditEmblemAPI.Models.Output.System
         public Class(ClassesConfig config, IList<string> data)
         {
             this.Matched = false;
-            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.MovementType = ParseHelper.SafeStringParse(data, config.MovementType, "Movement Type", true);
+            this.Name = DataParser.String(data, config.Name, "Name");
+            this.MovementType = DataParser.String(data, config.MovementType, "Movement Type");
 
-            this.Tags = ParseHelper.StringCSVParse(data, config.Tags);
-            this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
+            this.Tags = DataParser.List_StringCSV(data, config.Tags);
+            this.TextFields = DataParser.List_Strings(data, config.TextFields);
         }
 
         #region Static Functions
@@ -66,7 +66,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 try
                 {
                     IList<string> cls = row.Select(r => r.ToString()).ToList();
-                    string name = ParseHelper.SafeStringParse(cls, config.Name, "Name", false);
+                    string name = DataParser.OptionalString(cls, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!classes.TryAdd(name, new Class(config, cls)))

@@ -31,8 +31,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         public ItemMaxRangeSetEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.Categories = ParseHelper.StringCSVParse(parameters, 0);
-            this.Value = ParseHelper.Int_NonZeroPositive(parameters, 1, "Param2");
+            this.Categories = DataParser.List_StringCSV(parameters, 0);
+            this.Value = DataParser.Int_NonZeroPositive(parameters, 1, "Param2");
 
             if (this.Value > 15)
                 throw new ItemRangeMaximumTooLargeException(15);

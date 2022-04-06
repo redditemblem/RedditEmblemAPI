@@ -70,7 +70,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
                 try
                 {
                     IList<string> item = row.Select(r => r.ToString()).ToList();
-                    string name = ParseHelper.SafeStringParse(item, config.Convoy.Name, "Name", false);
+                    string name = DataParser.OptionalString(item, config.Convoy.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
                     this.ConvoyItems.Add(new ConvoyItem(config.Convoy, item, this.Items));
                 }

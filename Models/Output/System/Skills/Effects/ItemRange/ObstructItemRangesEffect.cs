@@ -27,7 +27,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         public ObstructItemRangesEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.Radius = ParseHelper.Int_Positive(parameters, 0, "Param1");
+            this.Radius = DataParser.Int_Positive(parameters, 0, "Param1");
         }
 
         /// <summary>

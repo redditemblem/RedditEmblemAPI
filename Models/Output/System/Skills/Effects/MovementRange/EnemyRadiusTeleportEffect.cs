@@ -31,8 +31,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public EnemyRadiusTeleportEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.TeleportationRange = ParseHelper.Int_NonZeroPositive(parameters, 0, "Param1");
-            this.Radius = ParseHelper.Int_NonZeroPositive(parameters, 1, "Param2");
+            this.TeleportationRange = DataParser.Int_NonZeroPositive(parameters, 0, "Param1");
+            this.Radius = DataParser.Int_NonZeroPositive(parameters, 1, "Param2");
         }
 
         /// <summary>

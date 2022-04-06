@@ -38,7 +38,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         public ReplaceCombatStatFormulaVariableEffect(IList<string> parameters)
             : base(parameters)
         {
-            this.Stats = ParseHelper.StringCSVParse(parameters, 0); //Param1
+            this.Stats = DataParser.List_StringCSV(parameters, 0); //Param1
             this.VariablesToReplace = CustomCSVParse(parameters, 1); //Param2
             this.VariablesToUse = CustomCSVParse(parameters, 2); //Param3
 

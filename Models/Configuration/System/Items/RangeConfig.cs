@@ -30,6 +30,10 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// </summary>
         public int Shape { get; set; } = -1;
 
+        /// <summary>
+        /// Optional. Cell index of the flag for if an item can only be used before movement.
+        /// </summary>
+        public int CanOnlyUseBeforeMovement { get; set; } = -1;
 
         #endregion
     }

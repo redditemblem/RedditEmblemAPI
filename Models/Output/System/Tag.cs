@@ -47,11 +47,10 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public Tag(TagConfig config, IList<string> data)
         {
-            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.SpriteURL = ParseHelper.SafeURLParse(data, config.SpriteURL, "Sprite URL", false);
-            this.ShowOnUnit = (ParseHelper.SafeStringParse(data, config.ShowOnUnit, "Show On Unit", false) == "Yes"
-                               && !string.IsNullOrEmpty(this.SpriteURL));
-            this.UnitAura = ParseHelper.SafeHexParse(data, config.UnitAura, "Unit Aura", false);
+            this.Name = DataParser.String(data, config.Name, "Name");
+            this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
+            this.ShowOnUnit = (DataParser.OptionalBoolean_YesNo(data, config.ShowOnUnit, "Show On Unit") && !string.IsNullOrEmpty(this.SpriteURL));
+            this.UnitAura = DataParser.OptionalString_HexCode(data, config.UnitAura, "Unit Aura");
         }
 
         #region Static Functions
@@ -65,7 +64,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 try
                 {
                     IList<string> tag = row.Select(r => r.ToString()).ToList();
-                    string name = ParseHelper.SafeStringParse(tag, config.Name, "Name", false);
+                    string name = DataParser.OptionalString(tag, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!tags.TryAdd(name, new Tag(config, tag)))

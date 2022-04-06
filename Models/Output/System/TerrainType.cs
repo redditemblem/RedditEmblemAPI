@@ -100,19 +100,19 @@ namespace RedditEmblemAPI.Models.Output.System
         public TerrainType(TerrainTypesConfig config, IList<string> data)
         {
             this.Matched = false;
-            this.Name = ParseHelper.SafeStringParse(data, config.Name, "Name", true);
-            this.CannotStopOn = (ParseHelper.SafeStringParse(data, config.CannotStopOn, "Cannot Stop On", false) == "Yes");
-            this.BlocksItems = (ParseHelper.SafeStringParse(data, config.BlocksItems, "Blocks Items", false) == "Yes");
-            this.RestrictAffiliations = ParseHelper.IntCSVParse(data, config.RestrictAffiliations, "Restrict Affiliations", true);
-            this.Groupings = ParseHelper.IntCSVParse(data, config.Groupings, "Groupings", true);
-            this.TextFields = ParseHelper.StringListParse(data, config.TextFields);
+            this.Name = DataParser.String(data, config.Name, "Name");
+            this.CannotStopOn = DataParser.OptionalBoolean_YesNo(data, config.CannotStopOn, "Cannot Stop On");
+            this.BlocksItems = DataParser.OptionalBoolean_YesNo(data, config.BlocksItems, "Blocks Items");
+            this.RestrictAffiliations = DataParser.List_IntCSV(data, config.RestrictAffiliations, "Restrict Affiliations", true);
+            this.Groupings = DataParser.List_IntCSV(data, config.Groupings, "Groupings", true);
+            this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
-            this.HPModifier = ParseHelper.OptionalInt_Any(data, config.HPModifier, "HP Modifier");
+            this.HPModifier = DataParser.OptionalInt_Any(data, config.HPModifier, "HP Modifier");
 
             this.CombatStatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.CombatStatModifiers)
             {
-                int val = ParseHelper.OptionalInt_Any(data, stat.Value, stat.SourceName);
+                int val = DataParser.OptionalInt_Any(data, stat.Value, stat.SourceName);
                 if (val == 0) continue;
                 this.CombatStatModifiers.Add(stat.SourceName, val);
             }
@@ -121,7 +121,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.StatModifiers = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.StatModifiers)
             {
-                int val = ParseHelper.OptionalInt_Any(data, stat.Value, stat.SourceName);
+                int val = DataParser.OptionalInt_Any(data, stat.Value, stat.SourceName);
                 if (val == 0) continue;
                 this.StatModifiers.Add(stat.SourceName, val);
             }
@@ -129,14 +129,14 @@ namespace RedditEmblemAPI.Models.Output.System
             this.MovementCosts = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.MovementCosts)
             {
-                int val = ParseHelper.Int_NonZeroPositive(data, stat.Value, $"{stat.SourceName} Movement Cost");
+                int val = DataParser.Int_NonZeroPositive(data, stat.Value, $"{stat.SourceName} Movement Cost");
                 this.MovementCosts.Add(stat.SourceName, val);
             }
 
-            this.WarpType = GetWarpTypeEnum(ParseHelper.SafeStringParse(data, config.WarpType, "Warp Type", false));
+            this.WarpType = GetWarpTypeEnum(DataParser.OptionalString(data, config.WarpType, "Warp Type"));
             if (this.WarpType == WarpType.Entrance || this.WarpType == WarpType.Dual)
             {
-                this.WarpCost = ParseHelper.Int_Positive(data, config.WarpCost, "Warp Cost");
+                this.WarpCost = DataParser.Int_Positive(data, config.WarpCost, "Warp Cost");
             }
             else this.WarpCost = -1;
         }
@@ -170,7 +170,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 try
                 {
                     IList<string> type = row.Select(r => r.ToString()).ToList();
-                    string name = ParseHelper.SafeStringParse(type, config.Name, "Name", false);
+                    string name = DataParser.OptionalString(type, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!terrainTypes.TryAdd(name, new TerrainType(config, type)))
