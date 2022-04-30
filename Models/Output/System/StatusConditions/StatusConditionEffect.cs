@@ -18,7 +18,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// Base constructor.
         /// </summary>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
-        public StatusConditionEffect(IList<string> parameters)
+        public StatusConditionEffect(List<string> parameters)
         {
             //Make sure enough parameters were passed in
             if (parameters.Count < this.ParameterCount)
@@ -36,7 +36,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// Helper function. Applies the values in <paramref name="modifiers"/> to the stats in <paramref name="combatStats"/>. Assumes both lists are the same length.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        protected void ApplyUnitCombatStatModifiers(Unit unit, string modifierName, IList<string> combatStats, IList<int> modifiers)
+        protected void ApplyUnitCombatStatModifiers(Unit unit, string modifierName, List<string> combatStats, List<int> modifiers)
         {
             for (int i = 0; i < combatStats.Count; i++)
             {
@@ -56,7 +56,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// Helper function. Applies the values in <paramref name="modifiers"/> to the stats in <paramref name="stats"/>. Assumes both lists are the same length.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        protected void ApplyUnitStatModifiers(Unit unit, string modifierName, IList<string> stats, IList<int> modifiers)
+        protected void ApplyUnitStatModifiers(Unit unit, string modifierName, List<string> stats, List<int> modifiers)
         {
             for (int i = 0; i < stats.Count; i++)
             {

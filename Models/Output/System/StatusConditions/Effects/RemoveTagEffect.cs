@@ -12,11 +12,11 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         protected override string Name { get { return "RemoveTag"; } }
         protected override int ParameterCount { get { return 1; } }
 
-        private IList<string> Tags { get; set; }
+        private List<string> Tags { get; set; }
 
         #endregion
 
-        public RemoveTagEffect(IList<string> parameters)
+        public RemoveTagEffect(List<string> parameters)
             : base(parameters)
         {
             this.Tags = DataParser.List_StringCSV(parameters, 0); //Param1

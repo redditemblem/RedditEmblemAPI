@@ -31,7 +31,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// Constructor.
         /// </summary>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
-        public HPBelowObstructTileRadiusEffect(IList<string> parameters)
+        public HPBelowObstructTileRadiusEffect(List<string> parameters)
             : base(parameters)
         {
             this.Radius = DataParser.Int_NonZeroPositive(parameters, 0, "Param1");
@@ -41,7 +41,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Marks all tiles within <c>this.Radius</c> tiles of <paramref name="unit"/>'s origin as obstructed when <paramref name="unit"/>'s HP percentage is below <c>this.HPPercentage</c>.
         /// </summary>
-        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             //If unit is not on the map, don't apply
             if (!unit.Location.IsOnMap())

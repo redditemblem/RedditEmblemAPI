@@ -36,7 +36,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Constructor.
         /// </summary>
-        public AllyHPAboveAllyRadiusTeleportEffect(IList<string> parameters)
+        public AllyHPAboveAllyRadiusTeleportEffect(List<string> parameters)
             : base(parameters)
         {
             this.TeleportationRange = DataParser.Int_NonZeroPositive(parameters, 0, "Param1");
@@ -47,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Locates ally units and adds tiles within <c>Radius</c> tiles of their origin to <paramref name="unit"/>'s movement range.
         /// </summary>
-        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             //If unit is not on the map, don't apply
             if (!unit.Location.IsOnMap())
@@ -57,7 +57,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
                 throw new SkillEffectMultitileUnitsNotSupportedException(this.Name);
 
             //Locate valid ally units and select tiles near them
-            IList<Tile> tiles = units.Where(u => u.Name != unit.Name
+            List<Tile> tiles = units.Where(u => u.Name != unit.Name
                                               && u.AffiliationObj.Grouping == unit.AffiliationObj.Grouping
                                               && u.Stats.HP.Percentage >= this.HPPercentage
                                               && u.Location.IsOnMap()

@@ -15,7 +15,7 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// List of warp tiles this tile is linked to.
         /// </summary>
         [JsonIgnore]
-        public IList<Tile> WarpGroup { get; set; }
+        public List<Tile> WarpGroup { get; set; }
         
         /// <summary>
         /// Number associated with the warp group this tile is linked to.

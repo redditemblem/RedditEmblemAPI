@@ -1,6 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using NCalc;
+using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -60,7 +63,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The calculated minimum range for the item, including modifier values.
         /// </summary>
         [JsonIgnore]
-        public int ModifiedMinRangeValue { get { return this.Item.Range.Minimum + this.MinRangeModifier; } }
+        public int ModifiedMinRangeValue { get { return this.Item.Range.Minimum + this.CalculatedMinRange + this.MinRangeModifier; } }
+
+        /// <summary>
+        /// The item's minimum range, if calculated using the unit's stats.
+        /// </summary>
+        public int CalculatedMinRange { get; set; }
 
         /// <summary>
         /// The amount by which to alter the item's minimum range.
@@ -71,7 +79,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The calculated maximum range for the item, including modifier values.
         /// </summary>
         [JsonIgnore]
-        public int ModifiedMaxRangeValue { get { return this.Item.Range.Maximum + this.MaxRangeModifier; } }
+        public int ModifiedMaxRangeValue { get { return this.Item.Range.Maximum + this.CalculatedMaxRange + this.MaxRangeModifier; } }
+
+        /// <summary>
+        /// The item's maxmimum range, if calculated using the unit's stats.
+        /// </summary>
+        public int CalculatedMaxRange { get; set; }
 
         /// <summary>
         /// The amount by which to alter the item's maximum range.
@@ -85,8 +98,14 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #endregion
 
+        #region Constants
+
         private static Regex usesRegex = new Regex(@"\([0-9]+\)"); //match item uses (ex. "(5)")
         private static Regex dropRegex = new Regex(@"\(D\)");      //match item droppable (ex. "(D)")
+
+        private static Regex unitStatRegex = new Regex(@"{UnitStat\[([A-Za-z,]+)\]}"); //match unit stat name
+
+        #endregion Constants
 
         /// <summary>
         /// Searches for an <c>Item</c> in <paramref name="items"/> that matches <paramref name="fullItemName"/>.
@@ -100,7 +119,9 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.IsDroppable = false;
             this.IsUsePrevented = false;
             this.Uses = 0;
+            this.CalculatedMinRange = 0;
             this.MinRangeModifier = 0;
+            this.CalculatedMaxRange = 0;
             this.MaxRangeModifier = 0;
             this.AllowMeleeRange = false;
 
@@ -132,6 +153,57 @@ namespace RedditEmblemAPI.Models.Output.Units
                 throw new UnmatchedItemException(name);
             this.Item = match;
             match.Matched = true;
+        }
+
+        /// <summary>
+        /// Checks to see if either the item's minimum or maximum ranges needs to be calculated. If yes, executes on the formula.
+        /// </summary>
+        public void CalculateItemRanges(Unit unit)
+        {
+            if (this.Item.Range.MinimumRequiresCalculation)
+                this.CalculatedMinRange = CalculateItemRange(this.Item.Range.MinimumRaw, unit);
+            
+            if(this.Item.Range.MaximumRequiresCalculation)
+                this.CalculatedMaxRange = CalculateItemRange(this.Item.Range.MaximumRaw, unit);
+        }
+
+        private int CalculateItemRange(string equation, Unit unit)
+        {
+            //{UnitStat[...]}
+            //Replaced by values from the General stat list
+            MatchCollection unitStatMatches = unitStatRegex.Matches(equation);
+            if (unitStatMatches.Count > 0)
+            {
+                foreach (Match match in unitStatMatches)
+                {
+                    int maximumStatValue = int.MinValue;
+                    foreach (string statSplit in match.Groups[1].Value.Split(","))
+                    {
+                        ModifiedStatValue unitStat;
+                        if (!unit.Stats.General.TryGetValue(statSplit, out unitStat))
+                            throw new UnmatchedStatException(statSplit);
+
+                        if (maximumStatValue < unitStat.FinalValue)
+                            maximumStatValue = unitStat.FinalValue;
+                    }
+
+                    equation = equation.Replace(match.Groups[0].Value, maximumStatValue.ToString());
+                }
+            }
+
+            //Throw an error if anything remains unparsed
+            if (equation.Contains("{") || equation.Contains("}"))
+                throw new UnrecognizedEquationVariableException(equation);
+
+            try
+            {
+                Expression expression = new Expression(equation);
+                return Math.Max(1, Convert.ToInt32(Math.Floor(Convert.ToDecimal(expression.Evaluate()))));
+            }
+            catch (Exception ex)
+            {
+                throw new EquationEvaluationErrorException(equation);
+            }
         }
     }
 }

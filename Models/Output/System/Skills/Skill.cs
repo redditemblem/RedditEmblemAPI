@@ -44,7 +44,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// <summary>
         /// List of the skill's text fields.
         /// </summary>
-        public IList<string> TextFields { get; set; }
+        public List<string> TextFields { get; set; }
 
         /// <summary>
         /// The effect the skill applies, if any.
@@ -57,7 +57,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Skill(SkillsConfig config, IList<string> data)
+        public Skill(SkillsConfig config, List<string> data)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -70,7 +70,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             else this.Effect = null;
         }
 
-        private SkillEffect BuildSkillEffect(string effectType, IList<string> parameters)
+        private SkillEffect BuildSkillEffect(string effectType, List<string> parameters)
         {
             if (string.IsNullOrEmpty(effectType))
                 return null;
@@ -148,11 +148,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         {
             IDictionary<string, Skill> skills = new Dictionary<string, Skill>();
 
-            foreach (IList<object> row in config.Query.Data)
+            foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    IList<string> skill = row.Select(r => r.ToString()).ToList();
+                    List<string> skill = row.Select(r => r.ToString()).ToList();
                     string name = DataParser.OptionalString(skill, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 

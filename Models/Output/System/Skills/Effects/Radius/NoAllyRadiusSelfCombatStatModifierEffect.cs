@@ -23,12 +23,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
         /// <summary>
         /// Param2. The unit combat stats to be affected.
         /// </summary>
-        private IList<string> Stats { get; set; }
+        private List<string> Stats { get; set; }
 
         /// <summary>
         /// Param3. The values by which to modify the <c>Stats</c>.
         /// </summary>
-        private IList<int> Values { get; set; }
+        private List<int> Values { get; set; }
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
         /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
-        public NoAllyRadiusSelfCombatStatModifierEffect(IList<string> parameters)
+        public NoAllyRadiusSelfCombatStatModifierEffect(List<string> parameters)
             : base(parameters)
         {
             this.Radius = DataParser.Int_NonZeroPositive(parameters, 0, "Param1");
@@ -57,7 +57,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
         /// Searches the <paramref name="units"/> list for friendly units within <c>Radius</c> tiles. If none exist, adds the values in <c>Values</c> as modifiers to the items in <c>Stats</c>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             //If unit is not on the map, don't apply
             if (!unit.Location.IsOnMap())

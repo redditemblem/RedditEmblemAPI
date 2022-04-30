@@ -32,12 +32,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses
         /// <summary>
         /// Optional. List of combat stat modifiers for a weapon rank bonus.
         /// </summary>
-        public IList<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
+        public List<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
         /// Optional. List of stat modifiers for a weapon rank bonus.
         /// </summary>
-        public IList<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
+        public List<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
 
         #endregion
     }

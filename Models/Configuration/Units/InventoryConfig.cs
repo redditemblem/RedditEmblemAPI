@@ -20,7 +20,7 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// Required. List of cell indexes for a unit's inventory items.
         /// </summary>
         [JsonRequired]
-        public IList<int> Slots { get; set; }
+        public List<int> Slots { get; set; }
 
         #endregion
     }

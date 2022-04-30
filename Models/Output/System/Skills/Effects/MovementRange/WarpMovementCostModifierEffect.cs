@@ -25,7 +25,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Constructor.
         /// </summary>
-        public WarpMovementCostModifierEffect(IList<string> parameters)
+        public WarpMovementCostModifierEffect(List<string> parameters)
             : base(parameters)
         {
             this.TerrainTypeGrouping = DataParser.Int_Positive(parameters, 0, "Param1");

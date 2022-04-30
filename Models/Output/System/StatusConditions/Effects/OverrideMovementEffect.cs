@@ -14,7 +14,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 
         #endregion
 
-        public OverrideMovementEffect(IList<string> parameters)
+        public OverrideMovementEffect(List<string> parameters)
             : base(parameters)
         {
             this.MovementValue = DataParser.Int_Positive(parameters, 0, "Param1");

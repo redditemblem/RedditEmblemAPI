@@ -49,7 +49,7 @@ namespace RedditEmblemAPI.Models.Configuration.System
         /// <summary>
         /// Optional. List of the weapon rank letters for this system, in order from lowest to highest. (ex. "E","D","C"...)
         /// </summary>
-        public IList<string> WeaponRanks { get; set; } = new List<string>();
+        public List<string> WeaponRanks { get; set; } = new List<string>();
 
         /// <summary>
         /// Optional. Container object for a system's class configuration.

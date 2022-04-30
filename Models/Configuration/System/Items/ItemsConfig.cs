@@ -48,7 +48,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// Required. List of an item's stat configurations.
         /// </summary>
         [JsonRequired]
-        public IList<NamedStatConfig> Stats { get; set; }
+        public List<NamedStatConfig> Stats { get; set; }
 
         /// <summary>
         /// Required. Container object for an item's range configuration.
@@ -73,22 +73,22 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// <summary>
         /// Optional. List of an item's stat modifiers when equipped.
         /// </summary>
-        public IList<NamedStatConfig> EquippedStatModifiers { get; set; } = new List<NamedStatConfig>();
+        public List<NamedStatConfig> EquippedStatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
         /// Optional. List of an item's stat modifiers when in a unit's inventory.
         /// </summary>
-        public IList<NamedStatConfig> InventoryStatModifiers { get; set; } = new List<NamedStatConfig>();
+        public List<NamedStatConfig> InventoryStatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. Cell index of an item's tags.
+        /// Optional. List of cell indexes for an item's tag(s).
         /// </summary>
-        public int Tags { get; set; } = -1;
+        public List<int> Tags { get; set; } = new List<int>();
 
         /// <summary>
         /// Optional. List of cell indexes for an item's text fields.
         /// </summary>
-        public IList<int> TextFields { get; set; } = new List<int>();
+        public List<int> TextFields { get; set; } = new List<int>();
 
         #endregion
     }

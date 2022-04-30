@@ -15,7 +15,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Param1. The list of <c>Item</c> categories to affect.
         /// </summary>
-        private IList<string> Categories { get; set; }
+        private List<string> Categories { get; set; }
 
         /// <summary>
         /// Param2. The value by which to modifiy the <c>UnitInventoryItem</c>'s min range.
@@ -27,9 +27,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ItemMinRangeSetEffect(IList<string> parameters)
+        public ItemMinRangeSetEffect(List<string> parameters)
             : base(parameters)
         {
+            //This needs to be executed last due to items w/ calculated ranges
+            this.ExecutionOrder = SkillEffectExecutionOrder.AfterFinalStatCalculations;
+
             this.Categories = DataParser.List_StringCSV(parameters, 0);
             this.Value = DataParser.Int_NonZeroPositive(parameters, 1, "Param2");
         }
@@ -37,7 +40,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Finds all items in <paramref name="unit"/>'s inventory with a category in <c>Categories</c> and sets their minimum range to <c>Value</c>.
         /// </summary>
-        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             foreach(UnitInventoryItem item in unit.Inventory)
             {
@@ -49,11 +52,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
                     continue;
 
                 //Items with a minimum range of 0 are not affected
-                if (item.Item.Range.Minimum == 0)
+                if (item.Item.Range.Minimum == 0 && item.CalculatedMinRange == 0)
                     continue;
 
                 //Calculate the difference between the set value and the item's base min range 
-                int modifier = this.Value - item.Item.Range.Minimum;
+                int modifier = this.Value - (item.Item.Range.Minimum + item.CalculatedMinRange);
 
                 //If there is a difference and it's smaller than what we're already applying, use it
                 if (modifier < 0 && modifier < item.MinRangeModifier)

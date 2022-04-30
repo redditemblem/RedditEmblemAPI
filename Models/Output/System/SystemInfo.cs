@@ -20,7 +20,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// List of weapon ranks.
         /// </summary>
         [JsonIgnore]
-        public IList<string> WeaponRanks { get; set; }
+        public List<string> WeaponRanks { get; set; }
 
         #endregion
 
@@ -74,7 +74,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Container list for data about weapon rank bonuses.
         /// </summary>
         [JsonIgnore]
-        public IList<WeaponRankBonus> WeaponRankBonuses { get; set; }
+        public List<WeaponRankBonus> WeaponRankBonuses { get; set; }
 
         #endregion
 

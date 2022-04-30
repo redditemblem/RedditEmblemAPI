@@ -24,7 +24,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ObstructItemRangesEffect(IList<string> parameters)
+        public ObstructItemRangesEffect(List<string> parameters)
             : base(parameters)
         {
             this.Radius = DataParser.Int_Positive(parameters, 0, "Param1");
@@ -33,7 +33,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// ddfdf
         /// </summary>
-        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             //Ignore units not on the map
             if (!unit.Location.IsOnMap())

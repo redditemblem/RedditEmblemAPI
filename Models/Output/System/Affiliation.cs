@@ -33,14 +33,14 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// List of the affiliation's text fields.
         /// </summary>
-        public IList<string> TextFields { get; set; }
+        public List<string> TextFields { get; set; }
 
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Affiliation(AffiliationsConfig config, IList<string> data)
+        public Affiliation(AffiliationsConfig config, List<string> data)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -54,11 +54,11 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             IDictionary<string, Affiliation> affiliations = new Dictionary<string, Affiliation>();
 
-            foreach (IList<object> row in config.Query.Data)
+            foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    IList<string> aff = row.Select(r => r.ToString()).ToList();
+                    List<string> aff = row.Select(r => r.ToString()).ToList();
                     string name = DataParser.OptionalString(aff, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 

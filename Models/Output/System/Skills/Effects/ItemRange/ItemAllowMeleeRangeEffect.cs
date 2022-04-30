@@ -16,14 +16,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Param1. The list of <c>Item</c> categories to affect.
         /// </summary>
-        private IList<string> Categories { get; set; }
+        private List<string> Categories { get; set; }
 
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ItemAllowMeleeRangeEffect(IList<string> parameters)
+        public ItemAllowMeleeRangeEffect(List<string> parameters)
             : base(parameters)
         {
             this.Categories = DataParser.List_StringCSV(parameters, 0);
@@ -32,7 +32,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Finds all items in <paramref name="unit"/>'s inventory with a category in <c>Categories</c> and sets their <c>AllowMeleeRange</c> value to true.
         /// </summary>
-        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             foreach (UnitInventoryItem item in unit.Inventory)
             {
@@ -44,7 +44,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
                     continue;
 
                 //Items with a minimum range of 0 are not affected
-                if (item.Item.Range.Minimum == 0)
+                if (item.Item.Range.Minimum == 0 && !item.Item.Range.MinimumRequiresCalculation)
                     continue;
 
                 item.AllowMeleeRange = true;

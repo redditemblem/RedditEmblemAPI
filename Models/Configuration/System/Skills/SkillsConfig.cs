@@ -32,7 +32,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Skills
         /// <summary>
         /// Optional. List of cell indexes for a skill's text fields.
         /// </summary>
-        public IList<int> TextFields { get; set; } = new List<int>();
+        public List<int> TextFields { get; set; } = new List<int>();
 
         /// <summary>
         /// Optional. Container object for skill effect configuration.

@@ -15,7 +15,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Param1. The list of <c>Item</c> categories to affect.
         /// </summary>
-        private IList<string> Categories { get; set; }
+        private List<string> Categories { get; set; }
 
         /// <summary>
         /// Param2. The value by which to modifiy the <c>UnitInventoryItem</c>'s max range.
@@ -27,7 +27,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ItemMaxRangeModifierEffect(IList<string> parameters)
+        public ItemMaxRangeModifierEffect(List<string> parameters)
             : base(parameters)
         {
             this.Categories = DataParser.List_StringCSV(parameters, 0);
@@ -37,7 +37,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Finds all items in <paramref name="unit"/>'s inventory with a category in <c>Categories</c> and boosts their max range by <c>Value</c>.
         /// </summary>
-        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             foreach(UnitInventoryItem item in unit.Inventory)
             {

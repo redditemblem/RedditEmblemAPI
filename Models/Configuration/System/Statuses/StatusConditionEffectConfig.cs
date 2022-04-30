@@ -17,7 +17,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
         /// Required. List of cell indexes for the parameters.
         /// </summary>
         [JsonRequired]
-        public IList<int> Parameters { get; set; }
+        public List<int> Parameters { get; set; }
 
         #endregion
     }

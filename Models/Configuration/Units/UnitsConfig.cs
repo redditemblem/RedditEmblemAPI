@@ -55,19 +55,19 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// Required. List of equations to calculate a unit's combat stats.
         /// </summary>
         [JsonRequired]
-        public IList<CalculatedStatConfig> CombatStats { get; set; }
+        public List<CalculatedStatConfig> CombatStats { get; set; }
 
         /// <summary>
         /// Required. List of a unit's base stats.
         /// </summary>
         [JsonRequired]
-        public IList<ModifiedNamedStatConfig> Stats { get; set; }
+        public List<ModifiedNamedStatConfig> Stats { get; set; }
 
         /// <summary>
         /// Required. List of a unit's weapon ranks.
         /// </summary>
         [JsonRequired]
-        public IList<UnitWeaponRanksConfig> WeaponRanks { get; set; }
+        public List<UnitWeaponRanksConfig> WeaponRanks { get; set; }
 
         /// <summary>
         /// Required. Container object for a unit's inventory configuration.
@@ -92,7 +92,7 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// <summary>
         /// Optional. List of cell indexes for a unit's class values.
         /// </summary>
-        public IList<int> Classes { get; set; } = new List<int>();
+        public List<int> Classes { get; set; } = new List<int>();
 
         /// <summary>
         /// Optional. The cell index for a unit's movement type.
@@ -102,7 +102,7 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// <summary>
         /// Optional. List of cell indexes for a unit's text fields.
         /// </summary>
-        public IList<int> TextFields { get; set; } = new List<int>();
+        public List<int> TextFields { get; set; } = new List<int>();
 
         /// <summary>
         /// Optional. Cell index of a unit's experience value.
@@ -125,9 +125,9 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public int HasMoved { get; set; } = -1;
 
         /// <summary>
-        /// Optional. Cell index of a unit's tags value.
+        /// Optional. List of cell indexes for a unit's tag(s).
         /// </summary>
-        public int Tags { get; set; } = -1;
+        public List<int> Tags { get; set; } = new List<int>();
 
         /// <summary>
         /// Optional. Cell index of a unit's behavior description.
@@ -137,17 +137,17 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// <summary>
         /// Optional. List of a unit's system stats.
         /// </summary>
-        public IList<ModifiedNamedStatConfig> SystemStats { get; set; } = new List<ModifiedNamedStatConfig>();
+        public List<ModifiedNamedStatConfig> SystemStats { get; set; } = new List<ModifiedNamedStatConfig>();
 
         /// <summary>
         /// Optional. List of cell indexes for a unit's status conditions.
         /// </summary>
-        public IList<int> StatusConditions { get; set; } = new List<int>();
+        public List<int> StatusConditions { get; set; } = new List<int>();
 
         /// <summary>
         /// Optional. Container object for a unit's skills configuration.
         /// </summary>
-        public IList<int> Skills { get; set; } = new List<int>();
+        public List<int> Skills { get; set; } = new List<int>();
 
         #endregion
     }

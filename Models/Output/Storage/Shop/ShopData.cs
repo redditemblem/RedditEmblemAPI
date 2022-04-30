@@ -35,7 +35,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// <summary>
         /// List of <c>ShopItem</c>s that will be presented on the Shop page.
         /// </summary>
-        public IList<ShopItem> ShopItems { get; set; }
+        public List<ShopItem> ShopItems { get; set; }
 
         /// <summary>
         /// List of <c>Item</c>s linked by the values in <c>ShopItems</c>.
@@ -66,11 +66,11 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
 
             //Build the shop item list
             this.ShopItems = new List<ShopItem>();
-            foreach (IList<object> row in config.Shop.Query.Data)
+            foreach (List<object> row in config.Shop.Query.Data)
             {
                 try
                 {
-                    IList<string> item = row.Select(r => r.ToString()).ToList();
+                    List<string> item = row.Select(r => r.ToString()).ToList();
                     string name = DataParser.OptionalString(item, config.Shop.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
                     this.ShopItems.Add(new ShopItem(config.Shop, item, this.Items));
@@ -82,7 +82,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             }
 
             //Build page parameters
-            IList<ItemSort> sorts = new List<ItemSort>() {
+            List<ItemSort> sorts = new List<ItemSort>() {
                 new ItemSort("Name", "name", false),
                 new ItemSort("Price", "price", false),
                 new ItemSort("Category", "category", true)

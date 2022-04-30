@@ -41,7 +41,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The <c>Tile</c> that this unit's range originates from.
         /// </summary>
         [JsonIgnore]
-        public IList<Tile> OriginTiles { get; set; }
+        public List<Tile> OriginTiles { get; set; }
 
         /// <summary>
         /// The <c>Unit</c> paired with the unit, if any.
@@ -70,7 +70,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Constructor.
         /// </summary>
-        public UnitLocationData(UnitsConfig config, IList<string> data)
+        public UnitLocationData(UnitsConfig config, List<string> data)
         {
             this.OriginTiles = new List<Tile>();
 

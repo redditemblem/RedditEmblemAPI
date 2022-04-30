@@ -62,7 +62,7 @@
       },
       "Name": 0, //Required
       "MovementType": 0, //Required
-      "Tags": 0, //Optional
+      "Tags": [ 0 ], //Optional
       "TextFields": [ 0 ] //Optional
     },
     "Items": { //Required
@@ -102,7 +102,7 @@
         "Shape": 0, //Optional
         "CanOnlyUseBeforeMovement": 0 //Optional
       },
-      "Tags": 0, //Optional
+      "Tags": [ 0 ], //Optional
       "TextFields": [] //Optional
     },
     "WeaponRankBonuses": { //Optional, defaults to null
@@ -285,7 +285,7 @@
     "HasMoved": 0, //Optional
     "Experience": 0, //Optional
     "HeldCurrency": 0, //Optional
-    "Tags": 0, //Optional
+    "Tags": [ 0 ], //Optional
     "Behavior": 0, //Optional
     "SystemStats": [ //Optional
       {

@@ -27,14 +27,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
 
         #endregion
 
-        public RadiusAllyMovementCostSetEffect(IList<string> parameters)
+        public RadiusAllyMovementCostSetEffect(List<string> parameters)
             : base(parameters)
         {
             this.Radius = DataParser.Int_Positive(parameters, 0, "Param1");
             this.MovementCost = DataParser.Int_Positive(parameters, 1, "Param2");
         }
 
-        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             //Ignore units not on map
             if (!unit.Location.IsOnMap())

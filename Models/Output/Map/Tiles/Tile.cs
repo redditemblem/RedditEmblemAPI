@@ -36,7 +36,7 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// <summary>
         /// List of the terrain effects on this tile.
         /// </summary>
-        public IList<TileTerrainEffect> TerrainEffects { get; set; }
+        public List<TileTerrainEffect> TerrainEffects { get; set; }
 
         #region JSON Serialization Only
 

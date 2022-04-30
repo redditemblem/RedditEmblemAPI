@@ -47,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// <summary>
         /// List of the status condtion's text fields.
         /// </summary>
-        public IList<string> TextFields { get; set; }
+        public List<string> TextFields { get; set; }
 
         /// <summary>
         /// The effect the status condition applies, if any.
@@ -60,7 +60,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// <summary>
         /// Constructor.
         /// </summary>
-        public StatusCondition(StatusConditionConfig config, IList<string> data)
+        public StatusCondition(StatusConditionConfig config, List<string> data)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -79,7 +79,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// Matches the value in <paramref name="data"/> at <paramref name="index"/> to a <c>StatusType</c> enum.
         /// </summary>
         /// <exception cref="UnmatchedStatusConditionTypeException"></exception>
-        private StatusConditionType ParseStatusConditionType(IList<string> data, int index)
+        private StatusConditionType ParseStatusConditionType(List<string> data, int index)
         {
             string name = DataParser.String(data, index, "Type");
             switch (name)
@@ -91,7 +91,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
             }
         }
 
-        private StatusConditionEffect BuildStatusConditionEffect(string effectType, IList<string> parameters)
+        private StatusConditionEffect BuildStatusConditionEffect(string effectType, List<string> parameters)
         {
             if (string.IsNullOrEmpty(effectType))
                 return null;
@@ -116,11 +116,11 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         {
             IDictionary<string, StatusCondition> statusConditions = new Dictionary<string, StatusCondition>();
 
-            foreach (IList<object> row in config.Query.Data)
+            foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    IList<string> stat = row.Select(r => r.ToString()).ToList();
+                    List<string> stat = row.Select(r => r.ToString()).ToList();
                     string name = DataParser.OptionalString(stat, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 

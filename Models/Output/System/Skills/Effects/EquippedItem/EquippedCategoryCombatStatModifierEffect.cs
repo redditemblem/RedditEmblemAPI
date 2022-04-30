@@ -18,17 +18,17 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
         /// <summary>
         /// Param1. List of <c>Item</c> categories to check for.
         /// </summary>
-        private IList<string> Categories { get; set; }
+        private List<string> Categories { get; set; }
 
         /// <summary>
         /// Param2. The unit combat stats to be affected.
         /// </summary>
-        private IList<string> Stats { get; set; }
+        private List<string> Stats { get; set; }
 
         /// <summary>
         /// Param3. The values by which to modify the <c>Stats</c>.
         /// </summary>
-        private IList<int> Values { get; set; }
+        private List<int> Values { get; set; }
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
         /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
-        public EquippedCategoryCombatStatModifierEffect(IList<string> parameters)
+        public EquippedCategoryCombatStatModifierEffect(List<string> parameters)
             : base(parameters)
         {
             this.Categories = DataParser.List_StringCSV(parameters, 0);
@@ -59,7 +59,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
         /// If <paramref name="unit"/> has an item equipped with a category in <c>Categories</c>, then the values in <c>Values</c> are added as modifiers to the items in <c>Stats</c>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             UnitInventoryItem equipped = unit.Inventory.SingleOrDefault(i => i != null && i.IsEquipped);
             if (equipped == null)

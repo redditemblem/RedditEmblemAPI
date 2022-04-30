@@ -23,12 +23,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
         /// <summary>
         /// Param2. The unit stats to be affected.
         /// </summary>
-        private IList<string> Stats { get; set; }
+        private List<string> Stats { get; set; }
 
         /// <summary>
         /// Param3. The values by which to modify the <c>Stats</c>.
         /// </summary>
-        private IList<int> Values { get; set; }
+        private List<int> Values { get; set; }
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
         /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
-        public TerrainTypeStatModifierEffect(IList<string> parameters)
+        public TerrainTypeStatModifierEffect(List<string> parameters)
             : base(parameters)
         {
             this.TerrainTypeGrouping = DataParser.Int_Positive(parameters, 0, "Param1");
@@ -57,7 +57,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
         /// If <paramref name="unit"/> originates on a tile with a terrain type in <c>TerrainTypeGrouping</c>, then the values in <c>Values</c> are added as modifiers to the items in <c>Stats</c>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             //If unit is not on the map, don't apply
             if (!unit.Location.IsOnMap())

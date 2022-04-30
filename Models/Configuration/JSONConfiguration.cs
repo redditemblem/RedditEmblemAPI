@@ -63,10 +63,10 @@ namespace RedditEmblemAPI.Models.Configuration
         /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
         /// </summary>
         /// <returns></returns>
-        public IList<Query> GetMapBatchQueries()
+        public List<Query> GetMapBatchQueries()
         {
             //Essential queries
-            IList<Query> queries = new List<Query>()
+            List<Query> queries = new List<Query>()
             {
                 this.Map.MapControls.Query,
                 this.Map.MapTiles.Query,
@@ -94,10 +94,10 @@ namespace RedditEmblemAPI.Models.Configuration
         /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
         /// </summary>
         /// <returns></returns>
-        public IList<Query> GetMapAnalysisBatchQueries()
+        public List<Query> GetMapAnalysisBatchQueries()
         {
             //Essential queries
-            IList<Query> queries = new List<Query>()
+            List<Query> queries = new List<Query>()
             {
                 this.Map.MapControls.Query,
                 this.Map.MapTiles.Query,
@@ -111,10 +111,10 @@ namespace RedditEmblemAPI.Models.Configuration
         /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
         /// </summary>
         /// <returns></returns>
-        public IList<Query> GetConvoyBatchQueries()
+        public List<Query> GetConvoyBatchQueries()
         {
             //Essential queries
-            IList<Query> queries = new List<Query>()
+            List<Query> queries = new List<Query>()
             {
                 this.System.Items.Query,
                 this.Convoy.Query
@@ -130,10 +130,10 @@ namespace RedditEmblemAPI.Models.Configuration
         /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
         /// </summary>
         /// <returns></returns>
-        public IList<Query> GetShopBatchQueries()
+        public List<Query> GetShopBatchQueries()
         {
             //Essential queries
-            IList<Query> queries = new List<Query>()
+            List<Query> queries = new List<Query>()
             {
                 this.System.Items.Query,
                 this.Shop.Query

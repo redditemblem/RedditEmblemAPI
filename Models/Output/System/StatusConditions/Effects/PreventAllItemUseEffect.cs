@@ -15,7 +15,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 
         #endregion
 
-        public PreventAllItemUseEffect(IList<string> parameters)
+        public PreventAllItemUseEffect(List<string> parameters)
             : base(parameters)
         { }
 

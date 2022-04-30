@@ -151,7 +151,7 @@
             "Shape": 14,
             "CanOnlyUseBeforeMovement": 15
         },
-      "Tags": 32,
+      "Tags": [ 32 ],
       "TextFields": [ 33, 34 ]
     },
     "WeaponRankBonuses": {
@@ -194,7 +194,7 @@
         "Orientation": 1
       },
       "Name": 0,
-      "Tags": 1,
+      "Tags": [ 1 ],
       "MovementType": 2,
       "TextFields": [ 3 ]
     },
@@ -342,7 +342,7 @@
       "Current": 17,
       "Maximum": 18
     },
-    "Tags": 15,
+    "Tags": [ 15 ],
     "Behavior": 16,
     "CombatStats": [
       {

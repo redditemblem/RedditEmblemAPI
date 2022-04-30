@@ -15,7 +15,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Constructor.
         /// </summary>
-        public IgnoreUnitAffiliationsEffect(IList<string> parameters)
+        public IgnoreUnitAffiliationsEffect(List<string> parameters)
             : base(parameters)
         {
             //This effect has no parameters

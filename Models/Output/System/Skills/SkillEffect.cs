@@ -15,6 +15,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 
         protected abstract string Name { get; }
         protected abstract int ParameterCount { get; }
+        public SkillEffectExecutionOrder ExecutionOrder { get; protected set; }
 
         #endregion
 
@@ -22,14 +23,17 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// Base constructor.
         /// </summary>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
-        public SkillEffect(IList<string> parameters)
+        public SkillEffect(List<string> parameters)
         {
             //Make sure enough parameters were passed in
             if (parameters.Count < this.ParameterCount)
                 throw new SkillEffectMissingParameterException(this.Name, this.ParameterCount, parameters.Count);
+
+            //Set the default execution order
+            this.ExecutionOrder = SkillEffectExecutionOrder.Standard;
         }
 
-        public virtual void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public virtual void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             //By default, the effect applies nothing
         }
@@ -40,7 +44,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// Helper function. Applies the values in <paramref name="modifiers"/> to the stats in <paramref name="combatStats"/>. Assumes both lists are the same length.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        protected void ApplyUnitCombatStatModifiers(Unit unit, string modifierName, IList<string> combatStats, IList<int> modifiers)
+        protected void ApplyUnitCombatStatModifiers(Unit unit, string modifierName, List<string> combatStats, List<int> modifiers)
         {
             for (int i = 0; i < combatStats.Count; i++)
             {
@@ -60,7 +64,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// Helper function. Applies the values in <paramref name="modifiers"/> to the stats in <paramref name="stats"/>. Assumes both lists are the same length.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        protected void ApplyUnitStatModifiers(Unit unit, string modifierName, IList<string> stats, IList<int> modifiers)
+        protected void ApplyUnitStatModifiers(Unit unit, string modifierName, List<string> stats, List<int> modifiers)
         {
             for (int i = 0; i < stats.Count; i++)
             {
@@ -80,9 +84,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// Helper function used by the <c>...RadiusTeleportEffect</c>s. Tests each tile in <paramref name="targetTiles"/> to ensure that <paramref name="unit"/> is capable of teleporting there, then adds valid tiles to the <paramref name="unit"/>'s movement range.
         /// </summary>
         /// <exception cref="UnmatchedMovementTypeException"></exception>
-        protected void AddTeleportTargetsToUnitRange(Unit unit, IList<Tile> targetTiles)
+        protected void AddTeleportTargetsToUnitRange(Unit unit, List<Tile> targetTiles)
         {
-            IList<TerrainTypeMovementCostSetEffect> moveCostSets = unit.SkillList.Select(s => s.Effect).OfType<TerrainTypeMovementCostSetEffect>().ToList();
+            List<TerrainTypeMovementCostSetEffect> moveCostSets = unit.SkillList.Select(s => s.Effect).OfType<TerrainTypeMovementCostSetEffect>().ToList();
 
             foreach (Tile tile in targetTiles)
             {
@@ -110,5 +114,17 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         }
 
         #endregion
+    }
+
+    public enum SkillEffectExecutionOrder
+    {
+        /// <summary>
+        /// The default execution order. Should be used for most normal skill effects.
+        /// </summary>
+        Standard,
+        /// <summary>
+        /// For skill effects dependent on the final value of a stat. Should NEVER modify unit stat values.
+        /// </summary>
+        AfterFinalStatCalculations
     }
 }

@@ -45,7 +45,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Tag(TagConfig config, IList<string> data)
+        public Tag(TagConfig config, List<string> data)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -59,11 +59,11 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             IDictionary<string, Tag> tags = new Dictionary<string, Tag>();
 
-            foreach (IList<object> row in config.Query.Data)
+            foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    IList<string> tag = row.Select(r => r.ToString()).ToList();
+                    List<string> tag = row.Select(r => r.ToString()).ToList();
                     string name = DataParser.OptionalString(tag, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 

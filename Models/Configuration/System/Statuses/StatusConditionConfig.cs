@@ -43,7 +43,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
         /// <summary>
         /// Optional. List of cell indexes for a status condition's text fields.
         /// </summary>
-        public IList<int> TextFields { get; set; } = new List<int>();
+        public List<int> TextFields { get; set; } = new List<int>();
 
         /// <summary>
         /// Optional. Container object for status condition effect configuration.

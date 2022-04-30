@@ -31,14 +31,14 @@ namespace RedditEmblemAPI.Models.Configuration.System.Classes
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index of a class's tags value.
+        /// Optional. List of cell indexes for a class's tag field(s).
         /// </summary>
-        public int Tags { get; set; } = -1;
+        public List<int> Tags { get; set; } = new List<int>();
 
         /// <summary>
         /// Optional. List of cell indexes for a class's text fields.
         /// </summary>
-        public IList<int> TextFields { get; set; } = new List<int>();
+        public List<int> TextFields { get; set; } = new List<int>();
 
         #endregion
     }

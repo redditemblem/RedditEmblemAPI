@@ -36,7 +36,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Constructor.
         /// </summary>
-        public UnitSpriteData(UnitsConfig config, IList<string> data)
+        public UnitSpriteData(UnitsConfig config, List<string> data)
         {
             this.SpriteURL = DataParser.String_URL(data, config.SpriteURL, "Sprite URL");
             this.PortraitURL = DataParser.OptionalString_URL(data, config.PortraitURL, "Portrait URL");

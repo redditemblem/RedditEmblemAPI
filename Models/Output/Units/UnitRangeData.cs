@@ -13,17 +13,17 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// List of tiles that the unit is capable of moving to.
         /// </summary>
-        public IList<Coordinate> Movement { get; set; }
+        public List<Coordinate> Movement { get; set; }
 
         /// <summary>
         /// List of tiles that the unit is capable of attacking.
         /// </summary>
-        public IList<Coordinate> Attack { get; set; }
+        public List<Coordinate> Attack { get; set; }
 
         /// <summary>
         /// List of tiles that the unit is capable of using a utility item on.
         /// </summary>
-        public IList<Coordinate> Utility { get; set; }
+        public List<Coordinate> Utility { get; set; }
 
         #endregion Attributes
 

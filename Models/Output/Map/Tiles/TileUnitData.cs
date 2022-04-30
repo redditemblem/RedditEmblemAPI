@@ -32,19 +32,19 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// The nearby <c>Unit</c>s obstructing movement through this tile, if any.
         /// </summary>
         [JsonIgnore]
-        public IList<Unit> UnitsObstructingMovement { get; set; }
+        public List<Unit> UnitsObstructingMovement { get; set; }
 
         /// <summary>
         /// The nearby <c>Unit</c>s obstructing item ranges through this tile, if any.
         /// </summary>
         [JsonIgnore]
-        public IList<Unit> UnitsObstructingItems { get; set; }
+        public List<Unit> UnitsObstructingItems { get; set; }
 
         /// <summary>
         /// The nearby <c>Unit</c>s adjusting the movement costs of this tile, if any.
         /// </summary>
         [JsonIgnore]
-        public IList<Unit> UnitsAffectingMovementCosts { get; set; }
+        public List<Unit> UnitsAffectingMovementCosts { get; set; }
 
         #region JSON Serialization Only
 

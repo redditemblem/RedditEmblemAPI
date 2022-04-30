@@ -33,7 +33,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
 
         #endregion
 
-        public HPBelowEnemyRadiusTeleportEffect(IList<string> parameters)
+        public HPBelowEnemyRadiusTeleportEffect(List<string> parameters)
             : base(parameters)
         {
             this.TeleportationRange = DataParser.Int_NonZeroPositive(parameters, 0, "Param1");
@@ -44,7 +44,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Locates enemy units and adds tiles within <c>Radius</c> tiles of their origin to <paramref name="unit"/>'s movement range.
         /// </summary>
-        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             //If unit is not on the map, don't apply
             if (!unit.Location.IsOnMap())
@@ -58,7 +58,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
                 throw new SkillEffectMultitileUnitsNotSupportedException(this.Name);
 
             //Locate valid enemy units and select tiles near them
-            IList<Tile> tiles = units.Where(u => u.AffiliationObj.Grouping != unit.AffiliationObj.Grouping
+            List<Tile> tiles = units.Where(u => u.AffiliationObj.Grouping != unit.AffiliationObj.Grouping
                                               && u.Location.IsOnMap()
                                               && (u.Location.OriginTiles.Any(o1 => unit.Location.OriginTiles.Any(o2 => o1.Coordinate.DistanceFrom(o2.Coordinate) <= this.TeleportationRange)) || this.TeleportationRange == 99))
                                      .SelectMany(u => map.GetTilesInRadius(u.Location.OriginTiles, this.Radius))

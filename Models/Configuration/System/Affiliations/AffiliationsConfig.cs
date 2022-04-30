@@ -33,7 +33,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Affiliations
         /// <summary>
         /// Optional. List of cell indexes for an affiliation's text fields.
         /// </summary>
-        public IList<int> TextFields { get; set; } = new List<int>();
+        public List<int> TextFields { get; set; } = new List<int>();
 
         #endregion
     }

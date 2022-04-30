@@ -56,7 +56,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// Constructor. Builds the <c>ShopItem</c> and matches it to an <c>Item</c> definition from <paramref name="items"/>.
         /// </summary>
         /// <exception cref="UnmatchedItemException"></exception>
-        public ShopItem(ShopConfig config, IList<string> data, IDictionary<string, Item> items)
+        public ShopItem(ShopConfig config, List<string> data, IDictionary<string, Item> items)
         {
             this.FullName = DataParser.String(data, config.Name, "Name");
 

@@ -24,7 +24,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Container list for data about units.
         /// </summary>
-        public IList<Unit> Units { get; set; }
+        public List<Unit> Units { get; set; }
 
         /// <summary>
         /// Flag indicating if the convoy button should be shown in the toolbar.

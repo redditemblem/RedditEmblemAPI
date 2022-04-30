@@ -12,7 +12,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 
         #endregion
 
-        public DoesNotBlockEnemyAffiliationsEffect(IList<string> parameters)
+        public DoesNotBlockEnemyAffiliationsEffect(List<string> parameters)
             : base(parameters)
         {
             //This effect has no parameters.

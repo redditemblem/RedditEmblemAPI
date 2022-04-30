@@ -12,7 +12,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Unmatched
             : base($"The value \"{unmatchedValue}\" could not be matched to a known {description} definition. The given name must match exactly, including capitalization and punctuation.")
         { }
 
-        public UnmatchedException(string description, string unmatchedValue, IList<string> possibleValues)
+        public UnmatchedException(string description, string unmatchedValue, List<string> possibleValues)
             : base($"The value \"{unmatchedValue}\" could not be matched to a known {description}. Possible values include: {string.Join(", ", possibleValues)}.")
         { }
     }

@@ -33,25 +33,25 @@ namespace RedditEmblemAPI.Models.Output.System
         /// List of the class's tags.
         /// </summary>
         [JsonIgnore]
-        public IList<string> Tags { get; set; }
+        public List<string> Tags { get; set; }
 
         /// <summary>
         /// List of the class's text fields.
         /// </summary>
-        public IList<string> TextFields { get; set; }
+        public List<string> TextFields { get; set; }
 
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Class(ClassesConfig config, IList<string> data)
+        public Class(ClassesConfig config, List<string> data)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.MovementType = DataParser.String(data, config.MovementType, "Movement Type");
 
-            this.Tags = DataParser.List_StringCSV(data, config.Tags);
+            this.Tags = DataParser.List_StringCSV(data, config.Tags).Distinct().ToList();
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
         }
 
@@ -61,11 +61,11 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             IDictionary<string, Class> classes = new Dictionary<string, Class>();
 
-            foreach (IList<object> row in config.Query.Data)
+            foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    IList<string> cls = row.Select(r => r.ToString()).ToList();
+                    List<string> cls = row.Select(r => r.ToString()).ToList();
                     string name = DataParser.OptionalString(cls, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 

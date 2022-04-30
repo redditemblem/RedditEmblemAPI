@@ -67,7 +67,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Constructor.
         /// </summary>
-        public UnitStatsData(UnitsConfig config, IList<string> data)
+        public UnitStatsData(UnitsConfig config, List<string> data)
         {
             this.Level = DataParser.Int_NonZeroPositive(data, config.Level, "Level");
 
@@ -89,7 +89,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Adds the stats from <paramref name="stats"/> into <c>CombatStats</c>. Does NOT calculate their values.
         /// </summary>
-        private void BuildCombatStats(IList<string> data, IList<CalculatedStatConfig> stats)
+        private void BuildCombatStats(List<string> data, List<CalculatedStatConfig> stats)
         {
             this.Combat = new Dictionary<string, ModifiedStatValue>();
 
@@ -109,7 +109,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
         }
 
-        private void BuildSystemStats(IList<string> data, IList<ModifiedNamedStatConfig> config)
+        private void BuildSystemStats(List<string> data, List<ModifiedNamedStatConfig> config)
         {
             this.System = new Dictionary<string, ModifiedStatValue>();
 
@@ -130,14 +130,14 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
         }
 
-        private void BuildGeneralStats(IList<string> data, IList<ModifiedNamedStatConfig> config)
+        private void BuildGeneralStats(List<string> data, List<ModifiedNamedStatConfig> config)
         {
             this.General = new Dictionary<string, ModifiedStatValue>();
 
             foreach (ModifiedNamedStatConfig stat in config)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
-                temp.BaseValue = DataParser.Int_Positive(data, stat.BaseValue, stat.SourceName);
+                temp.BaseValue = DataParser.Int_Any(data, stat.BaseValue, stat.SourceName);
 
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
@@ -156,7 +156,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Assembles and executes the equations in <paramref name="stats"/>.
         /// </summary>
-        public void CalculateCombatStats(IList<CalculatedStatConfig> stats, IList<UnitInventoryItem> unitInventory, IList<ReplaceCombatStatFormulaVariableEffect> replacementEffects)
+        public void CalculateCombatStats(List<CalculatedStatConfig> stats, List<UnitInventoryItem> unitInventory, List<ReplaceCombatStatFormulaVariableEffect> replacementEffects)
         {
             foreach (CalculatedStatConfig stat in stats)
             {
@@ -255,7 +255,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 try
                 {
                     Expression expression = new Expression(equation);
-                    this.Combat[stat.SourceName].BaseValue = Math.Max(0, Convert.ToInt32(expression.Evaluate()));
+                    this.Combat[stat.SourceName].BaseValue = Math.Max(0, Convert.ToInt32(Math.Floor(Convert.ToDecimal(expression.Evaluate()))));
                 }
                 catch(Exception ex)
                 {

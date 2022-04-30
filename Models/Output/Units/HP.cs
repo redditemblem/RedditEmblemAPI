@@ -30,7 +30,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Initializes the class with the values in <paramref name="data"/> at <paramref name="currentIndex"/> and <paramref name="maximumIndex"/>.
         /// </summary>
-        public HP(IList<string> data, int currentIndex, int maximumIndex)
+        public HP(List<string> data, int currentIndex, int maximumIndex)
         {
             int currentVal = DataParser.Int_Positive(data, currentIndex, "Current HP");
             this.Current = currentVal;

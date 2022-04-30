@@ -17,12 +17,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Param1. The unit stats to be affected.
         /// </summary>
-        private IList<string> Stats { get; set; }
+        private List<string> Stats { get; set; }
 
         /// <summary>
         /// Param2. The value by which to modify the <c>Stats</c>.
         /// </summary>
-        private IList<int> Values { get; set; }
+        private List<int> Values { get; set; }
 
         #endregion
 
@@ -31,7 +31,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
         /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
-        public StatModifierEffect(IList<string> parameters)
+        public StatModifierEffect(List<string> parameters)
             : base(parameters)
         {
             this.Stats = DataParser.List_StringCSV(parameters, 0); //Param1
@@ -50,7 +50,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// Adds the items in <c>Values</c> as modifiers to the stats in <c>Stats</c> for <paramref name="unit"/>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        public override void Apply(Unit unit, Skill skill, MapObj map, IList<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             ApplyUnitStatModifiers(unit, skill.Name, this.Stats, this.Values);
         }

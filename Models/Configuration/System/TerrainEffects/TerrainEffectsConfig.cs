@@ -48,17 +48,17 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainEffects
         /// <summary>
         /// Optional. List of a terrain effect's combat stat modifiers.
         /// </summary>
-        public IList<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
+        public List<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
         /// Optional. List of a terrain effect's combat stat modifiers.
         /// </summary>
-        public IList<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
+        public List<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
         /// Optional. List of cell indexes for a terrain effect's text fields.
         /// </summary>
-        public IList<int> TextFields { get; set; } = new List<int>();
+        public List<int> TextFields { get; set; } = new List<int>();
 
         #endregion
     }

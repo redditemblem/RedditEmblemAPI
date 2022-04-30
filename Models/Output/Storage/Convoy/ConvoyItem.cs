@@ -53,7 +53,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// Constructor. Builds the <c>ConvoyItem</c> and matches it to an <c>Item</c> definition from <paramref name="items"/>.
         /// </summary>
         /// <exception cref="UnmatchedItemException"></exception>
-        public ConvoyItem(ConvoyConfig config, IList<string> data, IDictionary<string, Item> items)
+        public ConvoyItem(ConvoyConfig config, List<string> data, IDictionary<string, Item> items)
         {
             this.FullName = DataParser.String(data, config.Name, "Name");
             this.Uses = 0;

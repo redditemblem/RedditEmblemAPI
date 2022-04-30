@@ -7,22 +7,22 @@ namespace RedditEmblemAPI.Models.Output.Storage
         /// <summary>
         /// List of the options available in the sort picker.
         /// </summary>
-        public IList<ItemSort> Sorts { get; set; }
+        public List<ItemSort> Sorts { get; set; }
 
         /// <summary>
         /// List of possible owners to filter by.
         /// </summary>
-        public IList<string> Owners { get; set; }
+        public List<string> Owners { get; set; }
 
         /// <summary>
         /// List of all the item category values to be available as checkboxes.
         /// </summary>
-        public IList<string> ItemCategories { get; set; }
+        public List<string> ItemCategories { get; set; }
 
         /// <summary>
         /// List of all the utilized stat values to be available as checkboxes.
         /// </summary>
-        public IList<string> UtilizedStats { get; set; }
+        public List<string> UtilizedStats { get; set; }
 
         /// <summary>
         /// Flags for displaying conditional filters.
@@ -37,7 +37,7 @@ namespace RedditEmblemAPI.Models.Output.Storage
         /// <param name="itemCategories"></param>
         /// <param name="utilizedStats"></param>
         /// <param name="filterConditions"></param>
-        public FilterParameters(IList<ItemSort> sorts, IList<string> owners, IList<string> itemCategories, IList<string> utilizedStats, IDictionary<string, bool> filterConditions)
+        public FilterParameters(List<ItemSort> sorts, List<string> owners, List<string> itemCategories, List<string> utilizedStats, IDictionary<string, bool> filterConditions)
         {
             this.Sorts = sorts;
             this.Owners = owners;

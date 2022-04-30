@@ -167,12 +167,12 @@ namespace RedditEmblemAPI.Models.Output.Map
             try
             {
                 IList<IList<object>> tileData = config.Query.Data;
-                IDictionary<int, IList<Tile>> warpGroups = new Dictionary<int, IList<Tile>>();
+                IDictionary<int, List<Tile>> warpGroups = new Dictionary<int, List<Tile>>();
 
                 if (tileData.Count != this.TileHeight)
                     throw new UnexpectedMapHeightException(tileData.Count, this.TileHeight, config.Query.Sheet);
 
-                foreach (IList<object> row in tileData)
+                foreach (List<object> row in tileData)
                 {
                     if (row.Count != this.TileWidth)
                         throw new UnexpectedMapWidthException(row.Count, this.TileWidth, config.Query.Sheet);
@@ -206,7 +206,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                             if (type.WarpType == WarpType.None)
                                 throw new TerrainTypeNotConfiguredAsWarpException(t, tile.ToString());
 
-                            IList<Tile> warpGroup;
+                            List<Tile> warpGroup;
                             if (!warpGroups.TryGetValue(warpGroupNum, out warpGroup))
                             {
                                 warpGroup = new List<Tile>();
@@ -232,10 +232,10 @@ namespace RedditEmblemAPI.Models.Output.Map
                 //Validate all warp groups for entrances/exits
                 foreach (int key in warpGroups.Keys)
                 {
-                    IList<Tile> group = warpGroups[key];
+                    List<Tile> group = warpGroups[key];
 
-                    IList<Tile> entrances = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Entrance || w.TerrainTypeObj.WarpType == WarpType.Dual).ToList();
-                    IList<Tile> exits = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Exit || w.TerrainTypeObj.WarpType == WarpType.Dual).ToList();
+                    List<Tile> entrances = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Entrance || w.TerrainTypeObj.WarpType == WarpType.Dual).ToList();
+                    List<Tile> exits = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Exit || w.TerrainTypeObj.WarpType == WarpType.Dual).ToList();
 
                     //If we do not have at least one distinct entrance and exit
                     if (entrances.Count == 0
@@ -309,7 +309,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                                         if (r2 >= this.Tiles.Count)
                                             throw new TileOutOfBoundsException(r2, c2);
 
-                                        IList<Tile> tiles2 = this.Tiles[r2];
+                                        List<Tile> tiles2 = this.Tiles[r2];
 
                                         if (c2 >= tiles2.Count)
                                             throw new TileOutOfBoundsException(r2, c2);
@@ -345,7 +345,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <exception cref="TileOutOfBoundsException"></exception>
         public Tile GetTileByCoord(int x, int y)
         {
-            IList<Tile> row = this.Tiles.ElementAtOrDefault<IList<Tile>>(y - 1) ?? throw new TileOutOfBoundsException(x, y);
+            List<Tile> row = this.Tiles.ElementAtOrDefault<List<Tile>>(y - 1) ?? throw new TileOutOfBoundsException(x, y);
             Tile column = row.ElementAtOrDefault<Tile>(x - 1) ?? throw new TileOutOfBoundsException(x, y);
 
             return column;
@@ -354,7 +354,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Returns a list of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="centerTiles"/>.
         /// </summary>
-        public List<Tile> GetTilesInRadius(IList<Tile> centerTiles, int radius)
+        public List<Tile> GetTilesInRadius(List<Tile> centerTiles, int radius)
         {
             return centerTiles.SelectMany(t => GetTilesInRadius(t.Coordinate, radius)).Except(centerTiles).ToList();
         }
@@ -372,7 +372,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// </summary>
         public List<Tile> GetTilesInRadius(Coordinate center, int radius)
         {
-            IList<Tile> temp = new List<Tile>();
+            List<Tile> temp = new List<Tile>();
 
             for (int x = 0; x <= radius; x++)
             {

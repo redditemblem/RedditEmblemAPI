@@ -73,7 +73,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// List of affiliations that are capable of passing through the terrain type, if any.
         /// </summary>
         [JsonIgnore]
-        public IList<int> RestrictAffiliations { get; set; }
+        public List<int> RestrictAffiliations { get; set; }
 
         /// <summary>
         /// Only for JSON serialization. True when there's any items in the <c>RestrictAffiliations</c> list.
@@ -85,19 +85,19 @@ namespace RedditEmblemAPI.Models.Output.System
         /// The groupings that the terrain type belongs to.
         /// </summary>
         [JsonIgnore]
-        public IList<int> Groupings { get; set; }
+        public List<int> Groupings { get; set; }
 
         /// <summary>
         /// List of text fields for the terrain type.
         /// </summary>
-        public IList<string> TextFields { get; set; }
+        public List<string> TextFields { get; set; }
 
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public TerrainType(TerrainTypesConfig config, IList<string> data)
+        public TerrainType(TerrainTypesConfig config, List<string> data)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -165,11 +165,11 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             IDictionary<string, TerrainType> terrainTypes = new Dictionary<string, TerrainType>();
 
-            foreach (IList<object> row in config.Query.Data)
+            foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    IList<string> type = row.Select(r => r.ToString()).ToList();
+                    List<string> type = row.Select(r => r.ToString()).ToList();
                     string name = DataParser.OptionalString(type, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 

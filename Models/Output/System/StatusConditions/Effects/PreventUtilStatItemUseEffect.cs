@@ -16,11 +16,11 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// <summary>
         /// Param1. List of item utilized stats to check for.
         /// </summary>
-        private IList<string> UtilizedStats { get; set; }
+        private List<string> UtilizedStats { get; set; }
 
         #endregion
 
-        public PreventUtilStatItemUseEffect(IList<string> parameters)
+        public PreventUtilStatItemUseEffect(List<string> parameters)
             : base(parameters)
         {
             this.UtilizedStats = DataParser.List_StringCSV(parameters, 0);

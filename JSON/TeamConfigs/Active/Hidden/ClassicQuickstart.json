@@ -1,0 +1,322 @@
+{
+  "Team": {
+    "Name": "Classic Quickstart",
+    "WorkbookID": "1H8GH-V4H2FmSkOILgVQilxr0zzRp_CXrKZjRhwVNrOk"
+  },
+  "Map": {
+    "Constants": {
+      "TileSize": 16,
+      "TileSpacing": 0,
+      "HasHeaderTopLeft": false,
+      "HasHeaderBottomRight": false,
+      "CalculatePairedUnitRanges": true,
+      "UnitMovementStatName": "Mov"
+    },
+    "MapControls": {
+      "Query": {
+        "Sheet": "Maps Control",
+        "Selection": "B1:B",
+        "Orientation": 2
+      },
+      "MapSwitch": 0,
+      "MapImageURL": 2,
+      "ChapterPostURL": 1
+    },
+    "MapTiles": {
+      "Query": {
+        "Sheet": "Map Tiles",
+        "Selection": "A1:ZZ",
+        "Orientation": 1
+      }
+    },
+    "MapEffects": {
+      "Query": {
+        "Sheet": "Map Terrain Effects",
+        "Selection": "A1:ZZ",
+        "Orientation": 1
+      }
+    }
+  },
+  "System": {
+    "Currency": {
+      "CurrencySymbol": "G",
+      "IsSymbolLeftAligned": false,
+      "IncludeSpace": true
+    },
+    "Affiliations": {
+      "Query": {
+        "Sheet": "Affiliations",
+        "Selection": "A2:C",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Grouping": 1,
+      "TextFields": [ 2 ]
+    },
+    "Classes": {
+      "Query": {
+        "Sheet": "Classes",
+        "Selection": "A2:AJ",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "MovementType": 6,
+      "Tags": [ 4, 5 ]
+    },
+    "Items": {
+      "Query": {
+        "Sheet": "New Items",
+        "Selection": "A2:P",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Category": 1,
+      "UtilizedStats": 11,
+      "DealsDamage": 15,
+      "Uses": 2,
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 3
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 4
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 5
+        }
+      ],
+      "Range": {
+        "Minimum": 6,
+        "Maximum": 7
+      },
+      "Tags": [ 13, 14 ],
+      "TextFields": [ 10 ]
+    },
+    "StatusConditions": {
+      "Query": {
+        "Sheet": "Status Conditions",
+        "Selection": "A2:D",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Type": 2,
+      "Turns": 1,
+      "TextFields": [ 3 ]
+    },
+    "Tags": {
+      "Query": {
+        "Sheet": "Tags",
+        "Selection": "B2:E",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "ShowOnUnit": 2,
+      "UnitAura": 3
+    },
+    "TerrainTypes": {
+      "Query": {
+        "Sheet": "Terrain Types",
+        "Selection": "A2:P",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "HPModifier": 3,
+      "CombatStatModifiers": [
+        {
+          "SourceName": "Avo",
+          "Value": 1
+        }
+      ],
+      "StatModifiers": [
+        {
+          "SourceName": "Def",
+          "Value": 2
+        },
+        {
+          "SourceName": "Res",
+          "Value": 2
+        }
+      ],
+      "MovementCosts": [
+        {
+          "SourceName": "Infantry",
+          "Value": 5
+        },
+        {
+          "SourceName": "Mounted",
+          "Value": 6
+        },
+        {
+          "SourceName": "Mounted (Promoted)",
+          "Value": 7
+        },
+        {
+          "SourceName": "Flier",
+          "Value": 8
+        },
+        {
+          "SourceName": "Armour",
+          "Value": 9
+        }
+      ],
+      "WarpType": 10,
+      "WarpCost": 11,
+      "CannotStopOn": 12,
+      "BlocksItems": 13,
+      "RestrictAffiliations": 14,
+      "Groupings": 15,
+      "TextFields": [ 4 ]
+    },
+    "TerrainEffects": {
+      "Query": {
+        "Sheet": "Terrain Effect Types",
+        "Selection": "A2:I",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 2,
+      "Size": 4,
+      "Layer": 3,
+      "HPModifier": 7,
+      "CombatStatModifiers": [
+        {
+          "SourceName": "Avo",
+          "Value": 5
+        }
+      ],
+      "StatModifiers": [
+        {
+          "SourceName": "Def",
+          "Value": 6
+        },
+        {
+          "SourceName": "Res",
+          "Value": 6
+        }
+      ],
+      "TextFields": [ 8 ]
+    }
+  },
+  "Units": {
+    "Query": {
+      "Sheet": "Unified Tracker",
+      "Selection": "B1:ZZ",
+      "Orientation": 2
+    },
+    "Name": 0,
+    "SpriteURL": 54,
+    "Level": 4,
+    "Classes": [ 3 ],
+    "Affiliation": 47,
+    "Coordinate": 6,
+    "HP": {
+      "Current": 9,
+      "Maximum": 10
+    },
+    "CombatStats": [
+      {
+        "SourceName": "Atk",
+        "Equation": "{UnitStat[Str,Mag]} + {WeaponStat[Mt]}"
+      },
+      {
+        "SourceName": "Hit",
+        "Equation": "{WeaponStat[Hit]} + ({UnitStat[Skl]} * 2.5) + {UnitStat[Lck]}"
+      },
+      {
+        "SourceName": "Avo",
+        "Equation": "({UnitStat[Spd]} * 1.5) + ({UnitStat[Lck]} * 1.5)"
+      },
+      {
+        "SourceName": "Crit",
+        "Equation": "{WeaponStat[Crit]} + ({UnitStat[Skl]} / 2)"
+      },
+      {
+        "SourceName": "CEva",
+        "Equation": "{UnitStat[Lck]}"
+      }
+    ],
+    "Stats": [
+      {
+        "SourceName": "Str",
+        "BaseValue": 11
+      },
+      {
+        "SourceName": "Mag",
+        "BaseValue": 12
+      },
+      {
+        "SourceName": "Skl",
+        "BaseValue": 13
+      },
+      {
+        "SourceName": "Spd",
+        "BaseValue": 14
+      },
+      {
+        "SourceName": "Lck",
+        "BaseValue": 15
+      },
+      {
+        "SourceName": "Def",
+        "BaseValue": 16
+      },
+      {
+        "SourceName": "Res",
+        "BaseValue": 17
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 18
+      }
+    ],
+    "WeaponRanks": [
+      {
+        "Type": 40
+      },
+      {
+        "Type": 41
+      },
+      {
+        "Type": 42
+      }
+    ],
+    "Inventory": {
+      "EquippedItem": 56,
+      "Slots": [ 57, 58, 59, 60, 61 ]
+    },
+    "Player": 1,
+    "PortraitURL": 53,
+    "TextFields": [ 51 ],
+    "UnitSize": 50,
+    "HasMoved": 7,
+    "Experience": 5,
+    "HeldCurrency": 46,
+    "StatusConditions": [ 43, 44, 45 ]
+  },
+  "Convoy": {
+    "Query": {
+      "Sheet": "Convoy",
+      "Selection": "A2:D",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "Owner": 1,
+    "Quantity": 2
+  },
+  "Shop": {
+    "Query": {
+      "Sheet": "Shop",
+      "Selection": "A2:E",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "Stock": 3,
+    "Price": 1,
+    "SalePrice": 2,
+    "IsNew": 4
+  }
+}

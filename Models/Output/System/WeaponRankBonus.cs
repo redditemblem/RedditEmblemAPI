@@ -38,7 +38,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public WeaponRankBonus(WeaponRankBonusesConfig config, IList<string> data)
+        public WeaponRankBonus(WeaponRankBonusesConfig config, List<string> data)
         {
             this.Category = DataParser.String(data, config.Category, "Category");
             this.Rank = DataParser.OptionalString(data, config.Rank, "Rank");
@@ -65,15 +65,15 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #region Static Functions
 
-        public static IList<WeaponRankBonus> BuildList(WeaponRankBonusesConfig config)
+        public static List<WeaponRankBonus> BuildList(WeaponRankBonusesConfig config)
         {
-            IList<WeaponRankBonus> weaponRankBonuses = new List<WeaponRankBonus>();
+            List<WeaponRankBonus> weaponRankBonuses = new List<WeaponRankBonus>();
 
-            foreach (IList<object> row in config.Query.Data)
+            foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    IList<string> bonus = row.Select(r => r.ToString()).ToList();
+                    List<string> bonus = row.Select(r => r.ToString()).ToList();
                     string category = DataParser.OptionalString(bonus, config.Category, "Category");
                     string rank = DataParser.OptionalString(bonus, config.Rank, "Rank");
 

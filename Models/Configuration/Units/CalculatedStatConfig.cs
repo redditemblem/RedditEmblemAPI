@@ -27,7 +27,7 @@ namespace RedditEmblemAPI.Models.Configuration.Units.CalculatedStats
         /// <summary>
         /// Optional. List of named modifiers to this stat. (ex. "Buff/Debuff")
         /// </summary>
-        public IList<NamedStatConfig> Modifiers { get; set; } = new List<NamedStatConfig>();
+        public List<NamedStatConfig> Modifiers { get; set; } = new List<NamedStatConfig>();
 
         #endregion
     }

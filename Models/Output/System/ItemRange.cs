@@ -5,6 +5,7 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -16,12 +17,34 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// The minimum number of tiles an item can reach.
         /// </summary>
-        public int Minimum { get; set; }
+        public int Minimum { get; private set; }
+
+        /// <summary>
+        /// Unparsed, raw data for the minimum number of tiles an item can reach.
+        /// </summary>
+        [JsonIgnore]
+        public string MinimumRaw { get; private set; }
+
+        /// <summary>
+        /// Flag indicating whether or not the Minimum range requires calculation.
+        /// </summary>
+        public bool MinimumRequiresCalculation { get; private set; }
 
         /// <summary>
         /// The maximum number of tiles an item can reach.
         /// </summary>
-        public int Maximum { get; set; }
+        public int Maximum { get; private set; }
+
+        /// <summary>
+        /// Unparsed, raw cell value for the maximum number of tiles an item can reach.
+        /// </summary>
+        [JsonIgnore]
+        public string MaximumRaw { get; private set; }
+
+        /// <summary>
+        /// Flag indicating whether or not the Maximum range requires calculation.
+        /// </summary>
+        public bool MaximumRequiresCalculation { get; private set; }
 
         /// <summary>
         /// The shape of the item's range
@@ -35,40 +58,65 @@ namespace RedditEmblemAPI.Models.Output.System
         public bool CanOnlyUseBeforeMovement { get; private set; }
 
         /// <summary>
-        /// Initializes the class with the passed in values.
-        /// </summary>
-        /// <exception cref="PositiveIntegerException"></exception>
-        /// <exception cref="MinimumGreaterThanMaximumException"></exception>
-        public ItemRange(int minimum, int maximum, string shape, bool canOnlyUseBeforeMovement)
-        {
-            if (minimum < 0)
-                throw new PositiveIntegerException("Minimum Range", minimum.ToString());
-            if (maximum < 0)
-                throw new PositiveIntegerException("Maximum Range", maximum.ToString());
-            if (minimum > maximum)
-                throw new MinimumGreaterThanMaximumException("Minimum Range", "Maximum Range");
-            if (maximum > 15 && maximum != 99)
-                throw new ItemRangeMaximumTooLargeException(15);
-
-            this.Minimum = minimum;
-            this.Maximum = maximum;
-            this.Shape = GetItemRangeShape(shape);
-            this.CanOnlyUseBeforeMovement = canOnlyUseBeforeMovement;
-        }
-
-
-        /// <summary>
         /// Initializes the class with the passed in <paramref name="minimum"/> and <paramref name="maximum"/> values.
         /// </summary>
         /// <param name="minimum">A numerical string value.</param>
         /// <param name="maximum">A numerical string value.</param>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
-        public ItemRange(RangeConfig config, IList<string> data)
-            : this(DataParser.Int_Positive(data, config.Minimum, "Minimum Range"),
-                   DataParser.Int_Positive(data, config.Maximum, "Maximum Range"),
-                   DataParser.OptionalString(data, config.Shape, "Range Shape"),
-                   DataParser.OptionalBoolean_YesNo(data, config.CanOnlyUseBeforeMovement, "Can Only Use Before Movement"))
-        { }
+        public ItemRange(RangeConfig config, List<string> data)
+        {
+            this.Minimum = RangeValueHandler_Minimum(data, config.Minimum);
+            this.Maximum = RangeValueHandler_Maximum(data, config.Maximum);
+
+            if (this.Minimum > this.Maximum && !this.MaximumRequiresCalculation)
+                throw new MinimumGreaterThanMaximumException("Minimum Range", "Maximum Range");
+            if (this.Maximum > 15 && this.Maximum != 99)
+                throw new ItemRangeMaximumTooLargeException(15);
+
+            this.Shape = GetItemRangeShape(DataParser.OptionalString(data, config.Shape, "Range Shape"));
+            this.CanOnlyUseBeforeMovement = DataParser.OptionalBoolean_YesNo(data, config.CanOnlyUseBeforeMovement, "Can Only Use Before Movement");
+        }
+
+        private int RangeValueHandler_Minimum(List<string> data, int index)
+        {
+            try
+            {   this.MinimumRaw = data.ElementAtOrDefault<string>(index) ?? string.Empty;
+                return DataParser.Int_Positive(data, index, "Minimum Range");
+            }
+            catch (PositiveIntegerException ex)
+            {
+                //Check if this value needs to be calculated. If yes, return 0. If no, throw the error again.
+                string value = data.ElementAtOrDefault<string>(index) ?? string.Empty;
+                if (value.Contains("{") || value.Contains("}"))
+                {
+                    this.MinimumRequiresCalculation = true;
+                    return 0;
+                }
+
+                throw ex;
+            }
+        }
+
+        private int RangeValueHandler_Maximum(List<string> data, int index)
+        {
+            try
+            {
+                this.MaximumRaw = data.ElementAtOrDefault<string>(index) ?? string.Empty;
+                return DataParser.Int_Positive(data, index, "Maximum Range");
+            }
+            catch (PositiveIntegerException ex)
+            {
+                //Check if this value needs to be calculated. If yes, return 0. If no, throw the error again.
+                string value = data.ElementAtOrDefault<string>(index) ?? string.Empty;
+                if (value.Contains("{") || value.Contains("}"))
+                {
+                    this.MaximumRequiresCalculation = true;
+                    return 0;
+                }
+
+                throw ex;
+            }
+        }
 
         private ItemRangeShape GetItemRangeShape(string shape)
         {

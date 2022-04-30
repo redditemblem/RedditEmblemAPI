@@ -7,6 +7,7 @@ using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats;
 using RedditEmblemAPI.Models.Output.Units;
 using System;
@@ -23,17 +24,17 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="data">Matrix of sheet Value values representing unit data</param>
         /// <param name="config">Parsed JSON configuration mapping Values to output</param>
         /// <returns></returns>
-        public static IList<Unit> Process(UnitsConfig config, SystemInfo systemData, MapObj map)
+        public static List<Unit> Process(UnitsConfig config, SystemInfo systemData, MapObj map)
         {
-            IList<Unit> units = new List<Unit>();
+            List<Unit> units = new List<Unit>();
 
             //Create units
-            foreach (IList<object> row in config.Query.Data)
+            foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
                     //Convert objects to strings
-                    IList<string> unit = row.Select(r => r.ToString()).ToList();
+                    List<string> unit = row.Select(r => r.ToString()).ToList();
                     string unitName = DataParser.OptionalString(unit, config.Name, "Name");
                     if (string.IsNullOrEmpty(unitName)) continue;
 
@@ -104,9 +105,8 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Skill effects
                 try
                 {
-                    foreach (Skill skill in unit.SkillList)
-                        if (skill.Effect != null)
-                            skill.Effect.Apply(unit, skill, map, units);
+                    foreach (Skill skill in unit.SkillList.Where(s => s.Effect != null && s.Effect.ExecutionOrder == SkillEffectExecutionOrder.Standard))
+                        skill.Effect.Apply(unit, skill, map, units);
                 }
                 catch(Exception ex)
                 {
@@ -126,10 +126,11 @@ namespace RedditEmblemAPI.Services.Helpers
                 }
             }
 
-            //Calculate combat stats
+            //Calculate combat stats and item ranges
             //Always do this last
             foreach (Unit unit in units)
             {
+                //Combat stats
                 try
                 {
                     unit.Stats.CalculateCombatStats(config.CombatStats, unit.Inventory, 
@@ -138,6 +139,28 @@ namespace RedditEmblemAPI.Services.Helpers
                 catch (Exception ex)
                 {
                     throw new UnitCombatStatFormulaProcessingException(unit.Name, ex);
+                }
+
+                //Item ranges
+                try
+                {
+                    foreach (UnitInventoryItem item in unit.Inventory.Where(i => i != null && (i.Item.Range.MinimumRequiresCalculation || i.Item.Range.MaximumRequiresCalculation)))
+                        item.CalculateItemRanges(unit);
+                }
+                catch(Exception ex)
+                {
+                    throw new UnitInventoryItemRangeFormulaProcessingException(unit.Name, ex);
+                }
+
+                //Skill effects
+                try
+                {
+                    foreach (Skill skill in unit.SkillList.Where(s => s.Effect != null && s.Effect.ExecutionOrder == SkillEffectExecutionOrder.AfterFinalStatCalculations))
+                        skill.Effect.Apply(unit, skill, map, units);
+                }
+                catch (Exception ex)
+                {
+                    throw new UnitSkillEffectProcessingException(unit.Name, ex);
                 }
             }
 

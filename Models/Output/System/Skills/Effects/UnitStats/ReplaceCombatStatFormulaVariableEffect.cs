@@ -16,17 +16,17 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Param1. The unit combat stats to be affected.
         /// </summary>
-        public IList<string> Stats { get; private set; }
+        public List<string> Stats { get; private set; }
 
         /// <summary>
         /// Param2. The variables to search for and replace in the formula.
         /// </summary>
-        public IList<string> VariablesToReplace { get; private set; }
+        public List<string> VariablesToReplace { get; private set; }
 
         /// <summary>
         /// Param3. The variables to replace <c>VariablesToReplace</c> with.
         /// </summary>
-        public IList<string> VariablesToUse { get; private set; }
+        public List<string> VariablesToUse { get; private set; }
 
         #endregion
 
@@ -35,7 +35,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
         /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
-        public ReplaceCombatStatFormulaVariableEffect(IList<string> parameters)
+        public ReplaceCombatStatFormulaVariableEffect(List<string> parameters)
             : base(parameters)
         {
             this.Stats = DataParser.List_StringCSV(parameters, 0); //Param1
@@ -57,9 +57,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Due to the potential for fields to contain embedded CSVs (ex. "{UnitStat[Str,Mag]},{UnitStat[Spd]}"), we need a custom parser.
         /// </summary>
-        private IList<string> CustomCSVParse(IList<string> data, int index)
+        private List<string> CustomCSVParse(List<string> data, int index)
         {
-            IList<string> output = new List<string>();
+            List<string> output = new List<string>();
             string csv = (data.ElementAtOrDefault<string>(index) ?? string.Empty);
 
             //Eliminate all whitespace from the string, including interior whitespace

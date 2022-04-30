@@ -12,12 +12,12 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         protected override string Name { get { return "CombatStatModifier"; } }
         protected override int ParameterCount { get { return 2; } }
 
-        private IList<string> Stats { get; set; }
-        private IList<int> Values { get; set; }
+        private List<string> Stats { get; set; }
+        private List<int> Values { get; set; }
 
         #endregion
 
-        public CombatStatModifierEffect(IList<string> parameters)
+        public CombatStatModifierEffect(List<string> parameters)
             : base(parameters)
         {
             this.Stats = DataParser.List_StringCSV(parameters, 0); //Param1

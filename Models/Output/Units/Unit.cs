@@ -38,7 +38,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// List of the unit's text fields.
         /// </summary>
-        public IList<string> TextFields { get; set; }
+        public List<string> TextFields { get; set; }
 
         /// <summary>
         /// Container for information about rendering a unit.
@@ -54,7 +54,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// A list of the unit's classes.
         /// </summary>
         [JsonIgnore]
-        public IList<Class> ClassList { get; set; }
+        public List<Class> ClassList { get; set; }
 
         /// <summary>
         /// The unit's movement type. Only used if classes are not provided.
@@ -75,7 +75,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// List of the unit's tags.
         /// </summary>
-        public IList<string> Tags { get; set; }
+        public List<string> Tags { get; set; }
 
         /// <summary>
         /// Description of how the unit behaves.
@@ -90,18 +90,18 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// List of the statuses the unit has.
         /// </summary>
-        public IList<UnitStatus> StatusConditions { get; set; }
+        public List<UnitStatus> StatusConditions { get; set; }
 
         /// <summary>
         /// List of the items the unit is carrying.
         /// </summary>
-        public IList<UnitInventoryItem> Inventory { get; set; }
+        public List<UnitInventoryItem> Inventory { get; set; }
 
         /// <summary>
         /// List of the skills the unit possesses.
         /// </summary>
         [JsonIgnore]
-        public IList<Skill> SkillList { get; set; }
+        public List<Skill> SkillList { get; set; }
 
         /// <summary>
         /// Container for information about a unit's movement/item ranges.
@@ -114,7 +114,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Only for JSON serialization. A list of the unit's classes.
         /// </summary>
         [JsonProperty]
-        private IList<string> Classes { get { return this.ClassList.Select(c => c.Name).ToList(); } }
+        private List<string> Classes { get { return this.ClassList.Select(c => c.Name).ToList(); } }
 
         /// <summary>
         /// Only for JSON serialization. The unit's affiliation name.
@@ -126,7 +126,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Only for JSON serialization. A list of the unit's skills.
         /// </summary>
         [JsonProperty]
-        private IList<string> Skills { get { return this.SkillList.Select(c => c.Name).ToList(); } }
+        private List<string> Skills { get { return this.SkillList.Select(c => c.Name).ToList(); } }
 
         #endregion JSON Serialization Only
 
@@ -141,14 +141,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Unit(UnitsConfig config, IList<string> data, SystemInfo systemData)
+        public Unit(UnitsConfig config, List<string> data, SystemInfo systemData)
         {
             //Basic fields
             this.Name = DataParser.String(data, config.Name, "Name");
             this.UnitNumber = ExtractUnitNumberFromName(this.Name);
             this.Player = DataParser.OptionalString(data, config.Player, "Player");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
-            this.Tags = DataParser.List_StringCSV(data, config.Tags);
+            this.Tags = DataParser.List_StringCSV(data, config.Tags).Distinct().ToList();
             this.Behavior = DataParser.OptionalString(data, config.Behavior, "Behavior");
 
             //Complex container objects
@@ -176,7 +176,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #region Build Functions
 
-        private void BuildWeaponRanks(IList<string> data, IList<UnitWeaponRanksConfig> config, bool systemUsesWeaponRanks)
+        private void BuildWeaponRanks(List<string> data, List<UnitWeaponRanksConfig> config, bool systemUsesWeaponRanks)
         {
             this.WeaponRanks = new Dictionary<string, string>();
 
@@ -195,7 +195,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
         }
 
-        private void BuildStatusConditions(IList<string> data, IList<int> indexes, IDictionary<string, StatusCondition> statuses)
+        private void BuildStatusConditions(List<string> data, List<int> indexes, IDictionary<string, StatusCondition> statuses)
         {
             this.StatusConditions = new List<UnitStatus>();
 
@@ -211,7 +211,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
         }
 
-        private void BuildInventory(IList<string> data, InventoryConfig config, IDictionary<string, Item> items, IList<string> weaponRanks, IList<WeaponRankBonus> weaponRankBonuses)
+        private void BuildInventory(List<string> data, InventoryConfig config, IDictionary<string, Item> items, List<string> weaponRanks, List<WeaponRankBonus> weaponRankBonuses)
         {
             this.Inventory = new List<UnitInventoryItem>();
 
@@ -305,7 +305,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>Skill</c> from <paramref name="skills"/>.
         /// </summary>
         /// <exception cref="UnmatchedSkillException"></exception>
-        private void BuildSkills(IList<string> data, IList<int> indexes, IDictionary<string, Skill> skills)
+        private void BuildSkills(List<string> data, List<int> indexes, IDictionary<string, Skill> skills)
         {
             this.SkillList = new List<Skill>();
 
@@ -329,7 +329,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>Class</c> from <paramref name="classes"/>.
         /// </summary>
         /// <exception cref="UnmatchedClassException"></exception>
-        private void BuildClasses(IList<string> data, IList<int> indexes, IDictionary<string, Class> classes)
+        private void BuildClasses(List<string> data, List<int> indexes, IDictionary<string, Class> classes)
         {
             this.ClassList = new List<Class>();
 
@@ -358,7 +358,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #region Match Functions
 
-        private void MatchAffiliation(IList<string> data, int affiliationIndex, IDictionary<string, Affiliation> affiliations)
+        private void MatchAffiliation(List<string> data, int affiliationIndex, IDictionary<string, Affiliation> affiliations)
         {
             string affiliation = DataParser.String(data, affiliationIndex, "Affiliation");
             Affiliation affMatch;

@@ -47,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// The unit stats that the item uses in calculations, if applicable.
         /// </summary>
-        public IList<string> UtilizedStats { get; set; }
+        public List<string> UtilizedStats { get; set; }
 
         /// <summary>
         /// Flag indicating whether or not this item is capable of attacking.
@@ -84,12 +84,12 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// The item's tags.
         /// </summary>
-        public IList<string> Tags { get; set; }
+        public List<string> Tags { get; set; }
 
         /// <summary>
         /// List of the item's text fields.
         /// </summary>
-        public IList<string> TextFields { get; set; }
+        public List<string> TextFields { get; set; }
 
         #endregion
 
@@ -97,7 +97,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Constructor.
         /// </summary>
         /// <exception cref="AnyIntegerException"></exception>
-        public Item(ItemsConfig config, IList<string> data, IDictionary<string, Tag> tags)
+        public Item(ItemsConfig config, List<string> data, IDictionary<string, Tag> tags)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -158,11 +158,11 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             IDictionary<string, Item> items = new Dictionary<string, Item>();
 
-            foreach (IList<object> row in config.Query.Data)
+            foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    IList<string> item = row.Select(r => r.ToString()).ToList();
+                    List<string> item = row.Select(r => r.ToString()).ToList();
                     string name = DataParser.OptionalString(item, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 

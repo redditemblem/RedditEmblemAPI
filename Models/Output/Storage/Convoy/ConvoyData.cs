@@ -34,7 +34,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// <summary>
         /// List of <c>ConvoyItem</c>s that will be presented on the Convoy page.
         /// </summary>
-        public IList<ConvoyItem> ConvoyItems { get; set; }
+        public List<ConvoyItem> ConvoyItems { get; set; }
 
         /// <summary>
         /// List of <c>Item</c>s linked by the values in <c>ConvoyItems</c>.
@@ -65,11 +65,11 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
 
             //Build the convoy item list
             this.ConvoyItems = new List<ConvoyItem>();
-            foreach (IList<object> row in config.Convoy.Query.Data)
+            foreach (List<object> row in config.Convoy.Query.Data)
             {
                 try
                 {
-                    IList<string> item = row.Select(r => r.ToString()).ToList();
+                    List<string> item = row.Select(r => r.ToString()).ToList();
                     string name = DataParser.OptionalString(item, config.Convoy.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
                     this.ConvoyItems.Add(new ConvoyItem(config.Convoy, item, this.Items));
@@ -81,7 +81,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             }
 
             //Build page parameters
-            IList<ItemSort> sorts = new List<ItemSort>() {
+            List<ItemSort> sorts = new List<ItemSort>() {
                 new ItemSort("Name", "name", false), 
                 new ItemSort("Owner", "owner", false), 
                 new ItemSort("Category", "category", true), 

@@ -59,11 +59,11 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// List of text fields for the terrain effect.
         /// </summary>
-        public IList<string> TextFields { get; set; }
+        public List<string> TextFields { get; set; }
 
         #endregion
 
-        public TerrainEffect(TerrainEffectsConfig config, IList<string> data)
+        public TerrainEffect(TerrainEffectsConfig config, List<string> data)
         {
             this.Matched = false;
 
@@ -119,11 +119,11 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             IDictionary<string, TerrainEffect> terrainEffects = new Dictionary<string, TerrainEffect>();
 
-            foreach (IList<object> row in config.Query.Data)
+            foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    IList<string> effect = row.Select(r => r.ToString()).ToList();
+                    List<string> effect = row.Select(r => r.ToString()).ToList();
                     string name = DataParser.OptionalString(effect, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 

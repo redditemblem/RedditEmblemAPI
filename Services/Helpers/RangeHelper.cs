@@ -17,10 +17,10 @@ namespace RedditEmblemAPI.Services.Helpers
     {
         private readonly ItemRangeDirection[] RANGE_DIRECTIONS = new ItemRangeDirection[] { ItemRangeDirection.Northeast, ItemRangeDirection.Southeast, ItemRangeDirection.Northwest, ItemRangeDirection.Southwest };
 
-        private IList<Unit> Units;
+        private List<Unit> Units;
         private MapObj Map;
 
-        public RangeHelper(IList<Unit> units, MapObj map)
+        public RangeHelper(List<Unit> units, MapObj map)
         {
             this.Units = units;
             this.Map = map;
@@ -66,7 +66,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
         }
 
-        private void RecurseUnitRange(UnitRangeParameters parms, IList<MovementCoordSet> currCoords, string visitedCoords, Coordinate lastWarpUsed)
+        private void RecurseUnitRange(UnitRangeParameters parms, List<MovementCoordSet> currCoords, string visitedCoords, Coordinate lastWarpUsed)
         {
             //Base case
             //Don't exceed the maximum range and don't go off the map
@@ -106,7 +106,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Check if nearby units can affect the movement costs of this tile
                 if (moveCost < 99 && tile.UnitData.UnitsAffectingMovementCosts.Any())
                 {
-                    IList<IAffectMovementCost> activeEffects = tile.UnitData.UnitsAffectingMovementCosts.SelectMany(u => u.SkillList.Select(s => s.Effect).OfType<IAffectMovementCost>().Where(e => e.IsActive(u, parms.Unit))).ToList();
+                    List<IAffectMovementCost> activeEffects = tile.UnitData.UnitsAffectingMovementCosts.SelectMany(u => u.SkillList.Select(s => s.Effect).OfType<IAffectMovementCost>().Where(e => e.IsActive(u, parms.Unit))).ToList();
                     if (activeEffects.Any())
                     {
                         int minEffectMovCost = activeEffects.Min(e => e.GetMovementCost());
@@ -132,7 +132,7 @@ namespace RedditEmblemAPI.Services.Helpers
             visitedCoords += "_" + currCoords.First().Coordinate.ToString() + "_";
 
             //Document tile movement
-            IList<Tile> tiles = currCoords.Select(c => this.Map.GetTileByCoord(c.Coordinate)).ToList();
+            List<Tile> tiles = currCoords.Select(c => this.Map.GetTileByCoord(c.Coordinate)).ToList();
             if (!tiles.Any(t => t.TerrainTypeObj.CannotStopOn))
             {
                 foreach (Tile tile in tiles)
@@ -147,25 +147,25 @@ namespace RedditEmblemAPI.Services.Helpers
             //Navigate in each cardinal direction, do not repeat tiles in this path
             //Left
             //Coordinate left = new Coordinate(currCoord.X - 1, currCoord.Y);
-            IList<MovementCoordSet> left = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(c.Coordinate.X - 1, c.Coordinate.Y))).ToList();
+            List<MovementCoordSet> left = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(c.Coordinate.X - 1, c.Coordinate.Y))).ToList();
             if (!visitedCoords.Contains("_" + left.First().Coordinate.ToString() + "_"))
                 RecurseUnitRange(parms, left, visitedCoords, lastWarpUsed);
 
             //Right
             //Coordinate right = new Coordinate(currCoord.X + 1, currCoord.Y);
-            IList<MovementCoordSet> right = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(c.Coordinate.X + 1, c.Coordinate.Y))).ToList();
+            List<MovementCoordSet> right = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(c.Coordinate.X + 1, c.Coordinate.Y))).ToList();
             if (!visitedCoords.Contains("_" + right.First().Coordinate.ToString() + "_"))
                 RecurseUnitRange(parms, right, visitedCoords, lastWarpUsed);
 
             //Up
             //Coordinate up = new Coordinate(currCoord.X, currCoord.Y - 1);
-            IList<MovementCoordSet> up = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(c.Coordinate.X, c.Coordinate.Y - 1))).ToList();
+            List<MovementCoordSet> up = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(c.Coordinate.X, c.Coordinate.Y - 1))).ToList();
             if (!visitedCoords.Contains("_" + up.First().Coordinate.ToString() + "_"))
                 RecurseUnitRange(parms, up, visitedCoords, lastWarpUsed);
 
             //Down
             //Coordinate down = new Coordinate(currCoord.X, currCoord.Y + 1);
-            IList<MovementCoordSet> down = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(c.Coordinate.X, c.Coordinate.Y + 1))).ToList();
+            List<MovementCoordSet> down = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(c.Coordinate.X, c.Coordinate.Y + 1))).ToList();
             if (!visitedCoords.Contains("_" + down.First().Coordinate.ToString() + "_"))
                 RecurseUnitRange(parms, down, visitedCoords, lastWarpUsed);
 
@@ -206,7 +206,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns true if <paramref name="movingUnit"/> is blocked by any of the units in <paramref name="blockingUnits"/>.
         /// </summary>
-        private bool UnitIsBlocked(Unit movingUnit, IList<Unit> blockingUnits, bool ignoreAffiliations)
+        private bool UnitIsBlocked(Unit movingUnit, List<Unit> blockingUnits, bool ignoreAffiliations)
         {
             //If unit ignores affiliations, never be blocked
             //Skip further logic
@@ -250,11 +250,11 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         private void CalculateUnitItemRanges(Unit unit)
         {
-            IList<Coordinate> atkRange = new List<Coordinate>();
-            IList<Coordinate> utilRange = new List<Coordinate>();
+            List<Coordinate> atkRange = new List<Coordinate>();
+            List<Coordinate> utilRange = new List<Coordinate>();
 
             //Transpose item data into the struct we're using for recursion
-            IList<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && !i.IsUsePrevented && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
+            List<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && !i.IsUsePrevented && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
                                                             .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.Range.Shape, i.Item.Range.CanOnlyUseBeforeMovement, i.Item.DealsDamage, i.AllowMeleeRange))
                                                             .ToList();
 
@@ -286,7 +286,7 @@ namespace RedditEmblemAPI.Services.Helpers
             unit.Ranges.Utility = utilRange;
         }
 
-        private void RecurseItemRange(ItemRangeParameters parms, Coordinate currCoord, int remainingRange, string visitedCoords, ref IList<Coordinate> atkRange, ref IList<Coordinate> utilRange)
+        private void RecurseItemRange(ItemRangeParameters parms, Coordinate currCoord, int remainingRange, string visitedCoords, ref List<Coordinate> atkRange, ref List<Coordinate> utilRange)
         {
             //Base case
             //Don't exceed the maximum range and don't go off the map
@@ -402,7 +402,7 @@ namespace RedditEmblemAPI.Services.Helpers
             }
         }
 
-        private void ApplyWholeMapItemRanges(Unit unit, IList<UnitItemRange> itemRanges, ref IList<Coordinate> atkRange, ref IList<Coordinate> utilRange)
+        private void ApplyWholeMapItemRanges(Unit unit, List<UnitItemRange> itemRanges, ref List<Coordinate> atkRange, ref List<Coordinate> utilRange)
         {
             //Only continue if we have at least one item with a max range of 99.
             if (!itemRanges.Any(r => r.MaxRange >= 99))
@@ -427,29 +427,19 @@ namespace RedditEmblemAPI.Services.Helpers
             //Remove all relevant ranges from list
             //Since we cover the whole map we don't need to address these individually later
             if (applyAtk)
-            {
-                while (itemRanges.Any(r => r.DealsDamage))
-                {
-                    itemRanges.Remove(itemRanges.First(r => r.DealsDamage));
-                }
-            }
+                itemRanges.RemoveAll(r => r.DealsDamage);
 
             if (applyUtil)
-            {
-                while (itemRanges.Any(r => !r.DealsDamage))
-                {
-                    itemRanges.Remove(itemRanges.First(r => !r.DealsDamage));
-                }
-            }
+                itemRanges.RemoveAll(r => !r.DealsDamage);
         }
 
-        private void ApplyNoUnitMovementItemRanges(Unit unit, IList<UnitItemRange> itemRanges, ref IList<Coordinate> atkRange, ref IList<Coordinate> utilRange)
+        private void ApplyNoUnitMovementItemRanges(Unit unit, List<UnitItemRange> itemRanges, ref List<Coordinate> atkRange, ref List<Coordinate> utilRange)
         {
             //Only continue if we have at least one item that can only be used before movement
             if (!itemRanges.Any(r => r.CanOnlyUseBeforeMovement))
                 return;
 
-            IList<UnitItemRange> noMovementItemRanges = itemRanges.Where(r => r.CanOnlyUseBeforeMovement).ToList();
+            List<UnitItemRange> noMovementItemRanges = itemRanges.Where(r => r.CanOnlyUseBeforeMovement).ToList();
 
             //Only calculate the item ranges for these items from the unit's origin tiles, not their whole movement range
             foreach (Coordinate coord in unit.Location.OriginTiles.Select(t => t.Coordinate))
@@ -468,10 +458,7 @@ namespace RedditEmblemAPI.Services.Helpers
             }
 
             //Remove all items from the list so they aren't processed again
-            while(itemRanges.Any(r => r.CanOnlyUseBeforeMovement))
-            {
-                itemRanges.Remove(itemRanges.First(r => r.CanOnlyUseBeforeMovement));
-            }
+            itemRanges.RemoveAll(r => r.CanOnlyUseBeforeMovement);
         }
 
         #endregion Item Range Calculation
@@ -486,11 +473,11 @@ namespace RedditEmblemAPI.Services.Helpers
 
         public bool IgnoresAffiliations { get; set; }
 
-        public IList<TerrainTypeMovementCostModifierEffect> MoveCostModifiers { get; set; }
-        public IList<TerrainTypeMovementCostSetEffect> MoveCostSets { get; set; }
+        public List<TerrainTypeMovementCostModifierEffect> MoveCostModifiers { get; set; }
+        public List<TerrainTypeMovementCostSetEffect> MoveCostSets { get; set; }
 
-        public IList<WarpMovementCostModifierEffect> WarpCostModifiers { get; set; }
-        public IList<WarpMovementCostSetEffect> WarpCostSets { get; set; }
+        public List<WarpMovementCostModifierEffect> WarpCostModifiers { get; set; }
+        public List<WarpMovementCostSetEffect> WarpCostSets { get; set; }
 
         #endregion
 
@@ -510,11 +497,11 @@ namespace RedditEmblemAPI.Services.Helpers
     {
         public Unit Unit;
         public Coordinate StartCoord;
-        public IList<UnitItemRange> Ranges;
+        public List<UnitItemRange> Ranges;
         public int LargestRange;
         public ItemRangeDirection RangeDirection;
 
-        public ItemRangeParameters(Unit unit, Coordinate startCoord, IList<UnitItemRange> ranges, ItemRangeDirection direction)
+        public ItemRangeParameters(Unit unit, Coordinate startCoord, List<UnitItemRange> ranges, ItemRangeDirection direction)
         {
             this.Unit = unit;
             this.StartCoord = startCoord;

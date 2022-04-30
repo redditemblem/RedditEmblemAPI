@@ -22,7 +22,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer.
         /// </summary>
-        public static int Int_Any(IList<string> data, int index, string fieldName)
+        public static int Int_Any(List<string> data, int index, string fieldName)
         {
             return Int_Any(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName);
         }
@@ -42,7 +42,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is below 0.
         /// </summary>
-        public static int Int_Positive(IList<string> data, int index, string fieldName)
+        public static int Int_Positive(List<string> data, int index, string fieldName)
         {
             return Int_Positive(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName);
         }
@@ -63,7 +63,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is below 1.
         /// </summary>
         /// <exception cref="NonZeroPositiveIntegerException"></exception>
-        public static int Int_NonZeroPositive(IList<string> data, int index, string fieldName)
+        public static int Int_NonZeroPositive(List<string> data, int index, string fieldName)
         {
             string number = data.ElementAtOrDefault<string>(index);
 
@@ -77,7 +77,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is above -1.
         /// </summary>
         /// <exception cref="NegativeIntegerException"></exception>
-        public static int Int_Negative(IList<string> data, int index, string fieldName)
+        public static int Int_Negative(List<string> data, int index, string fieldName)
         {
             string number = data.ElementAtOrDefault<string>(index);
 
@@ -90,7 +90,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. If the value is empty, returns <paramref name="defaultValueIfNull"/> instead.
         /// </summary>
-        public static int OptionalInt_Any(IList<string> data, int index, string fieldName, int defaultValueIfNull = 0)
+        public static int OptionalInt_Any(List<string> data, int index, string fieldName, int defaultValueIfNull = 0)
         {
             if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
                 return defaultValueIfNull;
@@ -100,7 +100,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is below 0. If the value is empty, returns <paramref name="defaultValueIfNull"/> instead.
         /// </summary>
-        public static int OptionalInt_Positive(IList<string> data, int index, string fieldName, int defaultValueIfNull = 0)
+        public static int OptionalInt_Positive(List<string> data, int index, string fieldName, int defaultValueIfNull = 0)
         {
             if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
                 return defaultValueIfNull;
@@ -110,7 +110,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is below 1. If the value is empty, returns <paramref name="defaultValueIfNull"/> instead.
         /// </summary>
-        public static int OptionalInt_NonZeroPositive(IList<string> data, int index, string fieldName, int defaultValueIfNull = 1)
+        public static int OptionalInt_NonZeroPositive(List<string> data, int index, string fieldName, int defaultValueIfNull = 1)
         {
             if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
                 return defaultValueIfNull;
@@ -120,7 +120,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is above -1. If the value is empty, returns <paramref name="defaultValueIfNull"/> instead.
         /// </summary>
-        public static int OptionalInt_Negative(IList<string> data, int index, string fieldName, int defaultValueIfNull = -1)
+        public static int OptionalInt_Negative(List<string> data, int index, string fieldName, int defaultValueIfNull = -1)
         {
             if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
                 return defaultValueIfNull;
@@ -134,7 +134,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns the value of the cell in <paramref name="data"/> at <paramref name="index"/> with Trim() applied.
         /// </summary>
-        public static string String(IList<string> data, int index, string fieldName)
+        public static string String(List<string> data, int index, string fieldName)
         {
             return String(data.ElementAtOrDefault<string>(index), fieldName);
         }
@@ -154,7 +154,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns the value of the cell in <paramref name="data"/> at <paramref name="index"/> with Trim() applied.
         /// </summary>
-        public static string OptionalString(IList<string> data, int index, string fieldName)
+        public static string OptionalString(List<string> data, int index, string fieldName)
         {
             return OptionalString(data.ElementAtOrDefault<string>(index), fieldName);
         }
@@ -174,7 +174,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// Returns the value of the cell in <paramref name="data"/> at <paramref name="index"/> after validating that it is a formatted URL.
         /// </summary>
         /// <param name="fieldName">The name of the value as it should display in any thrown exception messages.</param>
-        public static string String_URL(IList<string> data, int index, string fieldName)
+        public static string String_URL(List<string> data, int index, string fieldName)
         {
             return String_URL(data.ElementAtOrDefault<string>(index), fieldName);
         }
@@ -198,7 +198,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns the value of the cell in <paramref name="data"/> at <paramref name="index"/> after validating that it is a formatted URL.
         /// </summary>
-        public static string OptionalString_URL(IList<string> data, int index, string fieldName)
+        public static string OptionalString_URL(List<string> data, int index, string fieldName)
         {
             return OptionalString_URL(data.ElementAtOrDefault<string>(index), fieldName);
         }
@@ -225,7 +225,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns the value of the cell in <paramref name="data"/> at <paramref name="index"/> after validating that it is a hex code.
         /// </summary>
-        public static string String_HexCode(IList<string> data, int index, string fieldName)
+        public static string String_HexCode(List<string> data, int index, string fieldName)
         {
             return String_HexCode(data.ElementAtOrDefault<string>(index), fieldName);
         }
@@ -250,7 +250,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns the value of the cell in <paramref name="data"/> at <paramref name="index"/> after validating that it is a hex color code.
         /// </summary>
-        public static string OptionalString_HexCode(IList<string> data, int index, string fieldName)
+        public static string OptionalString_HexCode(List<string> data, int index, string fieldName)
         {
             return OptionalString_HexCode(data.ElementAtOrDefault<string>(index), fieldName);
         }
@@ -283,9 +283,9 @@ namespace RedditEmblemAPI.Services.Helpers
         /// Returns a list containing the values of <paramref name="data"/> at the locations contained in <paramref name="indexes"/>.
         /// </summary>
         /// <param name="keepEmptyValues">If true, then null or empty string values from <paramref name="data"/> will be retained in the returned list.</param>
-        public static IList<string> List_Strings(IList<string> data, IList<int> indexes, bool keepEmptyValues = false)
+        public static List<string> List_Strings(List<string> data, List<int> indexes, bool keepEmptyValues = false)
         {
-            IList<string> output = new List<string>();
+            List<string> output = new List<string>();
             foreach (int index in indexes)
             {
                 string value = OptionalString(data, index, string.Empty);
@@ -299,10 +299,19 @@ namespace RedditEmblemAPI.Services.Helpers
         }
 
         /// <summary>
+        /// Splits the CSVs contained in <paramref name="data"/> at the indexes in <paramref name="indexes"/> and formats them into one list.
+        /// </summary>
+        /// <param name="keepEmptyValues">If true, then null or empty string values from <paramref name="data"/> will be retained in the returned list.</param>
+        public static List<string> List_StringCSV(List<string> data, List<int> indexes, bool keepEmptyValues = false)
+        {
+            return indexes.SelectMany(index => List_StringCSV(data, index, keepEmptyValues)).ToList();
+        }
+
+        /// <summary>
         /// Splits the CSV contained in <paramref name="data"/> at index <paramref name="index"/> and formats it into a list.
         /// </summary>
         /// <param name="keepEmptyValues">If true, then null or empty string values from <paramref name="data"/> will be retained in the returned list.</param>
-        public static IList<string> List_StringCSV(IList<string> data, int index, bool keepEmptyValues = false)
+        public static List<string> List_StringCSV(List<string> data, int index, bool keepEmptyValues = false)
         {
             return List_StringCSV((data.ElementAtOrDefault<string>(index) ?? string.Empty), keepEmptyValues);
         }
@@ -311,9 +320,9 @@ namespace RedditEmblemAPI.Services.Helpers
         /// Splits the CSV contained in <paramref name="csv"/> and formats it into a list.
         /// </summary>
         /// <param name="keepEmptyValues">If true, then null or empty string values will be retained in the returned list.</param>
-        public static IList<string> List_StringCSV(string csv, bool keepEmptyValues = false)
+        public static List<string> List_StringCSV(string csv, bool keepEmptyValues = false)
         {
-            IList<string> output = new List<string>();
+            List<string> output = new List<string>();
 
             if (string.IsNullOrEmpty(csv))
                 return output;
@@ -335,7 +344,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         /// <param name="fieldName">The name of the numerical value list as it should display in any thrown exception messages.</param>
         /// <param name="isPositive">If true, an exception will be thrown if any integer in the CSV is less than 0.</param>
-        public static IList<int> List_IntCSV(IList<string> data, int index, string fieldName, bool isPositive)
+        public static List<int> List_IntCSV(List<string> data, int index, string fieldName, bool isPositive)
         {
             return List_IntCSV(data.ElementAtOrDefault<string>(index), fieldName, isPositive);
         }
@@ -345,9 +354,9 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         /// <param name="fieldName">The name of the numerical value list as it should display in any thrown exception messages.</param>
         /// <param name="isPositive">If true, an exception will be thrown if any integer in the CSV is less than 0.</param>
-        public static IList<int> List_IntCSV(string csv, string fieldName, bool isPositive)
+        public static List<int> List_IntCSV(string csv, string fieldName, bool isPositive)
         {
-            IList<int> output = new List<int>();
+            List<int> output = new List<int>();
 
             if (string.IsNullOrEmpty(csv))
                 return output;
@@ -371,7 +380,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns true if the value in <paramref name="data"/> at <paramref name="index"/> is equal to "yes".
         /// </summary>
-        public static bool OptionalBoolean_YesNo(IList<string> data, int index, string fieldName)
+        public static bool OptionalBoolean_YesNo(List<string> data, int index, string fieldName)
         {
             return OptionalBoolean_YesNo(data.ElementAtOrDefault<string>(index), fieldName);
         }

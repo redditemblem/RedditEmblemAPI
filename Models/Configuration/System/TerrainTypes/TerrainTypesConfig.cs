@@ -24,7 +24,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         /// Required. List of movement costs for a terrain type.
         /// </summary>
         [JsonRequired]
-        public IList<NamedStatConfig> MovementCosts { get; set; }
+        public List<NamedStatConfig> MovementCosts { get; set; }
 
         #endregion
 
@@ -38,12 +38,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         /// <summary>
         /// Optional. List of combat stat modifiers for a terrain type.
         /// </summary>
-        public IList<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
+        public List<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
         /// Optional. List of stat modifiers for a terrain type.
         /// </summary>
-        public IList<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
+        public List<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
         /// Optional. Cell index of a terrain type's warp type.
@@ -78,7 +78,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         /// <summary>
         /// Optional. List of cell indexes for a terrain type's text fields.
         /// </summary>
-        public IList<int> TextFields { get; set; } = new List<int>();
+        public List<int> TextFields { get; set; } = new List<int>();
 
         #endregion
     }
