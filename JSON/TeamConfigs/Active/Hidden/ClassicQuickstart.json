@@ -220,23 +220,43 @@
     "CombatStats": [
       {
         "SourceName": "Atk",
-        "Equation": "{UnitStat[Str,Mag]} + {WeaponStat[Mt]}"
+        "Equations": [
+          {
+            "Equation": "{UnitStat[Str,Mag]} + {WeaponStat[Mt]}"
+          }
+        ]
       },
       {
         "SourceName": "Hit",
-        "Equation": "{WeaponStat[Hit]} + ({UnitStat[Skl]} * 2.5) + {UnitStat[Lck]}"
+        "Equations": [
+          {
+            "Equation": "{WeaponStat[Hit]} + ({UnitStat[Skl]} * 2.5) + {UnitStat[Lck]}"
+          }
+        ]
       },
       {
         "SourceName": "Avo",
-        "Equation": "({UnitStat[Spd]} * 1.5) + ({UnitStat[Lck]} * 1.5)"
+        "Equations": [
+          {
+            "Equation": "({UnitStat[Spd]} * 1.5) + ({UnitStat[Lck]} * 1.5)"
+          }
+        ]
       },
       {
         "SourceName": "Crit",
-        "Equation": "{WeaponStat[Crit]} + ({UnitStat[Skl]} / 2)"
+        "Equations": [
+          {
+            "Equation": "{WeaponStat[Crit]} + ({UnitStat[Skl]} / 2)"
+          }
+        ]
       },
       {
         "SourceName": "CEva",
-        "Equation": "{UnitStat[Lck]}"
+        "Equations": [
+          {
+            "Equation": "{UnitStat[Lck]}"
+          }
+        ]
       }
     ],
     "Stats": [
@@ -285,7 +305,7 @@
       }
     ],
     "Inventory": {
-      "EquippedItem": 56,
+      "PrimaryEquippedItem": 56,
       "Slots": [ 57, 58, 59, 60, 61 ]
     },
     "Player": 1,

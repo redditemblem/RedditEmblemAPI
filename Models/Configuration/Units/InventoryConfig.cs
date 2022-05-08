@@ -11,16 +11,25 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index of a unit's equipped item name.
+        /// Required. Cell index of a unit's primary equipped item name.
         /// </summary>
         [JsonRequired]
-        public int EquippedItem { get; set; }
+        public int PrimaryEquippedItem { get; set; }
 
         /// <summary>
         /// Required. List of cell indexes for a unit's inventory items.
         /// </summary>
         [JsonRequired]
         public List<int> Slots { get; set; }
+
+        #endregion
+
+        #region Optional Fields
+
+        /// <summary>
+        /// Optional. List of cell indexes for a unit's secondary equipped item names.
+        /// </summary>
+        public List<int> SecondaryEquippedItems { get; set; } = new List<int>();
 
         #endregion
     }

@@ -347,19 +347,35 @@
     "CombatStats": [
       {
         "SourceName": "Atk",
-        "Equation": "{WeaponUtilStat}+{WeaponStat[Mt]}"
+        "Equations": [
+          {
+            "Equation": "{WeaponUtilStat}+{WeaponStat[Mt]}"
+          }
+        ]
       },
       {
         "SourceName": "Crit",
-        "Equation": "{WeaponStat[Crit]}+({UnitStat[Skl]}/2)"
+        "Equations": [
+          {
+            "Equation": "{WeaponStat[Crit]}+({UnitStat[Skl]}/2)"
+          }
+        ]
       },
       {
         "SourceName": "Hit",
-        "Equation": "{WeaponStat[Hit]}+({UnitStat[Skl]}*2)+{UnitStat[Lck]}"
+        "Equations": [
+          {
+            "Equation": "{WeaponStat[Hit]}+({UnitStat[Skl]}*2)+{UnitStat[Lck]}"
+          }
+        ]
       },
       {
         "SourceName": "Avo",
-        "Equation": "({UnitStat[Spd]}*2)+{UnitStat[Lck]}"
+        "Equations": [
+          {
+            "Equation": "({UnitStat[Spd]}*2)+{UnitStat[Lck]}"
+          }
+        ]
       }
     ],
     "Stats": [
@@ -459,8 +475,8 @@
       }
     ],
     "Inventory": {
-      "EquippedItem": 34,
-          "Slots": [ 35, 36, 37, 38, 39 ]
+      "PrimaryEquippedItem": 34,
+      "Slots": [ 35, 36, 37, 38, 39 ]
     },
     "Skills": [ 40, 41, 42, 43, 44, 45, 46, 47 ],
     "StatusConditions": [ 58, 59, 60 ]

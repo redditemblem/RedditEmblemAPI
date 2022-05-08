@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
+using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats;
@@ -160,8 +161,18 @@ namespace RedditEmblemAPI.Models.Output.Units
         {
             foreach (CalculatedStatConfig stat in stats)
             {
-                string equation = stat.Equation;
-                UnitInventoryItem equipped = unitInventory.SingleOrDefault(i => i != null && i.IsEquipped);
+                UnitInventoryItem equipped = unitInventory.SingleOrDefault(i => i != null && i.IsPrimaryEquipped);
+                string equippedUtilStat = GetItemUtilizedStatName(equipped);
+
+                //Select the correct equation
+                string equation = stat.Equations.First().Equation;
+                if (stat.SelectsUsing == CalculatedStatEquationSelectorEnum.EquippedWeaponUtilizedStat && !string.IsNullOrEmpty(equippedUtilStat))
+                {
+                    CalculatedStatEquationConfig equationConfig = stat.Equations.FirstOrDefault(e => e.SelectValue == equippedUtilStat);
+                    if (equationConfig != null)
+                        equation = equationConfig.Equation;
+                }
+
 
                 //First, check if skill effects replace any formula variables
                 foreach(ReplaceCombatStatFormulaVariableEffect effect in replacementEffects.Where(re => re.Stats.Contains(stat.SourceName)))
@@ -201,21 +212,11 @@ namespace RedditEmblemAPI.Models.Output.Units
                 //{WeaponUtilStat}
                 if (equation.Contains("{WeaponUtilStat}"))
                 {
-                    int weaponUtilStatValue = 0;
-                    if (equipped != null)
-                    {
-                        foreach (string utilStatName in equipped.Item.UtilizedStats)
-                        {
-                            ModifiedStatValue weaponUtilStat;
-                            if (!this.General.TryGetValue(utilStatName, out weaponUtilStat))
-                                throw new UnmatchedStatException(utilStatName);
+                    int value = 0;
+                    if (!string.IsNullOrEmpty(equippedUtilStat))
+                        value = this.General[equippedUtilStat].FinalValue;
 
-                            //Take the greatest stat value of all the utilized stats
-                            if (weaponUtilStat.FinalValue > weaponUtilStatValue)
-                                weaponUtilStatValue = weaponUtilStat.FinalValue;
-                        }
-                    }
-                    equation = equation.Replace("{WeaponUtilStat}", weaponUtilStatValue.ToString());
+                    equation = equation.Replace("{WeaponUtilStat}", value.ToString());
                 }
 
                 //{WeaponStat[...]}
@@ -264,5 +265,30 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
         }
 
+    
+        private string GetItemUtilizedStatName(UnitInventoryItem item)
+        {
+            string statName = string.Empty;
+            int maxValue = int.MinValue;
+
+            if (item == null)
+                return statName;
+
+            foreach (string utilStatName in item.Item.UtilizedStats)
+            {
+                ModifiedStatValue weaponUtilStat;
+                if (!this.General.TryGetValue(utilStatName, out weaponUtilStat))
+                    throw new UnmatchedStatException(utilStatName);
+
+                //Take the greatest stat value of all the utilized stats
+                if (weaponUtilStat.FinalValue > maxValue)
+                {
+                    statName = utilStatName;
+                    maxValue = weaponUtilStat.FinalValue;
+                }
+            }
+
+            return statName;
+        }
     }
 }

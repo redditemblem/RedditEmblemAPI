@@ -40,9 +40,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         public bool CanEquip { get; set; }
 
         /// <summary>
-        /// Flag indicating if this is the unit's currently equipped item.
+        /// Flag indicating if this is the unit's current primary equipped item. Should only ever be true for one item.
         /// </summary>
-        public bool IsEquipped { get; set; }
+        public bool IsPrimaryEquipped { get; set; }
+
+        /// <summary>
+        /// Flag indicating if this is one of the unit's secondary equipped items. Can be true for multiple items.
+        /// </summary>
+        public bool IsSecondaryEquipped { get; set; }
 
         /// <summary>
         /// Flag indicating if this item will be dropped upon unit defeat.
@@ -115,7 +120,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         {
             this.FullName = fullItemName;
             this.CanEquip = false;
-            this.IsEquipped = false;
+            this.IsPrimaryEquipped = false;
+            this.IsSecondaryEquipped = false;
             this.IsDroppable = false;
             this.IsUsePrevented = false;
             this.Uses = 0;

@@ -102,7 +102,7 @@
         "Shape": 0, //Optional
         "CanOnlyUseBeforeMovement": 0 //Optional
       },
-      "Tags": [ 0 ], //Optional
+      "Tags": [ 0 ], //Optional, only use if Tags sheet is provided
       "TextFields": [] //Optional
     },
     "WeaponRankBonuses": { //Optional, defaults to null
@@ -247,7 +247,13 @@
     "CombatStats": [ //Required
       {
         "SourceName": "",
-        "Equation": "",
+        "SelectsUsing": 0, //Optional, defaults to None (0)
+        "Equations": [
+          {
+            "SelectValue": "", //Optional, required if "SelectsUsing" is specified
+            "Equation": "0" //Required
+          }
+        ],
         "Modifiers": [ //Optional
           {
             "SourceName": "",
@@ -270,12 +276,14 @@
     ],
     "WeaponRanks": [ //Required
       {
-        "Type": 0, //Required
+        "SourceName": "Sword", //Optional, either SourceName or Type is required
+        "Type": 0, //Optional, either SourceName or Type is required
         "Rank": 0 //Optional
       }
     ],
     "Inventory": { //Required
-      "EquippedItem": 0, //Required
+      "PrimaryEquippedItem": 0, //Required
+      "SecondaryEquippedItems": [ 0 ], //Optional
       "Slots": [ 0 ] //Required
     },
     "Player": 0, //Optional

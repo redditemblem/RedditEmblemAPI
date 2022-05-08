@@ -7,17 +7,17 @@ namespace RedditEmblemAPI.Models.Configuration.Units
     /// </summary>
     public class UnitWeaponRanksConfig
     {
-        #region Required Fields
+        #region Optional Fields
 
         /// <summary>
-        /// Required. Cell index for the weapon rank type.
+        /// Optional. If weapon ranks are in fixed cells, the name of the weapon rank type. Mutually exclusive with <c>Type</c>.
         /// </summary>
-        [JsonRequired]
-        public int Type { get; set; }
+        public string SourceName { get; set; } = string.Empty;
 
-        #endregion
-
-        #region Optional Fields
+        /// <summary>
+        /// Optional. If weapon ranks are dynamic, the cell index for the weapon rank type. Mutually exclusive with <c>SourceName</c>.
+        /// </summary>
+        public int Type { get; set; } = -1;
 
         /// <summary>
         /// Optional. Cell index for the weapon rank letter.

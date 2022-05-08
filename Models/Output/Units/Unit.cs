@@ -9,6 +9,7 @@ using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Models.Output.Units
@@ -111,6 +112,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         #region JSON Serialization Only
 
         /// <summary>
+        /// The unit's name, with special characters swapped for alphabetical ones to help with searching.
+        /// </summary>
+        [JsonProperty]
+        private string NormalizedName { get; set; }
+
+        /// <summary>
         /// Only for JSON serialization. A list of the unit's classes.
         /// </summary>
         [JsonProperty]
@@ -134,6 +141,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #region Constants
 
+        private static Regex nonSpacingMarkRegex = new Regex(@"\p{Mn}", RegexOptions.Compiled);
         private static Regex unitNumberRegex = new Regex(@"\s([0-9]+$)"); //matches digits at the end of a string (ex. "Swordmaster _05_")
 
         #endregion
@@ -145,6 +153,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         {
             //Basic fields
             this.Name = DataParser.String(data, config.Name, "Name");
+            this.NormalizedName = RemoveDiacritics(this.Name);
             this.UnitNumber = ExtractUnitNumberFromName(this.Name);
             this.Player = DataParser.OptionalString(data, config.Player, "Player");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
@@ -182,7 +191,10 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             foreach (UnitWeaponRanksConfig rank in config)
             {
-                string rankType = DataParser.OptionalString(data, rank.Type, "Weapon Rank Type");
+                string rankType;
+                if(!string.IsNullOrEmpty(rank.SourceName)) rankType = rank.SourceName;
+                else rankType = DataParser.OptionalString(data, rank.Type, "Weapon Rank Type");
+
                 string rankLetter = DataParser.OptionalString(data, rank.Rank, "Weapon Rank Letter");
 
                 if (!string.IsNullOrEmpty(rankType))
@@ -242,25 +254,16 @@ namespace RedditEmblemAPI.Models.Output.Units
                 this.Inventory.Add(item);
             }
 
-            //Find the equipped item and flag it
-            string equippedItemName = DataParser.OptionalString(data, config.EquippedItem, "Equipped Item");
+            //Find the all equipped items and flag them
+            string equippedItemName = DataParser.OptionalString(data, config.PrimaryEquippedItem, "Equipped Item");
             if (!string.IsNullOrEmpty(equippedItemName))
             {
                 UnitInventoryItem equipped = this.Inventory.FirstOrDefault(i => i != null && i.FullName == equippedItemName);
                 if (equipped == null)
                     throw new UnmatchedEquippedItemException(equippedItemName);
-                equipped.IsEquipped = true;
+                equipped.IsPrimaryEquipped = true;
 
-                //Apply equipped stat modifiers
-                foreach (string stat in equipped.Item.EquippedStatModifiers.Keys)
-                {
-                    ModifiedStatValue mods;
-                    if (!this.Stats.General.TryGetValue(stat, out mods))
-                        throw new UnmatchedStatException(stat);
-                    mods.Modifiers.Add($"{equipped.Item.Name} (Eqp)", equipped.Item.EquippedStatModifiers[stat]);
-                }
-
-                //Check if we need to apply weapon rank bonuses for the equipped item
+                //Check if we need to apply weapon rank bonuses for the primary equipped item
                 if (this.WeaponRanks.ContainsKey(equipped.Item.Category))
                 {
                     string unitRank;
@@ -288,8 +291,32 @@ namespace RedditEmblemAPI.Models.Output.Units
                 }
             }
 
+            foreach(int index in config.SecondaryEquippedItems)
+            {
+                string secondaryEquippedItemName = DataParser.OptionalString(data, index, "Equipped Item");
+                if (string.IsNullOrEmpty(secondaryEquippedItemName))
+                    continue;
+
+                UnitInventoryItem equipped = this.Inventory.FirstOrDefault(i => i != null && i.FullName == secondaryEquippedItemName);
+                if (equipped == null)
+                    throw new UnmatchedEquippedItemException(equippedItemName);
+                equipped.IsSecondaryEquipped = true;
+            }
+
+            //Apply equipped stat modifiers
+            foreach (UnitInventoryItem equipped in this.Inventory.Where(i => i != null && (i.IsPrimaryEquipped || i.IsSecondaryEquipped)))
+            {
+                foreach (string stat in equipped.Item.EquippedStatModifiers.Keys)
+                {
+                    ModifiedStatValue mods;
+                    if (!this.Stats.General.TryGetValue(stat, out mods))
+                        throw new UnmatchedStatException(stat);
+                    mods.Modifiers.Add($"{equipped.Item.Name} (Eqp)", equipped.Item.EquippedStatModifiers[stat]);
+                }
+            }
+
             //Apply inventory stat modifiers for all nonequipped items
-            foreach (UnitInventoryItem inv in this.Inventory.Where(i => i != null && !i.IsEquipped))
+            foreach (UnitInventoryItem inv in this.Inventory.Where(i => i != null && !(i.IsPrimaryEquipped || i.IsSecondaryEquipped)))
             {
                 foreach (string stat in inv.Item.InventoryStatModifiers.Keys)
                 {
@@ -389,6 +416,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         }
 
         #endregion Match Functions
+
+        public static string RemoveDiacritics(string name)
+        {
+            string normalizedText = name.Normalize(NormalizationForm.FormD);
+            return nonSpacingMarkRegex.Replace(normalizedText, string.Empty);
+        }
 
         private string ExtractUnitNumberFromName(string name)
         {
