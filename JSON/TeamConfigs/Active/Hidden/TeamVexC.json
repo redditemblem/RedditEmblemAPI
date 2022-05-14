@@ -210,6 +210,78 @@
         }
       ],
       "TextFields": [ 12 ]
+    },
+    "Battalions": {
+      "Query": {
+        "Sheet": "Battalions",
+        "Selection": "A4:O",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Gambit": 3,
+      "MaxEndurance": 6,
+      "Rank": 4,
+      "Stats": [
+        {
+          "SourceName": "Phys Atk",
+          "Value": 7
+        },
+        {
+          "SourceName": "Mag Atk",
+          "Value": 8
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 9
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 10
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 11
+        },
+        {
+          "SourceName": "Prt",
+          "Value": 12
+        },
+        {
+          "SourceName": "Rsl",
+          "Value": 13
+        }
+      ],
+      "StatModifiers": [
+        {
+          "SourceName": "Cha",
+          "Value": 14
+        }
+      ]
+    },
+    "Gambits": {
+      "Query": {
+        "Sheet": "Gambits",
+        "Selection": "A4:K",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "MaxUses": 6,
+      "UtilizedStats": 7,
+      "Range": {
+        "Minimum": 4,
+        "Maximum": 5
+      },
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 1
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 2
+        }
+      ],
+      "TextFields": [ 9 ]
     }
   },
   "Units": {
@@ -231,9 +303,15 @@
     "CombatStats": [
       {
         "SourceName": "Atk",
+        "SelectsUsing": 1,
         "Equations": [
           {
-            "Equation": "{WeaponStat[Mt]} + {WeaponUtilStat}"
+            "SelectValue": "Str",
+            "Equation": "{WeaponStat[Mt]} + {WeaponUtilStat} + {BattalionStat[Phys Atk]}"
+          },
+          {
+            "SelectValue": "Mag",
+            "Equation": "{WeaponStat[Mt]} + {WeaponUtilStat} + {BattalionStat[Mag Atk]}"
           }
         ],
         "Modifiers": [
@@ -244,16 +322,30 @@
         ]
       },
       {
+        "SourceName": "Wt",
+        "Equations": [
+          {
+            "Equation": "{WeaponStat[Wt]}"
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Accessory",
+            "Value": 114
+          }
+        ]
+      },
+      {
         "SourceName": "Hit",
         "SelectsUsing": 1,
         "Equations": [
           {
             "SelectValue": "Str",
-            "Equation": "{WeaponStat[Hit]} + {UnitStat[Dex]}"
+            "Equation": "{WeaponStat[Hit]} + {BattalionStat[Hit]} + {UnitStat[Dex]}"
           },
           {
             "SelectValue": "Mag",
-            "Equation": "{WeaponStat[Hit]} + (({UnitStat[Dex]} + {UnitStat[Lck]}) / 2)"
+            "Equation": "{WeaponStat[Hit]} + {BattalionStat[Hit]} + (({UnitStat[Dex]} + {UnitStat[Lck]}) / 2)"
           }
         ],
         "Modifiers": [
@@ -276,16 +368,30 @@
         ]
       },
       {
+        "SourceName": "Prt",
+        "Equations": [
+          {
+            "Equation": "{UnitStat[Def]} + {BattalionStat[Prt]}"
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Accessory",
+            "Value": 112
+          }
+        ]
+      },
+      {
         "SourceName": "Avo",
         "SelectsUsing": 1,
         "Equations": [
           {
             "SelectValue": "Str",
-            "Equation": "0"
+            "Equation": "{BattalionStat[Avo]} + {UnitStat[Spd]} - Max({UnitCombatStat[Wt]} - ({UnitStat[Str]} / 5),0)"
           },
           {
             "SelectValue": "Mag",
-            "Equation": "({UnitStat[Spd]} + {UnitStat[Lck]}) / 2"
+            "Equation": "{BattalionStat[Avo]} + (({UnitStat[Spd]} + {UnitStat[Lck]}) / 2)"
           }
         ],
         "Modifiers": [
@@ -308,10 +414,24 @@
         ]
       },
       {
+        "SourceName": "Rsl",
+        "Equations": [
+          {
+            "Equation": "{UnitStat[Res]} + {BattalionStat[Rsl]}"
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Accessory",
+            "Value": 113
+          }
+        ]
+      },
+      {
         "SourceName": "Crit",
         "Equations": [
           {
-            "Equation" : "{WeaponStat[Crit]} + (({UnitStat[Dex]} + {UnitStat[Lck]})/2)"
+            "Equation": "{WeaponStat[Crit]} + {BattalionStat[Crit]} + (({UnitStat[Dex]} + {UnitStat[Lck]})/2)"
           }
         ],
         "Modifiers": [
@@ -358,48 +478,6 @@
             "Value": 126
           }
         ]
-      },
-      {
-        "SourceName": "Wt",
-        "Equations": [
-          {
-            "Equation": "{WeaponStat[Wt]}"
-          }
-        ],
-        "Modifiers": [
-          {
-            "SourceName": "Accessory",
-            "Value": 114
-          }
-        ]
-      },
-      {
-        "SourceName": "Prt",
-        "Equations": [
-          {
-            "Equation": "{UnitStat[Def]}"
-          }
-        ],
-        "Modifiers": [
-          {
-            "SourceName": "Accessory",
-            "Value": 112
-          }
-        ]
-      },
-      {
-        "SourceName": "Rsl",
-        "Equations": [
-          {
-            "Equation": "{UnitStat[Res]}"
-          }
-        ],
-        "Modifiers": [
-          {
-            "SourceName": "Accessory",
-            "Value": 113
-          }
-        ]
       }
     ],
     "Stats": [
@@ -426,6 +504,24 @@
         ]
       },
       {
+        "SourceName": "Def",
+        "BaseValue": 23,
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 75
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 89
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 103
+          }
+        ]
+      },
+      {
         "SourceName": "Mag",
         "BaseValue": 19,
         "Modifiers": [
@@ -444,6 +540,24 @@
           {
             "SourceName": "Accessory",
             "Value": 117
+          }
+        ]
+      },
+      {
+        "SourceName": "Res",
+        "BaseValue": 24,
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 76
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 90
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 104
           }
         ]
       },
@@ -470,86 +584,6 @@
         ]
       },
       {
-        "SourceName": "Spd",
-        "BaseValue": 21,
-        "Modifiers": [
-          {
-            "SourceName": "Short Buffs",
-            "Value": 73
-          },
-          {
-            "SourceName": "Short Debuffs",
-            "Value": 87
-          },
-          {
-            "SourceName": "Long Buffs",
-            "Value": 101
-          },
-          {
-            "SourceName": "Accessory",
-            "Value": 119
-          }
-        ]
-      },
-      {
-        "SourceName": "Lck",
-        "BaseValue": 22,
-        "Modifiers": [
-          {
-            "SourceName": "Short Buffs",
-            "Value": 74
-          },
-          {
-            "SourceName": "Short Debuffs",
-            "Value": 88
-          },
-          {
-            "SourceName": "Long Buffs",
-            "Value": 102
-          },
-          {
-            "SourceName": "Accessory",
-            "Value": 120
-          }
-        ]
-      },
-      {
-        "SourceName": "Def",
-        "BaseValue": 23,
-        "Modifiers": [
-          {
-            "SourceName": "Short Buffs",
-            "Value": 75
-          },
-          {
-            "SourceName": "Short Debuffs",
-            "Value": 89
-          },
-          {
-            "SourceName": "Long Buffs",
-            "Value": 103
-          }
-        ]
-      },
-      {
-        "SourceName": "Res",
-        "BaseValue": 24,
-        "Modifiers": [
-          {
-            "SourceName": "Short Buffs",
-            "Value": 76
-          },
-          {
-            "SourceName": "Short Debuffs",
-            "Value": 90
-          },
-          {
-            "SourceName": "Long Buffs",
-            "Value": 104
-          }
-        ]
-      },
-      {
         "SourceName": "Cha",
         "BaseValue": 25,
         "Modifiers": [
@@ -572,6 +606,28 @@
         ]
       },
       {
+        "SourceName": "Spd",
+        "BaseValue": 21,
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 73
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 87
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 101
+          },
+          {
+            "SourceName": "Accessory",
+            "Value": 119
+          }
+        ]
+      },
+      {
         "SourceName": "Mov",
         "BaseValue": 26,
         "Modifiers": [
@@ -590,6 +646,28 @@
           {
             "SourceName": "Accessory",
             "Value": 122
+          }
+        ]
+      },
+      {
+        "SourceName": "Lck",
+        "BaseValue": 22,
+        "Modifiers": [
+          {
+            "SourceName": "Short Buffs",
+            "Value": 74
+          },
+          {
+            "SourceName": "Short Debuffs",
+            "Value": 88
+          },
+          {
+            "SourceName": "Long Buffs",
+            "Value": 102
+          },
+          {
+            "SourceName": "Accessory",
+            "Value": 120
           }
         ]
       }
@@ -641,11 +719,14 @@
     "HeldCurrency": 11,
     "Tags": [ 13 ],
     "Behavior": 14,
-    "SystemStats": [
-
-    ],
+    "SystemStats": [],
     "Skills": [ 59, 60, 61, 62, 63, 64, 65, 66, 67 ],
-    "StatusConditions": [ 143, 144, 145 ]
+    "StatusConditions": [ 143, 144, 145 ],
+    "Battalion": {
+      "Battalion": 128,
+      "Endurance": 141,
+      "GambitUses": 138
+    }
   },
   "Convoy": {
     "Query": {

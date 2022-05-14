@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System.Affiliations;
+using RedditEmblemAPI.Models.Configuration.System.Battalions;
 using RedditEmblemAPI.Models.Configuration.System.Classes;
 using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Configuration.System.Skills;
@@ -80,6 +81,16 @@ namespace RedditEmblemAPI.Models.Configuration.System
         /// Optional. Container object for a system's terrain effect configuration.
         /// </summary>
         public TerrainEffectsConfig TerrainEffects { get; set; } = null;
+
+        /// <summary>
+        /// Optional. Container object for a system's battalion configuration.
+        /// </summary>
+        public BattalionsConfig Battalions { get; set; } = null;
+
+        /// <summary>
+        /// Optional. Container object for a system's gambit configuration.
+        /// </summary>
+        public GambitsConfig Gambits { get; set; } = null;
 
         #endregion
     }

@@ -65,13 +65,13 @@ namespace RedditEmblemAPI.Models.Output.System
         public IDictionary<string, int> Stats { get; set; }
 
         /// <summary>
-        /// Collection of stat modifiers that will be applied to the owning unit when this item <c>IsEquipped</c>.
+        /// Collection of stat modifiers that will be applied to the owning unit when this item is equipped.
         /// </summary>
         [JsonIgnore]
         public IDictionary<string, int> EquippedStatModifiers { get; set; }
 
         /// <summary>
-        /// Collection of stat modifiers that will be applied to the owning unit when this item !<c>IsEquipped</c>.
+        /// Collection of stat modifiers that will be applied to the owning unit when this item is not equipped.
         /// </summary>
         [JsonIgnore]
         public IDictionary<string, int> InventoryStatModifiers { get; set; }

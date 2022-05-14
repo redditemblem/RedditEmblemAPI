@@ -63,7 +63,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <param name="minimum">A numerical string value.</param>
         /// <param name="maximum">A numerical string value.</param>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
-        public ItemRange(RangeConfig config, List<string> data)
+        public ItemRange(ItemRangeConfig config, List<string> data)
         {
             this.Minimum = RangeValueHandler_Minimum(data, config.Minimum);
             this.Maximum = RangeValueHandler_Maximum(data, config.Maximum);

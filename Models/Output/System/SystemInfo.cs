@@ -76,6 +76,16 @@ namespace RedditEmblemAPI.Models.Output.System
         [JsonIgnore]
         public List<WeaponRankBonus> WeaponRankBonuses { get; set; }
 
+        /// <summary>
+        /// Container dictionary for data about battalions.
+        /// </summary>
+        public IDictionary<string, Battalion> Battalions { get; set; }
+
+        /// <summary>
+        /// Container dictionary for data about gambits.
+        /// </summary>
+        public IDictionary<string, Gambit> Gambits { get; set; }
+
         #endregion
 
         /// <summary>
@@ -137,6 +147,16 @@ namespace RedditEmblemAPI.Models.Output.System
             foreach (string key in this.Tags.Keys.ToList())
                 if (!this.Tags[key].Matched)
                     this.Tags.Remove(key);
+
+            //Cull unused battalions
+            foreach (string key in this.Battalions.Keys.ToList())
+                if (!this.Battalions[key].Matched)
+                    this.Battalions.Remove(key);
+
+            //Cull unused gambits
+            foreach(string key in this.Gambits.Keys.ToList())
+                if(!this.Gambits[key].Matched)
+                    this.Gambits.Remove(key);
         }
 
         #region Parsers
@@ -176,6 +196,12 @@ namespace RedditEmblemAPI.Models.Output.System
 
             if (config.WeaponRankBonuses != null) this.WeaponRankBonuses = WeaponRankBonus.BuildList(config.WeaponRankBonuses);
             else this.WeaponRankBonuses = new List<WeaponRankBonus>();
+
+            if (config.Gambits != null) this.Gambits = Gambit.BuildDictionary(config.Gambits);
+            else this.Gambits = new Dictionary<string, Gambit>();
+
+            if (config.Battalions != null) this.Battalions = Battalion.BuildDictionary(config.Battalions, this.Gambits);
+            else this.Battalions = new Dictionary<string, Battalion>();
         }
 
         #endregion

@@ -105,6 +105,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         public List<Skill> SkillList { get; set; }
 
         /// <summary>
+        /// Container for information about a unit's battalion.
+        /// </summary>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public UnitBattalion Battalion { get; set; }
+
+        /// <summary>
         /// Container for information about a unit's movement/item ranges.
         /// </summary>
         public UnitRangeData Ranges { get; set; }
@@ -177,6 +183,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             BuildInventory(data, config.Inventory, systemData.Items, systemData.WeaponRanks, systemData.WeaponRankBonuses);
             BuildSkills(data, config.Skills, systemData.Skills);
             BuildStatusConditions(data, config.StatusConditions, systemData.StatusConditions);
+            BuildBattalion(data, config.Battalion, systemData.Battalions);
 
             //If we have loaded tags, attempt to match. If not, just keep our plaintext list.
             if (systemData.Tags.Count > 0)
@@ -379,6 +386,28 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             if (indexes.Count > 0 && !this.ClassList.Any())
                 throw new Exception("Unit must have at least one class defined.");
+        }
+
+        private void BuildBattalion(List<string> data, UnitBattalionConfig config, IDictionary<string, Battalion> battalions)
+        {
+            if (config == null)
+                return;
+
+            string name = DataParser.OptionalString(data, config.Battalion, "Battalion");
+            if (string.IsNullOrEmpty(name))
+                return;
+
+            this.Battalion = new UnitBattalion(config, data, battalions);
+
+            //Apply any stat modifiers from the battalion
+            Battalion battalion = this.Battalion.BattalionObj;
+            foreach (string stat in battalion.StatModifiers.Keys)
+            {
+                ModifiedStatValue mods;
+                if (!this.Stats.General.TryGetValue(stat, out mods))
+                    throw new UnmatchedStatException(stat);
+                mods.Modifiers.Add(battalion.Name, battalion.StatModifiers[stat]);
+            }
         }
 
         #endregion Build Functions

@@ -133,8 +133,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Combat stats
                 try
                 {
-                    unit.Stats.CalculateCombatStats(config.CombatStats, unit.Inventory, 
-                        unit.SkillList.Select(s => s.Effect).OfType<ReplaceCombatStatFormulaVariableEffect>().ToList());
+                    unit.Stats.CalculateCombatStats(config.CombatStats, unit);
                 }
                 catch (Exception ex)
                 {

@@ -145,9 +145,14 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public List<int> StatusConditions { get; set; } = new List<int>();
 
         /// <summary>
-        /// Optional. Container object for a unit's skills configuration.
+        /// Optional. List of cell indexes for a unit's skills.
         /// </summary>
         public List<int> Skills { get; set; } = new List<int>();
+
+        /// <summary>
+        /// Optional. Container object for a unit's battalion configuration.
+        /// </summary>
+        public UnitBattalionConfig Battalion { get; set; } = null;
 
         #endregion
     }

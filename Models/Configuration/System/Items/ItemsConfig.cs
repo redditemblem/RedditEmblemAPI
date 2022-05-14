@@ -54,7 +54,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// Required. Container object for an item's range configuration.
         /// </summary>
         [JsonRequired]
-        public RangeConfig Range { get; set; }
+        public ItemRangeConfig Range { get; set; }
 
         #endregion
 

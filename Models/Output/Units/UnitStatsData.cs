@@ -2,7 +2,6 @@
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
-using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats;
@@ -57,13 +56,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         public IDictionary<string, ModifiedStatValue> General { get; set; }
 
         #endregion Attributes
-
-        #region Constants
-
-        private static Regex unitStatRegex = new Regex(@"{UnitStat\[([A-Za-z,]+)\]}"); //match unit stat name
-        private static Regex weaponStatRegex = new Regex(@"{WeaponStat\[([A-Za-z,]+)\]}"); //match weapon stat name
-
-        #endregion Constants
 
         /// <summary>
         /// Constructor.
@@ -157,13 +149,13 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Assembles and executes the equations in <paramref name="stats"/>.
         /// </summary>
-        public void CalculateCombatStats(List<CalculatedStatConfig> stats, List<UnitInventoryItem> unitInventory, List<ReplaceCombatStatFormulaVariableEffect> replacementEffects)
+        public void CalculateCombatStats(List<CalculatedStatConfig> stats, Unit unit)
         {
+            List<ReplaceCombatStatFormulaVariableEffect> replacementEffects = unit.SkillList.Select(s => s.Effect).OfType<ReplaceCombatStatFormulaVariableEffect>().ToList();
+            string equippedUtilStat = GetItemUtilizedStatName(unit.Inventory.SingleOrDefault(i => i != null && i.IsPrimaryEquipped));
+
             foreach (CalculatedStatConfig stat in stats)
             {
-                UnitInventoryItem equipped = unitInventory.SingleOrDefault(i => i != null && i.IsPrimaryEquipped);
-                string equippedUtilStat = GetItemUtilizedStatName(equipped);
-
                 //Select the correct equation
                 string equation = stat.Equations.First().Equation;
                 if (stat.SelectsUsing == CalculatedStatEquationSelectorEnum.EquippedWeaponUtilizedStat && !string.IsNullOrEmpty(equippedUtilStat))
@@ -173,99 +165,29 @@ namespace RedditEmblemAPI.Models.Output.Units
                         equation = equationConfig.Equation;
                 }
 
-
-                //First, check if skill effects replace any formula variables
-                foreach(ReplaceCombatStatFormulaVariableEffect effect in replacementEffects.Where(re => re.Stats.Contains(stat.SourceName)))
+                //Check if skill effects replace any formula variables
+                foreach (ReplaceCombatStatFormulaVariableEffect effect in replacementEffects.Where(re => re.Stats.Contains(stat.SourceName)))
                 {
                     for (int i = 0; i < effect.VariablesToReplace.Count; i++)
                         equation = equation.Replace(effect.VariablesToReplace[i], effect.VariablesToUse[i]);
                 }
 
-                //{UnitStat[...]}
-                //Replaced by values from the General stat list
-                MatchCollection unitStatMatches = unitStatRegex.Matches(equation);
-                if (unitStatMatches.Count > 0)
+                //Evaluate and round the result
+                EquationParserOptions options = new EquationParserOptions()
                 {
-                    foreach (Match match in unitStatMatches)
-                    {
-                        int maximumStatValue = int.MinValue;
-                        foreach(string statSplit in match.Groups[1].Value.Split(","))
-                        {
-                            ModifiedStatValue unitStat;
-                            if (!this.General.TryGetValue(statSplit, out unitStat))
-                                throw new UnmatchedStatException(statSplit);
+                    EvalUnitCombatStat = true,
+                    EvalUnitStat = true,
+                    EvalUnitLevel = true,
+                    EvalWeaponUtilStat = true,
+                    EvalWeaponStat = true,
+                    EvalBattalionStat = true
+                };
 
-                            if(maximumStatValue < unitStat.FinalValue)
-                                maximumStatValue = unitStat.FinalValue;
-                        }
-                        
-                        equation = equation.Replace(match.Groups[0].Value, maximumStatValue.ToString());
-                    }
-                }
-
-                //{UnitLevel}
-                if (equation.Contains("{UnitLevel}"))
-                {
-                    equation = equation.Replace("{UnitLevel}", this.Level.ToString());
-                }
-
-                //{WeaponUtilStat}
-                if (equation.Contains("{WeaponUtilStat}"))
-                {
-                    int value = 0;
-                    if (!string.IsNullOrEmpty(equippedUtilStat))
-                        value = this.General[equippedUtilStat].FinalValue;
-
-                    equation = equation.Replace("{WeaponUtilStat}", value.ToString());
-                }
-
-                //{WeaponStat[...]}
-                MatchCollection weaponStatMatches = weaponStatRegex.Matches(equation);
-                if (weaponStatMatches.Count > 0)
-                {
-                    foreach (Match match in weaponStatMatches)
-                    {
-                        int maximumStatValue = int.MinValue;
-
-                        if(equipped != null)
-                        {
-                            foreach (string statSplit in match.Groups[1].Value.Split(","))
-                            {
-                                int statValue;
-                                if (!equipped.Item.Stats.TryGetValue(statSplit, out statValue))
-                                    throw new UnmatchedStatException(statSplit);
-
-                                if (maximumStatValue < statValue)
-                                    maximumStatValue = statValue;
-                            }
-                        }
-                        else
-                        {
-                            //If there is no equipped item, default value to 0.
-                            maximumStatValue = 0;
-                        }
-
-                        equation = equation.Replace(match.Groups[0].Value, maximumStatValue.ToString());
-                    }
-                }
-
-                //Throw an error if anything remains unparsed
-                if (equation.Contains("{") || equation.Contains("}"))
-                    throw new UnrecognizedEquationVariableException(equation);
-
-                try
-                {
-                    Expression expression = new Expression(equation);
-                    this.Combat[stat.SourceName].BaseValue = Math.Max(0, Convert.ToInt32(Math.Floor(Convert.ToDecimal(expression.Evaluate()))));
-                }
-                catch(Exception ex)
-                {
-                    throw new EquationEvaluationErrorException(equation);
-                }
+                decimal equationResult = EquationParser.Evaluate(equation, unit, options);
+                this.Combat[stat.SourceName].BaseValue = Math.Max(0, Convert.ToInt32(Math.Floor(equationResult)));
             }
         }
 
-    
         private string GetItemUtilizedStatName(UnitInventoryItem item)
         {
             string statName = string.Empty;
@@ -290,5 +212,6 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             return statName;
         }
+
     }
 }

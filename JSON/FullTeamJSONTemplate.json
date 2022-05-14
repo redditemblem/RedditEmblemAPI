@@ -225,6 +225,53 @@
         }
       ],
       "TextFields": [ 0 ] //Optional
+    },
+    "Battalions": { //Optional
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "SpriteURL": 0, //Optional
+      "Gambit": 0, //Required
+      "MaxEndurance": 0, //Required
+      "Rank": 0, //Optional
+      "Stats": [ //Required
+        {
+          "SourceName": "Atk",
+          "Value": 0
+        }
+      ],
+      "StatModifiers": [ //Optional
+        {
+          "SourceName": "Str",
+          "Value": 0
+        }
+      ],
+      "TextFields": [ 0 ] //Optional
+    },
+    "Gambits": { //Optional
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "SpriteURL": 0, //Optional
+      "MaxUses": 0, //Required
+      "UtilizedStats": 0, //Optional
+      "Range": { //Required
+        "Minimum": 0,
+        "Maximum": 0
+      },
+      "Stats": [ //Required
+        {
+          "SourceName": "Mt",
+          "Value": 0
+        }
+      ],
+      "TextFields": [ 0 ] //Optional
     }
   },
   "Units": { //Required
@@ -308,7 +355,12 @@
       }
     ],
     "Skills": [ 0 ], //Optional
-    "StatusConditions": [ 0 ] //Optional
+    "StatusConditions": [ 0 ], //Optional
+    "Battalion": { //Optional
+      "Battalion": 0, //Required
+      "Endurance": 0, //Required
+      "GambitUses": 0 //Required
+    }
   },
   "Convoy": { //Optional
     "Query": {

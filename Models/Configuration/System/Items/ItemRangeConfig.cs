@@ -5,7 +5,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
     /// <summary>
     /// Container class for deserialized JSON <c>"Range"</c> object data.
     /// </summary>
-    public class RangeConfig
+    public class ItemRangeConfig
     {
         #region Required Fields
 
@@ -16,7 +16,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         public int Minimum { get; set; }
 
         /// <summary>
-        /// Required. Cell index for an item's minimum range value.
+        /// Required. Cell index for an item's maximum range value.
         /// </summary>
         [JsonRequired]
         public int Maximum { get; set; }

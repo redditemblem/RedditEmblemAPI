@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -105,10 +106,8 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #region Constants
 
-        private static Regex usesRegex = new Regex(@"\([0-9]+\)"); //match item uses (ex. "(5)")
-        private static Regex dropRegex = new Regex(@"\(D\)");      //match item droppable (ex. "(D)")
-
-        private static Regex unitStatRegex = new Regex(@"{UnitStat\[([A-Za-z,]+)\]}"); //match unit stat name
+        private static Regex usesRegex = new Regex(@"\([0-9]+\)", RegexOptions.Compiled); //match item uses (ex. "(5)")
+        private static Regex dropRegex = new Regex(@"\(D\)", RegexOptions.Compiled);      //match item droppable (ex. "(D)")
 
         #endregion Constants
 
@@ -175,41 +174,13 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         private int CalculateItemRange(string equation, Unit unit)
         {
-            //{UnitStat[...]}
-            //Replaced by values from the General stat list
-            MatchCollection unitStatMatches = unitStatRegex.Matches(equation);
-            if (unitStatMatches.Count > 0)
+            EquationParserOptions options = new EquationParserOptions()
             {
-                foreach (Match match in unitStatMatches)
-                {
-                    int maximumStatValue = int.MinValue;
-                    foreach (string statSplit in match.Groups[1].Value.Split(","))
-                    {
-                        ModifiedStatValue unitStat;
-                        if (!unit.Stats.General.TryGetValue(statSplit, out unitStat))
-                            throw new UnmatchedStatException(statSplit);
+                EvalUnitStat = true
+            };
 
-                        if (maximumStatValue < unitStat.FinalValue)
-                            maximumStatValue = unitStat.FinalValue;
-                    }
-
-                    equation = equation.Replace(match.Groups[0].Value, maximumStatValue.ToString());
-                }
-            }
-
-            //Throw an error if anything remains unparsed
-            if (equation.Contains("{") || equation.Contains("}"))
-                throw new UnrecognizedEquationVariableException(equation);
-
-            try
-            {
-                Expression expression = new Expression(equation);
-                return Math.Max(1, Convert.ToInt32(Math.Floor(Convert.ToDecimal(expression.Evaluate()))));
-            }
-            catch (Exception ex)
-            {
-                throw new EquationEvaluationErrorException(equation);
-            }
+            decimal equationResult = EquationParser.Evaluate(equation, unit, options);
+            return Math.Max(1, Convert.ToInt32(Math.Floor(equationResult)));         
         }
     }
 }
