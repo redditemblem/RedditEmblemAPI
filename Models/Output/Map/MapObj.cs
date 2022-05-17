@@ -12,8 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.Map
 {
@@ -125,8 +126,10 @@ namespace RedditEmblemAPI.Models.Output.Map
             int tileHeight;
             int tileWidth;
 
-            byte[] imageData = new WebClient().DownloadData(this.MapImageURL);
-            using (MemoryStream imgStream = new MemoryStream(imageData))
+            Task<byte[]> imageData = new HttpClient().GetByteArrayAsync(this.MapImageURL);
+            imageData.Wait();
+
+            using (MemoryStream imgStream = new MemoryStream(imageData.Result))
             using (SKManagedStream inputStream = new SKManagedStream(imgStream))
             using (SKBitmap img = SKBitmap.Decode(inputStream))
             {

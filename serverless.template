@@ -8,7 +8,7 @@
       "Type": "AWS::Serverless::Function",
       "Properties": {
         "Handler": "RedditEmblemAPI::RedditEmblemAPI.LambdaEntryPoint::FunctionHandlerAsync",
-        "Runtime": "dotnetcore3.1",
+        "Runtime": "dotnet6",
         "CodeUri": "",
         "MemorySize": 2048,
         "Timeout": 30,
