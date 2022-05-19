@@ -143,7 +143,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Item ranges
                 try
                 {
-                    foreach (UnitInventoryItem item in unit.Inventory.Where(i => i != null && (i.Item.Range.MinimumRequiresCalculation || i.Item.Range.MaximumRequiresCalculation)))
+                    foreach (UnitInventoryItem item in unit.Inventory.Items.Where(i => i.Item.Range.MinimumRequiresCalculation || i.Item.Range.MaximumRequiresCalculation))
                         item.CalculateItemRanges(unit);
                 }
                 catch(Exception ex)

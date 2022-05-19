@@ -254,7 +254,7 @@ namespace RedditEmblemAPI.Services.Helpers
             List<Coordinate> utilRange = new List<Coordinate>();
 
             //Transpose item data into the struct we're using for recursion
-            List<UnitItemRange> itemRanges = unit.Inventory.Where(i => i != null && i.CanEquip && !i.IsUsePrevented && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
+            List<UnitItemRange> itemRanges = unit.Inventory.Items.Where(i => i.CanEquip && !i.IsUsePrevented && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
                                                             .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.Range.Shape, i.Item.Range.CanOnlyUseBeforeMovement, i.Item.DealsDamage, i.AllowMeleeRange))
                                                             .ToList();
 

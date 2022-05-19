@@ -81,9 +81,10 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// <exception cref="UnmatchedStatusConditionTypeException"></exception>
         private StatusConditionType ParseStatusConditionType(List<string> data, int index)
         {
-            string name = DataParser.String(data, index, "Type");
+            string name = DataParser.OptionalString(data, index, "Type");
             switch (name)
             {
+                case "": return StatusConditionType.Unassigned;
                 case "Positive": return StatusConditionType.Positive;
                 case "Negative": return StatusConditionType.Negative;
                 case "Neutral": return StatusConditionType.Neutral;
@@ -141,8 +142,9 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 
     public enum StatusConditionType
     {
-        Positive = 0,
-        Negative = 1,
-        Neutral = 2
+        Unassigned = 0,
+        Positive = 1,
+        Negative = 2,
+        Neutral = 3
     }
 }

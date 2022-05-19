@@ -137,7 +137,7 @@ namespace RedditEmblemAPI.Services.Helpers
             if (weaponStatMatches.Count == 0)
                 return;
 
-            UnitInventoryItem primaryEquipped = unit.Inventory.SingleOrDefault(i => i != null && i.IsPrimaryEquipped);
+            UnitInventoryItem primaryEquipped = unit.Inventory.GetPrimaryEquippedItem();
 
             foreach (Match match in weaponStatMatches)
             {
@@ -207,7 +207,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
         private static string GetPrimaryEquippedItemUtilizedStatName(Unit unit)
         {
-            UnitInventoryItem primaryEquipped = unit.Inventory.SingleOrDefault(i => i != null && i.IsPrimaryEquipped);
+            UnitInventoryItem primaryEquipped = unit.Inventory.GetPrimaryEquippedItem();
 
             string statName = string.Empty;
             int maxValue = int.MinValue;

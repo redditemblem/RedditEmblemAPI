@@ -16,7 +16,7 @@
       "Query": {
         "Sheet": "",
         "Selection": "",
-        "Orientation": 0
+        "Orientation": 2
       },
       "MapSwitch": 0, //Required
       "MapImageURL": 0, //Required
@@ -25,14 +25,14 @@
     "MapTiles": { //Required
       "Query": {
         "Sheet": "",
-        "Selection": "",
+        "Selection": "A1:ZZ",
         "Orientation": 1
       }
     },
     "MapEffects": { //Optional, defaults to null
       "Query": {
         "Sheet": "",
-        "Selection": "",
+        "Selection": "A1:ZZ",
         "Orientation": 1
       }
     }

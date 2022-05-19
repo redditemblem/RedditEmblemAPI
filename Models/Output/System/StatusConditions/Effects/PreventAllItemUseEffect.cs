@@ -25,7 +25,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         public override void Apply(Unit unit, StatusCondition status)
         {
             //Mark use as prevented for all items in unit's inventory
-            foreach (UnitInventoryItem item in unit.Inventory.Where(i => i != null))
+            foreach (UnitInventoryItem item in unit.Inventory.Items)
                 item.IsUsePrevented = true;
         }
     }

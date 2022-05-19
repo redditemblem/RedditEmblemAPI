@@ -94,9 +94,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         public List<UnitStatus> StatusConditions { get; set; }
 
         /// <summary>
-        /// List of the items the unit is carrying.
+        /// Container for information about the unit's inventory.
         /// </summary>
-        public List<UnitInventoryItem> Inventory { get; set; }
+        public UnitInventory Inventory { get; set; }
 
         /// <summary>
         /// List of the skills the unit possesses.
@@ -232,18 +232,10 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         private void BuildInventory(List<string> data, InventoryConfig config, IDictionary<string, Item> items, List<string> weaponRanks, List<WeaponRankBonus> weaponRankBonuses)
         {
-            this.Inventory = new List<UnitInventoryItem>();
+            this.Inventory = new UnitInventory(config, data, items);
 
-            foreach (int index in config.Slots)
+            foreach (UnitInventoryItem item in this.Inventory.Items)
             {
-                string name = DataParser.OptionalString(data, index, "Item Name");
-                if (string.IsNullOrEmpty(name))
-                {
-                    this.Inventory.Add(null);
-                    continue;
-                }
-                UnitInventoryItem item = new UnitInventoryItem(name, items);
-
                 //Check if the item can be equipped
                 string unitRank;
                 if (this.WeaponRanks.TryGetValue(item.Item.Category, out unitRank))
@@ -258,25 +250,18 @@ namespace RedditEmblemAPI.Models.Output.Units
                     item.CanEquip = true;
                 }
 
-                this.Inventory.Add(item);
             }
 
-            //Find the all equipped items and flag them
-            string equippedItemName = DataParser.OptionalString(data, config.PrimaryEquippedItem, "Equipped Item");
-            if (!string.IsNullOrEmpty(equippedItemName))
+            UnitInventoryItem primaryEquipped = this.Inventory.GetPrimaryEquippedItem();
+            if (primaryEquipped != null)
             {
-                UnitInventoryItem equipped = this.Inventory.FirstOrDefault(i => i != null && i.FullName == equippedItemName);
-                if (equipped == null)
-                    throw new UnmatchedEquippedItemException(equippedItemName);
-                equipped.IsPrimaryEquipped = true;
-
                 //Check if we need to apply weapon rank bonuses for the primary equipped item
-                if (this.WeaponRanks.ContainsKey(equipped.Item.Category))
+                if (this.WeaponRanks.ContainsKey(primaryEquipped.Item.Category))
                 {
                     string unitRank;
-                    this.WeaponRanks.TryGetValue(equipped.Item.Category, out unitRank);
+                    this.WeaponRanks.TryGetValue(primaryEquipped.Item.Category, out unitRank);
 
-                    WeaponRankBonus bonus = weaponRankBonuses.FirstOrDefault(b => b.Category == equipped.Item.Category && b.Rank == unitRank);
+                    WeaponRankBonus bonus = weaponRankBonuses.FirstOrDefault(b => b.Category == primaryEquipped.Item.Category && b.Rank == unitRank);
                     if (bonus != null)
                     {
                         foreach (string stat in bonus.CombatStatModifiers.Keys)
@@ -284,7 +269,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                             ModifiedStatValue mods;
                             if (!this.Stats.Combat.TryGetValue(stat, out mods))
                                 throw new UnmatchedStatException(stat);
-                            mods.Modifiers.Add($"{equipped.Item.Category} {unitRank} Rank Bonus", bonus.CombatStatModifiers[stat]);
+                            mods.Modifiers.Add($"{primaryEquipped.Item.Category} {unitRank} Rank Bonus", bonus.CombatStatModifiers[stat]);
                         }
 
                         foreach (string stat in bonus.StatModifiers.Keys)
@@ -292,26 +277,14 @@ namespace RedditEmblemAPI.Models.Output.Units
                             ModifiedStatValue mods;
                             if (!this.Stats.General.TryGetValue(stat, out mods))
                                 throw new UnmatchedStatException(stat);
-                            mods.Modifiers.Add($"{equipped.Item.Category} {unitRank} Rank Bonus", bonus.StatModifiers[stat]);
+                            mods.Modifiers.Add($"{primaryEquipped.Item.Category} {unitRank} Rank Bonus", bonus.StatModifiers[stat]);
                         }
                     }
                 }
             }
 
-            foreach(int index in config.SecondaryEquippedItems)
-            {
-                string secondaryEquippedItemName = DataParser.OptionalString(data, index, "Equipped Item");
-                if (string.IsNullOrEmpty(secondaryEquippedItemName))
-                    continue;
-
-                UnitInventoryItem equipped = this.Inventory.FirstOrDefault(i => i != null && i.FullName == secondaryEquippedItemName);
-                if (equipped == null)
-                    throw new UnmatchedEquippedItemException(equippedItemName);
-                equipped.IsSecondaryEquipped = true;
-            }
-
             //Apply equipped stat modifiers
-            foreach (UnitInventoryItem equipped in this.Inventory.Where(i => i != null && (i.IsPrimaryEquipped || i.IsSecondaryEquipped)))
+            foreach (UnitInventoryItem equipped in this.Inventory.GetAllEquippedItems())
             {
                 foreach (string stat in equipped.Item.EquippedStatModifiers.Keys)
                 {
@@ -323,7 +296,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             //Apply inventory stat modifiers for all nonequipped items
-            foreach (UnitInventoryItem inv in this.Inventory.Where(i => i != null && !(i.IsPrimaryEquipped || i.IsSecondaryEquipped)))
+            foreach (UnitInventoryItem inv in this.Inventory.GetAllUnequippedItems())
             {
                 foreach (string stat in inv.Item.InventoryStatModifiers.Keys)
                 {

@@ -20,12 +20,6 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
         [JsonRequired]
         public int Name { get; set; }
 
-        /// <summary>
-        /// Required. Cell index for a status condition's type value.
-        /// </summary>
-        [JsonRequired]
-        public int Type { get; set; }
-
         #endregion
 
         #region Optional Fields
@@ -34,6 +28,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
         /// Optional. Cell index for a status condition's sprite.
         /// </summary>
         public int SpriteURL { get; set; } = -1;
+
+        /// <summary>
+        /// Optional. Cell index for a status condition's type value.
+        /// </summary>
+        public int Type { get; set; } = -1;
 
         /// <summary>
         /// Optional. Cell index for a status condition's turns value.

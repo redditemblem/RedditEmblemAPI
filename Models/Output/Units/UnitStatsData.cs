@@ -152,7 +152,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         public void CalculateCombatStats(List<CalculatedStatConfig> stats, Unit unit)
         {
             List<ReplaceCombatStatFormulaVariableEffect> replacementEffects = unit.SkillList.Select(s => s.Effect).OfType<ReplaceCombatStatFormulaVariableEffect>().ToList();
-            string equippedUtilStat = GetItemUtilizedStatName(unit.Inventory.SingleOrDefault(i => i != null && i.IsPrimaryEquipped));
+            string equippedUtilStat = GetItemUtilizedStatName(unit.Inventory.GetPrimaryEquippedItem());
 
             foreach (CalculatedStatConfig stat in stats)
             {

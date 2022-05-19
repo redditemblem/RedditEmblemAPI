@@ -61,7 +61,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
         /// <exception cref="UnmatchedStatException"></exception>
         public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
-            UnitInventoryItem equipped = unit.Inventory.SingleOrDefault(i => i != null && i.IsPrimaryEquipped);
+            UnitInventoryItem equipped = unit.Inventory.GetPrimaryEquippedItem();
             if (equipped == null)
                 return;
 
