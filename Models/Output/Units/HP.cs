@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The percentage of hit points the unit has remaining.
         /// </summary>
         public decimal Percentage { get { return Math.Round((decimal)this.Current / this.Maximum, 2) * 100; } }
+
+        /// <summary>
+        /// The difference between <c>Maximum</c> and <c>Current</c> with a minimum possible value of 0.
+        /// </summary>
+        [JsonIgnore]
+        public int Difference { get { return Math.Max(0, this.Maximum - this.Current); } }
 
         #region Constructors
 

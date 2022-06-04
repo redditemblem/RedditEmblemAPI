@@ -1,6 +1,6 @@
 ﻿namespace RedditEmblemAPI.Models.Exceptions.Validation
 {
-    public class NonZeroPositiveIntegerException : IntegerException
+    public class NonZeroPositiveIntegerException : NumericalException
     {
         /// <summary>
         /// Thrown when an integer fails to parse and the expected result is a non-zero positive number.

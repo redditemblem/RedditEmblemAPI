@@ -55,6 +55,16 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         [JsonIgnore]
         public StatusConditionEffect Effect { get; set; }
 
+        #region JSON Serialization Only
+
+        /// <summary>
+        /// Flag indicating whether or not a status condition effect is configured on this status condition.
+        /// </summary>
+        [JsonProperty]
+        private bool IsEffectConfigured { get { return this.Effect != null; } }
+
+        #endregion JSON Serialization Only
+
         #endregion
 
         /// <summary>

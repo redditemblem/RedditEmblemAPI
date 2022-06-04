@@ -25,7 +25,12 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// Parameters for the Convoy page display.
         /// </summary>
         public FilterParameters Parameters { get; set; }
-        
+
+        /// <summary>
+        /// Workbook ID number from the Google Sheets URL.
+        /// </summary>
+        public string WorkbookID { get; set; }
+
         /// <summary>
         /// Flag indicating if the shop link should be shown.
         /// </summary>
@@ -56,6 +61,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         public ConvoyData(JSONConfiguration config)
         {
             this.Currency = config.System.Currency;
+            this.WorkbookID = config.Team.WorkbookID;
             this.ShowShopLink = (config.Shop != null);
 
             if (config.System.Tags != null) this.Tags = Tag.BuildDictionary(config.System.Tags);

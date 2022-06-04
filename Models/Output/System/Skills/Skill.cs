@@ -52,6 +52,16 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         [JsonIgnore]
         public SkillEffect Effect { get; set; }
 
+        #region JSON Serialization Only
+
+        /// <summary>
+        /// Flag indicating whether or not a skill effect is configured on this skill.
+        /// </summary>
+        [JsonProperty]
+        private bool IsEffectConfigured { get { return this.Effect != null; } }
+
+        #endregion JSON Serialization Only
+
         #endregion
 
         /// <summary>
@@ -84,6 +94,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "StatModifier": return new StatModifierEffect(parameters);
                 case "HPBelowStatModifier": return new HPBelowStatModifierEffect(parameters);
                 case "HPAboveStatModifier": return new HPAboveStatModifierEffect(parameters);
+                case "HPDifferenceCombatStatModifier": return new HPDifferenceCombatStatModifierEffect(parameters);
+                case "HPDifferenceStatModifier": return new HPDifferenceStatModifierEffect(parameters);
                 case "ReplaceCombatStatFormulaVariable": return new ReplaceCombatStatFormulaVariableEffect(parameters);
                 //Equipped Item Effects
                 case "EquippedCategoryCombatStatModifier": return new EquippedCategoryCombatStatModifierEffect(parameters);

@@ -27,6 +27,11 @@ namespace RedditEmblemAPI.Models.Output.Map
         public List<Unit> Units { get; set; }
 
         /// <summary>
+        /// Workbook ID number from the Google Sheets URL.
+        /// </summary>
+        public string WorkbookID { get; set; }
+
+        /// <summary>
         /// Flag indicating if the convoy button should be shown in the toolbar.
         /// </summary>
         public bool ShowConvoyLink { get; set; }
@@ -38,6 +43,7 @@ namespace RedditEmblemAPI.Models.Output.Map
 
         public MapData(JSONConfiguration config)
         {
+            this.WorkbookID = config.Team.WorkbookID;
             this.ShowConvoyLink = (config.Convoy != null);
             this.ShowShopLink = (config.Shop != null);
 

@@ -103,10 +103,11 @@
     "Skills": {
       "Query": {
         "Sheet": "Abilities",
-        "Selection": "A5:P",
+        "Selection": "A5:Q",
         "Orientation": 1
       },
       "Name": 0,
+      "SpriteURL": 16,
       "TextFields": [ 3, 11 ],
       "Effect": {
         "Type": 12,

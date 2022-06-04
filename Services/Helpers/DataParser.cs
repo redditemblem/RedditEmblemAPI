@@ -127,6 +127,126 @@ namespace RedditEmblemAPI.Services.Helpers
             return Int_Negative(data, index, fieldName);
         }
 
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as a decimal.
+        /// </summary>
+        public static decimal Decimal_Any(List<string> data, int index, string fieldName)
+        {
+            return Decimal_Any(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName);
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="value"/> as a decimal.
+        /// </summary>
+        /// <exception cref="AnyDecimalException"></exception>
+        public static decimal Decimal_Any(string value, string fieldName)
+        {
+            decimal val;
+            if (!decimal.TryParse(value, out val))
+                throw new AnyDecimalException(fieldName, value);
+            return val;
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as a decimal. Errors if the value is below 0.
+        /// </summary>
+        public static decimal Decimal_Positive(List<string> data, int index, string fieldName)
+        {
+            return Decimal_Positive(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName);
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="value"/> as a decimal. Errors if the value is below 0.
+        /// </summary>
+        /// <exception cref="PositiveDecimalException"></exception>
+        public static decimal Decimal_Positive(string value, string fieldName)
+        {
+            decimal val;
+            if (!decimal.TryParse(value, out val) || val < 0)
+                throw new PositiveDecimalException(fieldName, value);
+            return val;
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as a decimal. Errors if the value is below or equal to 0.
+        /// </summary>
+        public static decimal Decimal_NonZeroPositive(List<string> data, int index, string fieldName)
+        {
+            return Decimal_NonZeroPositive(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName);
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="value"/> as a decimal. Errors if the value is below or equal to 0.
+        /// </summary>
+        /// <exception cref="NonZeroPositiveDecimalException"></exception>
+        public static decimal Decimal_NonZeroPositive(string value, string fieldName)
+        {
+            decimal val;
+            if (!decimal.TryParse(value, out val) || val <= 0)
+                throw new NonZeroPositiveDecimalException(fieldName, value);
+            return val;
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is above or equal to 0.
+        /// </summary>
+        public static decimal Decimal_Negative(List<string> data, int index, string fieldName)
+        {
+            return Decimal_Negative(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName);
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="value"/> as a decimal. Errors if the value is above or equal to 0.
+        /// </summary>
+        /// <exception cref="NegativeDecimalException"></exception>
+        public static decimal Decimal_Negative(string value, string fieldName)
+        {
+            decimal val;
+            if (!decimal.TryParse(value, out val) || val >= 0)
+                throw new NegativeDecimalException(fieldName, value);
+            return val;
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as a decimal. If the value is empty, returns <paramref name="defaultValueIfNull"/> instead.
+        /// </summary>
+        public static decimal OptionalDecimal_Any(List<string> data, int index, string fieldName, decimal defaultValueIfNull = 0)
+        {
+            if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
+                return defaultValueIfNull;
+            return Decimal_Any(data, index, fieldName);
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as a decimal. Errors if the value is below 0. If the value is empty, returns <paramref name="defaultValueIfNull"/> instead.
+        /// </summary>
+        public static decimal OptionalDecimal_Positive(List<string> data, int index, string fieldName, decimal defaultValueIfNull = 0)
+        {
+            if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
+                return defaultValueIfNull;
+            return Decimal_Positive(data, index, fieldName);
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as a decimal. Errors if the value is below or equal to 0. If the value is empty, returns <paramref name="defaultValueIfNull"/> instead.
+        /// </summary>
+        public static decimal OptionalDecimal_NonZeroPositive(List<string> data, int index, string fieldName, decimal defaultValueIfNull = 1)
+        {
+            if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
+                return defaultValueIfNull;
+            return Decimal_NonZeroPositive(data, index, fieldName);
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as a decimal. Errors if the value is above or equal to 0. If the value is empty, returns <paramref name="defaultValueIfNull"/> instead.
+        /// </summary>
+        public static decimal OptionalDecimal_Negative(List<string> data, int index, string fieldName, decimal defaultValueIfNull = -1)
+        {
+            if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
+                return defaultValueIfNull;
+            return Decimal_Negative(data, index, fieldName);
+        }
+
         #endregion
 
         #region String Parsing
