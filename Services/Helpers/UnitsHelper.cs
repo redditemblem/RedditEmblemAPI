@@ -54,10 +54,11 @@ namespace RedditEmblemAPI.Services.Helpers
             {
                 try
                 {
-                    unit.Location.Coordinate = new Coordinate(unit.Location.CoordinateString);
+                    unit.Location.Coordinate = new Coordinate(map.Constants.CoordinateFormat, unit.Location.CoordinateString);
                     AddUnitToMap(unit, map, true);
                 }
-                catch (CoordinateFormattingException ex)
+                catch (Exception ex)
+                when (ex is XYCoordinateFormattingException || ex is AlphanumericCoordinateFormattingException)
                 {
                     //If the coordinates aren't in an <x,y> format, check if it's the name of another unit.
                     Unit pair = units.FirstOrDefault(u => u.Name == unit.Location.CoordinateString);
@@ -202,9 +203,9 @@ namespace RedditEmblemAPI.Services.Helpers
                         }
                     }
                     
-                    //Apply terrain type effects from the origin tile.
+                    //Apply tile modifiers
                     ApplyTileTerrainTypeToUnit(unit, tile);
-                    ApplyTileTerrainEffectsToUnit(unit, tile);
+                    ApplyTileObjectModsToUnit(unit, tile);
                 }
             }
         }
@@ -230,26 +231,26 @@ namespace RedditEmblemAPI.Services.Helpers
             }
         }
 
-        private static void ApplyTileTerrainEffectsToUnit(Unit unit, Tile tile)
+        private static void ApplyTileObjectModsToUnit(Unit unit, Tile tile)
         {
-            foreach(TileTerrainEffect effect in tile.TerrainEffects)
+            foreach(TileObjectInstance effect in tile.TileObjects)
             {
                 //Apply combat stat modifiers
-                foreach(KeyValuePair<string, int> modifier in effect.TerrainEffect.CombatStatModifiers)
+                foreach(KeyValuePair<string, int> modifier in effect.TileObject.CombatStatModifiers)
                 {
                     ModifiedStatValue stat;
                     if (!unit.Stats.Combat.TryGetValue(modifier.Key, out stat))
                         throw new UnmatchedStatException(modifier.Key);
-                    stat.Modifiers.TryAdd(effect.TerrainEffect.Name, modifier.Value);
+                    stat.Modifiers.TryAdd(effect.TileObject.Name, modifier.Value);
                 }
 
                 //Apply stat modifiers
-                foreach (KeyValuePair<string, int> modifier in effect.TerrainEffect.StatModifiers)
+                foreach (KeyValuePair<string, int> modifier in effect.TileObject.StatModifiers)
                 {
                     ModifiedStatValue stat;
                     if (!unit.Stats.General.TryGetValue(modifier.Key, out stat))
                         throw new UnmatchedStatException(modifier.Key);
-                    stat.Modifiers.TryAdd(effect.TerrainEffect.Name, modifier.Value);
+                    stat.Modifiers.TryAdd(effect.TileObject.Name, modifier.Value);
                 }
             }
         }

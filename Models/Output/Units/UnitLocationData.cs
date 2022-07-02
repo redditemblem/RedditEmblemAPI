@@ -38,7 +38,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         public Tile AnchorTile { get; set; }
 
         /// <summary>
-        /// The <c>Tile</c> that this unit's range originates from.
+        /// List of <c>Tile</c>s that this unit's range originates from.
         /// </summary>
         [JsonIgnore]
         public List<Tile> OriginTiles { get; set; }

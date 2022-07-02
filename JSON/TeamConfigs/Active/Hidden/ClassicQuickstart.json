@@ -29,7 +29,7 @@
         "Orientation": 1
       }
     },
-    "MapEffects": {
+    "MapObjects": {
       "Query": {
         "Sheet": "Map Terrain Effects",
         "Selection": "A1:ZZ",
@@ -171,7 +171,7 @@
       "Groupings": 15,
       "TextFields": [ 4 ]
     },
-    "TerrainEffects": {
+    "TileObjects": {
       "Query": {
         "Sheet": "Terrain Effect Types",
         "Selection": "A2:I",

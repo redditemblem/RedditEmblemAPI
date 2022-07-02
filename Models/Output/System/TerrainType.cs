@@ -30,7 +30,7 @@ namespace RedditEmblemAPI.Models.Output.System
         public string Name { get; set; }
 
         /// <summary>
-        /// The value by which the terrain effect modifies a unit's HP. Assumed to be a percentage.
+        /// The value by which the terrain type modifies a unit's HP. Assumed to be a percentage.
         /// </summary>
         public int HPModifier { get; set; }
 
@@ -50,12 +50,12 @@ namespace RedditEmblemAPI.Models.Output.System
         public IDictionary<string, int> MovementCosts { get; set; }
 
         /// <summary>
-        /// The warp type of the terrain effect.
+        /// The warp type of the terrain type.
         /// </summary>
         public WarpType WarpType { get; set; }
 
         /// <summary>
-        /// The cost to begin a warp starting from this terrain effect, if applicable.
+        /// The cost to begin a warp starting from this terrain type, if applicable.
         /// </summary>
         public int WarpCost { get; set; }
 

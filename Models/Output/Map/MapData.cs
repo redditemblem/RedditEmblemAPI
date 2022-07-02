@@ -49,12 +49,13 @@ namespace RedditEmblemAPI.Models.Output.Map
 
             //Process data, order is important on these
             this.System = new SystemInfo(config.System);
-            this.Map = new MapObj(config.Map, this.System.TerrainTypes, this.System.TerrainEffects);
+            this.Map = new MapObj(config.Map, this.System.TerrainTypes, this.System.TileObjects);
 
             this.Units = UnitsHelper.Process(config.Units, this.System, this.Map);
 
-            //Calculate unit ranges
+            //Calculate map ranges
             RangeHelper rangeHelper = new RangeHelper(this.Units, this.Map);
+            rangeHelper.CalculateTileObjectRanges();
             rangeHelper.CalculateUnitRanges();
 
             //Clean up

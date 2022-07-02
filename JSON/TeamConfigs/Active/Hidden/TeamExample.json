@@ -8,7 +8,8 @@
       "TileSize": 32,
       "TileSpacing": 0,
       "HasHeaderTopLeft": true,
-      "HasHeaderBottomRight": false
+      "HasHeaderBottomRight": false,
+      "CoordinateFormat": 0
     },
     "MapControls": {
       "Query": {
@@ -27,9 +28,9 @@
         "Orientation": 1
       }
     },
-    "MapEffects": {
+    "MapObjects": {
       "Query": {
-        "Sheet": "Map Effects",
+        "Sheet": "Map Objects",
         "Selection": "A1:ZZ",
         "Orientation": 1
       }
@@ -264,46 +265,50 @@
       "TextFields": [ 12 ],
       "Groupings": 13
     },
-    "TerrainEffects": {
+    "TileObjects": {
       "Query": {
-        "Sheet": "Terrain Effects",
-        "Selection": "B2:ZZ",
+        "Sheet": "Tile Objects",
+        "Selection": "B3:ZZ",
         "Orientation": 1
       },
       "Name": 0,
       "SpriteURL": 1,
       "Size": 2,
       "Layer": 3,
-      "TextFields": [ 12 ],
-      "HPModifier": 4,
+      "Range": {
+        "Minimum": 5,
+        "Maximum": 6
+      },
+      "TextFields": [ 15 ],
+      "HPModifier": 7,
       "StatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 5
-        },
-        {
-          "SourceName": "Mag",
-          "Value": 6
-        },
-        {
-          "SourceName": "Skl",
-          "Value": 7
-        },
-        {
-          "SourceName": "Spd",
           "Value": 8
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Mag",
           "Value": 9
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Skl",
           "Value": 10
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Spd",
           "Value": 11
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 12
+        },
+        {
+          "SourceName": "Def",
+          "Value": 13
+        },
+        {
+          "SourceName": "Res",
+          "Value": 14
         }
       ]
     },

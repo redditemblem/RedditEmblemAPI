@@ -33,9 +33,9 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Container object for map terrain effects configuration.
+        /// Optional. Container object for map tile objects configuration.
         /// </summary>
-        public MapEffectsConfig MapEffects { get; set; } = null;
+        public MapObjectsConfig MapObjects { get; set; } = null;
 
         #endregion
     }

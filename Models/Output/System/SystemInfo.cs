@@ -51,9 +51,9 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Optional Data
 
         /// <summary>
-        /// Container dictionary for data about terrain effects.
+        /// Container dictionary for data about tile objects.
         /// </summary>
-        public IDictionary<string, TerrainEffect> TerrainEffects { get; set; }
+        public IDictionary<string, TileObject> TileObjects { get; set; }
 
         /// <summary>
         /// Container dictionary for data about skills.
@@ -123,10 +123,10 @@ namespace RedditEmblemAPI.Models.Output.System
 
             //OPTIONAL
 
-            //Cull unused terrain effects
-            foreach (string key in this.TerrainEffects.Keys.ToList())
-                if (!this.TerrainEffects[key].Matched)
-                    this.TerrainEffects.Remove(key);
+            //Cull unused tile objects
+            foreach (string key in this.TileObjects.Keys.ToList())
+                if (!this.TileObjects[key].Matched)
+                    this.TileObjects.Remove(key);
 
             //Cull unused classes
             foreach (string key in this.Classes.Keys.ToList())
@@ -179,8 +179,8 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <param name="config"></param>
         private void ParseOptionalData(SystemConfig config)
         {
-            if (config.TerrainEffects != null) this.TerrainEffects = TerrainEffect.BuildDictionary(config.TerrainEffects);
-            else this.TerrainEffects = new Dictionary<string, TerrainEffect>();
+            if (config.TileObjects != null) this.TileObjects = TileObject.BuildDictionary(config.TileObjects);
+            else this.TileObjects = new Dictionary<string, TileObject>();
 
             if (config.Classes != null) this.Classes = Class.BuildDictionary(config.Classes);
             else this.Classes = new Dictionary<string, Class>();

@@ -10,7 +10,8 @@
       "HasHeaderTopLeft": true,
       "HasHeaderBottomRight": true,
       "CalculatePairedUnitRanges": true,
-      "UnitMovementStatName": "Mov"
+      "UnitMovementStatName": "Mov",
+      "CoordinateFormat": 1
     },
     "MapControls": {
       "Query": {
@@ -29,7 +30,7 @@
         "Orientation": 1
       }
     },
-    "MapEffects": {
+    "MapObjects": {
       "Query": {
         "Sheet": "Map Terrain Effects",
         "Selection": "A1:ZZ",
@@ -178,7 +179,7 @@
       "Groupings": 15,
       "TextFields": [ 4 ]
     },
-    "TerrainEffects": {
+    "TileObjects": {
       "Query": {
         "Sheet": "Terrain Effect Types",
         "Selection": "A2:I",
@@ -188,24 +189,28 @@
       "SpriteURL": 2,
       "Size": 4,
       "Layer": 3,
-      "HPModifier": 7,
+      "Range": {
+        "Minimum": 5,
+        "Maximum": 6
+      },
+      "HPModifier": 9,
       "CombatStatModifiers": [
         {
           "SourceName": "Avo",
-          "Value": 5
+          "Value": 7
         }
       ],
       "StatModifiers": [
         {
           "SourceName": "Def",
-          "Value": 6
+          "Value": 8
         },
         {
           "SourceName": "Res",
-          "Value": 6
+          "Value": 8
         }
       ],
-      "TextFields": [ 8 ]
+      "TextFields": [ 10 ]
     }
   },
   "Units": {

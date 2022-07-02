@@ -1,7 +1,8 @@
 ﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Output.System;
-using RedditEmblemAPI.Models.Output.Units;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Map.Tiles
 {
@@ -34,9 +35,10 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         public TileWarpData WarpData { get; set; }
 
         /// <summary>
-        /// List of the terrain effects on this tile.
+        /// List of the tile objects on this tile.
         /// </summary>
-        public List<TileTerrainEffect> TerrainEffects { get; set; }
+        [JsonIgnore]
+        public List<TileObjectInstance> TileObjects { get; set; }
 
         #region JSON Serialization Only
 
@@ -45,6 +47,12 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// </summary>
         [JsonProperty]
         private string TerrainType { get { return this.TerrainTypeObj.Name; } }
+
+        /// <summary>
+        /// Only for JSON serialization. Returns List of the IDs of tile object instances on this tile.
+        /// </summary>
+        [JsonProperty]
+        private List<int> TileObjectInstanceIDs { get { return this.TileObjects.Select(to => to.ID).ToList(); } }
 
         /// <summary>
         /// Only for JSON serialization. The number of units with displayed movement on this tile.
@@ -64,6 +72,12 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         [JsonProperty]
         private int UtilCount { get { return 0; } }
 
+        /// <summary>
+        /// Only for JSON serialization. The number of tile objects with displayed ranges on this tile.
+        /// </summary>
+        [JsonProperty]
+        private int TileObjCount { get { return 0; } }
+
         #endregion JSON Serialization Only
 
         #endregion Attributes
@@ -75,14 +89,14 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// </summary>
         /// <param name="x">Used to initialize the Tile's coordinate in combination with <paramref name="y"/>.</param>
         /// <param name="y">Used to initialize the Tile's coordinate in combination with <paramref name="x"/>.</param>
-        public Tile(int x, int y, TerrainType terrainType)
+        public Tile(CoordinateFormat coordinateFormat, int x, int y, TerrainType terrainType)
         {
-            this.Coordinate = new Coordinate(x, y);
+            this.Coordinate = new Coordinate(coordinateFormat, x, y);
             this.TerrainTypeObj = terrainType;
 
             this.UnitData = new TileUnitData();
             this.WarpData = new TileWarpData();
-            this.TerrainEffects = new List<TileTerrainEffect>();
+            this.TileObjects = new List<TileObjectInstance>();
         }
 
         #endregion

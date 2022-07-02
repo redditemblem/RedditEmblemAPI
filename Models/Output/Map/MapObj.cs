@@ -69,6 +69,11 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// </summary>
         public List<List<Tile>> Tiles { get; set; }
 
+        /// <summary>
+        /// Dictionary of tile object instances present on the map.
+        /// </summary>
+        public Dictionary<int, TileObjectInstance> TileObjectInstances { get; set; }
+
         #endregion
 
         #region Constants
@@ -84,7 +89,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// </summary>
         /// <exception cref="MapDataLockedException"></exception>
         /// <exception cref="MapImageURLNotFoundException"></exception>
-        public MapObj(MapConfig config, IDictionary<string, TerrainType> terrainTypes, IDictionary<string, TerrainEffect> terrainEffects)
+        public MapObj(MapConfig config, IDictionary<string, TerrainType> terrainTypes, IDictionary<string, TileObject> tileObjects)
         {
             this.Constants = config.Constants;
 
@@ -111,9 +116,10 @@ namespace RedditEmblemAPI.Models.Output.Map
             this.Tiles = new List<List<Tile>>();
             BuildTiles(config.MapTiles, terrainTypes);
 
-            //If we have terrain effects configured, add those to the map
-            if (config.MapEffects != null)
-                AddTerrainEffectsToTiles(config.MapEffects, terrainEffects);
+            //If we have tile objects configured, add those to the map
+            this.TileObjectInstances = new Dictionary<int, TileObjectInstance>();
+            if (config.MapObjects != null)
+                AddTileObjectsToTiles(config.MapObjects, tileObjects);
         }
 
         #endregion
@@ -200,7 +206,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                             throw new UnmatchedTileTerrainTypeException(x, y, tile.ToString());
 
                         type.Matched = true;
-                        Tile temp = new Tile(x, y, type);
+                        Tile temp = new Tile(this.Constants.CoordinateFormat, x, y, type);
 
                         //If we found a warp group number, add the new tile to a warp group.
                         if (warpGroupNum > 0)
@@ -256,11 +262,9 @@ namespace RedditEmblemAPI.Models.Output.Map
         }
 
         /// <summary>
-        /// Uses the data from <paramref name="config"/>'s query to apply <c>TerrainEffect</c>s to the map.
+        /// Uses the data from <paramref name="config"/>'s query to apply <c>TileObjects</c>s to the map.
         /// </summary>
-        /// <param name="config"></param>
-        /// <param name="terrainEffects"></param>
-        private void AddTerrainEffectsToTiles(MapEffectsConfig config, IDictionary<string, TerrainEffect> terrainEffects)
+        private void AddTileObjectsToTiles(MapObjectsConfig config, IDictionary<string, TileObject> tileObjects)
         {
             try
             {
@@ -270,6 +274,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                 if (tileData.Count > this.Tiles.Count)
                     throw new UnexpectedMapHeightException(tileData.Count, this.Tiles.Count, config.Query.Sheet);
 
+                int idIterator = 1; 
                 for (int r = 0; r < tileData.Count; r++)
                 {
                     IList<object> row = tileData[r];
@@ -292,32 +297,40 @@ namespace RedditEmblemAPI.Models.Output.Map
                             if (string.IsNullOrEmpty(value))
                                 continue;
 
-                            TerrainEffect effect;
-                            if (!terrainEffects.TryGetValue(value.Trim(), out effect))
-                                throw new UnmatchedTileTerrainEffectException(tiles[c].Coordinate, value.Trim());
-                            effect.Matched = true;
-                            tiles[c].TerrainEffects.Add(new TileTerrainEffect(effect, true));
+                            TileObject tileObj;
+                            if (!tileObjects.TryGetValue(value.Trim(), out tileObj))
+                                throw new UnmatchedTileObjectException(tiles[c].Coordinate, value.Trim());
+                            tileObj.Matched = true;
+
+                            //3-way bind
+                            TileObjectInstance tileObjInst = new TileObjectInstance(idIterator++, tileObj);
+
+                            this.TileObjectInstances.Add(tileObjInst.ID, tileObjInst);
+                            tiles[c].TileObjects.Add(tileObjInst);
+                            tileObjInst.OriginTiles.Add(tiles[c]);
 
                             //Set all tiles for multi-tile effects
-                            if (effect.Size > 1)
+                            if (tileObj.Size > 1)
                             {
-                                for (int r2 = r; r2 < r + effect.Size; r2++)
+                                for (int r2 = r; r2 < r + tileObj.Size; r2++)
                                 {
-                                    for (int c2 = c; c2 < c + effect.Size; c2++)
+                                    for (int c2 = c; c2 < c + tileObj.Size; c2++)
                                     {
                                         //Skip the starting tile
                                         if (r2 == r && c2 == c)
                                             continue;
 
                                         if (r2 >= this.Tiles.Count)
-                                            throw new TileOutOfBoundsException(r2, c2);
+                                            throw new TileOutOfBoundsException(new Coordinate(this.Constants.CoordinateFormat, r2, c2));
 
                                         List<Tile> tiles2 = this.Tiles[r2];
 
                                         if (c2 >= tiles2.Count)
-                                            throw new TileOutOfBoundsException(r2, c2);
+                                            throw new TileOutOfBoundsException(new Coordinate(this.Constants.CoordinateFormat, r2, c2));
 
-                                        tiles2[c2].TerrainEffects.Add(new TileTerrainEffect(effect, false));
+                                        //2-way bind
+                                        tiles2[c2].TileObjects.Add(tileObjInst);
+                                        tileObjInst.OriginTiles.Add(tiles2[c2]);
                                     }
                                 }
                             }
@@ -348,8 +361,8 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <exception cref="TileOutOfBoundsException"></exception>
         public Tile GetTileByCoord(int x, int y)
         {
-            List<Tile> row = this.Tiles.ElementAtOrDefault<List<Tile>>(y - 1) ?? throw new TileOutOfBoundsException(x, y);
-            Tile column = row.ElementAtOrDefault<Tile>(x - 1) ?? throw new TileOutOfBoundsException(x, y);
+            List<Tile> row = this.Tiles.ElementAtOrDefault<List<Tile>>(y - 1) ?? throw new TileOutOfBoundsException(new Coordinate(this.Constants.CoordinateFormat, x, y));
+            Tile column = row.ElementAtOrDefault<Tile>(x - 1) ?? throw new TileOutOfBoundsException(new Coordinate(this.Constants.CoordinateFormat, x, y));
 
             return column;
         }

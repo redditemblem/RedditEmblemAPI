@@ -29,7 +29,7 @@
         "Orientation": 1
       }
     },
-    "MapEffects": {
+    "MapObjects": {
       "Query": {
         "Sheet": "Map Effects",
         "Selection": "A1:ZZ",
@@ -169,7 +169,7 @@
       "BlocksItems": 8,
       "TextFields": [ 9 ]
     },
-    "TerrainEffects": {
+    "TileObjects": {
       "Query": {
         "Sheet": "Tile Effects",
         "Selection": "B2:N",

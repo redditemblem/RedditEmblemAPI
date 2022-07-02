@@ -77,8 +77,8 @@ namespace RedditEmblemAPI.Models.Configuration
             };
 
             //Add optional queries
-            if (this.Map.MapEffects != null) queries.Add(this.Map.MapEffects.Query);
-            if (this.System.TerrainEffects != null) queries.Add(this.System.TerrainEffects.Query);
+            if (this.Map.MapObjects != null) queries.Add(this.Map.MapObjects.Query);
+            if (this.System.TileObjects != null) queries.Add(this.System.TileObjects.Query);
 
             if (this.System.Classes != null) queries.Add(this.System.Classes.Query);
             if (this.System.Skills != null) queries.Add(this.System.Skills.Query);

@@ -6,8 +6,8 @@ using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Configuration.System.Skills;
 using RedditEmblemAPI.Models.Configuration.System.Statuses;
 using RedditEmblemAPI.Models.Configuration.System.Tags;
-using RedditEmblemAPI.Models.Configuration.System.TerrainEffects;
 using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
+using RedditEmblemAPI.Models.Configuration.System.TileObjects;
 using RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses;
 using System.Collections.Generic;
 
@@ -78,9 +78,9 @@ namespace RedditEmblemAPI.Models.Configuration.System
         public WeaponRankBonusesConfig WeaponRankBonuses { get; set; } = null;
 
         /// <summary>
-        /// Optional. Container object for a system's terrain effect configuration.
+        /// Optional. Container object for a system's tile objects configuration.
         /// </summary>
-        public TerrainEffectsConfig TerrainEffects { get; set; } = null;
+        public TileObjectsConfig TileObjects { get; set; } = null;
 
         /// <summary>
         /// Optional. Container object for a system's battalion configuration.

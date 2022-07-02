@@ -10,7 +10,8 @@
       "HasHeaderTopLeft": false, //Optional, defaults to false
       "HasHeaderBottomRight": false, //Optional, defaults to false
       "CalculatePairedUnitRanges": true, //Optional, defaults to true
-      "UnitMovementStatName": "Mov" //Optional, defaults to "Mov"
+      "UnitMovementStatName": "Mov", //Optional, defaults to "Mov"
+      "CoordinateFormat": 0 //Optional, defaults to XY (0). 0 = XY, 1 = alphanumerical
     },
     "MapControls": { //Required
       "Query": {
@@ -29,7 +30,7 @@
         "Orientation": 1
       }
     },
-    "MapEffects": { //Optional, defaults to null
+    "MapObjects": { //Optional, defaults to null
       "Query": {
         "Sheet": "",
         "Selection": "A1:ZZ",
@@ -201,7 +202,7 @@
       "Groupings": 0, //Optional
       "TextFields": [ 0 ] //Optional
     },
-    "TerrainEffects": { //Optional
+    "TileObjects": { //Optional
       "Query": {
         "Sheet": "",
         "Selection": "",
@@ -211,6 +212,10 @@
       "SpriteURL": 0, //Required
       "Size": 0, //Optional
       "Layer": 0, //Optional
+      "Range": { //Optional
+        "Minimum": 0, //Required
+        "Maximum": 0 //Required
+      },
       "HPModifier": 0, //Optional
       "CombatStatModifiers": [ //Optional
         {

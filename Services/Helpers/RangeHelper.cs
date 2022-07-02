@@ -50,6 +50,39 @@ namespace RedditEmblemAPI.Services.Helpers
             }
         }
 
+        public void CalculateTileObjectRanges()
+        {
+            foreach(TileObjectInstance tileObjInst in this.Map.TileObjectInstances.Values)
+            {
+                //If tile object does not have a configured range, skip it.
+                if (tileObjInst.TileObject.Range.Minimum < 1 || tileObjInst.TileObject.Range.Maximum < 1)
+                    continue;
+
+                List<Coordinate> atkRange = new List<Coordinate>();
+                List<Coordinate> utilRange = new List<Coordinate>();
+
+                //Transpose item data into the struct we're using for recursion
+                List<UnitItemRange> ranges = new List<UnitItemRange> { new UnitItemRange(tileObjInst.TileObject.Range.Minimum, tileObjInst.TileObject.Range.Maximum, ItemRangeShape.Standard, false, true, false) };
+
+                foreach(Tile originTile in tileObjInst.OriginTiles)
+                {
+                    foreach (ItemRangeDirection direction in RANGE_DIRECTIONS)
+                    {
+                        ItemRangeParameters rangeParms = new ItemRangeParameters(originTile.Coordinate, tileObjInst.OriginTiles.Select(ot => ot.Coordinate).ToList(), ranges, direction, 0);
+                        RecurseItemRange( rangeParms,
+                                          originTile.Coordinate,
+                                          rangeParms.LargestRange,
+                                          string.Empty,
+                                          ref atkRange,
+                                          ref utilRange
+                                        );
+                    }
+                }
+
+                tileObjInst.AttackRange = atkRange;
+            }
+        }
+
         #region Movement Range Calculation
 
         /// <summary>
@@ -147,25 +180,25 @@ namespace RedditEmblemAPI.Services.Helpers
             //Navigate in each cardinal direction, do not repeat tiles in this path
             //Left
             //Coordinate left = new Coordinate(currCoord.X - 1, currCoord.Y);
-            List<MovementCoordSet> left = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(c.Coordinate.X - 1, c.Coordinate.Y))).ToList();
+            List<MovementCoordSet> left = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(this.Map.Constants.CoordinateFormat, c.Coordinate.X - 1, c.Coordinate.Y))).ToList();
             if (!visitedCoords.Contains("_" + left.First().Coordinate.ToString() + "_"))
                 RecurseUnitRange(parms, left, visitedCoords, lastWarpUsed);
 
             //Right
             //Coordinate right = new Coordinate(currCoord.X + 1, currCoord.Y);
-            List<MovementCoordSet> right = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(c.Coordinate.X + 1, c.Coordinate.Y))).ToList();
+            List<MovementCoordSet> right = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(this.Map.Constants.CoordinateFormat, c.Coordinate.X + 1, c.Coordinate.Y))).ToList();
             if (!visitedCoords.Contains("_" + right.First().Coordinate.ToString() + "_"))
                 RecurseUnitRange(parms, right, visitedCoords, lastWarpUsed);
 
             //Up
             //Coordinate up = new Coordinate(currCoord.X, currCoord.Y - 1);
-            List<MovementCoordSet> up = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(c.Coordinate.X, c.Coordinate.Y - 1))).ToList();
+            List<MovementCoordSet> up = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(this.Map.Constants.CoordinateFormat, c.Coordinate.X, c.Coordinate.Y - 1))).ToList();
             if (!visitedCoords.Contains("_" + up.First().Coordinate.ToString() + "_"))
                 RecurseUnitRange(parms, up, visitedCoords, lastWarpUsed);
 
             //Down
             //Coordinate down = new Coordinate(currCoord.X, currCoord.Y + 1);
-            List<MovementCoordSet> down = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(c.Coordinate.X, c.Coordinate.Y + 1))).ToList();
+            List<MovementCoordSet> down = currCoords.Select(c => new MovementCoordSet(c.RemainingMov, new Coordinate(this.Map.Constants.CoordinateFormat, c.Coordinate.X, c.Coordinate.Y + 1))).ToList();
             if (!visitedCoords.Contains("_" + down.First().Coordinate.ToString() + "_"))
                 RecurseUnitRange(parms, down, visitedCoords, lastWarpUsed);
 
@@ -194,7 +227,7 @@ namespace RedditEmblemAPI.Services.Helpers
                         for (int x = 0; x < parms.Unit.Location.UnitSize; x++)
                         {
                             RecurseUnitRange(parms,
-                                             currCoords.Select(c => new MovementCoordSet(c.RemainingMov - warpCost, new Coordinate(warpExit.Coordinate.X + Math.Abs(currAnchor.X - c.Coordinate.X) - x, warpExit.Coordinate.Y + Math.Abs(currAnchor.Y - c.Coordinate.Y) - y))).ToList(),
+                                             currCoords.Select(c => new MovementCoordSet(c.RemainingMov - warpCost, new Coordinate(this.Map.Constants.CoordinateFormat, warpExit.Coordinate.X + Math.Abs(currAnchor.X - c.Coordinate.X) - x, warpExit.Coordinate.Y + Math.Abs(currAnchor.Y - c.Coordinate.Y) - y))).ToList(),
                                              string.Empty,
                                              warpExit.Coordinate);
                         }
@@ -269,7 +302,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     foreach (ItemRangeDirection direction in RANGE_DIRECTIONS)
                     {
-                        ItemRangeParameters rangeParms = new ItemRangeParameters(unit, coord, itemRanges, direction);
+                        ItemRangeParameters rangeParms = new ItemRangeParameters(coord, unit.Ranges.Movement, itemRanges, direction, unit.AffiliationObj.Grouping);
                         RecurseItemRange(rangeParms,
                                          coord,
                                          rangeParms.LargestRange,
@@ -305,7 +338,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 return;
 
             //Check for items that can reach this tile
-            if (!parms.Unit.Ranges.Movement.Contains(currCoord))
+            if (!parms.IgnoreTiles.Contains(currCoord))
             {
                 int horzDisplacement = Math.Abs(currCoord.X - parms.StartCoord.X);
                 int verticalDisplacement = Math.Abs(currCoord.Y - parms.StartCoord.Y);
@@ -361,7 +394,7 @@ namespace RedditEmblemAPI.Services.Helpers
             if (!string.IsNullOrEmpty(visitedCoords))
             {
                 //Check if range can continue past this point
-                if (tile.UnitData.UnitsObstructingItems.Any(u => u.AffiliationObj.Grouping != parms.Unit.AffiliationObj.Grouping))
+                if (tile.UnitData.UnitsObstructingItems.Any(u => u.AffiliationObj.Grouping != parms.AffiliationGrouping))
                     return;
             }
 
@@ -371,7 +404,7 @@ namespace RedditEmblemAPI.Services.Helpers
             //Left
             if (parms.RangeDirection == ItemRangeDirection.Northwest || parms.RangeDirection == ItemRangeDirection.Southwest)
             {
-                Coordinate left = new Coordinate(currCoord.X - 1, currCoord.Y);
+                Coordinate left = new Coordinate(this.Map.Constants.CoordinateFormat, currCoord.X - 1, currCoord.Y);
                 if (!visitedCoords.Contains("_" + left.ToString() + "_"))
                     RecurseItemRange(parms, left, remainingRange - 1, visitedCoords, ref atkRange, ref utilRange);
             }
@@ -379,7 +412,7 @@ namespace RedditEmblemAPI.Services.Helpers
             //Right
             if (parms.RangeDirection == ItemRangeDirection.Northeast || parms.RangeDirection == ItemRangeDirection.Southeast)
             {
-                Coordinate right = new Coordinate(currCoord.X + 1, currCoord.Y);
+                Coordinate right = new Coordinate(this.Map.Constants.CoordinateFormat, currCoord.X + 1, currCoord.Y);
                 if (!visitedCoords.Contains("_" + right.ToString() + "_"))
                     RecurseItemRange(parms, right, remainingRange - 1, visitedCoords, ref atkRange, ref utilRange);
             }
@@ -387,7 +420,7 @@ namespace RedditEmblemAPI.Services.Helpers
             //Up
             if (parms.RangeDirection == ItemRangeDirection.Northwest || parms.RangeDirection == ItemRangeDirection.Northeast)
             {
-                Coordinate up = new Coordinate(currCoord.X, currCoord.Y - 1);
+                Coordinate up = new Coordinate(this.Map.Constants.CoordinateFormat, currCoord.X, currCoord.Y - 1);
                 if (!visitedCoords.Contains("_" + up.ToString() + "_"))
                     RecurseItemRange(parms, up, remainingRange - 1, visitedCoords, ref atkRange, ref utilRange);
             }
@@ -395,7 +428,7 @@ namespace RedditEmblemAPI.Services.Helpers
             //Down
             if (parms.RangeDirection == ItemRangeDirection.Southwest || parms.RangeDirection == ItemRangeDirection.Southeast)
             {
-                Coordinate down = new Coordinate(currCoord.X, currCoord.Y + 1);
+                Coordinate down = new Coordinate(this.Map.Constants.CoordinateFormat, currCoord.X, currCoord.Y + 1);
                 if (!visitedCoords.Contains("_" + down.ToString() + "_"))
                     RecurseItemRange(parms, down, remainingRange - 1, visitedCoords, ref atkRange, ref utilRange);
 
@@ -446,7 +479,7 @@ namespace RedditEmblemAPI.Services.Helpers
             {
                 foreach (ItemRangeDirection direction in RANGE_DIRECTIONS)
                 {
-                    ItemRangeParameters rangeParms = new ItemRangeParameters(unit, coord, noMovementItemRanges, direction);
+                    ItemRangeParameters rangeParms = new ItemRangeParameters(coord, unit.Ranges.Movement, noMovementItemRanges, direction, unit.AffiliationObj.Grouping);
                     RecurseItemRange(rangeParms,
                                      coord,
                                      rangeParms.LargestRange,
@@ -495,19 +528,21 @@ namespace RedditEmblemAPI.Services.Helpers
 
     public struct ItemRangeParameters
     {
-        public Unit Unit;
         public Coordinate StartCoord;
+        public List<Coordinate> IgnoreTiles;
         public List<UnitItemRange> Ranges;
         public int LargestRange;
         public ItemRangeDirection RangeDirection;
+        public int AffiliationGrouping;
 
-        public ItemRangeParameters(Unit unit, Coordinate startCoord, List<UnitItemRange> ranges, ItemRangeDirection direction)
+        public ItemRangeParameters(Coordinate startCoord, List<Coordinate> ignoreTiles, List<UnitItemRange> ranges, ItemRangeDirection direction, int affiliationGrouping)
         {
-            this.Unit = unit;
+            this.IgnoreTiles = ignoreTiles;
             this.StartCoord = startCoord;
             this.Ranges = ranges;
             this.LargestRange = this.Ranges.Select(r => (r.Shape == ItemRangeShape.Square || r.Shape == ItemRangeShape.Saltire || r.Shape == ItemRangeShape.Star) ? r.MaxRange * 2 : r.MaxRange).OrderByDescending(r => r).FirstOrDefault();
             this.RangeDirection = direction;
+            this.AffiliationGrouping = affiliationGrouping;
 
             //Safeguard just in case. We shouldn't ever get a 99 range here.
             if (this.LargestRange >= 99)

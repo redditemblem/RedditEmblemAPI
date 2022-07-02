@@ -36,6 +36,21 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         public bool HasHeaderBottomRight { get; set; } = false;
 
         /// <summary>
+        /// Optional. The format for the map tile coordinates. Valid values are:
+        /// <list type="bullet">
+        /// <item>
+        /// <term>0</term>
+        /// <description>Default option. x,y format. (ex. "1,1")</description>
+        /// </item>
+        /// <item>
+        /// <term>1</term>
+        /// <description>Alphanumerical format. (ex. "A1")</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        public CoordinateFormat CoordinateFormat { get; set; } = CoordinateFormat.XY;
+
+        /// <summary>
         /// Optional. Flag signifying whether units in the back of pair-ups should have their ranges calculated. Defaults to true.
         /// </summary>
         public bool CalculatePairedUnitRanges { get; set; } = true;
@@ -46,5 +61,11 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         public string UnitMovementStatName { get; set; } = "Mov";
 
         #endregion
+    }
+
+    public enum CoordinateFormat
+    {
+        XY = 0,
+        Alphanumerical = 1
     }
 }

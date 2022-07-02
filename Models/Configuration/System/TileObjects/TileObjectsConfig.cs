@@ -2,12 +2,12 @@
 using RedditEmblemAPI.Models.Configuration.Common;
 using System.Collections.Generic;
 
-namespace RedditEmblemAPI.Models.Configuration.System.TerrainEffects
+namespace RedditEmblemAPI.Models.Configuration.System.TileObjects
 {
     /// <summary>
-    /// Container class for deserialized JSON <c>"TerrainEffects"</c> object data.
+    /// Container class for deserialized JSON <c>"TileObjects"</c> object data.
     /// </summary>
-    public class TerrainEffectsConfig
+    public class TileObjectsConfig
     {
         #region Required Fields
 
@@ -15,13 +15,13 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainEffects
         public Query Query { get; set; }
 
         /// <summary>
-        /// Required. Cell index for a terrain effect's name value.
+        /// Required. Cell index for a tile object's name value.
         /// </summary>
         [JsonRequired]
         public int Name { get; set; }
 
         /// <summary>
-        /// Required. Cell index for a terrain effect's sprite image URL value.
+        /// Required. Cell index for a tile object's sprite image URL value.
         /// </summary>
         [JsonRequired]
         public int SpriteURL { get; set; }
@@ -31,32 +31,37 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainEffects
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index for a terrain effect's size value.
+        /// Optional. Cell index for a tile object's size value.
         /// </summary>
         public int Size { get; set; } = -1;
 
         /// <summary>
-        /// Optional. Cell index for a terrain effect's layer value.
+        /// Optional. Cell index for a tile object's layer value.
         /// </summary>
         public int Layer { get; set; } = -1;
 
         /// <summary>
-        /// Optional. Cell index for a terrain effect's hit point modifier value.
+        /// Optional. Container object for a tile object's range config.
+        /// </summary>
+        public TileObjectRangeConfig Range { get; set; } = null;
+
+        /// <summary>
+        /// Optional. Cell index for a tile object's hit point modifier value.
         /// </summary>
         public int HPModifier { get; set; } = -1;
 
         /// <summary>
-        /// Optional. List of a terrain effect's combat stat modifiers.
+        /// Optional. List of a tile object's combat stat modifiers.
         /// </summary>
         public List<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. List of a terrain effect's combat stat modifiers.
+        /// Optional. List of a tile object's combat stat modifiers.
         /// </summary>
         public List<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. List of cell indexes for a terrain effect's text fields.
+        /// Optional. List of cell indexes for a tile object's text fields.
         /// </summary>
         public List<int> TextFields { get; set; } = new List<int>();
 
