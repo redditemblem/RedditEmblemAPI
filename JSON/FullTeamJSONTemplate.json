@@ -336,7 +336,12 @@
     "Inventory": { //Required
       "PrimaryEquippedItem": 0, //Required
       "SecondaryEquippedItems": [ 0 ], //Optional
-      "Slots": [ 0 ] //Required
+      "Slots": [ //Required
+        {
+          "Name": 0, //Required
+          "Uses": 0 //Optional, only if Uses has its own separate cell
+        }
+      ]
     },
     "Player": 0, //Optional
     "PortraitURL": 0, //Optional

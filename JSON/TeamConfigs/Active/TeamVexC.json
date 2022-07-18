@@ -710,7 +710,62 @@
     "Inventory": {
       "PrimaryEquippedItem": 40,
       "SecondaryEquippedItems": [ 111 ],
-      "Slots": [ 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58 ]
+      "Slots": [
+        {
+          "Name": 41
+        },
+        {
+          "Name": 42
+        },
+        {
+          "Name": 43
+        },
+        {
+          "Name": 44
+        },
+        {
+          "Name": 45
+        },
+        {
+          "Name": 46
+        },
+        {
+          "Name": 47
+        },
+        {
+          "Name": 48
+        },
+        {
+          "Name": 49
+        },
+        {
+          "Name": 50
+        },
+        {
+          "Name": 51
+        },
+        {
+          "Name": 52
+        },
+        {
+          "Name": 53
+        },
+        {
+          "Name": 54
+        },
+        {
+          "Name": 55
+        },
+        {
+          "Name": 56
+        },
+        {
+          "Name": 57
+        },
+        {
+          "Name": 58
+        }
+      ]
     },
     "Player": 1,
     "PortraitURL": 5,

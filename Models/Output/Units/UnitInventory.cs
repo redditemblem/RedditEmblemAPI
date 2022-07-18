@@ -32,16 +32,17 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Items = new List<UnitInventoryItem>();
             this.EmptySlotCount = 0;
 
-            foreach (int index in config.Slots)
+            foreach (UnitInventoryItemConfig item in config.Slots)
             {
-                string name = DataParser.OptionalString(data, index, "Item Name");
+                string name = DataParser.OptionalString(data, item.Name, "Item Name");
                 if (string.IsNullOrEmpty(name))
                 {
                     EmptySlotCount++;
                     continue;
                 }
 
-                this.Items.Add(new UnitInventoryItem(name, items));
+                int uses = DataParser.OptionalInt_Positive(data, item.Uses, "Item Uses");
+                this.Items.Add(new UnitInventoryItem(name, uses, items));
             }
 
             //Find the all equipped items and flag them

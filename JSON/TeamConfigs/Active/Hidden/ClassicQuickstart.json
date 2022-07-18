@@ -306,7 +306,23 @@
     ],
     "Inventory": {
       "PrimaryEquippedItem": 56,
-      "Slots": [ 57, 58, 59, 60, 61 ]
+      "Slots": [
+        {
+          "Name": 57
+        },
+        {
+          "Name": 58
+        },
+        {
+          "Name": 59
+        },
+        {
+          "Name": 60
+        },
+        {
+          "Name": 61
+        }
+      ]
     },
     "Player": 1,
     "PortraitURL": 53,

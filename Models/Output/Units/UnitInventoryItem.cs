@@ -115,7 +115,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Searches for an <c>Item</c> in <paramref name="items"/> that matches <paramref name="fullItemName"/>.
         /// </summary>
         /// <exception cref="UnmatchedItemException"></exception>
-        public UnitInventoryItem(string fullItemName, IDictionary<string, Item> items)
+        public UnitInventoryItem(string fullItemName, int uses, IDictionary<string, Item> items)
         {
             this.FullName = fullItemName;
             this.CanEquip = false;
@@ -140,15 +140,20 @@ namespace RedditEmblemAPI.Models.Output.Units
                 name = dropRegex.Replace(name, string.Empty);
             }
 
-            //Search for uses syntax
-            Match usesMatch = usesRegex.Match(name);
-            if (usesMatch.Success)
+            //If uses is a separate field, use that value. Else, look for "(#)" syntax.
+            if (uses > 0) this.Uses = uses;
+            else
             {
-                //Convert item use synatax to int
-                string u = usesMatch.Value.ToString();
-                u = u.Substring(1, u.Length - 2);
-                this.Uses = int.Parse(u);
-                name = usesRegex.Replace(name, string.Empty);
+                //Search for uses syntax
+                Match usesMatch = usesRegex.Match(name);
+                if (usesMatch.Success)
+                {
+                    //Convert item use synatax to int
+                    string u = usesMatch.Value.ToString();
+                    u = u.Substring(1, u.Length - 2);
+                    this.Uses = int.Parse(u);
+                    name = usesRegex.Replace(name, string.Empty);
+                }
             }
 
             name = name.Trim();

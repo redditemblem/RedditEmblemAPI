@@ -17,10 +17,10 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public int PrimaryEquippedItem { get; set; }
 
         /// <summary>
-        /// Required. List of cell indexes for a unit's inventory items.
+        /// Required. List of container objects for the unit's inventory items.
         /// </summary>
         [JsonRequired]
-        public List<int> Slots { get; set; }
+        public List<UnitInventoryItemConfig> Slots { get; set; }
 
         #endregion
 
