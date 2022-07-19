@@ -95,8 +95,27 @@ namespace RedditEmblemAPI.Services.Helpers
             if (overrideMovEffect != null) movementVal = overrideMovEffect.MovementValue;
 
             UnitRangeParameters unitParms = new UnitRangeParameters(unit);
-            RecurseUnitRange(unitParms, unit.Location.OriginTiles.Select(o => new MovementCoordSet(movementVal, o.Coordinate)).ToList(), string.Empty, null);
 
+            if (unit.Location.UnitSize == 1) CalculateSingleTileUnitMovementRange(unitParms, movementVal);
+            else CalculateMultiTileUnitMovementRange(unitParms, movementVal);
+        }
+
+        private void CalculateSingleTileUnitMovementRange(UnitRangeParameters unitParms, int movementVal)
+        {
+            List<CoordMapVertex> coordinateMap = this.Map.Tiles.SelectMany(c => c.Select(r => new CoordMapVertex(r.Coordinate))).ToList();
+            foreach (Tile originTile in unitParms.Unit.Location.OriginTiles)
+            {
+                CoordMapVertex originMap = coordinateMap.Single(m => m.Coordinate == originTile.Coordinate);
+                originMap.MinDistanceTo = 0;
+            }
+
+            CalculateCoordinateMapValues(unitParms, coordinateMap);
+            unitParms.Unit.Ranges.Movement = coordinateMap.Where(c => c.MinDistanceTo <= movementVal && c.MinDistanceTo < 99 && !c.TraversableOnly).Select(c => c.Coordinate).ToList();
+        }
+
+        private void CalculateMultiTileUnitMovementRange(UnitRangeParameters unitParms, int movementVal)
+        {
+            RecurseUnitRange(unitParms, unitParms.Unit.Location.OriginTiles.Select(o => new MovementCoordSet(movementVal, o.Coordinate)).ToList(), string.Empty, null);
         }
 
         private void RecurseUnitRange(UnitRangeParameters parms, List<MovementCoordSet> currCoords, string visitedCoords, Coordinate lastWarpUsed)
@@ -116,40 +135,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 MovementCoordSet currCoord = currCoords[i];
                 Tile tile = this.Map.GetTileByCoord(currCoords[i].Coordinate);
 
-                //If there is a Unit occupying this tile, check for affiliation collisions
-                //Check if this tile blocks units of a certain affiliation
-                if (UnitIsBlocked(parms.Unit, tile.UnitData.Unit, parms.IgnoresAffiliations) ||
-                    (tile.TerrainTypeObj.RestrictAffiliations.Any() && !tile.TerrainTypeObj.RestrictAffiliations.Contains(parms.Unit.AffiliationObj.Grouping))
-                   )
-                    return;
-
-                //Test that the unit can move to this tile
-                int moveCost;
-                if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(parms.Unit.GetUnitMovementType(), out moveCost))
-                    throw new UnmatchedMovementTypeException(parms.Unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys.ToList());
-
-                //Apply movement cost modifiers
-                TerrainTypeMovementCostSetEffect movCostSet = parms.MoveCostSets.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-                TerrainTypeMovementCostModifierEffect moveCostMod = parms.MoveCostModifiers.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-                if (movCostSet != null && (movCostSet.CanOverride99MoveCost || moveCost < 99))
-                    moveCost = movCostSet.Value;
-                else if (moveCostMod != null && moveCost < 99)
-                    moveCost += moveCostMod.Value;
-
-                //Check if nearby units can affect the movement costs of this tile
-                if (moveCost < 99 && tile.UnitData.UnitsAffectingMovementCosts.Any())
-                {
-                    List<IAffectMovementCost> activeEffects = tile.UnitData.UnitsAffectingMovementCosts.SelectMany(u => u.SkillList.Select(s => s.Effect).OfType<IAffectMovementCost>().Where(e => e.IsActive(u, parms.Unit))).ToList();
-                    if (activeEffects.Any())
-                    {
-                        int minEffectMovCost = activeEffects.Min(e => e.GetMovementCost());
-                        if (minEffectMovCost < moveCost)
-                            moveCost = minEffectMovCost;
-                    }
-                }
-
-                //Min/max value enforcement
-                moveCost = Math.Max(0, moveCost);
+                int moveCost = CalculateTileMovementCost(parms, tile);
                 if (moveCost >= 99) return;
 
                 //Don't check or subtract move cost for the starting tile
@@ -175,7 +161,6 @@ namespace RedditEmblemAPI.Services.Helpers
 
             //Units may move onto obstructed tiles, but no further.
             if (tiles.Any(t => UnitIsBlocked(parms.Unit, t.UnitData.UnitsObstructingMovement, parms.IgnoresAffiliations))) return;
-
 
             //Navigate in each cardinal direction, do not repeat tiles in this path
             //Left
@@ -208,15 +193,7 @@ namespace RedditEmblemAPI.Services.Helpers
                                               && (lastWarpUsed == null || t.Coordinate != lastWarpUsed));
             foreach (Tile warp in warps)
             {
-                //Calculate warp cost
-                WarpMovementCostSetEffect warpCostSet = parms.WarpCostSets.FirstOrDefault(s => warp.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-                WarpMovementCostModifierEffect warpCostMod = parms.WarpCostModifiers.FirstOrDefault(s => warp.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-
-                int warpCost = warp.TerrainTypeObj.WarpCost;
-                if (warpCostSet != null) warpCost = warpCostSet.Value;
-                else if (warpCostMod != null) warpCost += warpCostMod.Value;
-
-                if (warpCost < 0) warpCost = 0;
+                int warpCost = CalculateTileWarpMovementCost(parms, warp);
 
                 foreach (Tile warpExit in warp.WarpData.WarpGroup.Where(t => warp.Coordinate != t.Coordinate && (t.TerrainTypeObj.WarpType == WarpType.Exit || t.TerrainTypeObj.WarpType == WarpType.Dual)))
                 {
@@ -236,6 +213,129 @@ namespace RedditEmblemAPI.Services.Helpers
             }
         }
 
+        private void CalculateCoordinateMapValues(UnitRangeParameters parms, List<CoordMapVertex> coordinateMap)
+        {
+            //Set pathing values for all tiles
+            foreach (CoordMapVertex coord in coordinateMap)
+            {
+                Tile tile = this.Map.GetTileByCoord(coord.Coordinate);
+                coord.PathCost = CalculateTileMovementCost(parms, tile);
+
+                if (tile.TerrainTypeObj.CannotStopOn)
+                    coord.TraversableOnly = true;
+
+                //Units may move onto obstructed tiles, but no further.
+                if (UnitIsBlocked(parms.Unit, tile.UnitData.UnitsObstructingMovement, parms.IgnoresAffiliations))
+                    coord.EndNode = true;
+            }
+
+            //Calculate minimum possible distance to every tile based on path values
+            List<Coordinate> warpsUsed = new List<Coordinate>();
+
+            while (coordinateMap.Any(c => !c.Visited))
+            {
+                CoordMapVertex currCoord = coordinateMap.Where(c => !c.Visited).MinBy(c => c.MinDistanceTo);
+                currCoord.Visited = true;
+
+                //If this node if a terminus, do not use its path value to update its neighbors
+                //If this node cannot be pathed to, skip it.
+                if (currCoord.EndNode || currCoord.PathCost >= 99 || currCoord.MinDistanceTo == int.MaxValue)
+                    continue;
+
+                List<CoordMapVertex> neighbors = coordinateMap.Where(c => ((currCoord.Coordinate.X == c.Coordinate.X && currCoord.Coordinate.Y == c.Coordinate.Y - 1)
+                                                                          || (currCoord.Coordinate.X == c.Coordinate.X && currCoord.Coordinate.Y == c.Coordinate.Y + 1)
+                                                                          || (currCoord.Coordinate.X == c.Coordinate.X - 1 && currCoord.Coordinate.Y == c.Coordinate.Y)
+                                                                          || (currCoord.Coordinate.X == c.Coordinate.X + 1 && currCoord.Coordinate.Y == c.Coordinate.Y))
+                                                                          && !c.Visited && c.PathCost < 99
+                                                                       ).ToList();
+                foreach (CoordMapVertex neighbor in neighbors)
+                    neighbor.MinDistanceTo = Math.Min(neighbor.MinDistanceTo, currCoord.MinDistanceTo + neighbor.PathCost);
+
+
+                //If the tile is a warp entrance, find the costs from its exit too.
+                Tile tile = this.Map.GetTileByCoord(currCoord.Coordinate);
+                if ((tile.TerrainTypeObj.WarpType == WarpType.Entrance || tile.TerrainTypeObj.WarpType == WarpType.Dual) && !warpsUsed.Contains(tile.Coordinate))
+                {
+                    warpsUsed.Add(tile.Coordinate);
+                    int warpCost = CalculateTileWarpMovementCost(parms, tile);
+
+                    bool warpUpdated = false;
+                    foreach (Tile warpExit in tile.WarpData.WarpGroup.Where(t => tile.Coordinate != t.Coordinate && (t.TerrainTypeObj.WarpType == WarpType.Exit || t.TerrainTypeObj.WarpType == WarpType.Dual)))
+                    {
+                        CoordMapVertex currWarp = coordinateMap.First(c => c.Coordinate == warpExit.Coordinate);
+
+                        //Ignore any exit on an untraversable tile
+                        if (currWarp.PathCost >= 99)
+                            continue;
+
+                        if(currCoord.MinDistanceTo + warpCost < currWarp.MinDistanceTo)
+                        {
+                            currWarp.MinDistanceTo = currCoord.MinDistanceTo + warpCost;
+                            warpUpdated = true;
+                        }
+                    }
+
+                    //Reset visited status of all vertices
+                    if(warpUpdated) coordinateMap.ForEach(c => c.Visited = false);
+                }
+            }
+        }
+
+        private int CalculateTileMovementCost(UnitRangeParameters parms, Tile tile)
+        {
+            // If there is a Unit occupying this tile, check for affiliation collisions
+            // Check if this tile blocks units of a certain affiliation
+            if (UnitIsBlocked(parms.Unit, tile.UnitData.Unit, parms.IgnoresAffiliations) ||
+                (tile.TerrainTypeObj.RestrictAffiliations.Any() && !tile.TerrainTypeObj.RestrictAffiliations.Contains(parms.Unit.AffiliationObj.Grouping))
+               )
+               return 99;
+
+            //Test that the unit can move to this tile
+            int moveCost;
+            if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(parms.Unit.GetUnitMovementType(), out moveCost))
+                throw new UnmatchedMovementTypeException(parms.Unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys.ToList());
+
+            //Apply movement cost modifiers
+            TerrainTypeMovementCostSetEffect movCostSet = parms.MoveCostSets.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+            TerrainTypeMovementCostModifierEffect moveCostMod = parms.MoveCostModifiers.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+            if (movCostSet != null && (movCostSet.CanOverride99MoveCost || moveCost < 99))
+                moveCost = movCostSet.Value;
+            else if (moveCostMod != null && moveCost < 99)
+                moveCost += moveCostMod.Value;
+
+            //Check if nearby units can affect the movement costs of this tile
+            if (moveCost < 99 && tile.UnitData.UnitsAffectingMovementCosts.Any())
+            {
+                List<IAffectMovementCost> activeEffects = tile.UnitData.UnitsAffectingMovementCosts.SelectMany(u => u.SkillList.Select(s => s.Effect).OfType<IAffectMovementCost>().Where(e => e.IsActive(u, parms.Unit))).ToList();
+                if (activeEffects.Any())
+                {
+                    int minEffectMovCost = activeEffects.Min(e => e.GetMovementCost());
+                    if (minEffectMovCost < moveCost)
+                        moveCost = minEffectMovCost;
+                }
+            }
+
+            //Min/max value enforcement
+            moveCost = Math.Max(0, moveCost);
+            moveCost = Math.Min(moveCost, 99);
+
+            return moveCost;
+        }
+
+        private int CalculateTileWarpMovementCost(UnitRangeParameters parms, Tile warp)
+        {
+            WarpMovementCostSetEffect warpCostSet = parms.WarpCostSets.FirstOrDefault(s => warp.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+            WarpMovementCostModifierEffect warpCostMod = parms.WarpCostModifiers.FirstOrDefault(s => warp.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+
+            int warpCost = warp.TerrainTypeObj.WarpCost;
+            if (warpCostSet != null) warpCost = warpCostSet.Value;
+            else if (warpCostMod != null) warpCost += warpCostMod.Value;
+
+            warpCost = Math.Max(0, warpCost); //enforce minimum
+
+            return warpCost;
+        }
+        
         /// <summary>
         /// Returns true if <paramref name="movingUnit"/> is blocked by any of the units in <paramref name="blockingUnits"/>.
         /// </summary>
@@ -590,6 +690,26 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             this.RemainingMov = remainingMov;
             this.Coordinate = coord;
+        }
+    }
+
+    public class CoordMapVertex
+    {
+        public Coordinate Coordinate;
+        public int MinDistanceTo;
+        public int PathCost;
+        public bool Visited;
+        public bool TraversableOnly;
+        public bool EndNode;
+
+        public CoordMapVertex(Coordinate coord)
+        {
+            this.Coordinate = coord;
+            this.MinDistanceTo = int.MaxValue;
+            this.PathCost = int.MaxValue;
+            this.Visited = false;
+            this.TraversableOnly = false;
+            this.EndNode = false;
         }
     }
 }
