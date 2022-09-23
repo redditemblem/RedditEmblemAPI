@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace RedditEmblemAPI.Models.Exceptions.Unmatched
+﻿namespace RedditEmblemAPI.Models.Exceptions.Unmatched
 {
     public class UnmatchedItemException : UnmatchedException
     {

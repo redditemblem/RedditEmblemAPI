@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace RedditEmblemAPI.Models.Configuration.Units
+﻿namespace RedditEmblemAPI.Models.Configuration.Units
 {
     /// <summary>
     /// Container class for deserialized JSON <c>"WeaponRanks"</c> object data.

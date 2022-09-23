@@ -4,7 +4,6 @@ using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Models.Output.Storage.Convoy

@@ -31,6 +31,11 @@ namespace RedditEmblemAPI.Models.Output.System
         public int Grouping { get; set; }
 
         /// <summary>
+        /// Flag indicating whether or not all units belonging to this affiliation should have their sprites flipped.
+        /// </summary>
+        public bool FlipUnitSprites { get; set; }
+
+        /// <summary>
         /// List of the affiliation's text fields.
         /// </summary>
         public List<string> TextFields { get; set; }
@@ -45,6 +50,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.Grouping = DataParser.Int_NonZeroPositive(data, config.Grouping, "Grouping");
+            this.FlipUnitSprites = DataParser.OptionalBoolean_YesNo(data, config.FlipUnitSprites, "Flip Unit Sprites");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
         }
 

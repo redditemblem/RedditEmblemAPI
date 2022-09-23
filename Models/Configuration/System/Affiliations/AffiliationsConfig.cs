@@ -31,6 +31,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Affiliations
         #region Optional Fields
 
         /// <summary>
+        /// Optional. Cell index of an affiliation's flip unit sprites flag.
+        /// </summary>
+        public int FlipUnitSprites { get; set; } = -1;
+
+        /// <summary>
         /// Optional. List of cell indexes for an affiliation's text fields.
         /// </summary>
         public List<int> TextFields { get; set; } = new List<int>();

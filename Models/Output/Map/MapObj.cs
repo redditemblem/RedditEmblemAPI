@@ -398,10 +398,10 @@ namespace RedditEmblemAPI.Models.Output.Map
                     if (x + y > radius) continue; //if the total displacement is greater than the radius, stop
 
                     //If fetching any tile fails, we still want to continue execution
-                    try { temp.Add(GetTileByCoord(center.X + x, center.Y + y)); } catch (TileOutOfBoundsException ex) { }
-                    try { temp.Add(GetTileByCoord(center.X - x, center.Y + y)); } catch (TileOutOfBoundsException ex) { }
-                    try { temp.Add(GetTileByCoord(center.X + x, center.Y - y)); } catch (TileOutOfBoundsException ex) { }
-                    try { temp.Add(GetTileByCoord(center.X - x, center.Y - y)); } catch (TileOutOfBoundsException ex) { }
+                    try { temp.Add(GetTileByCoord(center.X + x, center.Y + y)); } catch (TileOutOfBoundsException) { }
+                    try { temp.Add(GetTileByCoord(center.X - x, center.Y + y)); } catch (TileOutOfBoundsException) { }
+                    try { temp.Add(GetTileByCoord(center.X + x, center.Y - y)); } catch (TileOutOfBoundsException) { }
+                    try { temp.Add(GetTileByCoord(center.X - x, center.Y - y)); } catch (TileOutOfBoundsException) { }
                 }
             }
 

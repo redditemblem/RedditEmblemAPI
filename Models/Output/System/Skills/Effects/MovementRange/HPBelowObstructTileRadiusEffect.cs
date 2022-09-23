@@ -4,7 +4,6 @@ using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
 {

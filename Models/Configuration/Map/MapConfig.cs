@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Common;
 
 namespace RedditEmblemAPI.Models.Configuration.Map
 {

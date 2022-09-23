@@ -207,7 +207,8 @@
       },
       "Name": 0,
       "Grouping": 1,
-      "TextFields": [ 2 ]
+      "FlipUnitSprites": 2,
+      "TextFields": [ 3 ]
     },
     "StatusConditions": {
       "Query": {

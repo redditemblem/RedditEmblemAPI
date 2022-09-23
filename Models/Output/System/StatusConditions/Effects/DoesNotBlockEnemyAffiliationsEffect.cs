@@ -1,5 +1,4 @@
-﻿using RedditEmblemAPI.Models.Output.Units;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {

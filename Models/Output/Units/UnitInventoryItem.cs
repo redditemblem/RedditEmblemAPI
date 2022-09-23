@@ -1,7 +1,5 @@
-﻿using NCalc;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
-using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Services.Helpers;
 using System;
@@ -106,8 +104,8 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #region Constants
 
-        private static Regex usesRegex = new Regex(@"\([0-9]+\)", RegexOptions.Compiled); //match item uses (ex. "(5)")
-        private static Regex dropRegex = new Regex(@"\(D\)", RegexOptions.Compiled);      //match item droppable (ex. "(D)")
+        private static Regex usesRegex = new Regex(@"\([0-9]+\)"); //match item uses (ex. "(5)")
+        private static Regex dropRegex = new Regex(@"\(D\)");      //match item droppable (ex. "(D)")
 
         #endregion Constants
 

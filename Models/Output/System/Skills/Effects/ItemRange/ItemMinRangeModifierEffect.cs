@@ -1,8 +1,6 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output.Map;
+﻿using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
-using System;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange

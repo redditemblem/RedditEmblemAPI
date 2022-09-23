@@ -5,7 +5,6 @@ using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.Units;
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Services.Helpers
@@ -14,10 +13,10 @@ namespace RedditEmblemAPI.Services.Helpers
     {
         #region Regex Constants
 
-        private static Regex unitCombatStatRegex = new Regex(@"{UnitCombatStat\[([A-Za-z ]+)\]}", RegexOptions.Compiled);
-        private static Regex unitStatRegex       = new Regex(@"{UnitStat\[([A-Za-z, ]+)\]}", RegexOptions.Compiled);
-        private static Regex weaponStatRegex     = new Regex(@"{WeaponStat\[([A-Za-z, ]+)\]}", RegexOptions.Compiled);
-        private static Regex battalionStatRegex  = new Regex(@"{BattalionStat\[([A-Za-z, ]+)\]}", RegexOptions.Compiled);
+        private static Regex unitCombatStatRegex = new Regex(@"{UnitCombatStat\[([A-Za-z ]+)\]}");
+        private static Regex unitStatRegex       = new Regex(@"{UnitStat\[([A-Za-z, ]+)\]}");
+        private static Regex weaponStatRegex     = new Regex(@"{WeaponStat\[([A-Za-z, ]+)\]}");
+        private static Regex battalionStatRegex  = new Regex(@"{BattalionStat\[([A-Za-z, ]+)\]}");
 
         #endregion Regex Constants
 
@@ -42,7 +41,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 Expression expression = new Expression(equation);
                 return Convert.ToDecimal(expression.Evaluate());
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new EquationEvaluationErrorException(equation);
             }

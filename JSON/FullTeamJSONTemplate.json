@@ -53,6 +53,7 @@
       },
       "Name": 0, //Required
       "Grouping": 0, //Required
+      "FlipUnitSprites": 0, //Optional
       "TextFields": [ 0 ] //Optional
     },
     "Classes": { //Optional

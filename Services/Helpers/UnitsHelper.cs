@@ -8,7 +8,6 @@ using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
-using RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats;
 using RedditEmblemAPI.Models.Output.Units;
 using System;
 using System.Collections.Generic;

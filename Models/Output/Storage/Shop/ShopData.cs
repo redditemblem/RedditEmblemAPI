@@ -1,7 +1,6 @@
 ﻿using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Exceptions.Processing;
-using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Services.Helpers;
 using System;

@@ -137,7 +137,7 @@ namespace RedditEmblemAPI.Services
                     return (JSONConfiguration)serializer.Deserialize(file, typeof(JSONConfiguration));
                 }
             }
-            catch(FileNotFoundException ex)
+            catch(FileNotFoundException)
             {
                 throw new TeamConfigurationNotFoundException(Path.GetFileNameWithoutExtension(filePath));
             }

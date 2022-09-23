@@ -147,7 +147,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #region Constants
 
-        private static Regex nonSpacingMarkRegex = new Regex(@"\p{Mn}", RegexOptions.Compiled);
+        private static Regex nonSpacingMarkRegex = new Regex(@"\p{Mn}");
         private static Regex unitNumberRegex = new Regex(@"\s([0-9]+$)"); //matches digits at the end of a string (ex. "Swordmaster _05_")
 
         #endregion

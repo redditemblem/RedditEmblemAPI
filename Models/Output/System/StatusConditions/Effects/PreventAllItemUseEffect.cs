@@ -1,8 +1,5 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
+﻿using RedditEmblemAPI.Models.Output.Units;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {

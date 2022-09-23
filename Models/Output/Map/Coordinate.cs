@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Map;
+﻿using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using System;
 using System.Text.RegularExpressions;
@@ -13,7 +12,7 @@ namespace RedditEmblemAPI.Models.Output.Map
     {
         #region Constants
 
-        private readonly Regex alphanumericRegex = new Regex("^([A-Z]+)([0-9]+)$", RegexOptions.Compiled);
+        private readonly Regex alphanumericRegex = new Regex("^([A-Z]+)([0-9]+)$");
 
         #endregion Constants
 
