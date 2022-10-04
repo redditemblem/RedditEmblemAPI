@@ -345,6 +345,7 @@
       ]
     },
     "Player": 0, //Optional
+    "CharacterApplicationURL": 0, //Optional
     "PortraitURL": 0, //Optional
     "TextFields": [ 0 ], //Optional
     "UnitSize": 0, //Optional
@@ -366,7 +367,18 @@
       }
     ],
     "Skills": [ 0 ], //Optional
-    "StatusConditions": [ 0 ], //Optional
+    "StatusConditions": [ //Optional
+      {
+        "Name": 0, //Required
+        "RemainingTurns": 0, //Optional
+        "AdditionalStats": [ //Optional
+          {
+            "SourceName": "Stat",
+            "Value": 0
+          }
+        ]
+      }
+    ],
     "Battalion": { //Optional
       "Battalion": 0, //Required
       "Endurance": 0, //Required

@@ -37,6 +37,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         public string Player { get; set; }
 
         /// <summary>
+        /// The unit's character application URL link.
+        /// </summary>
+        public string CharacterApplicationURL { get; set; }
+
+        /// <summary>
         /// List of the unit's text fields.
         /// </summary>
         public List<string> TextFields { get; set; }
@@ -162,6 +167,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.NormalizedName = RemoveDiacritics(this.Name);
             this.UnitNumber = ExtractUnitNumberFromName(this.Name);
             this.Player = DataParser.OptionalString(data, config.Player, "Player");
+            this.CharacterApplicationURL = DataParser.OptionalString_URL(data, config.CharacterApplicationURL, "Character Application URL");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
             this.Tags = DataParser.List_StringCSV(data, config.Tags).Distinct().ToList();
             this.Behavior = DataParser.OptionalString(data, config.Behavior, "Behavior");
@@ -214,18 +220,18 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
         }
 
-        private void BuildStatusConditions(List<string> data, List<int> indexes, IDictionary<string, StatusCondition> statuses)
+        private void BuildStatusConditions(List<string> data, List<UnitStatusConditionConfig> configs, IDictionary<string, StatusCondition> statuses)
         {
             this.StatusConditions = new List<UnitStatus>();
 
-            foreach (int index in indexes)
+            foreach (UnitStatusConditionConfig config in configs)
             {
                 //Skip blank cells
-                string name = DataParser.OptionalString(data, index, "Status Condition Name");
+                string name = DataParser.OptionalString(data, config.Name, "Status Condition Name");
                 if (string.IsNullOrEmpty(name))
                     continue;
 
-                UnitStatus status = new UnitStatus(name, statuses);
+                UnitStatus status = new UnitStatus(data, config, statuses);
                 this.StatusConditions.Add(status);
             }
         }

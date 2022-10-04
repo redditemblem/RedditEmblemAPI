@@ -385,7 +385,20 @@
     "HasMoved": 7,
     "Experience": 5,
     "HeldCurrency": 51,
-    "StatusConditions": [ 43, 45, 47 ],
+    "StatusConditions": [
+      {
+        "Name": 43,
+        "RemainingTurns": 44
+      },
+      {
+        "Name": 45,
+        "RemainingTurns": 46
+      },
+      {
+        "Name": 47,
+        "RemainingTurns": 48
+      }
+    ],
     "Skills": [ 49, 50 ]
   },
   "Convoy": {

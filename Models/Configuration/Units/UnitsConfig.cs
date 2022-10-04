@@ -85,6 +85,11 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public int Player { get; set; } = -1;
 
         /// <summary>
+        /// Optional. Cell index of the unit's character application URL value.
+        /// </summary>
+        public int CharacterApplicationURL { get; set; } = -1;
+
+        /// <summary>
         /// Optional. Cell index of the unit's portrait image URL value.
         /// </summary>
         public int PortraitURL { get; set; } = -1;
@@ -140,9 +145,9 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public List<ModifiedNamedStatConfig> SystemStats { get; set; } = new List<ModifiedNamedStatConfig>();
 
         /// <summary>
-        /// Optional. List of cell indexes for a unit's status conditions.
+        /// Optional. List of container objects for a unit's status conditions.
         /// </summary>
-        public List<int> StatusConditions { get; set; } = new List<int>();
+        public List<UnitStatusConditionConfig> StatusConditions { get; set; } = new List<UnitStatusConditionConfig>();
 
         /// <summary>
         /// Optional. List of cell indexes for a unit's skills.

@@ -642,7 +642,17 @@
     "Tags": [ 15, 16 ],
     "Behavior": 17,
     "Skills": [ 64, 65, 66, 67, 68 ],
-    "StatusConditions": [ 19, 20, 22 ]
+    "StatusConditions": [
+      {
+        "Name": 19
+      },
+      {
+        "Name": 20
+      },
+      {
+        "Name": 22 
+      }
+    ]
   },
   "Convoy": {
     "Query": {
