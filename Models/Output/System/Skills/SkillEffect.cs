@@ -86,7 +86,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <exception cref="UnmatchedMovementTypeException"></exception>
         protected void AddTeleportTargetsToUnitRange(Unit unit, List<Tile> targetTiles)
         {
-            List<TerrainTypeMovementCostSetEffect> moveCostSets = unit.SkillList.Select(s => s.Effect).OfType<TerrainTypeMovementCostSetEffect>().ToList();
+            List<TerrainTypeMovementCostSetEffect> moveCostSets = unit.SkillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect>().ToList();
 
             foreach (Tile tile in targetTiles)
             {

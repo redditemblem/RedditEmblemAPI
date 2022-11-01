@@ -8,6 +8,7 @@ using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
+using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using RedditEmblemAPI.Models.Output.Units;
 using System;
 using System.Collections.Generic;
@@ -105,8 +106,8 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Skill effects
                 try
                 {
-                    foreach (Skill skill in unit.SkillList.Where(s => s.Effect != null && s.Effect.ExecutionOrder == SkillEffectExecutionOrder.Standard))
-                        skill.Effect.Apply(unit, skill, map, units);
+                    foreach (Skill skill in unit.SkillList.Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard)))
+                        skill.Effects.Where(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard).ToList().ForEach(e => e.Apply(unit, skill, map, units));
                 }
                 catch(Exception ex)
                 {
@@ -117,8 +118,8 @@ namespace RedditEmblemAPI.Services.Helpers
                 try
                 {
                     foreach (UnitStatus status in unit.StatusConditions)
-                        if (status.StatusObj.Effect != null)
-                            status.StatusObj.Effect.Apply(unit, status.StatusObj);
+                        foreach(StatusConditionEffect effect in status.StatusObj.Effects)
+                            effect.Apply(unit, status.StatusObj);
                 }
                 catch(Exception ex)
                 {
@@ -154,8 +155,8 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Skill effects
                 try
                 {
-                    foreach (Skill skill in unit.SkillList.Where(s => s.Effect != null && s.Effect.ExecutionOrder == SkillEffectExecutionOrder.AfterFinalStatCalculations))
-                        skill.Effect.Apply(unit, skill, map, units);
+                    foreach (Skill skill in unit.SkillList.Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.AfterFinalStatCalculations)))
+                        skill.Effects.Where(e => e.ExecutionOrder == SkillEffectExecutionOrder.AfterFinalStatCalculations).ToList().ForEach(e => e.Apply(unit, skill, map, units));
                 }
                 catch (Exception ex)
                 {

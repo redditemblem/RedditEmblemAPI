@@ -183,10 +183,12 @@
       "Name": 0,
       "SpriteURL": 1,
       "TextFields": [ 2 ],
-      "Effect": {
-        "Type": 3,
-        "Parameters": [ 4, 5, 6 ]
-      }
+      "Effects": [
+        {
+          "Type": 3,
+          "Parameters": [ 4, 5, 6 ]
+        }
+      ]
     },
     "Classes": {
       "Query": {
@@ -221,10 +223,12 @@
       "Type": 3,
       "Turns": 4,
       "TextFields": [ 5 ],
-      "Effect": {
-        "Type": 6,
-        "Parameters": [ 7, 8 ]
-      }
+      "Effects": [
+        {
+          "Type": 6,
+          "Parameters": [ 7, 8 ]
+        }
+      ]
     },
     "TerrainTypes": {
       "Query": {

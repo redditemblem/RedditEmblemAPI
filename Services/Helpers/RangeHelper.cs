@@ -91,7 +91,7 @@ namespace RedditEmblemAPI.Services.Helpers
         private void CalculateUnitMovementRange(Unit unit)
         {
             int movementVal = unit.Stats.General[this.Map.Constants.UnitMovementStatName].FinalValue;
-            OverrideMovementEffect overrideMovEffect = unit.StatusConditions.Select(s => s.StatusObj.Effect).OfType<OverrideMovementEffect>().FirstOrDefault();
+            OverrideMovementEffect overrideMovEffect = unit.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<OverrideMovementEffect>().FirstOrDefault();
             if (overrideMovEffect != null) movementVal = overrideMovEffect.MovementValue;
 
             UnitRangeParameters unitParms = new UnitRangeParameters(unit);
@@ -306,7 +306,7 @@ namespace RedditEmblemAPI.Services.Helpers
             //Check if nearby units can affect the movement costs of this tile
             if (moveCost < 99 && tile.UnitData.UnitsAffectingMovementCosts.Any())
             {
-                List<IAffectMovementCost> activeEffects = tile.UnitData.UnitsAffectingMovementCosts.SelectMany(u => u.SkillList.Select(s => s.Effect).OfType<IAffectMovementCost>().Where(e => e.IsActive(u, parms.Unit))).ToList();
+                List<IAffectMovementCost> activeEffects = tile.UnitData.UnitsAffectingMovementCosts.SelectMany(u => u.SkillList.SelectMany(s => s.Effects).OfType<IAffectMovementCost>().Where(e => e.IsActive(u, parms.Unit))).ToList();
                 if (activeEffects.Any())
                 {
                     int minEffectMovCost = activeEffects.Min(e => e.GetMovementCost());
@@ -367,7 +367,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 return false;
 
             //Check if the blocking unit is inflicted with a relevant status condition
-            if (blockingUnit.StatusConditions.Select(sc => sc.StatusObj.Effect).OfType<DoesNotBlockEnemyAffiliationsEffect>().Any())
+            if (blockingUnit.StatusConditions.SelectMany(sc => sc.StatusObj.Effects).OfType<DoesNotBlockEnemyAffiliationsEffect>().Any())
                 return false;
 
             //Finally, check if units are not in the same affiliation grouping
@@ -618,11 +618,11 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             this.Unit = unit;
 
-            this.IgnoresAffiliations = unit.SkillList.Select(s => s.Effect).OfType<IIgnoreUnitAffiliations>().Any(e => e.IsActive(unit));
-            this.MoveCostModifiers = unit.SkillList.Select(s => s.Effect).OfType<TerrainTypeMovementCostModifierEffect>().ToList();
-            this.MoveCostSets = unit.SkillList.Select(s => s.Effect).OfType<TerrainTypeMovementCostSetEffect>().ToList();
-            this.WarpCostModifiers = unit.SkillList.Select(s => s.Effect).OfType<WarpMovementCostModifierEffect>().ToList();
-            this.WarpCostSets = unit.SkillList.Select(s => s.Effect).OfType<WarpMovementCostSetEffect>().ToList();
+            this.IgnoresAffiliations = unit.SkillList.SelectMany(s => s.Effects).OfType<IIgnoreUnitAffiliations>().Any(e => e.IsActive(unit));
+            this.MoveCostModifiers = unit.SkillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostModifierEffect>().ToList();
+            this.MoveCostSets = unit.SkillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect>().ToList();
+            this.WarpCostModifiers = unit.SkillList.SelectMany(s => s.Effects).OfType<WarpMovementCostModifierEffect>().ToList();
+            this.WarpCostSets = unit.SkillList.SelectMany(s => s.Effects).OfType<WarpMovementCostSetEffect>().ToList();
         }
     }
 
@@ -666,6 +666,11 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             this.MinRange = minRange;
             this.MaxRange = maxRange;
+
+            //Final hour check for excessively large ranges
+            #warning Find a better solution for this.
+            if (this.MaxRange > 15) this.MaxRange = 99;
+
             this.Shape = shape;
             this.CanOnlyUseBeforeMovement = canOnlyBeUsedBeforeMovement;
             this.DealsDamage = dealsDamage;

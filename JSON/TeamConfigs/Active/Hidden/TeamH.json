@@ -132,10 +132,12 @@
       },
       "Name": 0,
       "TextFields": [ 1 ],
-      "Effect": {
-        "Type": 2,
-        "Parameters": [ 3, 4, 5 ]
-      }
+      "Effects": [
+        {
+          "Type": 2,
+          "Parameters": [ 3, 4, 5 ]
+        }
+      ]
     },
     "StatusConditions": {
       "Query": {
@@ -148,10 +150,12 @@
       "Type": 2,
       "Turns": 3,
       "TextFields": [ 4 ],
-      "Effect": {
-        "Type": 5,
-        "Parameters": [ 6, 7 ]
-      }
+      "Effects": [
+        {
+          "Type": 5,
+          "Parameters": [ 6, 7 ]
+        }
+      ]
     },
     "Tags": {
       "Query": {

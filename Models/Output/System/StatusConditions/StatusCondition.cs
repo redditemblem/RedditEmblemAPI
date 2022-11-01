@@ -53,7 +53,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// The effect the status condition applies, if any.
         /// </summary>
         [JsonIgnore]
-        public StatusConditionEffect Effect { get; set; }
+        public List<StatusConditionEffect> Effects { get; set; }
 
         #region JSON Serialization Only
 
@@ -61,7 +61,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// Flag indicating whether or not a status condition effect is configured on this status condition.
         /// </summary>
         [JsonProperty]
-        private bool IsEffectConfigured { get { return this.Effect != null; } }
+        private bool IsEffectConfigured { get { return this.Effects.Any(); } }
 
         #endregion JSON Serialization Only
 
@@ -78,11 +78,15 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
             this.Turns = DataParser.OptionalInt_NonZeroPositive(data, config.Turns, "Turns", 0);
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
-            //Check if status condition effects are configured
-            if (config.Effect != null)
-                this.Effect = BuildStatusConditionEffect(DataParser.OptionalString(data, config.Effect.Type, "Status Condition Effect Type"),
-                                                         DataParser.List_Strings(data, config.Effect.Parameters, true));
-            else this.Effect = null;
+            this.Effects = new List<StatusConditionEffect>();
+            foreach (StatusConditionEffectConfig effect in config.Effects)
+            {
+                string effectType = DataParser.OptionalString(data, effect.Type, "Status Condition Effect Type");
+                List<string> effectParms = DataParser.List_Strings(data, effect.Parameters, true);
+
+                if(!string.IsNullOrEmpty(effectType))
+                    this.Effects.Add(BuildStatusConditionEffect(effectType, effectParms));
+            }
         }
 
         /// <summary>
@@ -104,9 +108,6 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 
         private StatusConditionEffect BuildStatusConditionEffect(string effectType, List<string> parameters)
         {
-            if (string.IsNullOrEmpty(effectType))
-                return null;
-
             switch (effectType)
             {
                 case "OverrideMovement": return new OverrideMovementEffect(parameters);

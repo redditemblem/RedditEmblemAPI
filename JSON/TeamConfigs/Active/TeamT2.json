@@ -1,0 +1,430 @@
+{
+  "Team": {
+    "Name": "Team T2",
+    "WorkbookID": "1wtQ8Bn_rqkI87lkx7dgRBEuarbz7G11OEmvblJhU8VM"
+  },
+  "Map": {
+    "Constants": {
+      "TileSize": 16,
+      "TileSpacing": 0,
+      "HasHeaderTopLeft": false,
+      "HasHeaderBottomRight": true,
+      "CalculatePairedUnitRanges": true,
+      "UnitMovementStatName": "Mov",
+      "CoordinateFormat": 1
+    },
+    "MapControls": {
+      "Query": {
+        "Sheet": "MAPS Control",
+        "Selection": "B1:B",
+        "Orientation": 2
+      },
+      "MapSwitch": 0,
+      "MapImageURL": 2,
+      "ChapterPostURL": 1
+    },
+    "MapTiles": {
+      "Query": {
+        "Sheet": "MAPS Tiles",
+        "Selection": "A1:ZZ",
+        "Orientation": 1
+      }
+    },
+    "MapObjects": {
+      "Query": {
+        "Sheet": "MAPS Objects",
+        "Selection": "A1:ZZ",
+        "Orientation": 1
+      }
+    }
+  },
+  "System": {
+    "WeaponRanks": [ "PRF", "E", "D", "C", "B", "A" ],
+    "Currency": {
+      "CurrencySymbol": "G",
+      "IsSymbolLeftAligned": false,
+      "IncludeSpace": true
+    },
+    "Affiliations": {
+      "Query": {
+        "Sheet": "MAPS Affiliations",
+        "Selection": "A2:C",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Grouping": 1, 
+      "FlipUnitSprites": 2
+    },
+    "Classes": {
+      "Query": {
+        "Sheet": "Class Stats",
+        "Selection": "A2:T",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "MovementType": 18,
+      "Tags": [ 17 ],
+      "TextFields": [ 19 ]
+    },
+    "Items": {
+      "Query": {
+        "Sheet": "Weapon Index",
+        "Selection": "A2:V",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 2,
+      "Category": 17,
+      "WeaponRank": 3,
+      "UtilizedStats": 19,
+      "DealsDamage": 21,
+      "Uses": 4,
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 5
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 6
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 7
+        },
+        {
+          "SourceName": "Wt",
+          "Value": 11
+        },
+        {
+          "SourceName": "WeXP",
+          "Value": 12
+        }
+      ],
+      "Range": {
+        "Minimum": 9,
+        "Maximum": 10
+      },
+      "Tags": [ 16 ],
+      "TextFields": [ 15 ]
+    },
+    "Skills": {
+      "Query": {
+        "Sheet": "Skills",
+        "Selection": "B2:I",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "TextFields": [ 1 ],
+      "Effects": [
+        {
+          "Type": 4,
+          "Parameters": [ 5, 6, 7 ]
+        }
+      ]
+    },
+    "StatusConditions": {
+      "Query": {
+        "Sheet": "MAPS Status",
+        "Selection": "B2:L",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "Type": 2,
+      "Turns": 3,
+      "TextFields": [ 4 ],
+      "Effects": [
+        {
+          "Type": 5,
+          "Parameters": [ 6, 7 ]
+        },
+        {
+          "Type": 8,
+          "Parameters": [ 9, 10 ]
+        }
+      ]
+    },
+    "Tags": {
+      "Query": {
+        "Sheet": "MAPS Tags",
+        "Selection": "B2:D",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "ShowOnUnit": 2
+    },
+    "TerrainTypes": {
+      "Query": {
+        "Sheet": "Terrain Chart",
+        "Selection": "A2:J",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "CombatStatModifiers": [
+        {
+          "SourceName": "Avo",
+          "Value": 1
+        }
+      ],
+      "StatModifiers": [
+        {
+          "SourceName": "Def",
+          "Value": 2
+        }
+      ],
+      "MovementCosts": [
+        {
+          "SourceName": "Infantry",
+          "Value": 4
+        },
+        {
+          "SourceName": "Mounted",
+          "Value": 5
+        },
+        {
+          "SourceName": "Mounted (Promoted)",
+          "Value": 6
+        },
+        {
+          "SourceName": "Flier",
+          "Value": 7
+        },
+        {
+          "SourceName": "Armor",
+          "Value": 8
+        },
+        {
+          "SourceName": "Brigand",
+          "Value": 9
+        }
+      ],
+      "TextFields": [ 3 ]
+    },
+    "TileObjects": {
+      "Query": {
+        "Sheet": "MAPS Tile Objects",
+        "Selection": "B2:F",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "Size": 2,
+      "Layer": 3,
+      "TextFields": [ 4 ]
+    }
+  },
+  "Units": {
+    "Query": {
+      "Sheet": "Stats",
+      "Selection": "B1:ZZ",
+      "Orientation": 2
+    },
+    "Name": 0,
+    "SpriteURL": 3,
+    "Level": 20,
+    "Classes": [ 7 ],
+    "Affiliation": 4,
+    "Coordinate": 5,
+    "HP": {
+      "Current": 8,
+      "Maximum": 9
+    },
+    "CombatStats": [
+      {
+        "SourceName": "Atk",
+        "Equations": [
+          {
+            "Equation": "{WeaponStat[Mt]} + {WeaponUtilStat}"
+          }
+        ]
+      },
+      {
+        "SourceName": "Crit",
+        "Equations": [
+          {
+            "Equation": "{UnitStat[Skl]} - {UnitStat[Lck]}"
+          }
+        ]
+      },
+      {
+        "SourceName": "Hit",
+        "Equations": [
+          {
+            "Equation": "{WeaponStat[Hit]} + ({UnitStat[Skl]} * 2.5) + {UnitStat[Lck]}"
+          }
+        ]
+      },
+      {
+        "SourceName": "Avo",
+        "Equations": [
+          {
+            "Equation": "(({UnitStat[Spd]} - Max({WeaponStat[Wt]} - {UnitStat[Con]}, 0)) * 1.5) + ({UnitStat[Lck]} * 2)"
+          }
+        ]
+      }
+    ],
+    "Stats": [
+      {
+        "SourceName": "Str",
+        "BaseValue": 145,
+        "Modifiers": [
+          {
+            "SourceName": "Buff/Debuff",
+            "Value": 63
+          }
+        ]
+      },
+      {
+        "SourceName": "Mag",
+        "BaseValue": 146,
+        "Modifiers": [
+          {
+            "SourceName": "Buff/Debuff",
+            "Value": 64
+          }
+        ]
+      },
+      {
+        "SourceName": "Skl",
+        "BaseValue": 147,
+        "Modifiers": [
+          {
+            "SourceName": "Buff/Debuff",
+            "Value": 65
+          }
+        ]
+      },
+      {
+        "SourceName": "Spd",
+        "BaseValue": 148,
+        "Modifiers": [
+          {
+            "SourceName": "Buff/Debuff",
+            "Value": 66
+          }
+        ]
+      },
+      {
+        "SourceName": "Lck",
+        "BaseValue": 149,
+        "Modifiers": [
+          {
+            "SourceName": "Buff/Debuff",
+            "Value": 67
+          }
+        ]
+      },
+      {
+        "SourceName": "Def",
+        "BaseValue": 150,
+        "Modifiers": [
+          {
+            "SourceName": "Buff/Debuff",
+            "Value": 68
+          }
+        ]
+      },
+      {
+        "SourceName": "Con",
+        "BaseValue": 151,
+        "Modifiers": [
+          {
+            "SourceName": "Buff/Debuff",
+            "Value": 69
+          }
+        ]
+      },
+      {
+        "SourceName": "PCC",
+        "BaseValue": 152,
+        "Modifiers": [
+          {
+            "SourceName": "Buff/Debuff",
+            "Value": 70
+          }
+        ]
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 153,
+        "Modifiers": [
+          {
+            "SourceName": "Buff/Debuff",
+            "Value": 71
+          }
+        ]
+      }
+    ],
+    "WeaponRanks": [
+      {
+        "Type": 37,
+        "Rank": 42
+      },
+      {
+        "Type": 38,
+        "Rank": 43
+      },
+      {
+        "Type": 39,
+        "Rank": 44
+      },
+      {
+        "Type": 40,
+        "Rank": 45
+      },
+      {
+        "Type": 41,
+        "Rank": 46
+      }
+    ],
+    "Inventory": {
+      "PrimaryEquippedItem": 22,
+      "Slots": [
+        {
+          "Name": 23,
+          "Uses": 29
+        },
+        {
+          "Name": 24,
+          "Uses": 30
+        },
+        {
+          "Name": 25,
+          "Uses": 31
+        },
+        {
+          "Name": 26,
+          "Uses": 32
+        },
+        {
+          "Name": 27,
+          "Uses": 33
+        },
+        {
+          "Name": 28,
+          "Uses": 34
+        }
+      ]
+    },
+    "Player": 1,
+    "Experience": 21,
+    "Tags": [ 59 ],
+    "SystemStats": [
+      {
+        "SourceName": "Fatigue",
+        "BaseValue": 19
+      }
+    ],
+    "Skills": [ 47, 48, 49, 50, 51 ],
+    "StatusConditions": [
+      {
+        "Name": 57
+      },
+      {
+        "Name": 58
+      }
+    ]
+  }
+}

@@ -106,7 +106,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             foreach (ModifiedNamedStatConfig stat in config)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
-                temp.BaseValue = DataParser.Int_Any(data, stat.BaseValue, stat.SourceName);
+                temp.BaseValue = DataParser.OptionalInt_Any(data, stat.BaseValue, stat.SourceName);
 
                 //Parse modifiers list
                 foreach (NamedStatConfig mod in stat.Modifiers)
@@ -148,7 +148,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public void CalculateCombatStats(List<CalculatedStatConfig> stats, Unit unit)
         {
-            List<ReplaceCombatStatFormulaVariableEffect> replacementEffects = unit.SkillList.Select(s => s.Effect).OfType<ReplaceCombatStatFormulaVariableEffect>().ToList();
+            List<ReplaceCombatStatFormulaVariableEffect> replacementEffects = unit.SkillList.SelectMany(s => s.Effects).OfType<ReplaceCombatStatFormulaVariableEffect>().ToList();
             string equippedUtilStat = GetItemUtilizedStatName(unit.Inventory.GetPrimaryEquippedItem());
 
             foreach (CalculatedStatConfig stat in stats)

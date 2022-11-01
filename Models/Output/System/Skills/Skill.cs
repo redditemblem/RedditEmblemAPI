@@ -50,7 +50,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// The effect the skill applies, if any.
         /// </summary>
         [JsonIgnore]
-        public SkillEffect Effect { get; set; }
+        public List<SkillEffect> Effects { get; set; }
 
         #region JSON Serialization Only
 
@@ -58,7 +58,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// Flag indicating whether or not a skill effect is configured on this skill.
         /// </summary>
         [JsonProperty]
-        private bool IsEffectConfigured { get { return this.Effect != null; } }
+        private bool IsEffectConfigured { get { return this.Effects.Any(); } }
 
         #endregion JSON Serialization Only
 
@@ -73,18 +73,19 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
-            //Check if skill effects are configured
-            if (config.Effect != null)
-                this.Effect = BuildSkillEffect(DataParser.OptionalString(data, config.Effect.Type, "Skill Effect Type"),
-                                               DataParser.List_Strings(data, config.Effect.Parameters, true));
-            else this.Effect = null;
+            this.Effects = new List<SkillEffect>();
+            foreach (SkillEffectConfig effect in config.Effects)
+            {
+                string effectType = DataParser.OptionalString(data, effect.Type, "Skill Effect Type");
+                List<string> effectParms = DataParser.List_Strings(data, effect.Parameters, true);
+
+                if(!string.IsNullOrEmpty(effectType))
+                    this.Effects.Add(BuildSkillEffect(effectType, effectParms));
+            }
         }
 
         private SkillEffect BuildSkillEffect(string effectType, List<string> parameters)
         {
-            if (string.IsNullOrEmpty(effectType))
-                return null;
-
             switch (effectType)
             {
                 //Unit Stat Effects
