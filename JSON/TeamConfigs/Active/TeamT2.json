@@ -126,7 +126,7 @@
     "StatusConditions": {
       "Query": {
         "Sheet": "MAPS Status",
-        "Selection": "B2:L",
+        "Selection": "B2:N",
         "Orientation": 1
       },
       "Name": 0,
@@ -142,6 +142,10 @@
         {
           "Type": 8,
           "Parameters": [ 9, 10 ]
+        },
+        {
+          "Type": 11,
+          "Parameters": [ 12, 13 ]
         }
       ]
     },

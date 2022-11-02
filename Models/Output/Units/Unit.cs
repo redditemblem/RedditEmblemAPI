@@ -5,6 +5,7 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.StatusConditions;
+using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -65,7 +66,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// The unit's movement type. Only used if classes are not provided.
         /// </summary>
-        public string MovementType { get; set; }
+        private string UnitMovementType { get; set; }
 
         /// <summary>
         /// The unit's affiliation.
@@ -129,6 +130,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         private string NormalizedName { get; set; }
 
         /// <summary>
+        /// The unit's movement type
+        /// </summary>
+        [JsonProperty]
+        private string MovementType { get { return GetUnitMovementType(); } }
+
+        /// <summary>
         /// Only for JSON serialization. A list of the unit's classes.
         /// </summary>
         [JsonProperty]
@@ -183,7 +190,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             //If the system does not use classes, fall back on the MovementType attribute
             if (this.ClassList.Count == 0)
-                this.MovementType = DataParser.String(data, config.MovementType, "Movement Type");
+                this.UnitMovementType = DataParser.String(data, config.MovementType, "Movement Type");
 
             BuildWeaponRanks(data, config.WeaponRanks, systemData.WeaponRanks.Any());
             BuildInventory(data, config.Inventory, systemData.Items, systemData.WeaponRanks, systemData.WeaponRankBonuses);
@@ -441,9 +448,13 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         public string GetUnitMovementType()
         {
+            OverrideMovementTypeEffect overrideMovementType = this.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<OverrideMovementTypeEffect>().FirstOrDefault();
+            if(overrideMovementType != null)
+                return overrideMovementType.MovementType;
+
             if (this.ClassList.Count > 0)
                 return this.ClassList.First().MovementType;
-            else return this.MovementType;
+            else return this.UnitMovementType;
         }
     }
 }
