@@ -47,12 +47,13 @@
     "Affiliations": {
       "Query": {
         "Sheet": "Affiliations",
-        "Selection": "A2:C",
+        "Selection": "A2:D",
         "Orientation": 1
       },
       "Name": 0,
       "Grouping": 1,
-      "TextFields": [ 2 ]
+      "TextFields": [ 2 ],
+      "FlipUnitSprites": 3 
     },
     "Classes": {
       "Query": {
