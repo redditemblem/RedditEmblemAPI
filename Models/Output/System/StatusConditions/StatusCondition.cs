@@ -84,7 +84,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
                 string effectType = DataParser.OptionalString(data, effect.Type, "Status Condition Effect Type");
                 List<string> effectParms = DataParser.List_Strings(data, effect.Parameters, true);
 
-                if(!string.IsNullOrEmpty(effectType))
+                if (!string.IsNullOrEmpty(effectType))
                     this.Effects.Add(BuildStatusConditionEffect(effectType, effectParms));
             }
         }

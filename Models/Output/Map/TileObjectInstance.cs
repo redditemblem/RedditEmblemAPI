@@ -20,7 +20,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// Only for JSON serialization. The name of the tile object.
         /// </summary>
         [JsonProperty]
-        private string Name { get { return this.TileObject.Name;  } }
+        private string Name { get { return this.TileObject.Name; } }
 
         /// <summary>
         /// The <c>TileObject</c> located on the tile. 

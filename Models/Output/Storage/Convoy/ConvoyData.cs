@@ -88,17 +88,17 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
 
             //Build page parameters
             List<ItemSort> sorts = new List<ItemSort>() {
-                new ItemSort("Name", "name", false), 
-                new ItemSort("Owner", "owner", false), 
-                new ItemSort("Category", "category", true), 
-                new ItemSort("Uses", "maxUses", true) 
+                new ItemSort("Name", "name", false),
+                new ItemSort("Owner", "owner", false),
+                new ItemSort("Category", "category", true),
+                new ItemSort("Uses", "maxUses", true)
             };
             if (config.System.WeaponRanks.Count > 0)
                 sorts.Add(new ItemSort("Weapon Rank", "weaponRank", true));
 
             this.Parameters = new FilterParameters(sorts,
                 new List<string>() { "All" }.Union(this.ConvoyItems.Select(i => i.Owner).Where(o => !string.IsNullOrEmpty(o)).Distinct().OrderBy(o => o)).ToList(),
-                this.ConvoyItems.Select(i => i.Item.Category).Distinct().OrderBy(c => c).ToList(), 
+                this.ConvoyItems.Select(i => i.Item.Category).Distinct().OrderBy(c => c).ToList(),
                 this.ConvoyItems.SelectMany(i => i.Item.UtilizedStats).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(c => c).ToList(),
                 new Dictionary<string, bool>());
 

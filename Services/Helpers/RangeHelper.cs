@@ -52,7 +52,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
         public void CalculateTileObjectRanges()
         {
-            foreach(TileObjectInstance tileObjInst in this.Map.TileObjectInstances.Values)
+            foreach (TileObjectInstance tileObjInst in this.Map.TileObjectInstances.Values)
             {
                 //If tile object does not have a configured range, skip it.
                 if (tileObjInst.TileObject.Range.Minimum < 1 || tileObjInst.TileObject.Range.Maximum < 1)
@@ -64,12 +64,12 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Transpose item data into the struct we're using for recursion
                 List<UnitItemRange> ranges = new List<UnitItemRange> { new UnitItemRange(tileObjInst.TileObject.Range.Minimum, tileObjInst.TileObject.Range.Maximum, ItemRangeShape.Standard, false, true, false) };
 
-                foreach(Tile originTile in tileObjInst.OriginTiles)
+                foreach (Tile originTile in tileObjInst.OriginTiles)
                 {
                     foreach (ItemRangeDirection direction in RANGE_DIRECTIONS)
                     {
                         ItemRangeParameters rangeParms = new ItemRangeParameters(originTile.Coordinate, tileObjInst.OriginTiles.Select(ot => ot.Coordinate).ToList(), ranges, direction, 0);
-                        RecurseItemRange( rangeParms,
+                        RecurseItemRange(rangeParms,
                                           originTile.Coordinate,
                                           rangeParms.LargestRange,
                                           string.Empty,
@@ -125,8 +125,8 @@ namespace RedditEmblemAPI.Services.Helpers
             if (currCoords.Any(c => c.RemainingMov < 0
                                  || c.Coordinate.X < 1
                                  || c.Coordinate.Y < 1
-                                 || c.Coordinate.X > this.Map.TileWidth
-                                 || c.Coordinate.Y > this.Map.TileHeight)
+                                 || c.Coordinate.X > this.Map.MapWidthInTiles
+                                 || c.Coordinate.Y > this.Map.MapHeightInTiles)
                )
                 return;
 
@@ -268,7 +268,7 @@ namespace RedditEmblemAPI.Services.Helpers
                         if (currWarp.PathCost >= 99)
                             continue;
 
-                        if(currCoord.MinDistanceTo + warpCost < currWarp.MinDistanceTo)
+                        if (currCoord.MinDistanceTo + warpCost < currWarp.MinDistanceTo)
                         {
                             currWarp.MinDistanceTo = currCoord.MinDistanceTo + warpCost;
                             warpUpdated = true;
@@ -276,7 +276,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     }
 
                     //Reset visited status of all vertices
-                    if(warpUpdated) coordinateMap.ForEach(c => c.Visited = false);
+                    if (warpUpdated) coordinateMap.ForEach(c => c.Visited = false);
                 }
             }
         }
@@ -288,7 +288,7 @@ namespace RedditEmblemAPI.Services.Helpers
             if (UnitIsBlocked(parms.Unit, tile.UnitData.Unit, parms.IgnoresAffiliations) ||
                 (tile.TerrainTypeObj.RestrictAffiliations.Any() && !tile.TerrainTypeObj.RestrictAffiliations.Contains(parms.Unit.AffiliationObj.Grouping))
                )
-               return 99;
+                return 99;
 
             //Test that the unit can move to this tile
             int moveCost;
@@ -335,7 +335,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             return warpCost;
         }
-        
+
         /// <summary>
         /// Returns true if <paramref name="movingUnit"/> is blocked by any of the units in <paramref name="blockingUnits"/>.
         /// </summary>
@@ -387,7 +387,7 @@ namespace RedditEmblemAPI.Services.Helpers
             List<Coordinate> utilRange = new List<Coordinate>();
 
             //Transpose item data into the struct we're using for recursion
-            List<UnitItemRange> itemRanges = unit.Inventory.Items.Where(i => i.CanEquip && !i.IsUsePrevented && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
+            List<UnitItemRange> itemRanges = unit.Inventory.Items.Where(i => i.CanEquip && !i.IsUsePrevented && !i.MaxRangeExceedsCalculationLimit && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
                                                             .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.Range.Shape, i.Item.Range.CanOnlyUseBeforeMovement, i.Item.DealsDamage, i.AllowMeleeRange))
                                                             .ToList();
 
@@ -426,8 +426,8 @@ namespace RedditEmblemAPI.Services.Helpers
             if (remainingRange < 0
                 || currCoord.X < 1
                 || currCoord.Y < 1
-                || currCoord.X > this.Map.TileWidth
-                || currCoord.Y > this.Map.TileHeight
+                || currCoord.X > this.Map.MapWidthInTiles
+                || currCoord.Y > this.Map.MapHeightInTiles
                )
                 return;
 
@@ -666,11 +666,6 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             this.MinRange = minRange;
             this.MaxRange = maxRange;
-
-            //Final hour check for excessively large ranges
-            #warning Find a better solution for this.
-            if (this.MaxRange > 15) this.MaxRange = 99;
-
             this.Shape = shape;
             this.CanOnlyUseBeforeMovement = canOnlyBeUsedBeforeMovement;
             this.DealsDamage = dealsDamage;

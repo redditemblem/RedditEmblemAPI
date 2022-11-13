@@ -79,7 +79,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 string effectType = DataParser.OptionalString(data, effect.Type, "Skill Effect Type");
                 List<string> effectParms = DataParser.List_Strings(data, effect.Parameters, true);
 
-                if(!string.IsNullOrEmpty(effectType))
+                if (!string.IsNullOrEmpty(effectType))
                     this.Effects.Add(BuildSkillEffect(effectType, effectParms));
             }
         }
@@ -105,20 +105,20 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "TerrainTypeCombatStatModifier": return new TerrainTypeCombatStatModifierEffect(parameters);
                 case "TerrainTypeStatModifier": return new TerrainTypeStatModifierEffect(parameters);
                 //Unit Movement Range Effects
-                    //Movement Costs
+                //Movement Costs
                 case "TerrainTypeMovementCostModifier": return new TerrainTypeMovementCostModifierEffect(parameters);
                 case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect(parameters);
                 case "WarpMovementCostModifier": return new WarpMovementCostModifierEffect(parameters);
                 case "WarpMovementCostSet": return new WarpMovementCostSetEffect(parameters);
-                case "RadiusAllyMovementCostSet":  return new RadiusAllyMovementCostSetEffect(parameters);
-                    //Affiliations
+                case "RadiusAllyMovementCostSet": return new RadiusAllyMovementCostSetEffect(parameters);
+                //Affiliations
                 case "IgnoreUnitAffiliations": return new IgnoreUnitAffiliationsEffect(parameters);
                 case "HPBelowIgnoreUnitAffiliations": return new HPBelowIgnoreUnitAffiliationsEffect(parameters);
                 case "HPAboveIgnoreUnitAffiliations": return new HPAboveIgnoreUnitAffiliationsEffect(parameters);
                 case "ObstructTileRadius": return new ObstructTileRadiusEffect(parameters);
                 case "HPBelowObstructTileRadius": return new HPBelowObstructTileRadiusEffect(parameters);
                 case "HPAboveObstructTileRadius": return new HPAboveObstructTileRadiusEffect(parameters);
-                    //Teleportation
+                //Teleportation
                 case "AllyRadiusTeleport": return new AllyRadiusTeleportEffect(parameters);
                 case "HPBelowAllyRadiusTeleport": return new HPBelowAllyRadiusTeleportEffect(parameters);
                 case "HPAboveAllyRadiusTeleport": return new HPAboveAllyRadiusTeleportEffect(parameters);
@@ -135,12 +135,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "ItemMaxRangeModifier": return new ItemMaxRangeModifierEffect(parameters);
                 case "ObstructItemRanges": return new ObstructItemRangesEffect(parameters);
                 //Unit Radius Stat Effects
-                    //Normal
+                //Normal
                 case "AllyRadiusCombatStatModifier": return new AllyRadiusCombatStatModifierEffect(parameters);
                 case "AllyRadiusStatModifier": return new AllyRadiusStatModifierEffect(parameters);
                 case "EnemyRadiusCombatStatModifier": return new EnemyRadiusCombatStatModifierEffect(parameters);
                 case "EnemyRadiusStatModifier": return new EnemyRadiusStatModifierEffect(parameters);
-                    //Inverted
+                //Inverted
                 case "AllyRadiusSelfCombatStatModifier": return new AllyRadiusSelfCombatStatModifierEffect(parameters);
                 case "AllyRadiusSelfStatModifier": return new AllyRadiusSelfStatModifierEffect(parameters);
                 case "NoAllyRadiusSelfCombatStatModifier": return new NoAllyRadiusSelfCombatStatModifierEffect(parameters);
@@ -156,7 +156,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         }
 
         #region Static Functions
-        
+
         public static IDictionary<string, Skill> BuildDictionary(SkillsConfig config)
         {
             IDictionary<string, Skill> skills = new Dictionary<string, Skill>();
@@ -180,7 +180,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
 
             return skills;
         }
-        
+
         #endregion
     }
 }

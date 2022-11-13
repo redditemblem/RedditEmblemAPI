@@ -10,6 +10,7 @@
       "HasHeaderTopLeft": false, //Optional, defaults to false
       "HasHeaderBottomRight": false, //Optional, defaults to false
       "CalculatePairedUnitRanges": true, //Optional, defaults to true
+      "ItemMaxRangeAllowedForCalculation": 15, //Optional, defaults to 15
       "UnitMovementStatName": "Mov", //Optional, defaults to "Mov"
       "CoordinateFormat": 0 //Optional, defaults to XY (0). 0 = XY, 1 = alphanumerical
     },

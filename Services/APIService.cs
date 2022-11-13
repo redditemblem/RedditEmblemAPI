@@ -58,7 +58,7 @@ namespace RedditEmblemAPI.Services
         public ConvoyData LoadConvoyData(string teamName)
         {
             JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
-            if(config.Convoy == null)
+            if (config.Convoy == null)
                 throw new ConvoyNotConfiguredException();
             QueryGoogleSheets(config, config.GetConvoyBatchQueries());
 
@@ -73,7 +73,7 @@ namespace RedditEmblemAPI.Services
         public ShopData LoadShopData(string teamName)
         {
             JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
-            if(config.Shop == null)
+            if (config.Shop == null)
                 throw new ShopNotConfiguredException();
             QueryGoogleSheets(config, config.GetShopBatchQueries());
 
@@ -137,7 +137,7 @@ namespace RedditEmblemAPI.Services
                     return (JSONConfiguration)serializer.Deserialize(file, typeof(JSONConfiguration));
                 }
             }
-            catch(FileNotFoundException)
+            catch (FileNotFoundException)
             {
                 throw new TeamConfigurationNotFoundException(Path.GetFileNameWithoutExtension(filePath));
             }
@@ -152,7 +152,7 @@ namespace RedditEmblemAPI.Services
         /// </summary>
         /// <param name="config"></param>
         /// <param name="queries"></param>
-        private void QueryGoogleSheets( JSONConfiguration config, IList<Query> queries)
+        private void QueryGoogleSheets(JSONConfiguration config, IList<Query> queries)
         {
             SheetsService service = new SheetsService(new BaseClientService.Initializer()
             {
@@ -211,7 +211,7 @@ namespace RedditEmblemAPI.Services
             catch (Exception ex)
             {
                 throw new GoogleSheetsQueryFailedException(string.Join(", ", queries.Select(q => q.Sheet)), ex);
-            } 
+            }
         }
 
         #endregion

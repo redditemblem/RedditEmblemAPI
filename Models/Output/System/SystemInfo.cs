@@ -154,8 +154,8 @@ namespace RedditEmblemAPI.Models.Output.System
                     this.Battalions.Remove(key);
 
             //Cull unused gambits
-            foreach(string key in this.Gambits.Keys.ToList())
-                if(!this.Gambits[key].Matched)
+            foreach (string key in this.Gambits.Keys.ToList())
+                if (!this.Gambits[key].Matched)
                     this.Gambits.Remove(key);
         }
 
@@ -170,7 +170,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.TerrainTypes = TerrainType.BuildDictionary(config.TerrainTypes);
             this.Affiliations = Affiliation.BuildDictionary(config.Affiliations);
             this.Items = Item.BuildDictionary(config.Items, this.Tags); //note: items are dependent on Tags
-            
+
         }
 
         /// <summary>

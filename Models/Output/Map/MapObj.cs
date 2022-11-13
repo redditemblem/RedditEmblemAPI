@@ -51,13 +51,13 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// The height of the map in number of tiles.
         /// </summary>
         [JsonIgnore]
-        public int TileHeight { get; private set; }
+        public int MapHeightInTiles { get; private set; }
 
         /// <summary>
         /// The width of the map in number of tiles.
         /// </summary>
         [JsonIgnore]
-        public int TileWidth { get; private set; }
+        public int MapWidthInTiles { get; private set; }
 
         /// <summary>
         /// Collection of constant values for doing calculations.
@@ -158,8 +158,8 @@ namespace RedditEmblemAPI.Models.Output.Map
                 tileWidth -= 1;
             }
 
-            this.TileHeight = tileHeight;
-            this.TileWidth = tileWidth;
+            this.MapHeightInTiles = tileHeight;
+            this.MapWidthInTiles = tileWidth;
         }
 
         /// <summary>
@@ -178,13 +178,13 @@ namespace RedditEmblemAPI.Models.Output.Map
                 IList<IList<object>> tileData = config.Query.Data;
                 IDictionary<int, List<Tile>> warpGroups = new Dictionary<int, List<Tile>>();
 
-                if (tileData.Count != this.TileHeight)
-                    throw new UnexpectedMapHeightException(tileData.Count, this.TileHeight, config.Query.Sheet);
+                if (tileData.Count != this.MapHeightInTiles)
+                    throw new UnexpectedMapHeightException(tileData.Count, this.MapHeightInTiles, config.Query.Sheet);
 
                 foreach (List<object> row in tileData)
                 {
-                    if (row.Count != this.TileWidth)
-                        throw new UnexpectedMapWidthException(row.Count, this.TileWidth, config.Query.Sheet);
+                    if (row.Count != this.MapWidthInTiles)
+                        throw new UnexpectedMapWidthException(row.Count, this.MapWidthInTiles, config.Query.Sheet);
 
                     List<Tile> currentRow = new List<Tile>();
                     foreach (object tile in row)
@@ -274,7 +274,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                 if (tileData.Count > this.Tiles.Count)
                     throw new UnexpectedMapHeightException(tileData.Count, this.Tiles.Count, config.Query.Sheet);
 
-                int idIterator = 1; 
+                int idIterator = 1;
                 for (int r = 0; r < tileData.Count; r++)
                 {
                     IList<object> row = tileData[r];

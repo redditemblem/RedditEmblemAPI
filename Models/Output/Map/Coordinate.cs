@@ -8,7 +8,7 @@ namespace RedditEmblemAPI.Models.Output.Map
     /// <summary>
     /// A coordinate pair (ex. "x,y") on the map.
     /// </summary>
-    public class Coordinate 
+    public class Coordinate
     {
         #region Constants
 
@@ -67,7 +67,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <exception cref="AlphanumericCoordinateFormattingException"></exception>
         public Coordinate(CoordinateFormat coordinateFormat, string coord)
         {
-            if(string.IsNullOrEmpty(coord))
+            if (string.IsNullOrEmpty(coord))
             {
                 this.X = 0;
                 this.Y = 0;
@@ -75,7 +75,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                 return;
             }
 
-            if(coordinateFormat == CoordinateFormat.XY)
+            if (coordinateFormat == CoordinateFormat.XY)
             {
                 //Error if the passed string is not a tuple of non-zero, positive integers
                 string[] split = coord.Split(',');
@@ -97,7 +97,7 @@ namespace RedditEmblemAPI.Models.Output.Map
 
                 this.X = 0;
                 string alpha = match.Groups[1].Value;
-                for(int i = 0; i < alpha.Length; i++)
+                for (int i = 0; i < alpha.Length; i++)
                 {
                     int letter = (int)alpha[alpha.Length - i - 1] - 64;
                     this.X += letter * (int)Math.Pow(26, i);
@@ -148,7 +148,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         private string BuildAsTextValue_Alphanumerical()
         {
             string alpha = string.Empty;
-            if (this.X < 1 || this.Y < 1) 
+            if (this.X < 1 || this.Y < 1)
                 return alpha;
 
             int x = this.X;

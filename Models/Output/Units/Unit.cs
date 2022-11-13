@@ -212,7 +212,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             foreach (UnitWeaponRanksConfig rank in config)
             {
                 string rankType;
-                if(!string.IsNullOrEmpty(rank.SourceName)) rankType = rank.SourceName;
+                if (!string.IsNullOrEmpty(rank.SourceName)) rankType = rank.SourceName;
                 else rankType = DataParser.OptionalString(data, rank.Type, "Weapon Rank Type");
 
                 string rankLetter = DataParser.OptionalString(data, rank.Rank, "Weapon Rank Letter");
@@ -449,7 +449,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         public string GetUnitMovementType()
         {
             OverrideMovementTypeEffect overrideMovementType = this.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<OverrideMovementTypeEffect>().FirstOrDefault();
-            if(overrideMovementType != null)
+            if (overrideMovementType != null)
                 return overrideMovementType.MovementType;
 
             if (this.ClassList.Count > 0)

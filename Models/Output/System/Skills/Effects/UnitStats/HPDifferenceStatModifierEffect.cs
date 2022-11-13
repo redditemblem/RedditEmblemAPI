@@ -46,7 +46,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
             if (modifier == 0)
                 return;
 
-            foreach(string statName in this.Stats)
+            foreach (string statName in this.Stats)
             {
                 ModifiedStatValue stat;
                 if (!unit.Stats.General.TryGetValue(statName, out stat))

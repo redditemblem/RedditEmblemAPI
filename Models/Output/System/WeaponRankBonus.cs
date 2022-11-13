@@ -87,7 +87,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 catch (Exception ex)
                 {
                     throw new WeaponRankBonusProcessingException((row.ElementAtOrDefault(config.Category) ?? string.Empty).ToString(),
-                                                                 (row.ElementAtOrDefault(config.Rank) ?? string.Empty).ToString(), 
+                                                                 (row.ElementAtOrDefault(config.Rank) ?? string.Empty).ToString(),
                                                                  ex);
                 }
             }

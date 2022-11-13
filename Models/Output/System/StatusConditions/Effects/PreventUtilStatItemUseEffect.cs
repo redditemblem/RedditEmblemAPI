@@ -32,7 +32,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         public override void Apply(Unit unit, StatusCondition status)
         {
             //Mark use as prevented for all items with a utilized stat configured in UtilizedStats
-            foreach(UnitInventoryItem item in unit.Inventory.Items.Where(i => i.Item.UtilizedStats.Intersect(this.UtilizedStats).Any()))
+            foreach (UnitInventoryItem item in unit.Inventory.Items.Where(i => i.Item.UtilizedStats.Intersect(this.UtilizedStats).Any()))
                 item.IsUsePrevented = true;
         }
     }

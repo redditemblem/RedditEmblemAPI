@@ -96,6 +96,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         public int MaxRangeModifier { get; set; }
 
         /// <summary>
+        /// Flag indicating whether or not this item's max range value exceeds the maximum allowed.
+        /// </summary>
+        public bool MaxRangeExceedsCalculationLimit { get; set; }
+
+        /// <summary>
         /// Flag indicating that the item can be used a 1 range even when its min and max range normally don't allow it.
         /// </summary>
         public bool AllowMeleeRange { get; set; }
@@ -170,8 +175,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         {
             if (this.Item.Range.MinimumRequiresCalculation)
                 this.CalculatedMinRange = CalculateItemRange(this.Item.Range.MinimumRaw, unit);
-            
-            if(this.Item.Range.MaximumRequiresCalculation)
+
+            if (this.Item.Range.MaximumRequiresCalculation)
                 this.CalculatedMaxRange = CalculateItemRange(this.Item.Range.MaximumRaw, unit);
         }
 
@@ -183,7 +188,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             };
 
             decimal equationResult = EquationParser.Evaluate(equation, unit, options);
-            return Math.Max(1, Convert.ToInt32(Math.Floor(equationResult)));         
+            return Math.Max(1, Convert.ToInt32(Math.Floor(equationResult)));
         }
     }
 }

@@ -70,8 +70,6 @@ namespace RedditEmblemAPI.Models.Output.System
 
             if (this.Minimum > this.Maximum && !this.MaximumRequiresCalculation)
                 throw new MinimumGreaterThanMaximumException("Minimum Range", "Maximum Range");
-            if (this.Maximum > 15 && this.Maximum != 99)
-                throw new ItemRangeMaximumTooLargeException(15);
 
             this.Shape = GetItemRangeShape(DataParser.OptionalString(data, config.Shape, "Range Shape"));
             this.CanOnlyUseBeforeMovement = DataParser.OptionalBoolean_YesNo(data, config.CanOnlyUseBeforeMovement, "Can Only Use Before Movement");
@@ -80,7 +78,8 @@ namespace RedditEmblemAPI.Models.Output.System
         private int RangeValueHandler_Minimum(List<string> data, int index)
         {
             try
-            {   this.MinimumRaw = data.ElementAtOrDefault<string>(index) ?? string.Empty;
+            {
+                this.MinimumRaw = data.ElementAtOrDefault<string>(index) ?? string.Empty;
                 return DataParser.Int_Positive(data, index, "Minimum Range");
             }
             catch (PositiveIntegerException ex)

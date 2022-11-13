@@ -56,7 +56,8 @@ namespace RedditEmblemAPI
             app.UseHttpsRedirection();
             app.UseRouting();
 
-            app.UseEndpoints(endpoints => {
+            app.UseEndpoints(endpoints =>
+            {
                 endpoints.MapControllers();
             });
         }

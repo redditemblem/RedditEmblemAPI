@@ -84,17 +84,17 @@ namespace RedditEmblemAPI.Models.Output.System
             this.HPModifier = DataParser.OptionalInt_Any(data, config.HPModifier, "HP Modifier");
 
             this.CombatStatModifiers = new Dictionary<string, int>();
-            foreach(NamedStatConfig stat in config.CombatStatModifiers)
+            foreach (NamedStatConfig stat in config.CombatStatModifiers)
             {
                 int val = DataParser.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
                 if (val == 0) continue;
 
                 this.CombatStatModifiers.Add(stat.SourceName, val);
             }
-                
+
 
             this.StatModifiers = new Dictionary<string, int>();
-            foreach(NamedStatConfig stat in config.StatModifiers)
+            foreach (NamedStatConfig stat in config.StatModifiers)
             {
                 int val = DataParser.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
                 if (val == 0) continue;

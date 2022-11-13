@@ -1,5 +1,4 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output.Map;
+﻿using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
@@ -36,9 +35,6 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
 
             this.Categories = DataParser.List_StringCSV(parameters, 0);
             this.Value = DataParser.Int_NonZeroPositive(parameters, 1, "Param2");
-
-            if (this.Value > 15)
-                throw new ItemRangeMaximumTooLargeException(15);
         }
 
         /// <summary>
@@ -46,7 +42,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// </summary>
         public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
-            foreach(UnitInventoryItem item in unit.Inventory.Items)
+            foreach (UnitInventoryItem item in unit.Inventory.Items)
             {
                 //The item must have a listed category
                 if (!this.Categories.Contains(item.Item.Category))

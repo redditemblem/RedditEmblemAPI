@@ -36,7 +36,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
         /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
-        public HPBelowCombatStatModifierEffect (List<string> parameters)
+        public HPBelowCombatStatModifierEffect(List<string> parameters)
             : base(parameters)
         {
             this.HPPercentage = DataParser.Int_Positive(parameters, 0, "Param1");

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RedditEmblemAPI.Models.Exceptions.Query;
 using RedditEmblemAPI.Services;
 using System;
-using RedditEmblemAPI.Models.Exceptions.Query;
 
 namespace RedditEmblemAPI.Controllers
 {
@@ -28,7 +28,7 @@ namespace RedditEmblemAPI.Controllers
                 var data = _sheetsService.LoadMapData(teamName);
                 return Ok(data);
             }
-            catch(MapDataLockedException ex)
+            catch (MapDataLockedException ex)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, ex);
             }
@@ -104,6 +104,14 @@ namespace RedditEmblemAPI.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
+        }
+
+        [HttpGet("architecture")]
+        public IActionResult GetArchitectureInfo()
+        {
+            var architecture = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture;
+            var dotnetVersion = Environment.Version.ToString();
+            return Ok($"Architecture: {architecture}, .NET Version: {dotnetVersion}");
         }
     }
 }

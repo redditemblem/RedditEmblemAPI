@@ -56,6 +56,11 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         public bool CalculatePairedUnitRanges { get; set; } = true;
 
         /// <summary>
+        /// Optional. The maximum item range value that will be allowed to be calculated.
+        /// </summary>
+        public int ItemMaxRangeAllowedForCalculation { get; set; } = 15;
+
+        /// <summary>
         /// Optional. The name of the Unit Stat to use as the movement stat when calculating ranges. Defaults to "Mov".
         /// </summary>
         public string UnitMovementStatName { get; set; } = "Mov";

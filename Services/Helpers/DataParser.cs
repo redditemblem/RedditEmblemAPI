@@ -267,7 +267,7 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             if (string.IsNullOrEmpty(value))
                 throw new RequiredValueNotProvidedException(fieldName);
-            
+
             return value.Trim();
         }
 
@@ -284,7 +284,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static string OptionalString(string value, string fieldName)
         {
-            if(string.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
                 return string.Empty;
 
             return value.Trim();

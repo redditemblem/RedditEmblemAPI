@@ -9,6 +9,6 @@ namespace RedditEmblemAPI.Models.Exceptions.Query
         /// </summary>
         public GoogleSheetsQueryReturnedNullException(string sheetName)
             : base($"The \"{sheetName}\" sheet query returned no data, but is required to.")
-        {}
+        { }
     }
 }

@@ -60,9 +60,9 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             string name = this.FullName;
 
-            if(config.RemainingTurns != -1)
+            if (config.RemainingTurns != -1)
             {
-                this.RemainingTurns = DataParser.OptionalInt_Positive(data, config.RemainingTurns, $"{this.FullName} Remaining Turns");  
+                this.RemainingTurns = DataParser.OptionalInt_Positive(data, config.RemainingTurns, $"{this.FullName} Remaining Turns");
             }
             else
             {
@@ -78,7 +78,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             this.AdditionalStats = new Dictionary<string, int>();
-            foreach(NamedStatConfig stat in config.AdditionalStats)
+            foreach (NamedStatConfig stat in config.AdditionalStats)
             {
                 int value = DataParser.OptionalInt_Any(data, stat.Value, $"{this.FullName} {stat.SourceName}");
                 if (value == 0) continue;

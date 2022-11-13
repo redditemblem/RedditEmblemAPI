@@ -13,6 +13,7 @@ using RedditEmblemAPI.Models.Output.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace RedditEmblemAPI.Services.Helpers
 {
@@ -50,7 +51,7 @@ namespace RedditEmblemAPI.Services.Helpers
             }
 
             //Add units to the map
-            foreach(Unit unit in units)
+            foreach (Unit unit in units)
             {
                 try
                 {
@@ -101,7 +102,7 @@ namespace RedditEmblemAPI.Services.Helpers
             }
 
             //Apply skill and status condition effects
-            foreach(Unit unit in units)
+            foreach (Unit unit in units)
             {
                 //Skill effects
                 try
@@ -109,7 +110,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     foreach (Skill skill in unit.SkillList.Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard)))
                         skill.Effects.Where(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard).ToList().ForEach(e => e.Apply(unit, skill, map, units));
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new UnitSkillEffectProcessingException(unit.Name, ex);
                 }
@@ -118,10 +119,10 @@ namespace RedditEmblemAPI.Services.Helpers
                 try
                 {
                     foreach (UnitStatus status in unit.StatusConditions)
-                        foreach(StatusConditionEffect effect in status.StatusObj.Effects)
+                        foreach (StatusConditionEffect effect in status.StatusObj.Effects)
                             effect.Apply(unit, status.StatusObj);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new UnitStatusConditionEffectProcessingException(unit.Name, ex);
                 }
@@ -144,10 +145,20 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Item ranges
                 try
                 {
-                    foreach (UnitInventoryItem item in unit.Inventory.Items.Where(i => i.Item.Range.MinimumRequiresCalculation || i.Item.Range.MaximumRequiresCalculation))
-                        item.CalculateItemRanges(unit);
+                    foreach (UnitInventoryItem item in unit.Inventory.Items)
+                    {
+                        if(item.Item.Range.MinimumRequiresCalculation || item.Item.Range.MaximumRequiresCalculation)
+                            item.CalculateItemRanges(unit);
+
+                        int maxRange = item.ModifiedMaxRangeValue;
+                        if (item.Item.Range.Shape == ItemRangeShape.Square || item.Item.Range.Shape == ItemRangeShape.Saltire || item.Item.Range.Shape == ItemRangeShape.Star)
+                            maxRange *= 2;
+                        if (maxRange > map.Constants.ItemMaxRangeAllowedForCalculation && maxRange < 99)
+                            item.MaxRangeExceedsCalculationLimit = true;
+                    }
+                        
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new UnitInventoryItemRangeFormulaProcessingException(unit.Name, ex);
                 }
@@ -202,7 +213,7 @@ namespace RedditEmblemAPI.Services.Helpers
                             tile.UnitData.IsUnitAnchor = true;
                         }
                     }
-                    
+
                     //Apply tile modifiers
                     ApplyTileTerrainTypeToUnit(unit, tile);
                     ApplyTileObjectModsToUnit(unit, tile);
@@ -233,10 +244,10 @@ namespace RedditEmblemAPI.Services.Helpers
 
         private static void ApplyTileObjectModsToUnit(Unit unit, Tile tile)
         {
-            foreach(TileObjectInstance effect in tile.TileObjects)
+            foreach (TileObjectInstance effect in tile.TileObjects)
             {
                 //Apply combat stat modifiers
-                foreach(KeyValuePair<string, int> modifier in effect.TileObject.CombatStatModifiers)
+                foreach (KeyValuePair<string, int> modifier in effect.TileObject.CombatStatModifiers)
                 {
                     ModifiedStatValue stat;
                     if (!unit.Stats.Combat.TryGetValue(modifier.Key, out stat))

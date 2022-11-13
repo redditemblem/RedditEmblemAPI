@@ -10,7 +10,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Processing
         /// </summary>
         /// <param name="unit"></param>
         /// <param name="innerException"></param>
-        public RangeCalculationException(Unit unit, Exception innerException) 
+        public RangeCalculationException(Unit unit, Exception innerException)
             : base($"An error occurred while calculating map ranges for unit \"{unit.Name}\".", innerException)
         { }
     }
