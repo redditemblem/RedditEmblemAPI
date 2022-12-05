@@ -101,20 +101,27 @@
     "Skills": {
       "Query": {
         "Sheet": "Skills",
-        "Selection": "A2:B",
+        "Selection": "A2:F",
         "Orientation": 1
       },
       "Name": 0,
-      "TextFields": [ 1 ]
+      "TextFields": [ 1 ],
+      "Effects": [
+        {
+          "Type": 2,
+          "Parameters": [ 3, 4, 5 ]
+        }
+      ]
     },
     "StatusConditions": {
       "Query": {
         "Sheet": "Status Conditions",
-        "Selection": "A2:C",
+        "Selection": "A2:D",
         "Orientation": 1
       },
       "Name": 0,
-      "TextFields": [ 2 ]
+      "TextFields": [ 2 ],
+      "SpriteURL": 3
     },
     "Tags": {
       "Query": {
