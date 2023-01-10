@@ -8,7 +8,7 @@
       "TileSize": 16,
       "TileSpacing": 0,
       "HasHeaderTopLeft": false,
-      "HasHeaderBottomRight": true,
+      "HasHeaderBottomRight": false,
       "CalculatePairedUnitRanges": true,
       "UnitMovementStatName": "Mov",
       "CoordinateFormat": 1
