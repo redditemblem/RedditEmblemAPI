@@ -1,9 +1,9 @@
 ﻿using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
-namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
+namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
-    public class TerrainTypeMovementCostSetEffect : SkillEffect
+    public class TerrainTypeMovementCostSetEffect_Status : StatusConditionEffect
     {
         #region Attributes
 
@@ -30,7 +30,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Constructor.
         /// </summary>
-        public TerrainTypeMovementCostSetEffect(List<string> parameters)
+        public TerrainTypeMovementCostSetEffect_Status(List<string> parameters)
             : base(parameters)
         {
             this.TerrainTypeGrouping = DataParser.Int_Positive(parameters, 0, "Param1");

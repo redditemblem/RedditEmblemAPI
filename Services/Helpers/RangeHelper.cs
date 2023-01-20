@@ -110,7 +110,9 @@ namespace RedditEmblemAPI.Services.Helpers
             }
 
             CalculateCoordinateMapValues(unitParms, coordinateMap);
-            unitParms.Unit.Ranges.Movement = coordinateMap.Where(c => c.MinDistanceTo <= movementVal && c.MinDistanceTo < 99 && !c.TraversableOnly).Select(c => c.Coordinate).ToList();
+            IEnumerable<Coordinate> movementRangeCoords = coordinateMap.Where(c => c.MinDistanceTo <= movementVal && c.MinDistanceTo < 99 && !c.TraversableOnly).Select(c => c.Coordinate);
+
+            unitParms.Unit.Ranges.Movement = unitParms.Unit.Ranges.Movement.Union(movementRangeCoords).Distinct().ToList();
         }
 
         private void CalculateMultiTileUnitMovementRange(UnitRangeParameters unitParms, int movementVal)
@@ -296,10 +298,13 @@ namespace RedditEmblemAPI.Services.Helpers
                 throw new UnmatchedMovementTypeException(parms.Unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys.ToList());
 
             //Apply movement cost modifiers
-            TerrainTypeMovementCostSetEffect movCostSet = parms.MoveCostSets.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+            TerrainTypeMovementCostSetEffect_Skill movCostSet_Skill = parms.MoveCostSets_Skills.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+            TerrainTypeMovementCostSetEffect_Status movCostSet_Status = parms.MoveCostSets_Statuses.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
             TerrainTypeMovementCostModifierEffect moveCostMod = parms.MoveCostModifiers.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-            if (movCostSet != null && (movCostSet.CanOverride99MoveCost || moveCost < 99))
-                moveCost = movCostSet.Value;
+            if (movCostSet_Status != null && (movCostSet_Status.CanOverride99MoveCost || moveCost < 99))
+                moveCost = movCostSet_Status.Value;
+            else if (movCostSet_Skill != null && (movCostSet_Skill.CanOverride99MoveCost || moveCost < 99))
+                moveCost = movCostSet_Skill.Value;
             else if (moveCostMod != null && moveCost < 99)
                 moveCost += moveCostMod.Value;
 
@@ -606,11 +611,11 @@ namespace RedditEmblemAPI.Services.Helpers
 
         public bool IgnoresAffiliations { get; set; }
 
-        public List<TerrainTypeMovementCostModifierEffect> MoveCostModifiers { get; set; }
-        public List<TerrainTypeMovementCostSetEffect> MoveCostSets { get; set; }
-
-        public List<WarpMovementCostModifierEffect> WarpCostModifiers { get; set; }
-        public List<WarpMovementCostSetEffect> WarpCostSets { get; set; }
+        public IEnumerable<TerrainTypeMovementCostModifierEffect> MoveCostModifiers { get; set; }
+        public IEnumerable<TerrainTypeMovementCostSetEffect_Skill> MoveCostSets_Skills { get; set; }
+        public IEnumerable<TerrainTypeMovementCostSetEffect_Status> MoveCostSets_Statuses { get; set; }
+        public IEnumerable<WarpMovementCostModifierEffect> WarpCostModifiers { get; set; }
+        public IEnumerable<WarpMovementCostSetEffect> WarpCostSets { get; set; }
 
         #endregion
 
@@ -619,10 +624,11 @@ namespace RedditEmblemAPI.Services.Helpers
             this.Unit = unit;
 
             this.IgnoresAffiliations = unit.SkillList.SelectMany(s => s.Effects).OfType<IIgnoreUnitAffiliations>().Any(e => e.IsActive(unit));
-            this.MoveCostModifiers = unit.SkillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostModifierEffect>().ToList();
-            this.MoveCostSets = unit.SkillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect>().ToList();
-            this.WarpCostModifiers = unit.SkillList.SelectMany(s => s.Effects).OfType<WarpMovementCostModifierEffect>().ToList();
-            this.WarpCostSets = unit.SkillList.SelectMany(s => s.Effects).OfType<WarpMovementCostSetEffect>().ToList();
+            this.MoveCostModifiers = unit.SkillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostModifierEffect>();
+            this.MoveCostSets_Skills = unit.SkillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect_Skill>();
+            this.MoveCostSets_Statuses = unit.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<TerrainTypeMovementCostSetEffect_Status>();
+            this.WarpCostModifiers = unit.SkillList.SelectMany(s => s.Effects).OfType<WarpMovementCostModifierEffect>();
+            this.WarpCostSets = unit.SkillList.SelectMany(s => s.Effects).OfType<WarpMovementCostSetEffect>();
         }
     }
 

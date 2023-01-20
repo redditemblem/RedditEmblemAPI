@@ -104,10 +104,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 //Terrain Type Effects
                 case "TerrainTypeCombatStatModifier": return new TerrainTypeCombatStatModifierEffect(parameters);
                 case "TerrainTypeStatModifier": return new TerrainTypeStatModifierEffect(parameters);
+                case "TerrainTypeCombatStatBonusCombatStatModifier": return new TerrainTypeCombatStatBonusCombatStatModifierEffect(parameters);
+                case "TerrainTypeStatBonusCombatStatModifier": return new TerrainTypeStatBonusCombatStatModifierEffect(parameters);
+                case "TerrainTypeCombatStatBonusStatModifier": return new TerrainTypeCombatStatBonusStatModifierEffect(parameters);
+                case "TerrainTypeStatBonusStatModifier": return new TerrainTypeStatBonusStatModifierEffect(parameters);
                 //Unit Movement Range Effects
                 //Movement Costs
                 case "TerrainTypeMovementCostModifier": return new TerrainTypeMovementCostModifierEffect(parameters);
-                case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect(parameters);
+                case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect_Skill(parameters);
                 case "WarpMovementCostModifier": return new WarpMovementCostModifierEffect(parameters);
                 case "WarpMovementCostSet": return new WarpMovementCostSetEffect(parameters);
                 case "RadiusAllyMovementCostSet": return new RadiusAllyMovementCostSetEffect(parameters);

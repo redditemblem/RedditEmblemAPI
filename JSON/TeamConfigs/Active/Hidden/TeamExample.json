@@ -226,7 +226,7 @@
       "Effects": [
         {
           "Type": 6,
-          "Parameters": [ 7, 8 ]
+          "Parameters": [ 7, 8, 9 ]
         }
       ]
     },
@@ -237,7 +237,7 @@
         "Orientation": 1
       },
       "Name": 0,
-      "HPModifier": 3,
+      "HPModifier": 4,
       "CombatStatModifiers": [
         {
           "SourceName": "Avo",
@@ -248,27 +248,37 @@
           "Value": 2
         }
       ],
+      "StatModifiers": [
+        {
+          "SourceName": "Def",
+          "Value": 3
+        },
+        {
+          "SourceName": "Res",
+          "Value": 3
+        }
+      ],
       "MovementCosts": [
         {
           "SourceName": "Foot",
-          "Value": 4
-        },
-        {
-          "SourceName": "Mounted",
           "Value": 5
         },
         {
-          "SourceName": "Flying",
+          "SourceName": "Mounted",
           "Value": 6
+        },
+        {
+          "SourceName": "Flying",
+          "Value": 7
         }
       ],
-      "WarpType": 7,
-      "WarpCost": 8,
-      "CannotStopOn": 9,
-      "BlocksItems": 10,
-      "RestrictAffiliations": 11,
-      "TextFields": [ 12 ],
-      "Groupings": 13
+      "WarpType": 8,
+      "WarpCost": 9,
+      "CannotStopOn": 10,
+      "BlocksItems": 11,
+      "RestrictAffiliations": 12,
+      "TextFields": [ 13 ],
+      "Groupings": 14
     },
     "TileObjects": {
       "Query": {

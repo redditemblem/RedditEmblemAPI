@@ -112,6 +112,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
             {
                 case "OverrideMovement": return new OverrideMovementEffect(parameters);
                 case "OverrideMovementType": return new OverrideMovementTypeEffect(parameters);
+                case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect_Status(parameters);
                 case "DoesNotBlockEnemyAffiliations": return new DoesNotBlockEnemyAffiliationsEffect(parameters);
                 case "PreventAllItemUse": return new PreventAllItemUseEffect(parameters);
                 case "PreventUtilStatItemUse": return new PreventUtilStatItemUseEffect(parameters);
