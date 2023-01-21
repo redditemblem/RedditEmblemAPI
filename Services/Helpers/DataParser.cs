@@ -188,6 +188,26 @@ namespace RedditEmblemAPI.Services.Helpers
         }
 
         /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as a decimal. Errors if the value is less than 1.
+        /// </summary>
+        public static decimal Decimal_OneOrGreater(List<string> data, int index, string fieldName)
+        {
+            return Decimal_OneOrGreater(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName); 
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="value"/> as a decimal. Errors if that value is less than 1.
+        /// </summary>
+        /// <exception cref="OneOrGreaterDecimalException"></exception>
+        public static decimal Decimal_OneOrGreater(string value, string fieldName)
+        {
+            decimal val;
+            if (!decimal.TryParse(value, out val) || val < 1)
+                throw new OneOrGreaterDecimalException(fieldName, value);
+            return val;
+        }
+
+        /// <summary>
         /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as an integer. Errors if the value is above or equal to 0.
         /// </summary>
         public static decimal Decimal_Negative(List<string> data, int index, string fieldName)
@@ -235,6 +255,16 @@ namespace RedditEmblemAPI.Services.Helpers
             if (string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
                 return defaultValueIfNull;
             return Decimal_NonZeroPositive(data, index, fieldName);
+        }
+
+        /// <summary>
+        /// Returns the numerical value in <paramref name="data"/> at <paramref name="index"/> as a decimal. Errors if the value is less than 1. If the value is empty, returns <paramref name="defaultValueIfNull"/> instead.
+        /// </summary>
+        public static decimal OptionalDecimal_OneOrGreater(List<string> data, int index, string fieldName, decimal defaultValueIfNull = 1)
+        {
+            if(string.IsNullOrEmpty(data.ElementAtOrDefault<string>(index)))
+                return defaultValueIfNull;
+            return Decimal_OneOrGreater(data, index, fieldName);
         }
 
         /// <summary>

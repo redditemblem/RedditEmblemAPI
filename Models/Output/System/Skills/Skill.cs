@@ -101,6 +101,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 //Equipped Item Effects
                 case "EquippedCategoryCombatStatModifier": return new EquippedCategoryCombatStatModifierEffect(parameters);
                 case "EquippedCategoryStatModifier": return new EquippedCategoryStatModifierEffect(parameters);
+                //Item Effects
+                case "ItemMaxUsesMultiplier": return new ItemMaxUsesMultiplierEffect(parameters);
                 //Terrain Type Effects
                 case "TerrainTypeCombatStatModifier": return new TerrainTypeCombatStatModifierEffect(parameters);
                 case "TerrainTypeStatModifier": return new TerrainTypeStatModifierEffect(parameters);

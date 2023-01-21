@@ -64,6 +64,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         public int Uses { get; set; }
 
         /// <summary>
+        /// The maximum number of uses the item has. For items with single or infinite uses, this value is 0. (Copied from <c>this.Item</c> on initialization & match)
+        /// </summary>
+        public int MaxUses { get; set; }
+
+        /// <summary>
         /// The calculated minimum range for the item, including modifier values.
         /// </summary>
         [JsonIgnore]
@@ -166,6 +171,8 @@ namespace RedditEmblemAPI.Models.Output.Units
                 throw new UnmatchedItemException(name);
             this.Item = match;
             match.Matched = true;
+
+            this.MaxUses = this.Item.MaxUses;
         }
 
         /// <summary>
