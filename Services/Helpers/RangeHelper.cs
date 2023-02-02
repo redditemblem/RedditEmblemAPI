@@ -162,7 +162,7 @@ namespace RedditEmblemAPI.Services.Helpers
             }
 
             //Units may move onto obstructed tiles, but no further.
-            if (tiles.Any(t => UnitIsBlocked(parms.Unit, t.UnitData.UnitsObstructingMovement, parms.IgnoresAffiliations))) return;
+            if (tiles.Any(t => UnitIsBlocked(parms.Unit, t.UnitData.UnitsObstructingMovement, parms.IgnoresAffiliations, parms.Unit.Location.OriginTiles.Contains(t)))) return;
 
             //Navigate in each cardinal direction, do not repeat tiles in this path
             //Left
@@ -227,7 +227,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     coord.TraversableOnly = true;
 
                 //Units may move onto obstructed tiles, but no further.
-                if (UnitIsBlocked(parms.Unit, tile.UnitData.UnitsObstructingMovement, parms.IgnoresAffiliations))
+                if (UnitIsBlocked(parms.Unit, tile.UnitData.UnitsObstructingMovement, parms.IgnoresAffiliations, parms.Unit.Location.OriginTiles.Contains(tile)))
                     coord.EndNode = true;
             }
 
@@ -287,7 +287,7 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             // If there is a Unit occupying this tile, check for affiliation collisions
             // Check if this tile blocks units of a certain affiliation
-            if (UnitIsBlocked(parms.Unit, tile.UnitData.Unit, parms.IgnoresAffiliations) ||
+            if (UnitIsBlocked(parms.Unit, tile.UnitData.Unit, parms.IgnoresAffiliations, parms.Unit.Location.OriginTiles.Contains(tile)) ||
                 (tile.TerrainTypeObj.RestrictAffiliations.Any() && !tile.TerrainTypeObj.RestrictAffiliations.Contains(parms.Unit.AffiliationObj.Grouping))
                )
                 return 99;
@@ -344,20 +344,20 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Returns true if <paramref name="movingUnit"/> is blocked by any of the units in <paramref name="blockingUnits"/>.
         /// </summary>
-        private bool UnitIsBlocked(Unit movingUnit, List<Unit> blockingUnits, bool ignoreAffiliations)
+        private bool UnitIsBlocked(Unit movingUnit, List<Unit> blockingUnits, bool ignoreAffiliations, bool isOnOriginTile)
         {
             //If unit ignores affiliations, never be blocked
             //Skip further logic
             if (ignoreAffiliations)
                 return false;
 
-            return blockingUnits.Any(u => UnitIsBlocked(movingUnit, u, ignoreAffiliations));
+            return blockingUnits.Any(u => UnitIsBlocked(movingUnit, u, ignoreAffiliations, isOnOriginTile));
         }
 
         /// <summary>
         /// Returns true if <paramref name="movingUnit"/> is blocked by <paramref name="blockingUnit"/>.
         /// </summary>
-        private bool UnitIsBlocked(Unit movingUnit, Unit blockingUnit, bool ignoreAffiliations)
+        private bool UnitIsBlocked(Unit movingUnit, Unit blockingUnit, bool ignoreAffiliations, bool isOnOriginTile)
         {
             //If unit ignores affiliations, never be blocked
             if (ignoreAffiliations)
@@ -365,6 +365,10 @@ namespace RedditEmblemAPI.Services.Helpers
 
             //Check if both units exist
             if (movingUnit == null || blockingUnit == null)
+                return false;
+
+            //If the moving unit is on its origin tile, it is not impacted by blocking units
+            if (isOnOriginTile)
                 return false;
 
             //Check if units are the same
