@@ -38,7 +38,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public WeaponRankBonus(WeaponRankBonusesConfig config, List<string> data)
+        public WeaponRankBonus(WeaponRankBonusesConfig config, IEnumerable<string> data)
         {
             this.Category = DataParser.String(data, config.Category, "Category");
             this.Rank = DataParser.OptionalString(data, config.Rank, "Rank");
@@ -68,12 +68,14 @@ namespace RedditEmblemAPI.Models.Output.System
         public static List<WeaponRankBonus> BuildList(WeaponRankBonusesConfig config)
         {
             List<WeaponRankBonus> weaponRankBonuses = new List<WeaponRankBonus>();
+            if (config == null || config.Query == null)
+                return weaponRankBonuses;
 
             foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    List<string> bonus = row.Select(r => r.ToString()).ToList();
+                    IEnumerable<string> bonus = row.Select(r => r.ToString());
                     string category = DataParser.OptionalString(bonus, config.Category, "Category");
                     string rank = DataParser.OptionalString(bonus, config.Rank, "Rank");
 

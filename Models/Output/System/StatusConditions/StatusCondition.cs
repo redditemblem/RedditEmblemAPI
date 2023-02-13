@@ -3,6 +3,7 @@ using RedditEmblemAPI.Models.Configuration.System.Statuses;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
 using RedditEmblemAPI.Services.Helpers;
 using System;
@@ -14,7 +15,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
     /// <summary>
     /// Object representing a status condition in a team's system.
     /// </summary>
-    public class StatusCondition
+    public class StatusCondition : IMatchable
     {
         #region Attributes
 
@@ -70,8 +71,9 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// <summary>
         /// Constructor.
         /// </summary>
-        public StatusCondition(StatusConditionConfig config, List<string> data)
+        public StatusCondition(StatusConditionConfig config, IEnumerable<string> data)
         {
+            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.Type = ParseStatusConditionType(data, config.Type);
@@ -93,7 +95,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// Matches the value in <paramref name="data"/> at <paramref name="index"/> to a <c>StatusType</c> enum.
         /// </summary>
         /// <exception cref="UnmatchedStatusConditionTypeException"></exception>
-        private StatusConditionType ParseStatusConditionType(List<string> data, int index)
+        private StatusConditionType ParseStatusConditionType(IEnumerable<string> data, int index)
         {
             string name = DataParser.OptionalString(data, index, "Type");
             switch (name)
@@ -129,12 +131,14 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         public static IDictionary<string, StatusCondition> BuildDictionary(StatusConditionConfig config)
         {
             IDictionary<string, StatusCondition> statusConditions = new Dictionary<string, StatusCondition>();
+            if (config == null || config.Query == null)
+                return statusConditions;
 
             foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    List<string> stat = row.Select(r => r.ToString()).ToList();
+                    IEnumerable<string> stat = row.Select(r => r.ToString());
                     string name = DataParser.OptionalString(stat, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
@@ -148,6 +152,31 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
             }
 
             return statusConditions;
+        }
+
+        /// <summary>
+        /// Matches each of the strings in <paramref name="names"/> to a <c>StatusCondition</c> in <paramref name="statusConditions"/> and returns the matches as a list.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
+        public static List<StatusCondition> MatchNames(IDictionary<string, StatusCondition> statusConditions, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        {
+            return names.Select(n => MatchName(statusConditions, n, skipMatchedStatusSet)).ToList();
+        }
+
+        /// <summary>
+        /// Matches <paramref name="name"/> to a <c>StatusCondition</c> in <paramref name="statusConditions"/> and returns it.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <exception cref="UnmatchedStatusConditionException"></exception>
+        public static StatusCondition MatchName(IDictionary<string, StatusCondition> statusConditions, string name, bool skipMatchedStatusSet = false)
+        {
+            StatusCondition match;
+            if (!statusConditions.TryGetValue(name, out match))
+                throw new UnmatchedStatusConditionException(name);
+
+            if (!skipMatchedStatusSet) match.Matched = true;
+
+            return match;
         }
 
         #endregion

@@ -1,5 +1,4 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Unmatched;
-using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.Units;

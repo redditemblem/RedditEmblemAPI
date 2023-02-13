@@ -4,6 +4,7 @@ using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Models.Output.Units
@@ -20,12 +21,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         [JsonIgnore]
         public string FullName { get; set; }
-
-        /// <summary>
-        /// Only for JSON serialization. The name of the item.
-        /// </summary>
-        [JsonProperty]
-        private string Name { get { return this.Item.Name; } }
 
         /// <summary>
         /// The <c>Item</c> object.
@@ -69,36 +64,19 @@ namespace RedditEmblemAPI.Models.Output.Units
         public int MaxUses { get; set; }
 
         /// <summary>
-        /// The calculated minimum range for the item, including modifier values.
+        /// Dictionary of the item's stats.
         /// </summary>
-        [JsonIgnore]
-        public int ModifiedMinRangeValue { get { return this.Item.Range.Minimum + this.CalculatedMinRange + this.MinRangeModifier; } }
+        public Dictionary<string, UnitInventoryItemStat> Stats { get; set; }
 
         /// <summary>
-        /// The item's minimum range, if calculated using the unit's stats.
+        /// The item's minimum range data.
         /// </summary>
-        public int CalculatedMinRange { get; set; }
+        public UnitInventoryItemStat MinRange { get; set; }
 
         /// <summary>
-        /// The amount by which to alter the item's minimum range.
+        /// Thie item's maximum range data.
         /// </summary>
-        public int MinRangeModifier { get; set; }
-
-        /// <summary>
-        /// The calculated maximum range for the item, including modifier values.
-        /// </summary>
-        [JsonIgnore]
-        public int ModifiedMaxRangeValue { get { return this.Item.Range.Maximum + this.CalculatedMaxRange + this.MaxRangeModifier; } }
-
-        /// <summary>
-        /// The item's maxmimum range, if calculated using the unit's stats.
-        /// </summary>
-        public int CalculatedMaxRange { get; set; }
-
-        /// <summary>
-        /// The amount by which to alter the item's maximum range.
-        /// </summary>
-        public int MaxRangeModifier { get; set; }
+        public UnitInventoryItemStat MaxRange { get; set; }
 
         /// <summary>
         /// Flag indicating whether or not this item's max range value exceeds the maximum allowed.
@@ -110,6 +88,29 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public bool AllowMeleeRange { get; set; }
 
+        /// <summary>
+        /// List of the item's engravings.
+        /// </summary>
+        [JsonIgnore]
+        public List<Engraving> EngravingsList { get; set; }
+
+        #region JSON Serialization Only
+
+        /// <summary>
+        /// Only for JSON serialization. The name of the item.
+        /// </summary>
+        [JsonProperty]
+        private string Name { get { return this.Item.Name; } }
+
+
+        /// <summary>
+        /// For JSON Serialization ONLY. Complete list of the item's engravings.
+        /// </summary>
+        [JsonProperty]
+        private IEnumerable<string> Engravings { get { return this.EngravingsList.Select(e => e.Name).Union(this.Item.Engravings.Select(e => e.Name)).Distinct(); } }
+
+        #endregion JSON Serialization Only
+
         #endregion
 
         #region Constants
@@ -120,22 +121,20 @@ namespace RedditEmblemAPI.Models.Output.Units
         #endregion Constants
 
         /// <summary>
-        /// Searches for an <c>Item</c> in <paramref name="items"/> that matches <paramref name="fullItemName"/>.
+        /// Searches for an <c>Item</c> in <paramref name="items"/> that matches <paramref name="itemFullName"/>.
         /// </summary>
         /// <exception cref="UnmatchedItemException"></exception>
-        public UnitInventoryItem(string fullItemName, int uses, IDictionary<string, Item> items)
+        /// <exception cref="UnmatchedEngravingException"></exception>
+        public UnitInventoryItem(string itemFullName, int itemUses, IEnumerable<string> itemEngravings, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
         {
-            this.FullName = fullItemName;
+            this.FullName = itemFullName;
             this.CanEquip = false;
             this.IsPrimaryEquipped = false;
             this.IsSecondaryEquipped = false;
             this.IsDroppable = false;
             this.IsUsePrevented = false;
             this.Uses = 0;
-            this.CalculatedMinRange = 0;
-            this.MinRangeModifier = 0;
-            this.CalculatedMaxRange = 0;
-            this.MaxRangeModifier = 0;
+            this.Stats = new Dictionary<string, UnitInventoryItemStat>();
             this.AllowMeleeRange = false;
 
             string name = this.FullName;
@@ -149,7 +148,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             //If uses is a separate field, use that value. Else, look for "(#)" syntax.
-            if (uses > 0) this.Uses = uses;
+            if (itemUses > 0) this.Uses = itemUses;
             else
             {
                 //Search for uses syntax
@@ -165,14 +164,31 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             name = name.Trim();
+            this.Item = Item.MatchName(items, name);
 
-            Item match;
-            if (!items.TryGetValue(name, out match))
-                throw new UnmatchedItemException(name);
-            this.Item = match;
-            match.Matched = true;
-
+            //Copy data over from the matched item
             this.MaxUses = this.Item.MaxUses;
+            this.MinRange = new UnitInventoryItemStat(this.Item.Range.Minimum);
+            this.MaxRange = new UnitInventoryItemStat(this.Item.Range.Maximum);
+
+            foreach (KeyValuePair<string, int> stat in this.Item.Stats)
+                this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
+
+            MatchEngravings(itemEngravings, engravings);   
+        }
+
+        private void MatchEngravings(IEnumerable<string> itemEngravings, IDictionary<string, Engraving> engravings)
+        {
+            this.EngravingsList = Engraving.MatchNames(engravings, itemEngravings);
+            foreach (Engraving engraving in this.EngravingsList.Union(this.Item.Engravings))
+            {
+                //Apply any modifiers to the item's stats
+                foreach (KeyValuePair<string, int> mod in engraving.StatModifiers)
+                {
+                    UnitInventoryItemStat stat = MatchStatName(mod.Key);
+                    stat.Modifiers.TryAdd(engraving.Name, mod.Value);
+                }
+            }
         }
 
         /// <summary>
@@ -181,10 +197,10 @@ namespace RedditEmblemAPI.Models.Output.Units
         public void CalculateItemRanges(Unit unit)
         {
             if (this.Item.Range.MinimumRequiresCalculation)
-                this.CalculatedMinRange = CalculateItemRange(this.Item.Range.MinimumRaw, unit);
+                this.MinRange.BaseValue = CalculateItemRange(this.Item.Range.MinimumRaw, unit);
 
             if (this.Item.Range.MaximumRequiresCalculation)
-                this.CalculatedMaxRange = CalculateItemRange(this.Item.Range.MaximumRaw, unit);
+                this.MaxRange.BaseValue = CalculateItemRange(this.Item.Range.MaximumRaw, unit);
         }
 
         private int CalculateItemRange(string equation, Unit unit)
@@ -196,6 +212,15 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             decimal equationResult = EquationParser.Evaluate(equation, unit, options);
             return Math.Max(1, Convert.ToInt32(Math.Floor(equationResult)));
+        }
+
+        public UnitInventoryItemStat MatchStatName(string name)
+        {
+            UnitInventoryItemStat stat;
+            if (!this.Stats.TryGetValue(name, out stat))
+                throw new UnmatchedStatException(name);
+
+            return stat;
         }
     }
 }

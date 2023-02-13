@@ -201,12 +201,9 @@ namespace RedditEmblemAPI.Models.Output.Map
                         }
 
                         //Match on tile's terrain type
-                        TerrainType type;
-                        if (!terrainTypes.TryGetValue(t, out type))
-                            throw new UnmatchedTileTerrainTypeException(x, y, tile.ToString());
-
-                        type.Matched = true;
-                        Tile temp = new Tile(this.Constants.CoordinateFormat, x, y, type);
+                        Coordinate coord = new Coordinate(this.Constants.CoordinateFormat, x, y);
+                        TerrainType type = TerrainType.MatchName(terrainTypes, t, coord);
+                        Tile temp = new Tile(coord, type);
 
                         //If we found a warp group number, add the new tile to a warp group.
                         if (warpGroupNum > 0)
@@ -243,13 +240,13 @@ namespace RedditEmblemAPI.Models.Output.Map
                 {
                     List<Tile> group = warpGroups[key];
 
-                    List<Tile> entrances = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Entrance || w.TerrainTypeObj.WarpType == WarpType.Dual).ToList();
-                    List<Tile> exits = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Exit || w.TerrainTypeObj.WarpType == WarpType.Dual).ToList();
+                    IEnumerable<Tile> entrances = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Entrance || w.TerrainTypeObj.WarpType == WarpType.Dual);
+                    IEnumerable<Tile> exits = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Exit || w.TerrainTypeObj.WarpType == WarpType.Dual);
 
                     //If we do not have at least one distinct entrance and exit
-                    if (entrances.Count == 0
-                        || exits.Count == 0
-                        || entrances.Select(e => e.Coordinate).Union(exits.Select(e => e.Coordinate)).Distinct().Count() < 2
+                    if (  !entrances.Any()
+                       || !exits.Any()
+                       || entrances.Select(e => e.Coordinate).Union(exits.Select(e => e.Coordinate)).Distinct().Count() < 2
                         )
                         throw new InvalidWarpGroupException(key.ToString());
                 }
@@ -294,17 +291,12 @@ namespace RedditEmblemAPI.Models.Output.Map
                         foreach (string value in cell.Split(","))
                         {
                             //Skip any empty strings
-                            if (string.IsNullOrEmpty(value))
-                                continue;
+                            if (string.IsNullOrWhiteSpace(value)) continue;
 
-                            TileObject tileObj;
-                            if (!tileObjects.TryGetValue(value.Trim(), out tileObj))
-                                throw new UnmatchedTileObjectException(tiles[c].Coordinate, value.Trim());
-                            tileObj.Matched = true;
-
-                            //3-way bind
+                            TileObject tileObj = TileObject.MatchName(tileObjects, value.Trim(), tiles[c].Coordinate);
                             TileObjectInstance tileObjInst = new TileObjectInstance(idIterator++, tileObj);
 
+                            //3-way bind
                             this.TileObjectInstances.Add(tileObjInst.ID, tileObjInst);
                             tiles[c].TileObjects.Add(tileObjInst);
                             tileObjInst.OriginTiles.Add(tiles[c]);

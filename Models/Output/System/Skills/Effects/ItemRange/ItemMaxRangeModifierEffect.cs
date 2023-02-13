@@ -54,7 +54,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
                     continue;
 
                 //Items with a max range of 99 are not affected
-                if (item.Item.Range.Maximum == 99)
+                if (item.MaxRange.BaseValue >= 99)
                     continue;
 
                 //Filter based on damage dealt, if needed
@@ -64,8 +64,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
                     continue;
 
                 //If this modifier is greater than the one we're currently using, apply it
-                if (this.Value > item.MaxRangeModifier)
-                    item.MaxRangeModifier = this.Value;
+                if (this.Value > item.MaxRange.ForcedModifier)
+                    item.MaxRange.ForcedModifier = this.Value;
             }
         }
 

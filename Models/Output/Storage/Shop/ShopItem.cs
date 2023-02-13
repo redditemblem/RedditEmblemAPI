@@ -2,8 +2,10 @@
 using RedditEmblemAPI.Models.Configuration.Shop;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Storage.Shop
 {
@@ -18,16 +20,15 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         public string FullName { get; set; }
 
         /// <summary>
-        /// Only for JSON serialization. The name of the item.
-        /// </summary>
-        [JsonProperty]
-        private string Name { get { return this.Item.Name; } }
-
-        /// <summary>
         /// The <c>Item</c> object.
         /// </summary>
         [JsonIgnore]
         public Item Item { get; set; }
+
+        /// <summary>
+        /// Dictionary of the item's stats. Copied over from <c>Item</c> on match.
+        /// </summary>
+        public IDictionary<string, UnitInventoryItemStat> Stats { get; set; }
 
         /// <summary>
         /// The purchase price of the item.
@@ -49,26 +50,75 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// </summary>
         public bool IsNew { get; set; }
 
+        /// <summary>
+        /// List of engravings applied to the item.
+        /// </summary>
+        [JsonIgnore]
+        public List<Engraving> EngravingsList { get; set; }
+
+        #region JSON Serialization Only
+
+        /// <summary>
+        /// Only for JSON serialization. The name of the item.
+        /// </summary>
+        [JsonProperty]
+        private string Name { get { return this.Item.Name; } }
+
+        /// <summary>
+        /// Only for JSON serialization. List of the engravings on the item.
+        /// </summary>
+        [JsonProperty]
+        private IEnumerable<string> Engravings { get { return this.EngravingsList.Select(e => e.Name).Union(this.Item.Engravings.Select(e => e.Name)).Distinct(); } }
+
+        #endregion JSON Serialization Only
+
         #endregion
 
         /// <summary>
         /// Constructor. Builds the <c>ShopItem</c> and matches it to an <c>Item</c> definition from <paramref name="items"/>.
         /// </summary>
         /// <exception cref="UnmatchedItemException"></exception>
-        public ShopItem(ShopConfig config, List<string> data, IDictionary<string, Item> items)
+        public ShopItem(ShopConfig config, IEnumerable<string> data, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
         {
             this.FullName = DataParser.String(data, config.Name, "Name");
+            this.Item = Item.MatchName(items, this.FullName);
 
-            Item match;
-            if (!items.TryGetValue(this.FullName, out match))
-                throw new UnmatchedItemException(this.FullName);
-            this.Item = match;
-            match.Matched = true;
+            //Copy stats data from parent item
+            this.Stats = new Dictionary<string, UnitInventoryItemStat>();
+            foreach (KeyValuePair<string, int> stat in this.Item.Stats)
+                this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
 
             this.Price = DataParser.Int_Positive(data, config.Price, "Price");
             this.SalePrice = DataParser.OptionalInt_Positive(data, config.SalePrice, "Sale Price", this.Price);
             this.Stock = DataParser.Int_Positive(data, config.Stock, "Stock");
             this.IsNew = DataParser.OptionalBoolean_YesNo(data, config.IsNew, "Is New");
+
+            List<string> itemEngravings = DataParser.List_Strings(data, config.Engravings);
+            this.EngravingsList = Engraving.MatchNames(engravings, itemEngravings);
+
+            ApplyEngravings();
+        }
+
+        private void ApplyEngravings()
+        {
+            foreach (Engraving engraving in this.EngravingsList.Union(this.Item.Engravings))
+            {
+                //Apply any modifiers to the item's stats
+                foreach (KeyValuePair<string, int> mod in engraving.StatModifiers)
+                {
+                    UnitInventoryItemStat stat = MatchStatName(mod.Key);
+                    stat.Modifiers.TryAdd(engraving.Name, mod.Value);
+                }
+            }
+        }
+
+        public UnitInventoryItemStat MatchStatName(string name)
+        {
+            UnitInventoryItemStat stat;
+            if (!this.Stats.TryGetValue(name, out stat))
+                throw new UnmatchedStatException(name);
+
+            return stat;
         }
     }
 }

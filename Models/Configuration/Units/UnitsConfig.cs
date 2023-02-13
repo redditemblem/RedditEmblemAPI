@@ -159,6 +159,11 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// </summary>
         public UnitBattalionConfig Battalion { get; set; } = null;
 
+        /// <summary>
+        /// Optional. Container object for a unit's emblem configuration.
+        /// </summary>
+        public UnitEmblemConfig Emblem { get; set; } = null;
+
         #endregion
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System.Tags;
 using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class Tag
+    public class Tag : IMatchable
     {
         #region Attributes
 
@@ -45,8 +47,9 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Tag(TagConfig config, List<string> data)
+        public Tag(TagConfig config, IEnumerable<string> data)
         {
+            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.ShowOnUnit = (DataParser.OptionalBoolean_YesNo(data, config.ShowOnUnit, "Show On Unit") && !string.IsNullOrEmpty(this.SpriteURL));
@@ -58,12 +61,14 @@ namespace RedditEmblemAPI.Models.Output.System
         public static IDictionary<string, Tag> BuildDictionary(TagConfig config)
         {
             IDictionary<string, Tag> tags = new Dictionary<string, Tag>();
+            if (config == null || config.Query == null)
+                return tags;
 
             foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    List<string> tag = row.Select(r => r.ToString()).ToList();
+                    IEnumerable<string> tag = row.Select(r => r.ToString());
                     string name = DataParser.OptionalString(tag, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
@@ -77,6 +82,31 @@ namespace RedditEmblemAPI.Models.Output.System
             }
 
             return tags;
+        }
+
+        /// <summary>
+        /// Matches each of the strings in <paramref name="names"/> to a <c>Tag</c> in <paramref name="tags"/> and returns the matches as a list.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
+        public static List<Tag> MatchNames(IDictionary<string, Tag> tags, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        {
+            return names.Select(n => MatchName(tags, n, skipMatchedStatusSet)).ToList();
+        }
+
+        /// <summary>
+        /// Matches <paramref name="name"/> to a <c>Tag</c> in <paramref name="tags"/> and returns it.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <exception cref="UnmatchedTagException"></exception>
+        public static Tag MatchName(IDictionary<string, Tag> tags, string name, bool skipMatchedStatusSet = false)
+        {
+            Tag match;
+            if (!tags.TryGetValue(name, out match))
+                throw new UnmatchedTagException(name);
+
+            if (!skipMatchedStatusSet) match.Matched = true;
+
+            return match;
         }
 
         #endregion

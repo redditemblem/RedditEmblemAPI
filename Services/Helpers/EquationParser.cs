@@ -5,6 +5,7 @@ using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.Units;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Services.Helpers
@@ -14,9 +15,9 @@ namespace RedditEmblemAPI.Services.Helpers
         #region Regex Constants
 
         private static Regex unitCombatStatRegex = new Regex(@"{UnitCombatStat\[([A-Za-z ]+)\]}");
-        private static Regex unitStatRegex       = new Regex(@"{UnitStat\[([A-Za-z, ]+)\]}");
-        private static Regex weaponStatRegex     = new Regex(@"{WeaponStat\[([A-Za-z, ]+)\]}");
-        private static Regex battalionStatRegex  = new Regex(@"{BattalionStat\[([A-Za-z, ]+)\]}");
+        private static Regex unitStatRegex = new Regex(@"{UnitStat\[([A-Za-z, ]+)\]}");
+        private static Regex weaponStatRegex = new Regex(@"{WeaponStat\[([A-Za-z, ]+)\]}");
+        private static Regex battalionStatRegex = new Regex(@"{BattalionStat\[([A-Za-z, ]+)\]}");
 
         #endregion Regex Constants
 
@@ -66,10 +67,7 @@ namespace RedditEmblemAPI.Services.Helpers
             {
                 string statName = match.Groups[1].Value.Trim();
 
-                ModifiedStatValue unitCombatStat;
-                if (!unit.Stats.Combat.TryGetValue(statName, out unitCombatStat))
-                    throw new UnmatchedStatException(statName);
-
+                ModifiedStatValue unitCombatStat = unit.Stats.MatchCombatStatName(statName);
                 equation = equation.Replace(match.Groups[0].Value, unitCombatStat.FinalValue.ToString());
             }
         }
@@ -89,10 +87,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 int maximumStatValue = int.MinValue;
                 foreach (string statSplit in match.Groups[1].Value.Split(","))
                 {
-                    ModifiedStatValue unitStat;
-                    if (!unit.Stats.General.TryGetValue(statSplit.Trim(), out unitStat))
-                        throw new UnmatchedStatException(statSplit);
-
+                    ModifiedStatValue unitStat = unit.Stats.MatchGeneralStatName(statSplit.Trim());
                     if (maximumStatValue < unitStat.FinalValue)
                         maximumStatValue = unitStat.FinalValue;
                 }
@@ -137,6 +132,11 @@ namespace RedditEmblemAPI.Services.Helpers
                 return;
 
             UnitInventoryItem primaryEquipped = unit.Inventory.GetPrimaryEquippedItem();
+            if(primaryEquipped == null && unit.Emblem != null)
+            {
+                //If the primary equipped item isn't in the unit's inventory, check emblem weapons
+                primaryEquipped = unit.Emblem.EngageWeapons.SingleOrDefault(i => i.IsPrimaryEquipped);
+            }
 
             foreach (Match match in weaponStatMatches)
             {
@@ -146,12 +146,9 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     foreach (string statSplit in match.Groups[1].Value.Split(","))
                     {
-                        int statValue;
-                        if (!primaryEquipped.Item.Stats.TryGetValue(statSplit.Trim(), out statValue))
-                            throw new UnmatchedStatException(statSplit);
-
-                        if (maximumStatValue < statValue)
-                            maximumStatValue = statValue;
+                        UnitInventoryItemStat stat = primaryEquipped.MatchStatName(statSplit.Trim());
+                        if (maximumStatValue < stat.FinalValue)
+                            maximumStatValue = stat.FinalValue;
                     }
                 }
                 else
@@ -184,10 +181,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     foreach (string statSplit in match.Groups[1].Value.Split(","))
                     {
-                        int statValue;
-                        if (!battalion.Stats.TryGetValue(statSplit.Trim(), out statValue))
-                            throw new UnmatchedStatException(statSplit);
-
+                        int statValue = battalion.MatchStatName(statSplit.Trim());
                         if (maximumStatValue < statValue)
                             maximumStatValue = statValue;
                     }
@@ -207,6 +201,11 @@ namespace RedditEmblemAPI.Services.Helpers
         private static string GetPrimaryEquippedItemUtilizedStatName(Unit unit)
         {
             UnitInventoryItem primaryEquipped = unit.Inventory.GetPrimaryEquippedItem();
+            if (primaryEquipped == null && unit.Emblem != null)
+            {
+                //If the primary equipped item isn't in the unit's inventory, check emblem weapons
+                primaryEquipped = unit.Emblem.EngageWeapons.SingleOrDefault(i => i.IsPrimaryEquipped);
+            }
 
             string statName = string.Empty;
             int maxValue = int.MinValue;
@@ -216,9 +215,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             foreach (string utilStatName in primaryEquipped.Item.UtilizedStats)
             {
-                ModifiedStatValue weaponUtilStat;
-                if (!unit.Stats.General.TryGetValue(utilStatName, out weaponUtilStat))
-                    throw new UnmatchedStatException(utilStatName);
+                ModifiedStatValue weaponUtilStat = unit.Stats.MatchGeneralStatName(utilStatName);
 
                 //Take the greatest stat value of all the utilized stats
                 if (weaponUtilStat.FinalValue > maxValue)

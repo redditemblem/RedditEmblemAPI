@@ -85,8 +85,10 @@ namespace RedditEmblemAPI.Models.Configuration
             if (this.System.StatusConditions != null) queries.Add(this.System.StatusConditions.Query);
             if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
             if (this.System.WeaponRankBonuses != null) queries.Add(this.System.WeaponRankBonuses.Query);
+            if (this.System.Engravings != null) queries.Add(this.System.Engravings.Query);
             if (this.System.Battalions != null) queries.Add(this.System.Battalions.Query);
             if (this.System.Gambits != null) queries.Add(this.System.Gambits.Query);
+            if (this.System.Emblems != null) queries.Add(this.System.Emblems.Query);
 
             return queries;
         }
@@ -123,6 +125,7 @@ namespace RedditEmblemAPI.Models.Configuration
             };
 
             //Add optional queries
+            if (this.System.Engravings != null) queries.Add(this.System.Engravings.Query);
             if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
 
             return queries;
@@ -142,6 +145,7 @@ namespace RedditEmblemAPI.Models.Configuration
             };
 
             //Add optional queries
+            if (this.System.Engravings != null) queries.Add(this.System.Engravings.Query);
             if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
 
             return queries;

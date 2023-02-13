@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
+using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.Convoy
 {
@@ -30,6 +31,11 @@ namespace RedditEmblemAPI.Models.Configuration.Convoy
         #region Optional Fields
 
         /// <summary>
+        /// Optional. Cell index of a convoy item's uses.
+        /// </summary>
+        public int Uses { get; set; } = -1;
+
+        /// <summary>
         /// Optional. Cell index of a convoy item's value.
         /// </summary>
         public int Value { get; set; } = -1;
@@ -38,6 +44,11 @@ namespace RedditEmblemAPI.Models.Configuration.Convoy
         /// Optional. Cell index of a convoy item's quantity value.
         /// </summary>
         public int Quantity { get; set; } = -1;
+
+        /// <summary>
+        /// Optional. List of cell indexes of a convoy item's engravings.
+        /// </summary>
+        public List<int> Engravings { get; set; } = new List<int>();
 
         #endregion
     }

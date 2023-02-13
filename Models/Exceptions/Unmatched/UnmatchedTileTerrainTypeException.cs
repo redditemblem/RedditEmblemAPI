@@ -5,7 +5,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Unmatched
 {
     public class UnmatchedTileTerrainTypeException : Exception
     {
-        private const string ERROR = "The terrain type \"{0}\" located at coordinate \"{1},{2}\" could not be matched to a known terrain type definition. The given name must match exactly, including capitalization and punctuation.";
+        private const string ERROR = "The terrain type \"{0}\" located at coordinate \"{1}\" could not be matched to a known terrain type definition. The given name must match exactly, including capitalization and punctuation.";
 
         /// <summary>
         /// Thrown when text cannot be matched to the name of a <c>TerrainType</c>.
@@ -13,7 +13,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Unmatched
         /// <param name="coord"></param>
         /// <param name="terrainName"></param>
         public UnmatchedTileTerrainTypeException(Coordinate coord, string terrainName)
-            : base(string.Format(ERROR, terrainName, coord.X, coord.Y))
+            : base(string.Format(ERROR, terrainName, coord.AsText))
         { }
 
         /// <summary>

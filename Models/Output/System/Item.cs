@@ -4,6 +4,8 @@ using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -14,7 +16,7 @@ namespace RedditEmblemAPI.Models.Output.System
     /// <summary>
     /// Object representing an item definition in the team's system. 
     /// </summary>
-    public class Item
+    public class Item : IMatchable
     {
         #region Attributes
 
@@ -62,6 +64,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Collection of stat values for the item. (ex. Hit)
         /// </summary>
+        [JsonIgnore]
         public IDictionary<string, int> Stats { get; set; }
 
         /// <summary>
@@ -84,21 +87,35 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// The item's tags.
         /// </summary>
-        public List<string> Tags { get; set; }
+        [JsonIgnore]
+        public List<Tag> TagsList { get; set; }
+
+        /// <summary>
+        /// The item's engravings.
+        /// </summary>
+        [JsonIgnore]
+        public List<Engraving> Engravings { get; set; }
 
         /// <summary>
         /// List of the item's text fields.
         /// </summary>
         public List<string> TextFields { get; set; }
 
+        #region JSON Serialization Only
+
+        [JsonProperty]
+        private IEnumerable<string> Tags { get { return this.TagsList.Select(t => t.Name); } }
+
+        #endregion JSON Serialization Only
+
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="AnyIntegerException"></exception>
-        public Item(ItemsConfig config, List<string> data, IDictionary<string, Tag> tags)
+        public Item(ItemsConfig config, IEnumerable<string> data, IDictionary<string, Tag> tags, IDictionary<string, Engraving> engravings)
         {
+            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.Category = DataParser.String(data, config.Category, "Category");
@@ -109,8 +126,11 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Range = new ItemRange(config.Range, data);
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
-            this.Tags = DataParser.List_StringCSV(data, config.Tags).Distinct().ToList();
-            MatchTags(tags);
+            IEnumerable<string> itemTags = DataParser.List_StringCSV(data, config.Tags).Distinct();
+            this.TagsList = Tag.MatchNames(tags, itemTags, true);
+
+            IEnumerable<string> itemEngravings = DataParser.List_Strings(data, config.Engravings).Distinct();
+            this.Engravings = Engraving.MatchNames(engravings, itemEngravings, true);
 
             this.Stats = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in config.Stats)
@@ -136,37 +156,23 @@ namespace RedditEmblemAPI.Models.Output.System
             }
         }
 
-        /// <summary>
-        /// MUST BE RUN AFTER TAGS ARE BUILT. Iterates through the values in <c>this.Tags</c> and attempts to match them a <c>Tag</c> from <paramref name="tags"/>.
-        /// </summary>
-        /// <param name="tags"></param>
-        private void MatchTags(IDictionary<string, Tag> tags)
-        {
-            foreach (string tag in this.Tags)
-            {
-                Tag match;
-                if (!tags.TryGetValue(tag, out match))
-                    throw new UnmatchedTagException(tag);
-
-                match.Matched = true;
-            }
-        }
-
         #region Static Functions
 
-        public static IDictionary<string, Item> BuildDictionary(ItemsConfig config, IDictionary<string, Tag> tags)
+        public static IDictionary<string, Item> BuildDictionary(ItemsConfig config, IDictionary<string, Tag> tags, IDictionary<string, Engraving> engravings)
         {
             IDictionary<string, Item> items = new Dictionary<string, Item>();
+            if (config == null || config.Query == null)
+                return items;
 
             foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    List<string> item = row.Select(r => r.ToString()).ToList();
+                    IEnumerable<string> item = row.Select(r => r.ToString());
                     string name = DataParser.OptionalString(item, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!items.TryAdd(name, new Item(config, item, tags)))
+                    if (!items.TryAdd(name, new Item(config, item, tags, engravings)))
                         throw new NonUniqueObjectNameException("item");
                 }
                 catch (Exception ex)
@@ -176,6 +182,36 @@ namespace RedditEmblemAPI.Models.Output.System
             }
 
             return items;
+        }
+
+        /// <summary>
+        /// Matches each of the strings in <paramref name="names"/> to a <c>Item</c> in <paramref name="items"/> and returns the matches as a list.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
+        public static List<Item> MatchNames(IDictionary<string, Item> items, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        {
+            return names.Select(n => MatchName(items, n, skipMatchedStatusSet)).ToList();
+        }
+
+        /// <summary>
+        /// Matches <paramref name="name"/> to a <c>Item</c> in <paramref name="items"/> and returns it.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <exception cref="UnmatchedItemException"></exception>
+        public static Item MatchName(IDictionary<string, Item> items, string name, bool skipMatchedStatusSet = false)
+        {
+            Item match;
+            if (!items.TryGetValue(name, out match))
+                throw new UnmatchedItemException(name);
+
+            if (!skipMatchedStatusSet)
+            {
+                match.Matched = true;
+                match.TagsList.ForEach(t => t.Matched = true);
+                match.Engravings.ForEach(e => e.Matched = true);
+            }
+
+            return match;
         }
 
         #endregion

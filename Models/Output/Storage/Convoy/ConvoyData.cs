@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -51,12 +52,16 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// </summary>
         public IDictionary<string, Tag> Tags { get; set; }
 
+        /// <summary>
+        /// Container dictionary for data about engravings.
+        /// </summary>
+        public IDictionary<string, Engraving> Engravings { get; set; }
+
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="ItemProcessingException"></exception>
         /// <exception cref="ConvoyItemProcessingException"></exception>
         public ConvoyData(JSONConfiguration config)
         {
@@ -64,10 +69,9 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             this.WorkbookID = config.Team.WorkbookID;
             this.ShowShopLink = (config.Shop != null);
 
-            if (config.System.Tags != null) this.Tags = Tag.BuildDictionary(config.System.Tags);
-            else this.Tags = new Dictionary<string, Tag>();
-
-            this.Items = Item.BuildDictionary(config.System.Items, this.Tags);
+            this.Tags = Tag.BuildDictionary(config.System.Tags);
+            this.Engravings = Engraving.BuildDictionary(config.System.Engravings);
+            this.Items = Item.BuildDictionary(config.System.Items, this.Tags, this.Engravings);
 
             //Build the convoy item list
             this.ConvoyItems = new List<ConvoyItem>();
@@ -75,10 +79,11 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             {
                 try
                 {
-                    List<string> item = row.Select(r => r.ToString()).ToList();
+                    IEnumerable<string> item = row.Select(r => r.ToString());
                     string name = DataParser.OptionalString(item, config.Convoy.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
-                    this.ConvoyItems.Add(new ConvoyItem(config.Convoy, item, this.Items));
+
+                    this.ConvoyItems.Add(new ConvoyItem(config.Convoy, item, this.Items, this.Engravings));
                 }
                 catch (Exception ex)
                 {
@@ -96,11 +101,14 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             if (config.System.WeaponRanks.Count > 0)
                 sorts.Add(new ItemSort("Weapon Rank", "weaponRank", true));
 
+            IDictionary<string, bool> filters = new Dictionary<string, bool>();
+            filters.Add("AllowEngravings", config.Convoy.Engravings.Any() || config.System.Items.Engravings.Any());
+
             this.Parameters = new FilterParameters(sorts,
-                new List<string>() { "All" }.Union(this.ConvoyItems.Select(i => i.Owner).Where(o => !string.IsNullOrEmpty(o)).Distinct().OrderBy(o => o)).ToList(),
-                this.ConvoyItems.Select(i => i.Item.Category).Distinct().OrderBy(c => c).ToList(),
-                this.ConvoyItems.SelectMany(i => i.Item.UtilizedStats).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(c => c).ToList(),
-                new Dictionary<string, bool>());
+                new List<string>() { "All" }.Union(this.ConvoyItems.Select(i => i.Owner).Where(o => !string.IsNullOrEmpty(o)).Distinct().OrderBy(o => o)),
+                this.ConvoyItems.Select(i => i.Item.Category).Distinct().OrderBy(c => c),
+                this.ConvoyItems.SelectMany(i => i.Item.UtilizedStats).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(c => c),
+                filters);
 
             //Always do this last
             RemoveUnusedObjects();
@@ -111,15 +119,16 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// </summary>
         private void RemoveUnusedObjects()
         {
-            //Cull unused items
-            foreach (string key in this.Items.Keys.ToList())
-                if (!this.Items[key].Matched)
-                    this.Items.Remove(key);
+            CullDictionary(this.Items);
+            CullDictionary(this.Tags);
+            CullDictionary(this.Engravings);
+        }
 
-            //Cull unused tags
-            foreach (string key in this.Tags.Keys.ToList())
-                if (!this.Tags[key].Matched)
-                    this.Tags.Remove(key);
+        private void CullDictionary<T>(IDictionary<string, T> dictionary) where T : IMatchable
+        {
+            foreach (string key in dictionary.Keys)
+                if (!dictionary[key].Matched)
+                    dictionary.Remove(key);
         }
     }
 }

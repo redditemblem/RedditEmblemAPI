@@ -52,7 +52,7 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// Only for JSON serialization. Returns List of the IDs of tile object instances on this tile.
         /// </summary>
         [JsonProperty]
-        private List<int> TileObjectInstanceIDs { get { return this.TileObjects.Select(to => to.ID).ToList(); } }
+        private IEnumerable<int> TileObjectInstanceIDs { get { return this.TileObjects.Select(to => to.ID); } }
 
         /// <summary>
         /// Only for JSON serialization. The number of units with displayed movement on this tile.
@@ -85,13 +85,20 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         #region Constructors
 
         /// <summary>
-        /// Initializes the tile's coordinate with the passed in <paramref name="x"/> and <paramref name="y"/> values.
+        /// Constructor. Initializes the tile's coordinate with the passed in <paramref name="x"/> and <paramref name="y"/> values.
         /// </summary>
         /// <param name="x">Used to initialize the Tile's coordinate in combination with <paramref name="y"/>.</param>
         /// <param name="y">Used to initialize the Tile's coordinate in combination with <paramref name="x"/>.</param>
         public Tile(CoordinateFormat coordinateFormat, int x, int y, TerrainType terrainType)
+            : this(new Coordinate(coordinateFormat, x, y), terrainType)
+        { }
+
+        /// <summary>
+        /// Constructor. Initializes the tile's coordinate using <paramref name="coord"/>.
+        /// </summary>
+        public Tile(Coordinate coord, TerrainType terrainType)
         {
-            this.Coordinate = new Coordinate(coordinateFormat, x, y);
+            this.Coordinate = coord;
             this.TerrainTypeObj = terrainType;
 
             this.UnitData = new TileUnitData();

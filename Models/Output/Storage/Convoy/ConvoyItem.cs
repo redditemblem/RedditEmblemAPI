@@ -2,25 +2,23 @@
 using RedditEmblemAPI.Models.Configuration.Convoy;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Models.Output.Storage.Convoy
 {
     public class ConvoyItem
     {
+        #region Attributes
+
         /// <summary>
         /// The full name of the item pulled from raw convoy data.
         /// </summary>
         [JsonIgnore]
         public string FullName { get; set; }
-
-        /// <summary>
-        /// Only for JSON serialization. The name of the item.
-        /// </summary>
-        [JsonProperty]
-        private string Name { get { return this.Item.Name; } }
 
         [JsonIgnore]
         public Item Item { get; set; }
@@ -36,6 +34,11 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         public int Uses { get; set; }
 
         /// <summary>
+        /// Dictionary of the item's stats. Copied over from <c>Item</c> on match.
+        /// </summary>
+        public IDictionary<string, UnitInventoryItemStat> Stats { get; set; }
+
+        /// <summary>
         /// The number of this item present in the convoy.
         /// </summary>
         public int Quantity { get; set; }
@@ -45,42 +48,97 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// </summary>
         public int Value { get; set; }
 
+        /// <summary>
+        /// List of the engravings applied to the item.
+        /// </summary>
+        [JsonIgnore]
+        public List<Engraving> EngravingsList { get; set; }
+
+        #region JSON Serialization Only
+
+        /// <summary>
+        /// Only for JSON serialization. The name of the item.
+        /// </summary>
+        [JsonProperty]
+        private string Name { get { return this.Item.Name; } }
+
+        /// <summary>
+        /// For JSON serialization only. Complete list of the item's engravings.
+        /// </summary>
+        [JsonProperty]
+        private IEnumerable<string> Engravings { get { return this.EngravingsList.Select(e => e.Name).Union(this.Item.Engravings.Select(e => e.Name)).Distinct(); } }
+
+        #endregion JSON Serialization Only
+
+        #endregion Attributes
 
         private static Regex usesRegex = new Regex(@"\([0-9]+\)"); //match item uses (ex. "(5)")
 
         /// <summary>
         /// Constructor. Builds the <c>ConvoyItem</c> and matches it to an <c>Item</c> definition from <paramref name="items"/>.
         /// </summary>
-        /// <exception cref="UnmatchedItemException"></exception>
-        public ConvoyItem(ConvoyConfig config, List<string> data, IDictionary<string, Item> items)
+        public ConvoyItem(ConvoyConfig config, IEnumerable<string> data, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
         {
             this.FullName = DataParser.String(data, config.Name, "Name");
             this.Uses = 0;
 
             string name = this.FullName;
-
-            //Search for uses syntax
-            Match usesMatch = usesRegex.Match(name);
-            if (usesMatch.Success)
+            if(config.Uses > -1)
             {
-                //Convert item use synatax to int
-                string u = usesMatch.Value.ToString();
-                u = u.Substring(1, u.Length - 2);
-                this.Uses = int.Parse(u);
-                name = usesRegex.Replace(name, string.Empty);
+                this.Uses = DataParser.OptionalInt_Positive(data, config.Uses, "Uses");
             }
-
+            else
+            {
+                //Search for uses syntax
+                Match usesMatch = usesRegex.Match(name);
+                if (usesMatch.Success)
+                {
+                    //Convert item use synatax to int
+                    string u = usesMatch.Value.ToString();
+                    u = u.Substring(1, u.Length - 2);
+                    this.Uses = int.Parse(u);
+                    name = usesRegex.Replace(name, string.Empty);
+                }
+            }
+            
             name = name.Trim();
+            this.Item = Item.MatchName(items, name);
 
-            Item match;
-            if (!items.TryGetValue(name, out match))
-                throw new UnmatchedItemException(name);
-            this.Item = match;
-            match.Matched = true;
+            //Copy stats data from parent item
+            this.Stats = new Dictionary<string, UnitInventoryItemStat>();
+            foreach (KeyValuePair<string, int> stat in this.Item.Stats)
+                this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
 
             this.Owner = DataParser.OptionalString(data, config.Owner, "Owner");
             this.Value = DataParser.OptionalInt_Positive(data, config.Value, "Value", -1);
             this.Quantity = DataParser.OptionalInt_NonZeroPositive(data, config.Quantity, "Quantity");
+
+            List<string> itemEngravings = DataParser.List_Strings(data, config.Engravings);
+            this.EngravingsList = Engraving.MatchNames(engravings, itemEngravings);
+
+            ApplyEngravings();
+        }
+
+        private void ApplyEngravings()
+        {
+            foreach (Engraving engraving in this.EngravingsList.Union(this.Item.Engravings))
+            {
+                //Apply any modifiers to the item's stats
+                foreach (KeyValuePair<string, int> mod in engraving.StatModifiers)
+                {
+                    UnitInventoryItemStat stat = MatchStatName(mod.Key);
+                    stat.Modifiers.TryAdd(engraving.Name, mod.Value);
+                }
+            }
+        }
+
+        public UnitInventoryItemStat MatchStatName(string name)
+        {
+            UnitInventoryItemStat stat;
+            if (!this.Stats.TryGetValue(name, out stat))
+                throw new UnmatchedStatException(name);
+
+            return stat;
         }
     }
 }

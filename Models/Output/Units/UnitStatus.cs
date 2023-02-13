@@ -53,7 +53,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Searches for a <c>StatusCondition</c> in <paramref name="statusConditions"/> that matches <paramref name="fullStatusName"/>.
         /// </summary>
         /// <exception cref="UnmatchedStatusConditionException"></exception>
-        public UnitStatus(List<string> data, UnitStatusConditionConfig config, IDictionary<string, StatusCondition> statusConditions)
+        public UnitStatus(IEnumerable<string> data, UnitStatusConditionConfig config, IDictionary<string, StatusCondition> statusConditions)
         {
             this.FullName = DataParser.String(data, config.Name, "Status Condition Name");
             this.RemainingTurns = 0;
@@ -98,12 +98,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             //END TEMP
 
             name = name.Trim();
-
-            StatusCondition match;
-            if (!statusConditions.TryGetValue(name, out match))
-                throw new UnmatchedStatusConditionException(name);
-            this.StatusObj = match;
-            match.Matched = true;
+            this.StatusObj = StatusCondition.MatchName(statusConditions, name);
         }
     }
 }

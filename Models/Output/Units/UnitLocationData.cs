@@ -70,7 +70,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Constructor.
         /// </summary>
-        public UnitLocationData(UnitsConfig config, List<string> data)
+        public UnitLocationData(UnitsConfig config, IEnumerable<string> data)
         {
             this.OriginTiles = new List<Tile>();
 

@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Unmatched
         /// </summary>
         /// <param name="movementType"></param>
         /// <param name="possibleValues"></param>
-        public UnmatchedMovementTypeException(string movementType, List<string> possibleValues)
+        public UnmatchedMovementTypeException(string movementType, IEnumerable<string> possibleValues)
             : base("movement type", movementType, possibleValues)
         { }
     }

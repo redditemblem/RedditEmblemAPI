@@ -49,15 +49,15 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
                     continue;
 
                 //Items with a minimum range of 0 are not affected
-                if (item.Item.Range.Minimum == 0 && item.CalculatedMinRange == 0)
+                if (item.MinRange.BaseValue == 0)
                     continue;
 
                 //Calculate the difference between the set value and the item's base min range 
-                int modifier = this.Value - (item.Item.Range.Minimum + item.CalculatedMinRange);
+                int modifier = this.Value - item.MinRange.BaseValue;
 
                 //If there is a difference and it's smaller than what we're already applying, use it
-                if (modifier < 0 && modifier < item.MinRangeModifier)
-                    item.MinRangeModifier = modifier;
+                if (modifier < 0 && modifier < item.MinRange.ForcedModifier)
+                    item.MinRange.ForcedModifier = modifier;
             }
         }
     }

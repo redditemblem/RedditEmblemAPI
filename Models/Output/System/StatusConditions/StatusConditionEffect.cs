@@ -45,9 +45,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 
                 if (value == 0) continue;
 
-                ModifiedStatValue stat;
-                if (!unit.Stats.Combat.TryGetValue(statName, out stat))
-                    throw new UnmatchedStatException(statName);
+                ModifiedStatValue stat = unit.Stats.MatchCombatStatName(statName);
                 stat.Modifiers.Add(modifierName, value);
             }
         }
@@ -65,9 +63,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 
                 if (value == 0) continue;
 
-                ModifiedStatValue stat;
-                if (!unit.Stats.General.TryGetValue(statName, out stat))
-                    throw new UnmatchedStatException(statName);
+                ModifiedStatValue stat = unit.Stats.MatchGeneralStatName(statName);
                 stat.Modifiers.Add(modifierName, value);
             }
         }

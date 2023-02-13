@@ -2,7 +2,9 @@
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Battalions;
 using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ namespace RedditEmblemAPI.Models.Output.System
     /// <summary>
     /// Object representing a gambit definition in the team's system. 
     /// </summary>
-    public class Gambit
+    public class Gambit : IMatchable
     {
         #region Attributes
 
@@ -60,7 +62,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion
 
-        public Gambit(GambitsConfig config, List<string> data)
+        public Gambit(GambitsConfig config, IEnumerable<string> data)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -74,7 +76,7 @@ namespace RedditEmblemAPI.Models.Output.System
             BuildStats(config.Stats, data);
         }
 
-        private void BuildStats(List<NamedStatConfig> configs, List<string> data)
+        private void BuildStats(List<NamedStatConfig> configs, IEnumerable<string> data)
         {
             this.Stats = new Dictionary<string, int>();
             foreach (NamedStatConfig stat in configs)
@@ -90,12 +92,14 @@ namespace RedditEmblemAPI.Models.Output.System
         public static IDictionary<string, Gambit> BuildDictionary(GambitsConfig config)
         {
             IDictionary<string, Gambit> gambits = new Dictionary<string, Gambit>();
+            if (config == null || config.Query == null)
+                return gambits;
 
             foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    List<string> gambit = row.Select(r => r.ToString()).ToList();
+                    IEnumerable<string> gambit = row.Select(r => r.ToString());
                     string name = DataParser.OptionalString(gambit, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
@@ -109,6 +113,31 @@ namespace RedditEmblemAPI.Models.Output.System
             }
 
             return gambits;
+        }
+
+        /// <summary>
+        /// Matches each of the strings in <paramref name="names"/> to a <c>Gambit</c> in <paramref name="gambits"/> and returns the matches as a list.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
+        public static List<Gambit> MatchNames(IDictionary<string, Gambit> gambits, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        {
+            return names.Select(n => MatchName(gambits, n, skipMatchedStatusSet)).ToList();
+        }
+
+        /// <summary>
+        /// Matches <paramref name="name"/> to a <c>Gambit</c> in <paramref name="gambits"/> and returns it.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <exception cref="UnmatchedGambitException"></exception>
+        public static Gambit MatchName(IDictionary<string, Gambit> gambits, string name, bool skipMatchedStatusSet = false)
+        {
+            Gambit match;
+            if (!gambits.TryGetValue(name, out match))
+                throw new UnmatchedGambitException(name);
+            
+            if(!skipMatchedStatusSet) match.Matched = true;
+
+            return match;
         }
 
         #endregion

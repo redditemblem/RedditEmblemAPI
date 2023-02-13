@@ -49,15 +49,15 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
                     continue;
 
                 //Items with a max range of 99 are not affected
-                if (item.Item.Range.Maximum == 99)
+                if (item.MaxRange.BaseValue >= 99)
                     continue;
 
                 //Calculate the difference between the set value and the item's base max range 
-                int modifier = this.Value - (item.Item.Range.Maximum + item.CalculatedMaxRange);
+                int modifier = this.Value - item.MaxRange.BaseValue;
 
                 //If there is a difference and it's larger than what we're already applying, use it
-                if (modifier > 0 && modifier > item.MaxRangeModifier)
-                    item.MaxRangeModifier = modifier;
+                if (modifier > 0 && modifier > item.MaxRange.ForcedModifier)
+                    item.MaxRange.ForcedModifier = modifier;
             }
         }
     }

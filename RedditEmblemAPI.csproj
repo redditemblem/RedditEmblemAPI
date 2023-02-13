@@ -5,6 +5,12 @@
     <AWSProjectType>Lambda</AWSProjectType>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="UnitTests\**" />
+    <Content Remove="UnitTests\**" />
+    <EmbeddedResource Remove="UnitTests\**" />
+    <None Remove="UnitTests\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="CoreCLR-NCalc" Version="2.2.110" />
     <PackageReference Include="Google.Apis.Sheets.v4" Version="1.57.0.2727" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.9.27" />

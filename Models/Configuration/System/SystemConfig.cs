@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Configuration.System.Affiliations;
 using RedditEmblemAPI.Models.Configuration.System.Battalions;
 using RedditEmblemAPI.Models.Configuration.System.Classes;
+using RedditEmblemAPI.Models.Configuration.System.Emblems;
 using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Configuration.System.Skills;
 using RedditEmblemAPI.Models.Configuration.System.Statuses;
@@ -78,6 +79,11 @@ namespace RedditEmblemAPI.Models.Configuration.System
         public WeaponRankBonusesConfig WeaponRankBonuses { get; set; } = null;
 
         /// <summary>
+        /// Optional. Container object for a system's engravings configuration.
+        /// </summary>
+        public EngravingsConfig Engravings { get; set; } = null;
+
+        /// <summary>
         /// Optional. Container object for a system's tile objects configuration.
         /// </summary>
         public TileObjectsConfig TileObjects { get; set; } = null;
@@ -91,6 +97,11 @@ namespace RedditEmblemAPI.Models.Configuration.System
         /// Optional. Container object for a system's gambit configuration.
         /// </summary>
         public GambitsConfig Gambits { get; set; } = null;
+
+        /// <summary>
+        /// Optional. Container object for a system's emblem configuration.
+        /// </summary>
+        public EmblemsConfig Emblems { get; set; } = null;
 
         #endregion
     }

@@ -4,6 +4,8 @@ using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -14,7 +16,7 @@ namespace RedditEmblemAPI.Models.Output.System
     /// <summary>
     /// Object representing a TerrainType definition in the team's system.
     /// </summary>
-    public class TerrainType
+    public class TerrainType : IMatchable
     {
         #region Attributes
 
@@ -97,7 +99,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public TerrainType(TerrainTypesConfig config, List<string> data)
+        public TerrainType(TerrainTypesConfig config, IEnumerable<string> data)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -144,9 +146,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Converts the string value of <paramref name="warpType"/> into the corresponding <c>WarpType</c> object.
         /// </summary>
-        /// <param name="warpType"></param>
         /// <exception cref="UnmatchedWarpTypeException"></exception>
-        /// <returns></returns>
         private WarpType GetWarpTypeEnum(string warpType)
         {
             if (string.IsNullOrEmpty(warpType))
@@ -164,12 +164,14 @@ namespace RedditEmblemAPI.Models.Output.System
         public static IDictionary<string, TerrainType> BuildDictionary(TerrainTypesConfig config)
         {
             IDictionary<string, TerrainType> terrainTypes = new Dictionary<string, TerrainType>();
+            if (config == null || config.Query == null)
+                return terrainTypes;
 
             foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    List<string> type = row.Select(r => r.ToString()).ToList();
+                    IEnumerable<string> type = row.Select(r => r.ToString());
                     string name = DataParser.OptionalString(type, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
@@ -183,6 +185,31 @@ namespace RedditEmblemAPI.Models.Output.System
             }
 
             return terrainTypes;
+        }
+
+        /// <summary>
+        /// Matches each of the strings in <paramref name="names"/> to a <c>TerrainType</c> in <paramref name="terrainTypes"/> and returns the matches as a list.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
+        public static List<TerrainType> MatchNames(IDictionary<string, TerrainType> terrainTypes, IEnumerable<string> names, Coordinate coord, bool skipMatchedStatusSet = false)
+        {
+            return names.Select(n => MatchName(terrainTypes, n, coord, skipMatchedStatusSet)).ToList();
+        }
+
+        /// <summary>
+        /// Matches <paramref name="name"/> to a <c>TerrainType</c> in <paramref name="terrainTypes"/> and returns it.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <exception cref="UnmatchedTerrainTypeException"></exception>
+        public static TerrainType MatchName(IDictionary<string, TerrainType> terrainTypes, string name, Coordinate coord, bool skipMatchedStatusSet = false)
+        {
+            TerrainType match;
+            if (!terrainTypes.TryGetValue(name, out match))
+                throw new UnmatchedTileTerrainTypeException(coord, name);
+
+            if (!skipMatchedStatusSet) match.Matched = true;
+
+            return match;
         }
 
         #endregion

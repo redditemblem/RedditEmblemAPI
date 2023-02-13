@@ -54,9 +54,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 
                 if (value == 0) continue;
 
-                ModifiedStatValue stat;
-                if (!unit.Stats.Combat.TryGetValue(statName, out stat))
-                    throw new UnmatchedStatException(statName);
+                ModifiedStatValue stat = unit.Stats.MatchCombatStatName(statName);
                 stat.Modifiers.Add(modifierName, value);
             }
         }
@@ -74,9 +72,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 
                 if (value == 0) continue;
 
-                ModifiedStatValue stat;
-                if (!unit.Stats.General.TryGetValue(statName, out stat))
-                    throw new UnmatchedStatException(statName);
+                ModifiedStatValue stat = unit.Stats.MatchGeneralStatName(statName);
                 stat.Modifiers.Add(modifierName, value);
             }
         }
@@ -87,7 +83,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <exception cref="UnmatchedMovementTypeException"></exception>
         protected void AddTeleportTargetsToUnitRange(Unit unit, List<Tile> targetTiles)
         {
-            IEnumerable<TerrainTypeMovementCostSetEffect_Skill> moveCostSets_Skill = unit.SkillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect_Skill>();
+            IEnumerable<TerrainTypeMovementCostSetEffect_Skill> moveCostSets_Skill = unit.GetSkills().SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect_Skill>();
             IEnumerable<TerrainTypeMovementCostSetEffect_Status> moveCostSets_Status = unit.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<TerrainTypeMovementCostSetEffect_Status>();
 
             foreach (Tile tile in targetTiles)

@@ -13,7 +13,6 @@ using RedditEmblemAPI.Models.Output.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace RedditEmblemAPI.Services.Helpers
 {
@@ -35,7 +34,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 try
                 {
                     //Convert objects to strings
-                    List<string> unit = row.Select(r => r.ToString()).ToList();
+                    IEnumerable<string> unit = row.Select(r => r.ToString());
                     string unitName = DataParser.OptionalString(unit, config.Name, "Name");
                     if (string.IsNullOrEmpty(unitName)) continue;
 
@@ -107,7 +106,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Skill effects
                 try
                 {
-                    foreach (Skill skill in unit.SkillList.Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard)))
+                    foreach (Skill skill in unit.GetSkills().Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard)))
                         skill.Effects.Where(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard).ToList().ForEach(e => e.Apply(unit, skill, map, units));
                 }
                 catch (Exception ex)
@@ -145,12 +144,16 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Item ranges
                 try
                 {
-                    foreach (UnitInventoryItem item in unit.Inventory.Items)
+                    List<UnitInventoryItem> inventoryItems = unit.Inventory.Items;
+                    if (unit.Emblem != null && unit.Emblem.IsEngaged)
+                        inventoryItems = inventoryItems.Union(unit.Emblem.EngageWeapons).ToList();
+
+                    foreach (UnitInventoryItem item in inventoryItems)
                     {
                         if(item.Item.Range.MinimumRequiresCalculation || item.Item.Range.MaximumRequiresCalculation)
                             item.CalculateItemRanges(unit);
 
-                        int maxRange = item.ModifiedMaxRangeValue;
+                        int maxRange = item.MaxRange.FinalValue;
                         if (item.Item.Range.Shape == ItemRangeShape.Square || item.Item.Range.Shape == ItemRangeShape.Saltire || item.Item.Range.Shape == ItemRangeShape.Star)
                             maxRange *= 2;
                         if (maxRange > map.Constants.ItemMaxRangeAllowedForCalculation && maxRange < 99)
@@ -166,7 +169,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Skill effects
                 try
                 {
-                    foreach (Skill skill in unit.SkillList.Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.AfterFinalStatCalculations)))
+                    foreach (Skill skill in unit.GetSkills().Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.AfterFinalStatCalculations)))
                         skill.Effects.Where(e => e.ExecutionOrder == SkillEffectExecutionOrder.AfterFinalStatCalculations).ToList().ForEach(e => e.Apply(unit, skill, map, units));
                 }
                 catch (Exception ex)
@@ -226,18 +229,14 @@ namespace RedditEmblemAPI.Services.Helpers
             //Apply combat stat modifiers
             foreach (KeyValuePair<string, int> modifier in tile.TerrainTypeObj.CombatStatModifiers)
             {
-                ModifiedStatValue stat;
-                if (!unit.Stats.Combat.TryGetValue(modifier.Key, out stat))
-                    throw new UnmatchedStatException(modifier.Key);
+                ModifiedStatValue stat = unit.Stats.MatchCombatStatName(modifier.Key);
                 stat.Modifiers.TryAdd(tile.TerrainTypeObj.Name, modifier.Value);
             }
 
             //Apply stat modifiers
             foreach (KeyValuePair<string, int> modifier in tile.TerrainTypeObj.StatModifiers)
             {
-                ModifiedStatValue stat;
-                if (!unit.Stats.General.TryGetValue(modifier.Key, out stat))
-                    throw new UnmatchedStatException(modifier.Key);
+                ModifiedStatValue stat = unit.Stats.MatchGeneralStatName(modifier.Key);
                 stat.Modifiers.TryAdd(tile.TerrainTypeObj.Name, modifier.Value);
             }
         }
@@ -249,18 +248,14 @@ namespace RedditEmblemAPI.Services.Helpers
                 //Apply combat stat modifiers
                 foreach (KeyValuePair<string, int> modifier in effect.TileObject.CombatStatModifiers)
                 {
-                    ModifiedStatValue stat;
-                    if (!unit.Stats.Combat.TryGetValue(modifier.Key, out stat))
-                        throw new UnmatchedStatException(modifier.Key);
+                    ModifiedStatValue stat = unit.Stats.MatchCombatStatName(modifier.Key);
                     stat.Modifiers.TryAdd(effect.TileObject.Name, modifier.Value);
                 }
 
                 //Apply stat modifiers
                 foreach (KeyValuePair<string, int> modifier in effect.TileObject.StatModifiers)
                 {
-                    ModifiedStatValue stat;
-                    if (!unit.Stats.General.TryGetValue(modifier.Key, out stat))
-                        throw new UnmatchedStatException(modifier.Key);
+                    ModifiedStatValue stat = unit.Stats.MatchGeneralStatName(modifier.Key);
                     stat.Modifiers.TryAdd(effect.TileObject.Name, modifier.Value);
                 }
             }

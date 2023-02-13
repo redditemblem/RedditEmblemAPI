@@ -3,6 +3,7 @@ using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
 using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
@@ -295,7 +296,7 @@ namespace RedditEmblemAPI.Services.Helpers
             //Test that the unit can move to this tile
             int moveCost;
             if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(parms.Unit.GetUnitMovementType(), out moveCost))
-                throw new UnmatchedMovementTypeException(parms.Unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys.ToList());
+                throw new UnmatchedMovementTypeException(parms.Unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys);
 
             //Apply movement cost modifiers
             TerrainTypeMovementCostSetEffect_Skill movCostSet_Skill = parms.MoveCostSets_Skills.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
@@ -311,7 +312,7 @@ namespace RedditEmblemAPI.Services.Helpers
             //Check if nearby units can affect the movement costs of this tile
             if (moveCost < 99 && tile.UnitData.UnitsAffectingMovementCosts.Any())
             {
-                List<IAffectMovementCost> activeEffects = tile.UnitData.UnitsAffectingMovementCosts.SelectMany(u => u.SkillList.SelectMany(s => s.Effects).OfType<IAffectMovementCost>().Where(e => e.IsActive(u, parms.Unit))).ToList();
+                IEnumerable<IAffectMovementCost> activeEffects = tile.UnitData.UnitsAffectingMovementCosts.SelectMany(u => u.GetSkills().SelectMany(s => s.Effects).OfType<IAffectMovementCost>().Where(e => e.IsActive(u, parms.Unit)));
                 if (activeEffects.Any())
                 {
                     int minEffectMovCost = activeEffects.Min(e => e.GetMovementCost());
@@ -396,9 +397,11 @@ namespace RedditEmblemAPI.Services.Helpers
             List<Coordinate> utilRange = new List<Coordinate>();
 
             //Transpose item data into the struct we're using for recursion
-            List<UnitItemRange> itemRanges = unit.Inventory.Items.Where(i => i.CanEquip && !i.IsUsePrevented && !i.MaxRangeExceedsCalculationLimit && (i.ModifiedMinRangeValue > 0 || i.ModifiedMaxRangeValue > 0))
-                                                            .Select(i => new UnitItemRange(i.ModifiedMinRangeValue, i.ModifiedMaxRangeValue, i.Item.Range.Shape, i.Item.Range.CanOnlyUseBeforeMovement, i.Item.DealsDamage, i.AllowMeleeRange))
-                                                            .ToList();
+            List<UnitItemRange> itemRanges = SelectInventoryItemsIntoRangeStruct(unit.Inventory.Items);
+
+            //If unit is engaged with an emblem, include its items in the range as well
+            if (unit.Emblem != null && unit.Emblem.IsEngaged)
+                itemRanges = itemRanges.Union(SelectInventoryItemsIntoRangeStruct(unit.Emblem.EngageWeapons)).ToList();
 
             //Check for special case ranges
             ApplyWholeMapItemRanges(unit, itemRanges, ref atkRange, ref utilRange);
@@ -426,6 +429,13 @@ namespace RedditEmblemAPI.Services.Helpers
 
             unit.Ranges.Attack = atkRange;
             unit.Ranges.Utility = utilRange;
+        }
+
+        private List<UnitItemRange> SelectInventoryItemsIntoRangeStruct(List<UnitInventoryItem> items)
+        {
+            return items.Where(i => i.CanEquip && !i.IsUsePrevented && !i.MaxRangeExceedsCalculationLimit && (i.MinRange.FinalValue > 0 || i.MaxRange.FinalValue > 0))
+                        .Select(i => new UnitItemRange(i.MinRange.FinalValue, i.MaxRange.FinalValue, i.Item.Range.Shape, i.Item.Range.CanOnlyUseBeforeMovement, i.Item.DealsDamage, i.AllowMeleeRange))
+                        .ToList();
         }
 
         private void RecurseItemRange(ItemRangeParameters parms, Coordinate currCoord, int remainingRange, string visitedCoords, ref List<Coordinate> atkRange, ref List<Coordinate> utilRange)
@@ -626,13 +636,14 @@ namespace RedditEmblemAPI.Services.Helpers
         public UnitRangeParameters(Unit unit)
         {
             this.Unit = unit;
+            IEnumerable<Skill> skillList = unit.GetSkills();
 
-            this.IgnoresAffiliations = unit.SkillList.SelectMany(s => s.Effects).OfType<IIgnoreUnitAffiliations>().Any(e => e.IsActive(unit));
-            this.MoveCostModifiers = unit.SkillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostModifierEffect>();
-            this.MoveCostSets_Skills = unit.SkillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect_Skill>();
+            this.IgnoresAffiliations = skillList.SelectMany(s => s.Effects).OfType<IIgnoreUnitAffiliations>().Any(e => e.IsActive(unit));
+            this.MoveCostModifiers = skillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostModifierEffect>();
+            this.MoveCostSets_Skills = skillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect_Skill>();
             this.MoveCostSets_Statuses = unit.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<TerrainTypeMovementCostSetEffect_Status>();
-            this.WarpCostModifiers = unit.SkillList.SelectMany(s => s.Effects).OfType<WarpMovementCostModifierEffect>();
-            this.WarpCostSets = unit.SkillList.SelectMany(s => s.Effects).OfType<WarpMovementCostSetEffect>();
+            this.WarpCostModifiers = skillList.SelectMany(s => s.Effects).OfType<WarpMovementCostModifierEffect>();
+            this.WarpCostSets = skillList.SelectMany(s => s.Effects).OfType<WarpMovementCostSetEffect>();
         }
     }
 

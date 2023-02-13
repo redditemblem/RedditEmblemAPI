@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System;
+using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -77,6 +77,11 @@ namespace RedditEmblemAPI.Models.Output.System
         public List<WeaponRankBonus> WeaponRankBonuses { get; set; }
 
         /// <summary>
+        /// Container dictionary for data about engravings.
+        /// </summary>
+        public IDictionary<string, Engraving> Engravings { get; set; }
+
+        /// <summary>
         /// Container dictionary for data about battalions.
         /// </summary>
         public IDictionary<string, Battalion> Battalions { get; set; }
@@ -86,12 +91,16 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public IDictionary<string, Gambit> Gambits { get; set; }
 
+        /// <summary>
+        /// Container dictionary for data about emblems.
+        /// </summary>
+        public IDictionary<string, Emblem> Emblems { get; set; }
+
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="config"></param>
         public SystemInfo(SystemConfig config)
         {
             //Copy over constants from config
@@ -105,58 +114,27 @@ namespace RedditEmblemAPI.Models.Output.System
         public void RemoveUnusedObjects()
         {
             //REQUIRED
-
-            //Cull unused terrain types
-            foreach (string key in this.TerrainTypes.Keys.ToList())
-                if (!this.TerrainTypes[key].Matched)
-                    this.TerrainTypes.Remove(key);
-
-            //Cull unused affiliations
-            foreach (string key in this.Affiliations.Keys.ToList())
-                if (!this.Affiliations[key].Matched)
-                    this.Affiliations.Remove(key);
-
-            //Cull unused items
-            foreach (string key in this.Items.Keys.ToList())
-                if (!this.Items[key].Matched)
-                    this.Items.Remove(key);
+            CullDictionary(this.TerrainTypes);
+            CullDictionary(this.Affiliations);
+            CullDictionary(this.Items);
 
             //OPTIONAL
+            CullDictionary(this.TileObjects);
+            CullDictionary(this.Classes);
+            CullDictionary(this.Skills);
+            CullDictionary(this.StatusConditions);
+            CullDictionary(this.Tags);
+            CullDictionary(this.Battalions);
+            CullDictionary(this.Gambits);
+            CullDictionary(this.Engravings);
+            CullDictionary(this.Emblems);
+        }
 
-            //Cull unused tile objects
-            foreach (string key in this.TileObjects.Keys.ToList())
-                if (!this.TileObjects[key].Matched)
-                    this.TileObjects.Remove(key);
-
-            //Cull unused classes
-            foreach (string key in this.Classes.Keys.ToList())
-                if (!this.Classes[key].Matched)
-                    this.Classes.Remove(key);
-
-            //Cull unused skills
-            foreach (string key in this.Skills.Keys.ToList())
-                if (!this.Skills[key].Matched)
-                    this.Skills.Remove(key);
-
-            //Cull unused status conditions
-            foreach (string key in this.StatusConditions.Keys.ToList())
-                if (!this.StatusConditions[key].Matched)
-                    this.StatusConditions.Remove(key);
-
-            //Cull unused tags
-            foreach (string key in this.Tags.Keys.ToList())
-                if (!this.Tags[key].Matched)
-                    this.Tags.Remove(key);
-
-            //Cull unused battalions
-            foreach (string key in this.Battalions.Keys.ToList())
-                if (!this.Battalions[key].Matched)
-                    this.Battalions.Remove(key);
-
-            //Cull unused gambits
-            foreach (string key in this.Gambits.Keys.ToList())
-                if (!this.Gambits[key].Matched)
-                    this.Gambits.Remove(key);
+        private void CullDictionary<T>(IDictionary<string, T> dictionary) where T : IMatchable
+        { 
+            foreach (string key in dictionary.Keys)
+                if (!dictionary[key].Matched)
+                    dictionary.Remove(key);
         }
 
         #region Parsers
@@ -169,39 +147,25 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             this.TerrainTypes = TerrainType.BuildDictionary(config.TerrainTypes);
             this.Affiliations = Affiliation.BuildDictionary(config.Affiliations);
-            this.Items = Item.BuildDictionary(config.Items, this.Tags); //note: items are dependent on Tags
+            this.Items = Item.BuildDictionary(config.Items, this.Tags, this.Engravings); //note: items are dependent on Tags & Engravings
 
         }
 
         /// <summary>
         /// Helper function for the constructor. Parses data into dictionaries.
         /// </summary>
-        /// <param name="config"></param>
         private void ParseOptionalData(SystemConfig config)
         {
-            if (config.TileObjects != null) this.TileObjects = TileObject.BuildDictionary(config.TileObjects);
-            else this.TileObjects = new Dictionary<string, TileObject>();
-
-            if (config.Classes != null) this.Classes = Class.BuildDictionary(config.Classes);
-            else this.Classes = new Dictionary<string, Class>();
-
-            if (config.Skills != null) this.Skills = Skill.BuildDictionary(config.Skills);
-            else this.Skills = new Dictionary<string, Skill>();
-
-            if (config.StatusConditions != null) this.StatusConditions = StatusCondition.BuildDictionary(config.StatusConditions);
-            else this.StatusConditions = new Dictionary<string, StatusCondition>();
-
-            if (config.Tags != null) this.Tags = Tag.BuildDictionary(config.Tags);
-            else this.Tags = new Dictionary<string, Tag>();
-
-            if (config.WeaponRankBonuses != null) this.WeaponRankBonuses = WeaponRankBonus.BuildList(config.WeaponRankBonuses);
-            else this.WeaponRankBonuses = new List<WeaponRankBonus>();
-
-            if (config.Gambits != null) this.Gambits = Gambit.BuildDictionary(config.Gambits);
-            else this.Gambits = new Dictionary<string, Gambit>();
-
-            if (config.Battalions != null) this.Battalions = Battalion.BuildDictionary(config.Battalions, this.Gambits);
-            else this.Battalions = new Dictionary<string, Battalion>();
+            this.TileObjects = TileObject.BuildDictionary(config.TileObjects);
+            this.Classes = Class.BuildDictionary(config.Classes);
+            this.Skills = Skill.BuildDictionary(config.Skills);
+            this.StatusConditions = StatusCondition.BuildDictionary(config.StatusConditions);
+            this.Tags = Tag.BuildDictionary(config.Tags);
+            this.WeaponRankBonuses = WeaponRankBonus.BuildList(config.WeaponRankBonuses);
+            this.Engravings = Engraving.BuildDictionary(config.Engravings);
+            this.Gambits = Gambit.BuildDictionary(config.Gambits);
+            this.Battalions = Battalion.BuildDictionary(config.Battalions, this.Gambits);
+            this.Emblems = Emblem.BuildDictionary(config.Emblems);
         }
 
         #endregion

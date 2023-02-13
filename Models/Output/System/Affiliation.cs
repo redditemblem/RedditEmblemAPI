@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System.Affiliations;
 using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class Affiliation
+    public class Affiliation : IMatchable
     {
         #region Attributes
 
@@ -45,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Affiliation(AffiliationsConfig config, List<string> data)
+        public Affiliation(AffiliationsConfig config, IEnumerable<string> data)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -59,12 +61,14 @@ namespace RedditEmblemAPI.Models.Output.System
         public static IDictionary<string, Affiliation> BuildDictionary(AffiliationsConfig config)
         {
             IDictionary<string, Affiliation> affiliations = new Dictionary<string, Affiliation>();
+            if (config == null || config.Query == null)
+                return affiliations;
 
             foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    List<string> aff = row.Select(r => r.ToString()).ToList();
+                    IEnumerable<string> aff = row.Select(r => r.ToString());
                     string name = DataParser.OptionalString(aff, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
@@ -78,6 +82,31 @@ namespace RedditEmblemAPI.Models.Output.System
             }
 
             return affiliations;
+        }
+
+        /// <summary>
+        /// Matches each of the strings in <paramref name="names"/> to an <c>Affiliation</c> in <paramref name="affiliations"/> and returns the matches as a list.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
+        public static List<Affiliation> MatchNames(IDictionary<string, Affiliation> affiliations, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        {
+            return names.Select(n => MatchName(affiliations, n, skipMatchedStatusSet)).ToList();
+        }
+
+        /// <summary>
+        /// Matches <paramref name="name"/> to an <c>Affiliation</c> in <paramref name="affiliations"/> and returns it.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <exception cref="UnmatchedAffiliationException"></exception>
+        public static Affiliation MatchName(IDictionary<string, Affiliation> affiliations, string name, bool skipMatchedStatusSet = false)
+        {
+            Affiliation match;
+            if (!affiliations.TryGetValue(name, out match))
+                throw new UnmatchedAffiliationException(name);
+
+            if (!skipMatchedStatusSet) match.Matched = true;
+
+            return match;
         }
 
         #endregion

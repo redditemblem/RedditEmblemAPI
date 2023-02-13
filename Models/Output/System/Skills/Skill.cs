@@ -3,6 +3,7 @@ using RedditEmblemAPI.Models.Configuration.System.Skills;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange;
@@ -21,7 +22,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
     /// <summary>
     /// Object representing a Skill definition in the team's system. 
     /// </summary>
-    public class Skill
+    public class Skill : IMatchable
     {
         #region Attributes
 
@@ -67,8 +68,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Skill(SkillsConfig config, List<string> data)
+        public Skill(SkillsConfig config, IEnumerable<string> data)
         {
+            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
@@ -166,12 +168,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         public static IDictionary<string, Skill> BuildDictionary(SkillsConfig config)
         {
             IDictionary<string, Skill> skills = new Dictionary<string, Skill>();
+            if (config == null || config.Query == null)
+                return skills;
 
             foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    List<string> skill = row.Select(r => r.ToString()).ToList();
+                    IEnumerable<string> skill = row.Select(r => r.ToString());
                     string name = DataParser.OptionalString(skill, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
@@ -185,6 +189,31 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             }
 
             return skills;
+        }
+
+        /// <summary>
+        /// Matches each of the strings in <paramref name="names"/> to a <c>Skill</c> in <paramref name="skills"/> and returns the matches as a list.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
+        public static List<Skill> MatchNames(IDictionary<string, Skill> skills, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        {
+            return names.Select(n => MatchName(skills, n, skipMatchedStatusSet)).ToList();
+        }
+
+        /// <summary>
+        /// Matches <paramref name="name"/> to a <c>Skill</c> in <paramref name="skills"/> and returns it.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <exception cref="UnmatchedSkillException"></exception>
+        public static Skill MatchName(IDictionary<string, Skill> skills, string name, bool skipMatchedStatusSet = false)
+        {
+            Skill match;
+            if (!skills.TryGetValue(name, out match))
+                throw new UnmatchedSkillException(name);
+
+            if (!skipMatchedStatusSet) match.Matched = true;
+
+            return match;
         }
 
         #endregion

@@ -41,7 +41,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
                     continue;
 
                 //Items with a minimum range of 0 are not affected
-                if (item.Item.Range.Minimum == 0 && !item.Item.Range.MinimumRequiresCalculation)
+                if (item.MinRange.BaseValue == 0 && !item.Item.Range.MinimumRequiresCalculation)
                     continue;
 
                 item.AllowMeleeRange = true;

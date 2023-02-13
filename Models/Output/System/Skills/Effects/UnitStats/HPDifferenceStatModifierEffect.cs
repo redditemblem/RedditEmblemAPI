@@ -39,7 +39,6 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Calculates the HP difference and adds it as a modifier to the stats in <c>Stats</c> for <paramref name="unit"/>.
         /// </summary>
-        /// <exception cref="UnmatchedStatException"></exception>
         public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             int modifier = (int)Math.Floor(unit.Stats.HP.Difference * this.Multiplier);
@@ -48,9 +47,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
 
             foreach (string statName in this.Stats)
             {
-                ModifiedStatValue stat;
-                if (!unit.Stats.General.TryGetValue(statName, out stat))
-                    throw new UnmatchedStatException(statName);
+                ModifiedStatValue stat = unit.Stats.MatchGeneralStatName(statName);
                 stat.Modifiers.Add(skill.Name, modifier);
             }
         }

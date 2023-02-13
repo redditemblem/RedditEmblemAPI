@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using Newtonsoft.Json.Linq;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -57,7 +58,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Constructor.
         /// </summary>
-        public UnitStatsData(UnitsConfig config, List<string> data)
+        public UnitStatsData(UnitsConfig config, IEnumerable<string> data)
         {
             this.Level = DataParser.Int_NonZeroPositive(data, config.Level, "Level");
 
@@ -79,7 +80,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Adds the stats from <paramref name="stats"/> into <c>CombatStats</c>. Does NOT calculate their values.
         /// </summary>
-        private void BuildCombatStats(List<string> data, List<CalculatedStatConfig> stats)
+        private void BuildCombatStats(IEnumerable<string> data, List<CalculatedStatConfig> stats)
         {
             this.Combat = new Dictionary<string, ModifiedStatValue>();
 
@@ -99,7 +100,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
         }
 
-        private void BuildSystemStats(List<string> data, List<ModifiedNamedStatConfig> config)
+        private void BuildSystemStats(IEnumerable<string> data, List<ModifiedNamedStatConfig> config)
         {
             this.System = new Dictionary<string, ModifiedStatValue>();
 
@@ -120,7 +121,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
         }
 
-        private void BuildGeneralStats(List<string> data, List<ModifiedNamedStatConfig> config)
+        private void BuildGeneralStats(IEnumerable<string> data, List<ModifiedNamedStatConfig> config)
         {
             this.General = new Dictionary<string, ModifiedStatValue>();
 
@@ -148,7 +149,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public void CalculateCombatStats(List<CalculatedStatConfig> stats, Unit unit)
         {
-            List<ReplaceCombatStatFormulaVariableEffect> replacementEffects = unit.SkillList.SelectMany(s => s.Effects).OfType<ReplaceCombatStatFormulaVariableEffect>().ToList();
+            List<ReplaceCombatStatFormulaVariableEffect> replacementEffects = unit.GetSkills().SelectMany(s => s.Effects).OfType<ReplaceCombatStatFormulaVariableEffect>().ToList();
             string equippedUtilStat = GetItemUtilizedStatName(unit.Inventory.GetPrimaryEquippedItem());
 
             foreach (CalculatedStatConfig stat in stats)
@@ -190,14 +191,11 @@ namespace RedditEmblemAPI.Models.Output.Units
             string statName = string.Empty;
             int maxValue = int.MinValue;
 
-            if (item == null)
-                return statName;
+            if (item == null) return statName;
 
             foreach (string utilStatName in item.Item.UtilizedStats)
             {
-                ModifiedStatValue weaponUtilStat;
-                if (!this.General.TryGetValue(utilStatName, out weaponUtilStat))
-                    throw new UnmatchedStatException(utilStatName);
+                ModifiedStatValue weaponUtilStat = MatchGeneralStatName(utilStatName);
 
                 //Take the greatest stat value of all the utilized stats
                 if (weaponUtilStat.FinalValue > maxValue)
@@ -210,5 +208,43 @@ namespace RedditEmblemAPI.Models.Output.Units
             return statName;
         }
 
+        /// <summary>
+        /// Returns the stat in <c>Combat</c> that matches <paramref name="name"/>.
+        /// </summary>
+        /// <exception cref="UnmatchedStatException"></exception>
+        public ModifiedStatValue MatchCombatStatName(string name)
+        {
+            ModifiedStatValue stat;
+            if (!this.Combat.TryGetValue(name, out stat))
+                throw new UnmatchedStatException(name);
+
+            return stat;
+        }
+
+        /// <summary>
+        /// Returns the stat in <c>System</c> that matches <paramref name="name"/>.
+        /// </summary>
+        /// <exception cref="UnmatchedStatException"></exception>
+        public ModifiedStatValue MatchSystemStatName(string name)
+        {
+            ModifiedStatValue stat;
+            if (!this.System.TryGetValue(name, out stat))
+                throw new UnmatchedStatException(name);
+
+            return stat;
+        }
+
+        /// <summary>
+        /// Returns the stat in <c>General</c> that matches <paramref name="name"/>.
+        /// </summary>
+        /// <exception cref="UnmatchedStatException"></exception>
+        public ModifiedStatValue MatchGeneralStatName(string name)
+        {
+            ModifiedStatValue stat;
+            if (!this.General.TryGetValue(name, out stat))
+                throw new UnmatchedStatException(name);
+
+            return stat;
+        }
     }
 }

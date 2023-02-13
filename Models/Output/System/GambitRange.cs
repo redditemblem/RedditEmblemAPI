@@ -24,7 +24,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Constructor.
         /// </summary>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
-        public GambitRange(GambitRangeConfig config, List<string> data)
+        public GambitRange(GambitRangeConfig config, IEnumerable<string> data)
         {
             this.Minimum = DataParser.Int_Positive(data, config.Minimum, "Minimum Range");
             this.Maximum = DataParser.Int_Positive(data, config.Maximum, "Maximum Range");

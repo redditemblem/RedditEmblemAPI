@@ -27,7 +27,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Constructor. Builds the Items list and flags equipped items.
         /// </summary>
         /// <exception cref="UnmatchedEquippedItemException"></exception>
-        public UnitInventory(InventoryConfig config, List<string> data, IDictionary<string, Item> items)
+        public UnitInventory(InventoryConfig config, IEnumerable<string> data, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings, UnitEmblem emblem)
         {
             this.Items = new List<UnitInventoryItem>();
             this.EmptySlotCount = 0;
@@ -42,7 +42,8 @@ namespace RedditEmblemAPI.Models.Output.Units
                 }
 
                 int uses = DataParser.OptionalInt_Positive(data, item.Uses, "Item Uses");
-                this.Items.Add(new UnitInventoryItem(name, uses, items));
+                IEnumerable<string> itemEngravings = DataParser.List_Strings(data, item.Engravings).Distinct();
+                this.Items.Add(new UnitInventoryItem(name, uses, itemEngravings, items, engravings));
             }
 
             //Find the all equipped items and flag them
@@ -51,7 +52,13 @@ namespace RedditEmblemAPI.Models.Output.Units
             {
                 UnitInventoryItem equipped = this.Items.FirstOrDefault(i => i.FullName == equippedItemName);
                 if (equipped == null)
-                    throw new UnmatchedEquippedItemException(equippedItemName);
+                {
+                    //Attempt to pick the equipped item off of an emblem, if one exists
+                    equipped = emblem?.EngageWeapons.FirstOrDefault(i => i.FullName == equippedItemName);
+                    if(equipped == null)
+                        throw new UnmatchedEquippedItemException(equippedItemName);
+
+                }
                 equipped.IsPrimaryEquipped = true;
             }
 

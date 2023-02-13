@@ -163,13 +163,13 @@ namespace RedditEmblemAPI.Services
             ExecuteBatchQuery(service,
                               config.Team.WorkbookID,
                               MajorDimensionEnum.ROWS,
-                              queries.Where(q => q != null && q.Orientation == MajorDimensionEnum.ROWS).ToList()
+                              queries.Where(q => q != null && q.Orientation == MajorDimensionEnum.ROWS)
                              );
 
             ExecuteBatchQuery(service,
                               config.Team.WorkbookID,
                               MajorDimensionEnum.COLUMNS,
-                              queries.Where(q => q != null && q.Orientation == MajorDimensionEnum.COLUMNS).ToList()
+                              queries.Where(q => q != null && q.Orientation == MajorDimensionEnum.COLUMNS)
                              );
         }
 
@@ -181,12 +181,11 @@ namespace RedditEmblemAPI.Services
         /// <param name="queries">The set of queries to be executed. All are expected to have the same <c>Orientation</c> value as <paramref name="dimension"/>.</param>
         /// <returns></returns>
         /// <exception cref="GoogleSheetsQueryFailedException"></exception>
-        private void ExecuteBatchQuery(SheetsService service, string workbookID, MajorDimensionEnum dimension, IList<Query> queries)
+        private void ExecuteBatchQuery(SheetsService service, string workbookID, MajorDimensionEnum dimension, IEnumerable<Query> queries)
         {
             try
             {
-                if (queries.Count == 0)
-                    return;
+                if (!queries.Any()) return;
 
                 BatchGetRequest request = service.Spreadsheets.Values.BatchGet(workbookID);
                 request.Ranges = queries.Select(q => q.ToString()).ToList();

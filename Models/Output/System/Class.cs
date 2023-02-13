@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System.Classes;
 using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class Class
+    public class Class : IMatchable
     {
         #region Attributes
 
@@ -45,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Class(ClassesConfig config, List<string> data)
+        public Class(ClassesConfig config, IEnumerable<string> data)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -60,12 +62,14 @@ namespace RedditEmblemAPI.Models.Output.System
         public static IDictionary<string, Class> BuildDictionary(ClassesConfig config)
         {
             IDictionary<string, Class> classes = new Dictionary<string, Class>();
+            if (config == null || config.Query == null)
+                return classes;
 
             foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    List<string> cls = row.Select(r => r.ToString()).ToList();
+                    IEnumerable<string> cls = row.Select(r => r.ToString());
                     string name = DataParser.OptionalString(cls, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
@@ -79,6 +83,31 @@ namespace RedditEmblemAPI.Models.Output.System
             }
 
             return classes;
+        }
+
+        /// <summary>
+        /// Matches each of the strings in <paramref name="names"/> to a <c>Class</c> in <paramref name="classes"/> and returns the matches as a list.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
+        public static List<Class> MatchNames(IDictionary<string, Class> classes, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        {
+            return names.Select(n => MatchName(classes, n, skipMatchedStatusSet)).ToList();
+        }
+
+        /// <summary>
+        /// Matches <paramref name="name"/> to a <c>Class</c> in <paramref name="classes"/> and returns it.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <exception cref="UnmatchedClassException"></exception>
+        public static Class MatchName(IDictionary<string, Class> classes, string name, bool skipMatchedStatusSet = false)
+        {
+            Class match;
+            if (!classes.TryGetValue(name, out match))
+                throw new UnmatchedClassException(name);
+
+            if (!skipMatchedStatusSet) match.Matched = true;
+
+            return match;
         }
 
         #endregion

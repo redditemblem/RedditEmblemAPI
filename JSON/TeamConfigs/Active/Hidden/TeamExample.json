@@ -74,7 +74,7 @@
           "Value": 10
         },
         {
-          "SourceName": "Eva",
+          "SourceName": "CEva",
           "Value": 11
         }
       ],
@@ -146,14 +146,15 @@
           "Value": 31
         }
       ],
-        "Range": {
-            "Minimum": 12,
-            "Maximum": 13,
-            "Shape": 14,
-            "CanOnlyUseBeforeMovement": 15
-        },
+      "Range": {
+        "Minimum": 12,
+        "Maximum": 13,
+        "Shape": 14,
+        "CanOnlyUseBeforeMovement": 15
+      },
       "Tags": [ 32 ],
-      "TextFields": [ 33, 34 ]
+      "Engravings": [ 33 ],
+      "TextFields": [ 34, 35 ]
     },
     "WeaponRankBonuses": {
       "Query": {
@@ -337,6 +338,50 @@
       "SpriteURL": 1,
       "ShowOnUnit": 2,
       "UnitAura": 3
+    },
+    "Engravings": {
+      "Query": {
+        "Sheet": "Item Engravings",
+        "Selection": "B2:J",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "StatModifiers": [
+        {
+          "SourceName": "Mt",
+          "Value": 2
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 3
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 4
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 5
+        },
+        {
+          "SourceName": "CEva",
+          "Value": 6
+        }
+      ],
+      "TextFields": [ 7, 8 ]
+    },
+    "Emblems": {
+      "Query": {
+        "Sheet": "Emblems",
+        "Selection": "B2:F",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "EngagedUnitAura": 2,
+      "Tagline": 3,
+      "TextFields": [ 4 ]
     }
   },
   "Units": {
@@ -406,7 +451,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 50
+            "Value": 74
           }
         ]
       },
@@ -416,7 +461,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 55
+            "Value": 79
           }
         ]
       },
@@ -426,7 +471,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 51
+            "Value": 75
           }
         ]
       },
@@ -436,7 +481,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 56
+            "Value": 80
           }
         ]
       },
@@ -446,7 +491,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 54
+            "Value": 78
           }
         ]
       },
@@ -456,7 +501,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 53
+            "Value": 77
           }
         ]
       },
@@ -466,7 +511,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 52
+            "Value": 76
           }
         ]
       },
@@ -476,7 +521,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 57
+            "Value": 81
           }
         ]
       }
@@ -499,55 +544,69 @@
       "PrimaryEquippedItem": 35,
       "Slots": [
         {
-          "Name": 36
+          "Name": 36,
+          "Engravings": [ 37 ]
         },
         {
-          "Name": 37
+          "Name": 38,
+          "Engravings": [ 39 ]
         },
         {
-          "Name": 38
+          "Name": 40,
+          "Engravings": [ 41 ]
         },
         {
-          "Name": 39
+          "Name": 42,
+          "Engravings": [ 43 ]
         },
         {
-          "Name": 40
+          "Name": 44,
+          "Engravings": [ 45 ]
         }
       ]
     },
-    "Skills": [ 41, 42, 43, 44, 45, 46, 47, 48 ],
+    "Skills": [ 54, 55, 56, 57, 58, 59, 60, 61 ],
     "StatusConditions": [
       {
-        "Name": 59,
-        "RemainingTurns": 60,
+        "Name": 83,
+        "RemainingTurns": 84,
         "AdditionalStats": [
           {
             "SourceName": "Intensity",
-            "Value": 61
+            "Value": 85
           }
         ]
       },
       {
-        "Name": 62,
-        "RemainingTurns": 63,
+        "Name": 86,
+        "RemainingTurns": 87,
         "AdditionalStats": [
           {
             "SourceName": "Intensity",
-            "Value": 64
+            "Value": 88
           }
         ]
       },
       {
-        "Name": 65,
-        "RemainingTurns": 66,
+        "Name": 89,
+        "RemainingTurns": 90,
         "AdditionalStats": [
           {
             "SourceName": "Intensity",
-            "Value": 67
+            "Value": 91
           }
         ]
       }
-    ]
+    ],
+    "Emblem": {
+      "Name": 62,
+      "BondLevel": 63,
+      "EngageMeterCount": 64,
+      "IsEngaged": 65,
+      "SyncSkills": [ 66, 67, 68 ],
+      "EngageSkills": [ 69 ],
+      "EngageWeapons": [ 70, 71, 72 ]
+    }
   },
   "Convoy": {
     "Query": {
@@ -556,9 +615,11 @@
       "Orientation": 1
     },
     "Name": 0,
-    "Owner": 1,
-    "Quantity": 2,
-    "Value": 3
+    "Uses": 1,
+    "Engravings": [ 2 ],
+    "Owner": 3,
+    "Quantity": 4,
+    "Value": 5
   },
   "Shop": {
     "Query": {
@@ -568,9 +629,10 @@
 
     },
     "Name": 0,
-    "Stock": 1,
-    "Price": 2,
-    "SalePrice": 3,
-    "IsNew": 4
+    "Stock": 2,
+    "Price": 3,
+    "SalePrice": 4,
+    "IsNew": 5,
+    "Engravings": [ 1 ]
   }
 }

@@ -4,6 +4,8 @@ using RedditEmblemAPI.Models.Configuration.System.TileObjects;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,7 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class TileObject
+    public class TileObject : IMatchable
     {
         #region Attributes
 
@@ -68,10 +70,9 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion
 
-        public TileObject(TileObjectsConfig config, List<string> data)
+        public TileObject(TileObjectsConfig config, IEnumerable<string> data)
         {
             this.Matched = false;
-
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.String_URL(data, config.SpriteURL, "Sprite URL");
             this.Size = DataParser.OptionalInt_NonZeroPositive(data, config.Size, "Size");
@@ -124,12 +125,14 @@ namespace RedditEmblemAPI.Models.Output.System
         public static IDictionary<string, TileObject> BuildDictionary(TileObjectsConfig config)
         {
             IDictionary<string, TileObject> tileObjects = new Dictionary<string, TileObject>();
+            if (config == null || config.Query == null)
+                return tileObjects;
 
             foreach (List<object> row in config.Query.Data)
             {
                 try
                 {
-                    List<string> tileObj = row.Select(r => r.ToString()).ToList();
+                    IEnumerable<string> tileObj = row.Select(r => r.ToString());
                     string name = DataParser.OptionalString(tileObj, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
@@ -143,6 +146,31 @@ namespace RedditEmblemAPI.Models.Output.System
             }
 
             return tileObjects;
+        }
+
+        /// <summary>
+        /// Matches each of the strings in <paramref name="names"/> to a <c>TileObject</c> in <paramref name="tileObjects"/> and returns the matches as a list.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
+        public static List<TileObject> MatchNames(IDictionary<string, TileObject> tileObjects, IEnumerable<string> names, Coordinate coord, bool skipMatchedStatusSet = false)
+        {
+            return names.Select(n => MatchName(tileObjects, n, coord, skipMatchedStatusSet)).ToList();
+        }
+
+        /// <summary>
+        /// Matches <paramref name="name"/> to a <c>TileObject</c> in <paramref name="tileObjects"/> and returns it.
+        /// </summary>
+        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <exception cref="UnmatchedTileObjectException"></exception>
+        public static TileObject MatchName(IDictionary<string, TileObject> tileObjects, string name, Coordinate coord, bool skipMatchedStatusSet = false)
+        {
+            TileObject match;
+            if (!tileObjects.TryGetValue(name, out match))
+                throw new UnmatchedTileObjectException(coord, name);
+
+            if (!skipMatchedStatusSet) match.Matched = true;
+
+            return match;
         }
 
         #endregion

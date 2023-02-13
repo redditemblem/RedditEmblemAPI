@@ -81,6 +81,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         public List<NamedStatConfig> InventoryStatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
+        /// Optional. List of cell indexes for an item's engraving(s).
+        /// </summary>
+        public List<int> Engravings = new List<int>();
+
+        /// <summary>
         /// Optional. List of cell indexes for an item's tag(s).
         /// </summary>
         public List<int> Tags { get; set; } = new List<int>();

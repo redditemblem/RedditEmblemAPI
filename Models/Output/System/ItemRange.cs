@@ -63,7 +63,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <param name="minimum">A numerical string value.</param>
         /// <param name="maximum">A numerical string value.</param>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
-        public ItemRange(ItemRangeConfig config, List<string> data)
+        public ItemRange(ItemRangeConfig config, IEnumerable<string> data)
         {
             this.Minimum = RangeValueHandler_Minimum(data, config.Minimum);
             this.Maximum = RangeValueHandler_Maximum(data, config.Maximum);
@@ -75,7 +75,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.CanOnlyUseBeforeMovement = DataParser.OptionalBoolean_YesNo(data, config.CanOnlyUseBeforeMovement, "Can Only Use Before Movement");
         }
 
-        private int RangeValueHandler_Minimum(List<string> data, int index)
+        private int RangeValueHandler_Minimum(IEnumerable<string> data, int index)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace RedditEmblemAPI.Models.Output.System
             }
         }
 
-        private int RangeValueHandler_Maximum(List<string> data, int index)
+        private int RangeValueHandler_Maximum(IEnumerable<string> data, int index)
         {
             try
             {

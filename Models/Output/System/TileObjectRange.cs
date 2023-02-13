@@ -33,7 +33,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Constructor.
         /// </summary>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
-        public TileObjectRange(TileObjectRangeConfig config, List<string> data)
+        public TileObjectRange(TileObjectRangeConfig config, IEnumerable<string> data)
         {
             this.Minimum = DataParser.OptionalInt_Positive(data, config.Minimum, "Minimum Range");
             this.Maximum = DataParser.OptionalInt_Positive(data, config.Maximum, "Maximum Range");

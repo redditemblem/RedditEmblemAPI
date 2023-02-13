@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
+using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.Shop
 {
@@ -44,6 +45,11 @@ namespace RedditEmblemAPI.Models.Configuration.Shop
         /// Optional. Cell index for a shop item's is new flag.
         /// </summary>
         public int IsNew { get; set; } = -1;
+
+        /// <summary>
+        /// Optional. Cell indexes for a shop item's engravings.
+        /// </summary>
+        public List<int> Engravings { get; set; } = new List<int>();
 
         #endregion
     }

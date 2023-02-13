@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Units;
-using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
@@ -42,26 +41,13 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #endregion Attributes
 
-        public UnitBattalion(UnitBattalionConfig config, List<string> data, IDictionary<string, Battalion> battalions)
-        {
-            this.BattalionObj = MatchBattalion(config, data, battalions);
-            this.Endurance = DataParser.Int_Positive(data, config.Endurance, "Battalion Endurance");
-            this.GambitUses = DataParser.Int_Positive(data, config.GambitUses, "Gambit Uses");
-        }
-
-        private Battalion MatchBattalion(UnitBattalionConfig config, List<string> data, IDictionary<string, Battalion> battalions)
+        public UnitBattalion(UnitBattalionConfig config, IEnumerable<string> data, IDictionary<string, Battalion> battalions)
         {
             string name = DataParser.String(data, config.Battalion, "Battalion");
+            this.BattalionObj = Battalion.MatchName(battalions, name);
 
-            Battalion battalion;
-            if (!battalions.TryGetValue(name, out battalion))
-                throw new UnmatchedBattalionException(name);
-
-            //Mark both the battalion and its associated gambit as matched
-            battalion.Matched = true;
-            battalion.GambitObj.Matched = true;
-
-            return battalion;
+            this.Endurance = DataParser.Int_Positive(data, config.Endurance, "Battalion Endurance");
+            this.GambitUses = DataParser.Int_Positive(data, config.GambitUses, "Gambit Uses");
         }
     }
 }
