@@ -58,6 +58,10 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Affiliation</c> from each valid row.
+        /// </summary>
+        /// <exception cref="AffiliationProcessingException"></exception>
         public static IDictionary<string, Affiliation> BuildDictionary(AffiliationsConfig config)
         {
             IDictionary<string, Affiliation> affiliations = new Dictionary<string, Affiliation>();
@@ -66,10 +70,11 @@ namespace RedditEmblemAPI.Models.Output.System
 
             foreach (List<object> row in config.Query.Data)
             {
+                string name = string.Empty;
                 try
                 {
                     IEnumerable<string> aff = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(aff, config.Name, "Name");
+                    name = DataParser.OptionalString(aff, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!affiliations.TryAdd(name, new Affiliation(config, aff)))
@@ -77,7 +82,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
                 catch (Exception ex)
                 {
-                    throw new AffiliationProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                    throw new AffiliationProcessingException(name, ex);
                 }
             }
 

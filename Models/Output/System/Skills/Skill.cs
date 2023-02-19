@@ -165,6 +165,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Skill</c> from each valid row.
+        /// </summary>
+        /// <exception cref="SkillProcessingException"></exception>
         public static IDictionary<string, Skill> BuildDictionary(SkillsConfig config)
         {
             IDictionary<string, Skill> skills = new Dictionary<string, Skill>();
@@ -173,10 +177,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
 
             foreach (List<object> row in config.Query.Data)
             {
+                string name = string.Empty;
                 try
                 {
                     IEnumerable<string> skill = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(skill, config.Name, "Name");
+                    name = DataParser.OptionalString(skill, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!skills.TryAdd(name, new Skill(config, skill)))
@@ -184,7 +189,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 }
                 catch (Exception ex)
                 {
-                    throw new SkillProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                    throw new SkillProcessingException(name, ex);
                 }
             }
 

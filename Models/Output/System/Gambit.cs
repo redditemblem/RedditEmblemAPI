@@ -72,23 +72,15 @@ namespace RedditEmblemAPI.Models.Output.System
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
             this.Range = new GambitRange(config.Range, data);
-
-            BuildStats(config.Stats, data);
+            this.Stats = DataParser.NamedStatDictionary_Int_Any(config.Stats, data, true);
         }
-
-        private void BuildStats(List<NamedStatConfig> configs, IEnumerable<string> data)
-        {
-            this.Stats = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in configs)
-            {
-                int val = DataParser.Int_Any(data, stat.Value, stat.SourceName);
-                this.Stats.Add(stat.SourceName, val);
-            }
-        }
-
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Gambit</c> from each valid row.
+        /// </summary>
+        /// <exception cref="GambitProcessingException"></exception>
         public static IDictionary<string, Gambit> BuildDictionary(GambitsConfig config)
         {
             IDictionary<string, Gambit> gambits = new Dictionary<string, Gambit>();
@@ -97,10 +89,11 @@ namespace RedditEmblemAPI.Models.Output.System
 
             foreach (List<object> row in config.Query.Data)
             {
+                string name = string.Empty;
                 try
                 {
                     IEnumerable<string> gambit = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(gambit, config.Name, "Name");
+                    name = DataParser.OptionalString(gambit, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!gambits.TryAdd(name, new Gambit(config, gambit)))
@@ -108,7 +101,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
                 catch (Exception ex)
                 {
-                    throw new GambitProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                    throw new GambitProcessingException(name, ex);
                 }
             }
 

@@ -7,8 +7,6 @@ namespace RedditEmblemAPI.Models.Exceptions.Unmatched
         /// <summary>
         /// Thrown when text cannot be matched to a movement cost name configured in <c>TerrainTypesConfig</c>.
         /// </summary>
-        /// <param name="movementType"></param>
-        /// <param name="possibleValues"></param>
         public UnmatchedMovementTypeException(string movementType, IEnumerable<string> possibleValues)
             : base("movement type", movementType, possibleValues)
         { }

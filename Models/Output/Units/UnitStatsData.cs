@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using RedditEmblemAPI.Models.Configuration.Common;
+﻿using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -70,76 +69,51 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.HP = new HP(data, config.HP.Current, config.HP.Maximum);
 
             //Build stat dictionaries
-            BuildCombatStats(data, config.CombatStats);
-            BuildSystemStats(data, config.SystemStats);
-            BuildGeneralStats(data, config.Stats);
+            this.Combat = BuildCombatStats(data, config.CombatStats);
+            this.System = BuildModifiedStatDictionary(data, config.SystemStats, false);
+            this.General = BuildModifiedStatDictionary(data, config.Stats);
         }
 
         #region Build Functions
 
         /// <summary>
-        /// Adds the stats from <paramref name="stats"/> into <c>CombatStats</c>. Does NOT calculate their values.
+        /// Iterates <paramref name="calculatedStats"/> and builds a dictionary of values. Does NOT calculate the stat's base value.
         /// </summary>
-        private void BuildCombatStats(IEnumerable<string> data, List<CalculatedStatConfig> stats)
+        private IDictionary<string, ModifiedStatValue> BuildCombatStats(IEnumerable<string> data, List<CalculatedStatConfig> calculatedStats)
         {
-            this.Combat = new Dictionary<string, ModifiedStatValue>();
+            IDictionary<string, ModifiedStatValue> stats = new Dictionary<string, ModifiedStatValue>();
 
-            foreach (CalculatedStatConfig stat in stats)
+            foreach (CalculatedStatConfig stat in calculatedStats)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
+                temp.Modifiers = DataParser.NamedStatDictionary_OptionalInt_Any(stat.Modifiers, data, false, "{1} {0}", stat.SourceName);
 
-                //Parse modifiers list
-                foreach (NamedStatConfig mod in stat.Modifiers)
-                {
-                    int val = DataParser.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
-                    if (val == 0) continue;
-                    temp.Modifiers.Add(mod.SourceName, val);
-                }
-
-                this.Combat.Add(stat.SourceName, temp);
+                stats.Add(stat.SourceName, temp);
             }
+
+            return stats;
         }
 
-        private void BuildSystemStats(IEnumerable<string> data, List<ModifiedNamedStatConfig> config)
+        /// <summary>
+        /// Iterates through the stats in <paramref name="config"/> and builds a dictionary of values.
+        /// </summary>
+        private IDictionary<string, ModifiedStatValue> BuildModifiedStatDictionary(IEnumerable<string> data, List<ModifiedNamedStatConfig> config, bool requireBaseValue = true)
         {
-            this.System = new Dictionary<string, ModifiedStatValue>();
+            IDictionary<string, ModifiedStatValue> stats = new Dictionary<string, ModifiedStatValue>();
 
             foreach (ModifiedNamedStatConfig stat in config)
             {
                 ModifiedStatValue temp = new ModifiedStatValue();
-                temp.BaseValue = DataParser.OptionalInt_Any(data, stat.BaseValue, stat.SourceName);
+                
+                if(requireBaseValue) temp.BaseValue = DataParser.Int_Any(data, stat.BaseValue, stat.SourceName);
+                else temp.BaseValue = DataParser.OptionalInt_Any(data, stat.BaseValue, stat.SourceName);
 
-                //Parse modifiers list
-                foreach (NamedStatConfig mod in stat.Modifiers)
-                {
-                    int val = DataParser.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
-                    if (val == 0) continue;
-                    temp.Modifiers.Add(mod.SourceName, val);
-                }
+                temp.Modifiers = DataParser.NamedStatDictionary_OptionalInt_Any(stat.Modifiers, data, false, "{1} {0}", stat.SourceName);
 
-                this.System.Add(stat.SourceName, temp);
+                stats.Add(stat.SourceName, temp);
             }
-        }
 
-        private void BuildGeneralStats(IEnumerable<string> data, List<ModifiedNamedStatConfig> config)
-        {
-            this.General = new Dictionary<string, ModifiedStatValue>();
-
-            foreach (ModifiedNamedStatConfig stat in config)
-            {
-                ModifiedStatValue temp = new ModifiedStatValue();
-                temp.BaseValue = DataParser.Int_Any(data, stat.BaseValue, stat.SourceName);
-
-                //Parse modifiers list
-                foreach (NamedStatConfig mod in stat.Modifiers)
-                {
-                    int val = DataParser.OptionalInt_Any(data, mod.Value, $"{stat.SourceName} {mod.SourceName}");
-                    if (val == 0) continue;
-                    temp.Modifiers.Add(mod.SourceName, val);
-                }
-
-                this.General.Add(stat.SourceName, temp);
-            }
+            return stats;
         }
 
         #endregion
@@ -149,7 +123,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public void CalculateCombatStats(List<CalculatedStatConfig> stats, Unit unit)
         {
-            List<ReplaceCombatStatFormulaVariableEffect> replacementEffects = unit.GetSkills().SelectMany(s => s.Effects).OfType<ReplaceCombatStatFormulaVariableEffect>().ToList();
+            List<ReplaceCombatStatFormulaVariableEffect> replacementEffects = unit.GetFullSkillsList().SelectMany(s => s.Effects).OfType<ReplaceCombatStatFormulaVariableEffect>().ToList();
             string equippedUtilStat = GetItemUtilizedStatName(unit.Inventory.GetPrimaryEquippedItem());
 
             foreach (CalculatedStatConfig stat in stats)

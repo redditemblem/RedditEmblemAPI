@@ -54,6 +54,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         public bool IsUsePrevented { get; set; }
 
         /// <summary>
+        /// Flag indicating if an equipped item was not found in the unit's inventory, but permitted anyways.
+        /// </summary>
+        public bool IsNotInInventory { get; set; }
+
+        /// <summary>
         /// The number of uses the item currently has remaining.
         /// </summary>
         public int Uses { get; set; }
@@ -133,6 +138,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.IsSecondaryEquipped = false;
             this.IsDroppable = false;
             this.IsUsePrevented = false;
+            this.IsNotInInventory = false;
             this.Uses = 0;
             this.Stats = new Dictionary<string, UnitInventoryItemStat>();
             this.AllowMeleeRange = false;

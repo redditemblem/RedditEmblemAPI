@@ -66,7 +66,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// <exception cref="ShopItemProcessingException"></exception>
         public ShopData(JSONConfiguration config)
         {
-            this.Currency = config.System.Currency;
+            this.Currency = config.System.Constants.Currency;
             this.WorkbookID = config.Team.WorkbookID;
             this.ShowConvoyLink = (config.Convoy != null);
 
@@ -97,7 +97,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
                 new ItemSort("Price", "price", false),
                 new ItemSort("Category", "category", true)
             };
-            if (config.System.WeaponRanks.Count > 0)
+            if (config.System.Constants.WeaponRanks.Count > 0)
                 sorts.Add(new ItemSort("Weapon Rank", "weaponRank", true));
 
             IDictionary<string, bool> filters = new Dictionary<string, bool>();

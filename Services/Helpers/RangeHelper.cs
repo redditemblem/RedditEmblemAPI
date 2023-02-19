@@ -312,7 +312,7 @@ namespace RedditEmblemAPI.Services.Helpers
             //Check if nearby units can affect the movement costs of this tile
             if (moveCost < 99 && tile.UnitData.UnitsAffectingMovementCosts.Any())
             {
-                IEnumerable<IAffectMovementCost> activeEffects = tile.UnitData.UnitsAffectingMovementCosts.SelectMany(u => u.GetSkills().SelectMany(s => s.Effects).OfType<IAffectMovementCost>().Where(e => e.IsActive(u, parms.Unit)));
+                IEnumerable<IAffectMovementCost> activeEffects = tile.UnitData.UnitsAffectingMovementCosts.SelectMany(u => u.GetFullSkillsList().SelectMany(s => s.Effects).OfType<IAffectMovementCost>().Where(e => e.IsActive(u, parms.Unit)));
                 if (activeEffects.Any())
                 {
                     int minEffectMovCost = activeEffects.Min(e => e.GetMovementCost());
@@ -636,7 +636,7 @@ namespace RedditEmblemAPI.Services.Helpers
         public UnitRangeParameters(Unit unit)
         {
             this.Unit = unit;
-            IEnumerable<Skill> skillList = unit.GetSkills();
+            IEnumerable<Skill> skillList = unit.GetFullSkillsList();
 
             this.IgnoresAffiliations = skillList.SelectMany(s => s.Effects).OfType<IIgnoreUnitAffiliations>().Any(e => e.IsActive(unit));
             this.MoveCostModifiers = skillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostModifierEffect>();

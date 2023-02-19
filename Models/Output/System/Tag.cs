@@ -58,6 +58,10 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Tag</c> from each valid row.
+        /// </summary>
+        /// <exception cref="TagProcessingException"></exception>
         public static IDictionary<string, Tag> BuildDictionary(TagConfig config)
         {
             IDictionary<string, Tag> tags = new Dictionary<string, Tag>();
@@ -66,10 +70,11 @@ namespace RedditEmblemAPI.Models.Output.System
 
             foreach (List<object> row in config.Query.Data)
             {
+                string name = string.Empty;
                 try
                 {
                     IEnumerable<string> tag = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(tag, config.Name, "Name");
+                    name = DataParser.OptionalString(tag, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!tags.TryAdd(name, new Tag(config, tag)))
@@ -77,7 +82,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
                 catch (Exception ex)
                 {
-                    throw new TagProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                    throw new TagProcessingException(name, ex);
                 }
             }
 

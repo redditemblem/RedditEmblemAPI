@@ -40,11 +40,14 @@
     }
   },
   "System": { //Required
-    "WeaponRanks": [ "E", "D", "C", "B", "A", "S" ], //Optional, defaults to an empty list
-    "Currency": { //Optional, defaults to null
-      "CurrencySymbol": "", //Required
-      "IsSymbolLeftAligned": true, //Optional, defaults to true
-      "IncludeSpace": false //Optional, defaults to false
+    "Constants": { //Required
+      "Currency": { //Optional, defaults to null
+        "CurrencySymbol": "", //Required
+        "IsSymbolLeftAligned": true, //Optional, defaults to true
+        "IncludeSpace": false //Optional, defaults to false
+      },
+      "WeaponRanks": [ "E", "D", "C", "B", "A", "S" ], //Optional, defaults to an empty list
+      "AllowNonInventoryEquippedItems": false //Optional, defaults to false
     },
     "Affiliations": { //Required
       "Query": {

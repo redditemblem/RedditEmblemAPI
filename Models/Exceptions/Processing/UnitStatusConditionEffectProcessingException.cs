@@ -7,10 +7,8 @@ namespace RedditEmblemAPI.Models.Exceptions.Processing
         /// <summary>
         /// Container exception thrown when an error occurs while processing a <c>Unit</c>'s status condition effects.
         /// </summary>
-        /// <param name="unitName"></param>
-        /// <param name="innerException"></param>
-        public UnitStatusConditionEffectProcessingException(string unitName, Exception innerException)
-            : base("status condition effects on unit", unitName, innerException)
+        public UnitStatusConditionEffectProcessingException(string unitName, string statusConditionName, Exception innerException)
+            : base($"effects on status condition \"{statusConditionName}\" on unit", unitName, innerException)
         { }
     }
 }

@@ -37,11 +37,14 @@
     }
   },
   "System": {
-    "WeaponRanks": [ "E", "D", "C", "B", "A", "S" ],
-    "Currency": {
-      "CurrencySymbol": "G",
-      "IsSymbolLeftAligned": false,
-      "IncludeSpace": true
+    "Constants": {
+      "Currency": {
+        "CurrencySymbol": "G",
+        "IsSymbolLeftAligned": false,
+        "IncludeSpace": true
+      },
+      "WeaponRanks": [ "E", "D", "C", "B", "A", "S" ],
+      "AllowNonInventoryEquippedItems": true
     },
     "Items": {
       "Query": {

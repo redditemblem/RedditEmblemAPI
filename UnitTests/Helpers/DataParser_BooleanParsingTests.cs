@@ -30,7 +30,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalBoolean_YesNo_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             bool value = DataParser.OptionalBoolean_YesNo(data, index, "OptionalBoolean_YesNo_WithInput_Whitespace");

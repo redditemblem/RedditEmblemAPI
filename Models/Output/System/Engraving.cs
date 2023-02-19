@@ -39,7 +39,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Dictionary of the stat modifiers this engraving applies to items.
         /// </summary>
         [JsonIgnore]
-        public Dictionary<string, int> StatModifiers { get; set; }
+        public IDictionary<string, int> StatModifiers { get; set; }
 
         /// <summary>
         /// List of the engraving's text fields.
@@ -58,22 +58,15 @@ namespace RedditEmblemAPI.Models.Output.System
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
-            BuildStatModifiers(config.StatModifiers, data);
-        }
-
-        public void BuildStatModifiers(List<NamedStatConfig> configs, IEnumerable<string> data)
-        {
-            this.StatModifiers = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in configs)
-            {
-                int val = DataParser.OptionalInt_Any(data, stat.Value, $"{stat.SourceName} Modifier");
-                if (val == 0) continue;
-                this.StatModifiers.Add(stat.SourceName, val);
-            }
+            this.StatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.StatModifiers, data, false, "{0} Modifier");
         }
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Engraving</c> from each valid row.
+        /// </summary>
+        /// <exception cref="EngravingProcessingException"></exception>
         public static IDictionary<string, Engraving> BuildDictionary(EngravingsConfig config)
         {
             IDictionary<string, Engraving> engravings = new Dictionary<string, Engraving>();
@@ -82,10 +75,11 @@ namespace RedditEmblemAPI.Models.Output.System
 
             foreach (List<object> row in config.Query.Data)
             {
+                string name = string.Empty;
                 try
                 {
                     IEnumerable<string> engraving = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(engraving, config.Name, "Name");
+                    name = DataParser.OptionalString(engraving, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!engravings.TryAdd(name, new Engraving(config, engraving)))
@@ -93,7 +87,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
                 catch (Exception ex)
                 {
-                    throw new EngravingProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                    throw new EngravingProcessingException(name, ex);
                 }
             }
 

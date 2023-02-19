@@ -91,29 +91,8 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Rank = DataParser.OptionalString(data, config.Rank, "Rank");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
-            BuildStats(config.Stats, data);
-            BuildStatModifiers(config.StatModifiers, data);
-        }
-
-        private void BuildStats(List<NamedStatConfig> configs, IEnumerable<string> data)
-        {
-            this.Stats = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in configs)
-            {
-                int val = DataParser.Int_Any(data, stat.Value, stat.SourceName);
-                this.Stats.Add(stat.SourceName, val);
-            }
-        }
-
-        private void BuildStatModifiers(List<NamedStatConfig> configs, IEnumerable<string> data)
-        {
-            this.StatModifiers = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in configs)
-            {
-                int val = DataParser.OptionalInt_Any(data, stat.Value, $"{stat.SourceName} Modifier");
-                if (val == 0) continue;
-                this.StatModifiers.Add(stat.SourceName, val);
-            }
+            this.Stats = DataParser.NamedStatDictionary_Int_Any(config.Stats, data, true);
+            this.StatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.StatModifiers, data, false, "{0} Modifier");
         }
 
         public int MatchStatName(string name)
@@ -127,6 +106,10 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Battalion</c> from each valid row.
+        /// </summary>
+        /// <exception cref="BattalionProcessingException"></exception>
         public static IDictionary<string, Battalion> BuildDictionary(BattalionsConfig config, IDictionary<string, Gambit> gambits)
         {
             IDictionary<string, Battalion> battalions = new Dictionary<string, Battalion>();
@@ -135,10 +118,11 @@ namespace RedditEmblemAPI.Models.Output.System
 
             foreach (List<object> row in config.Query.Data)
             {
+                string name = string.Empty;
                 try
                 {
                     IEnumerable<string> battalion = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(battalion, config.Name, "Name");
+                    name = DataParser.OptionalString(battalion, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!battalions.TryAdd(name, new Battalion(config, battalion, gambits)))
@@ -146,7 +130,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
                 catch (Exception ex)
                 {
-                    throw new BattalionProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                    throw new BattalionProcessingException(name, ex);
                 }
             }
 

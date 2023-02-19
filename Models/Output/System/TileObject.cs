@@ -83,25 +83,8 @@ namespace RedditEmblemAPI.Models.Output.System
             else this.Range = new TileObjectRange();
 
             this.HPModifier = DataParser.OptionalInt_Any(data, config.HPModifier, "HP Modifier");
-
-            this.CombatStatModifiers = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in config.CombatStatModifiers)
-            {
-                int val = DataParser.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
-                if (val == 0) continue;
-
-                this.CombatStatModifiers.Add(stat.SourceName, val);
-            }
-
-
-            this.StatModifiers = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in config.StatModifiers)
-            {
-                int val = DataParser.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
-                if (val == 0) continue;
-
-                this.StatModifiers.Add(stat.SourceName, val);
-            }
+            this.CombatStatModifiers = DataParser.NamedStatDictionary_Int_Any(config.CombatStatModifiers, data, false, "{0} Modifier");
+            this.StatModifiers = DataParser.NamedStatDictionary_Int_Any(config.StatModifiers, data, false, "{0} Modifier");
         }
 
         /// <summary>
@@ -122,6 +105,10 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>TileObject</c> from each valid row.
+        /// </summary>
+        /// <exception cref="TileObjectProcessingException"></exception>
         public static IDictionary<string, TileObject> BuildDictionary(TileObjectsConfig config)
         {
             IDictionary<string, TileObject> tileObjects = new Dictionary<string, TileObject>();
@@ -130,10 +117,11 @@ namespace RedditEmblemAPI.Models.Output.System
 
             foreach (List<object> row in config.Query.Data)
             {
+                string name = string.Empty;
                 try
                 {
                     IEnumerable<string> tileObj = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(tileObj, config.Name, "Name");
+                    name = DataParser.OptionalString(tileObj, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!tileObjects.TryAdd(name, new TileObject(config, tileObj)))
@@ -141,7 +129,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
                 catch (Exception ex)
                 {
-                    throw new TileObjectProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                    throw new TileObjectProcessingException(name, ex);
                 }
             }
 

@@ -128,6 +128,10 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>StatusCondition</c> from each valid row.
+        /// </summary>
+        /// <exception cref="StatusConditionProcessingException"></exception>
         public static IDictionary<string, StatusCondition> BuildDictionary(StatusConditionConfig config)
         {
             IDictionary<string, StatusCondition> statusConditions = new Dictionary<string, StatusCondition>();
@@ -136,10 +140,11 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 
             foreach (List<object> row in config.Query.Data)
             {
+                string name = string.Empty;
                 try
                 {
                     IEnumerable<string> stat = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(stat, config.Name, "Name");
+                    name = DataParser.OptionalString(stat, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!statusConditions.TryAdd(name, new StatusCondition(config, stat)))
@@ -147,7 +152,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
                 }
                 catch (Exception ex)
                 {
-                    throw new StatusConditionProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                    throw new StatusConditionProcessingException(name, ex);
                 }
             }
 

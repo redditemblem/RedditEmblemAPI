@@ -27,7 +27,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Constructor. Builds the Items list and flags equipped items.
         /// </summary>
         /// <exception cref="UnmatchedEquippedItemException"></exception>
-        public UnitInventory(InventoryConfig config, IEnumerable<string> data, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings, UnitEmblem emblem)
+        public UnitInventory(InventoryConfig config, SystemInfo system, IEnumerable<string> data, UnitEmblem emblem)
         {
             this.Items = new List<UnitInventoryItem>();
             this.EmptySlotCount = 0;
@@ -43,7 +43,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
                 int uses = DataParser.OptionalInt_Positive(data, item.Uses, "Item Uses");
                 IEnumerable<string> itemEngravings = DataParser.List_Strings(data, item.Engravings).Distinct();
-                this.Items.Add(new UnitInventoryItem(name, uses, itemEngravings, items, engravings));
+                this.Items.Add(new UnitInventoryItem(name, uses, itemEngravings, system.Items, system.Engravings));
             }
 
             //Find the all equipped items and flag them
@@ -55,9 +55,16 @@ namespace RedditEmblemAPI.Models.Output.Units
                 {
                     //Attempt to pick the equipped item off of an emblem, if one exists
                     equipped = emblem?.EngageWeapons.FirstOrDefault(i => i.FullName == equippedItemName);
-                    if(equipped == null)
-                        throw new UnmatchedEquippedItemException(equippedItemName);
+                    if(equipped == null) {
 
+                        if(!system.Constants.AllowNonInventoryEquippedItems)
+                            throw new UnmatchedEquippedItemException(equippedItemName);
+
+                        //If we're allowing non-inventory equipped items, add this missing item to the top of the unit's inventory
+                        equipped = new UnitInventoryItem(equippedItemName, 0, new List<string>(), system.Items, system.Engravings);
+                        equipped.IsNotInInventory = true;
+                        this.Items.Insert(0, equipped);
+                    }
                 }
                 equipped.IsPrimaryEquipped = true;
             }

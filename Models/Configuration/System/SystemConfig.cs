@@ -10,7 +10,6 @@ using RedditEmblemAPI.Models.Configuration.System.Tags;
 using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
 using RedditEmblemAPI.Models.Configuration.System.TileObjects;
 using RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses;
-using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System
 {
@@ -20,6 +19,12 @@ namespace RedditEmblemAPI.Models.Configuration.System
     public class SystemConfig
     {
         #region Required Fields
+
+        /// <summary>
+        /// Required. Container object for constant system values.
+        /// </summary>
+        [JsonRequired]
+        public SystemConstantsConfig Constants { get; set; }
 
         /// <summary>
         /// Required. Container object for a system's affiliation configuration.
@@ -42,16 +47,6 @@ namespace RedditEmblemAPI.Models.Configuration.System
         #endregion
 
         #region Optional Fields
-
-        /// <summary>
-        /// Optional. Container object for a system's currency configuration.
-        /// </summary>
-        public CurrencyConstsConfig Currency { get; set; } = null;
-
-        /// <summary>
-        /// Optional. List of the weapon rank letters for this system, in order from lowest to highest. (ex. "E","D","C"...)
-        /// </summary>
-        public List<string> WeaponRanks { get; set; } = new List<string>();
 
         /// <summary>
         /// Optional. Container object for a system's class configuration.

@@ -83,7 +83,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <exception cref="UnmatchedMovementTypeException"></exception>
         protected void AddTeleportTargetsToUnitRange(Unit unit, List<Tile> targetTiles)
         {
-            IEnumerable<TerrainTypeMovementCostSetEffect_Skill> moveCostSets_Skill = unit.GetSkills().SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect_Skill>();
+            IEnumerable<TerrainTypeMovementCostSetEffect_Skill> moveCostSets_Skill = unit.GetFullSkillsList().SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect_Skill>();
             IEnumerable<TerrainTypeMovementCostSetEffect_Status> moveCostSets_Status = unit.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<TerrainTypeMovementCostSetEffect_Status>();
 
             foreach (Tile tile in targetTiles)
@@ -91,7 +91,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                 //Ensure that this unit can move to this tile
                 int moveCost;
                 if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(unit.GetUnitMovementType(), out moveCost))
-                    throw new UnmatchedMovementTypeException(unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys.ToList());
+                    throw new UnmatchedMovementTypeException(unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys);
 
                 //If unit is blocked from this tile, check for an effect that would allow it to access it
                 if (moveCost == 99)

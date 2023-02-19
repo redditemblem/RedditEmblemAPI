@@ -7,10 +7,8 @@ namespace RedditEmblemAPI.Models.Exceptions.Processing
         /// <summary>
         /// Container exception thrown when an error occurs while processing a <c>Unit</c>'s skill effects.
         /// </summary>
-        /// <param name="unitName"></param>
-        /// <param name="innerException"></param>
-        public UnitSkillEffectProcessingException(string unitName, Exception innerException)
-            : base("skill effects on unit", unitName, innerException)
+        public UnitSkillEffectProcessingException(string unitName, string skillName, Exception innerException)
+            : base($"effects on skill \"{skillName}\" on unit", unitName, innerException)
         { }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -110,30 +109,9 @@ namespace RedditEmblemAPI.Models.Output.System
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
             this.HPModifier = DataParser.OptionalInt_Any(data, config.HPModifier, "HP Modifier");
-
-            this.CombatStatModifiers = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in config.CombatStatModifiers)
-            {
-                int val = DataParser.OptionalInt_Any(data, stat.Value, stat.SourceName);
-                if (val == 0) continue;
-                this.CombatStatModifiers.Add(stat.SourceName, val);
-            }
-
-
-            this.StatModifiers = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in config.StatModifiers)
-            {
-                int val = DataParser.OptionalInt_Any(data, stat.Value, stat.SourceName);
-                if (val == 0) continue;
-                this.StatModifiers.Add(stat.SourceName, val);
-            }
-
-            this.MovementCosts = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in config.MovementCosts)
-            {
-                int val = DataParser.Int_NonZeroPositive(data, stat.Value, $"{stat.SourceName} Movement Cost");
-                this.MovementCosts.Add(stat.SourceName, val);
-            }
+            this.CombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.CombatStatModifiers, data);
+            this.StatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.StatModifiers, data);
+            this.MovementCosts = DataParser.NamedStatDictionary_Int_NonZeroPositive(config.MovementCosts, data, "{0} Movement Cost");
 
             this.WarpType = GetWarpTypeEnum(DataParser.OptionalString(data, config.WarpType, "Warp Type"));
             if (this.WarpType == WarpType.Entrance || this.WarpType == WarpType.Dual)
@@ -161,6 +139,10 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>TerrainType</c> from each valid row.
+        /// </summary>
+        /// <exception cref="TerrainTypeProcessingException"></exception>
         public static IDictionary<string, TerrainType> BuildDictionary(TerrainTypesConfig config)
         {
             IDictionary<string, TerrainType> terrainTypes = new Dictionary<string, TerrainType>();
@@ -169,10 +151,11 @@ namespace RedditEmblemAPI.Models.Output.System
 
             foreach (List<object> row in config.Query.Data)
             {
+                string name = string.Empty;
                 try
                 {
                     IEnumerable<string> type = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(type, config.Name, "Name");
+                    name = DataParser.OptionalString(type, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!terrainTypes.TryAdd(name, new TerrainType(config, type)))
@@ -180,7 +163,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
                 catch (Exception ex)
                 {
-                    throw new TerrainTypeProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                    throw new TerrainTypeProcessingException(name, ex);
                 }
             }
 
@@ -212,7 +195,7 @@ namespace RedditEmblemAPI.Models.Output.System
             return match;
         }
 
-        #endregion
+        #endregion Static Functions
     }
 
     public enum WarpType

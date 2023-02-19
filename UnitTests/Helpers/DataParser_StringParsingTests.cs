@@ -29,7 +29,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void String_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             Assert.ThrowsException<RequiredValueNotProvidedException>(() => DataParser.String(data, index, "String_WithInput_Whitespace"));
@@ -92,7 +92,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalString_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             string value = DataParser.OptionalString(data, index, "OptionalString_WithInput_Whitespace");
@@ -144,7 +144,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void String_URL_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             Assert.ThrowsException<RequiredValueNotProvidedException>(() => DataParser.String_URL(data, index, "String_URL_WithInput_Whitespace"));
@@ -243,7 +243,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalString_URL_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             string value = DataParser.OptionalString_URL(data, index, "OptionalString_URL_WithInput_Whitespace");
@@ -303,7 +303,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void String_HexCode_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             Assert.ThrowsException<RequiredValueNotProvidedException>(() => DataParser.String_HexCode(data, index, "String_HexCode_WithInput_Whitespace"));
@@ -420,7 +420,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalString_HexCode_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             string value = DataParser.OptionalString_HexCode(data, index, "OptionalString_HexCode_WithInput_Whitespace");

@@ -39,11 +39,13 @@
     }
   },
   "System": {
-    "WeaponRanks": [ "E", "D", "C", "B", "A" ],
-    "Currency": {
-      "CurrencySymbol": "G",
-      "IsSymbolLeftAligned": false,
-      "IncludeSpace": false
+    "Constants": {
+      "WeaponRanks": [ "E", "D", "C", "B", "A" ],
+      "Currency": {
+        "CurrencySymbol": "G",
+        "IsSymbolLeftAligned": false,
+        "IncludeSpace": false
+      }
     },
     "Affiliations": {
       "Query": {
@@ -654,7 +656,7 @@
         "Name": 20
       },
       {
-        "Name": 22 
+        "Name": 22
       }
     ]
   },

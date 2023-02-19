@@ -61,6 +61,10 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Emblem</c> from each valid row.
+        /// </summary>
+        /// <exception cref="EmblemProcessingException"></exception>
         public static IDictionary<string, Emblem> BuildDictionary(EmblemsConfig config)
         {
             IDictionary<string, Emblem> emblems = new Dictionary<string, Emblem>();
@@ -69,10 +73,11 @@ namespace RedditEmblemAPI.Models.Output.System
 
             foreach (List<object> row in config.Query.Data)
             {
+                string name = string.Empty;
                 try
                 {
                     IEnumerable<string> emblem = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(emblem, config.Name, "Name");
+                    name = DataParser.OptionalString(emblem, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!emblems.TryAdd(name, new Emblem(config, emblem)))
@@ -80,7 +85,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
                 catch (Exception ex)
                 {
-                    throw new EmblemProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                    throw new EmblemProcessingException(name, ex);
                 }
             }
 

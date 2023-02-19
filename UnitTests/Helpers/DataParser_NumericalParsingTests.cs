@@ -29,7 +29,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void Int_Any_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             Assert.ThrowsException<AnyIntegerException>(() => DataParser.Int_Any(data, index, "Int_Any_WithInput_Whitespace"));
@@ -130,7 +130,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalInt_Any_WithInput_Whitespace_NoDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_Whitespace_NoDefault");
@@ -140,7 +140,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalInt_Any_WithInput_Whitespace_WithDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_Whitespace_WithDefault", 1);
@@ -202,7 +202,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void Int_Positive_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             Assert.ThrowsException<PositiveIntegerException>(() => DataParser.Int_Positive(data, index, "Int_Positive_WithInput_Whitespace"));
@@ -302,7 +302,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalInt_Positive_WithInput_Whitespace_NoDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_Whitespace_NoDefault");
@@ -312,7 +312,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalInt_Positive_WithInput_Whitespace_WithDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_Whitespace_WithDefault", 1);
@@ -373,7 +373,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void Int_NonZeroPositive_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             Assert.ThrowsException<NonZeroPositiveIntegerException>(() => DataParser.Int_NonZeroPositive(data, index, "Int_NonZeroPositive_WithInput_Whitespace"));
@@ -472,7 +472,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalInt_NonZeroPositive_WithInput_Whitespace_NoDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_Whitespace_NoDefault");
@@ -482,7 +482,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalInt_NonZeroPositive_WithInput_Whitespace_WithDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_Whitespace_WithDefault", 2);
@@ -542,7 +542,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void Int_Negative_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             Assert.ThrowsException<NegativeIntegerException>(() => DataParser.Int_Negative(data, index, "Int_Negative_WithInput_Whitespace"));
@@ -641,7 +641,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalInt_Negative_WithInput_Whitespace_NoDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_Whitespace_NoDefault");
@@ -651,7 +651,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalInt_Negative_WithInput_Whitespace_WithDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_Whitespace_WithDefault", -2);
@@ -711,7 +711,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void Decimal_Any_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             Assert.ThrowsException<AnyDecimalException>(() => DataParser.Decimal_Any(data, index, "Decimal_Any_WithInput_Whitespace"));
@@ -813,7 +813,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalDecimal_Any_WithInput_Whitespace_NoDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_WithInput_Whitespace_NoDefault");
@@ -823,7 +823,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalDecimal_Any_WithInput_Whitespace_WithDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_WithInput_Whitespace_WithDefault", 1.0m);
@@ -885,7 +885,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void Decimal_Positive_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             Assert.ThrowsException<PositiveDecimalException>(() => DataParser.Decimal_Positive(data, index, "Decimal_Positive_WithInput_Whitespace"));
@@ -986,7 +986,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalDecimal_Positive_WithInput_Whitespace_NoDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_WithInput_Whitespace_NoDefault");
@@ -996,7 +996,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalDecimal_Positive_WithInput_Whitespace_WithDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_WithInput_Whitespace_WithDefault", 1.0m);
@@ -1057,7 +1057,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void Decimal_NonZeroPositive_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             Assert.ThrowsException<NonZeroPositiveDecimalException>(() => DataParser.Decimal_NonZeroPositive(data, index, "Decimal_NonZeroPositive_WithInput_Whitespace"));
@@ -1157,7 +1157,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalDecimal_NonZeroPositive_WithInput_Whitespace_NoDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_WithInput_Whitespace_NoDefault");
@@ -1167,7 +1167,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalDecimal_NonZeroPositive_WithInput_Whitespace_WithDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_WithInput_Whitespace_WithDefault", 0.5m);
@@ -1227,7 +1227,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void Decimal_OneOrGreater_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             Assert.ThrowsException<OneOrGreaterDecimalException>(() => DataParser.Decimal_OneOrGreater(data, index, "Decimal_OneOrGreater_WithInput_Whitespace"));
@@ -1326,7 +1326,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalDecimal_OneOrGreater_WithInput_Whitespace_NoDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_WithInput_Whitespace_NoDefault");
@@ -1336,7 +1336,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalDecimal_OneOrGreater_WithInput_Whitespace_WithDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_WithInput_Whitespace_WithDefault", 1.5m);
@@ -1396,7 +1396,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void Decimal_Negative_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             Assert.ThrowsException<NegativeDecimalException>(() => DataParser.Decimal_Negative(data, index, "Decimal_Negative_WithInput_Whitespace"));
@@ -1495,7 +1495,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalDecimal_Negative_WithInput_Whitespace_NoDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_WithInput_Whitespace_NoDefault");
@@ -1505,7 +1505,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void OptionalDecimal_Negative_WithInput_Whitespace_WithDefault()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_WithInput_Whitespace_WithDefault", -0.5m);

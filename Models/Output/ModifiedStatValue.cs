@@ -24,7 +24,7 @@ namespace RedditEmblemAPI.Models.Output
         /// <summary>
         /// Collection of all values that modify this stat. (ex. "Debuff",-2)
         /// </summary>
-        public Dictionary<string, int> Modifiers { get; set; }
+        public IDictionary<string, int> Modifiers { get; set; }
 
         #endregion
 

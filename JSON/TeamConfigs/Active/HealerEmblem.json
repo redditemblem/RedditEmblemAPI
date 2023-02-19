@@ -40,10 +40,12 @@
     }
   },
   "System": {
-    "Currency": {
-      "CurrencySymbol": "G",
-      "IsSymbolLeftAligned": false,
-      "IncludeSpace": true
+    "Constants": {
+      "Currency": {
+        "CurrencySymbol": "G",
+        "IsSymbolLeftAligned": false,
+        "IncludeSpace": true
+      }
     },
     "Affiliations": {
       "Query": {
@@ -54,7 +56,7 @@
       "Name": 0,
       "Grouping": 1,
       "TextFields": [ 2 ],
-      "FlipUnitSprites": 3 
+      "FlipUnitSprites": 3
     },
     "Classes": {
       "Query": {

@@ -12,17 +12,11 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Constants
 
         /// <summary>
-        /// Container for currency constants.
+        /// Container for system constants.
         /// </summary>
-        public CurrencyConstsConfig Currency { get; set; }
+        public SystemConstantsConfig Constants { get; set; }
 
-        /// <summary>
-        /// List of weapon ranks.
-        /// </summary>
-        [JsonIgnore]
-        public List<string> WeaponRanks { get; set; }
-
-        #endregion
+        #endregion Constants
 
         #region Required Data
 
@@ -104,8 +98,7 @@ namespace RedditEmblemAPI.Models.Output.System
         public SystemInfo(SystemConfig config)
         {
             //Copy over constants from config
-            this.Currency = config.Currency;
-            this.WeaponRanks = config.WeaponRanks;
+            this.Constants = config.Constants;
 
             ParseOptionalData(config);
             ParseRequiredData(config); //some required data reliant on optional data

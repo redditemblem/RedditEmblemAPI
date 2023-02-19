@@ -4,7 +4,6 @@ using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
@@ -132,32 +131,17 @@ namespace RedditEmblemAPI.Models.Output.System
             IEnumerable<string> itemEngravings = DataParser.List_Strings(data, config.Engravings).Distinct();
             this.Engravings = Engraving.MatchNames(engravings, itemEngravings, true);
 
-            this.Stats = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in config.Stats)
-            {
-                int val = DataParser.Int_Any(data, stat.Value, stat.SourceName);
-                this.Stats.Add(stat.SourceName, val);
-            }
-
-            this.EquippedStatModifiers = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in config.EquippedStatModifiers)
-            {
-                int val = DataParser.OptionalInt_Any(data, stat.Value, $"{stat.SourceName} (Equipped)");
-                if (val == 0) continue;
-                this.EquippedStatModifiers.Add(stat.SourceName, val);
-            }
-
-            this.InventoryStatModifiers = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in config.InventoryStatModifiers)
-            {
-                int val = DataParser.OptionalInt_Any(data, stat.Value, $"{stat.SourceName} (Inventory)");
-                if (val == 0) continue;
-                this.InventoryStatModifiers.Add(stat.SourceName, val);
-            }
+            this.Stats = DataParser.NamedStatDictionary_Int_Any(config.Stats, data, true);
+            this.EquippedStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.EquippedStatModifiers, data, false, "{0} (Equipped)");
+            this.InventoryStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.InventoryStatModifiers, data, false, "{0} (Inventory)");
         }
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Item</c> from each valid row.
+        /// </summary>
+        /// <exception cref="ItemProcessingException"></exception>
         public static IDictionary<string, Item> BuildDictionary(ItemsConfig config, IDictionary<string, Tag> tags, IDictionary<string, Engraving> engravings)
         {
             IDictionary<string, Item> items = new Dictionary<string, Item>();
@@ -166,10 +150,11 @@ namespace RedditEmblemAPI.Models.Output.System
 
             foreach (List<object> row in config.Query.Data)
             {
+                string name = string.Empty;
                 try
                 {
                     IEnumerable<string> item = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(item, config.Name, "Name");
+                    name = DataParser.OptionalString(item, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!items.TryAdd(name, new Item(config, item, tags, engravings)))
@@ -177,7 +162,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
                 catch (Exception ex)
                 {
-                    throw new ItemProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                    throw new ItemProcessingException(name, ex);
                 }
             }
 

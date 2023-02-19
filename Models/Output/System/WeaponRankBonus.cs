@@ -43,28 +43,16 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Category = DataParser.String(data, config.Category, "Category");
             this.Rank = DataParser.OptionalString(data, config.Rank, "Rank");
 
-            this.CombatStatModifiers = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in config.CombatStatModifiers)
-            {
-                int val = DataParser.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
-                if (val == 0) continue;
-
-                this.CombatStatModifiers.Add(stat.SourceName, val);
-            }
-
-
-            this.StatModifiers = new Dictionary<string, int>();
-            foreach (NamedStatConfig stat in config.StatModifiers)
-            {
-                int val = DataParser.Int_Any(data, stat.Value, stat.SourceName + " Modifier");
-                if (val == 0) continue;
-
-                this.StatModifiers.Add(stat.SourceName, val);
-            }
+            this.CombatStatModifiers = DataParser.NamedStatDictionary_Int_Any(config.CombatStatModifiers, data, false, "{0} Modifier");
+            this.StatModifiers = DataParser.NamedStatDictionary_Int_Any(config.StatModifiers, data, false, "{0} Modifier");
         }
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>WeaponRankBonus</c> from each valid row.
+        /// </summary>
+        /// <exception cref="WeaponRankBonusProcessingException"></exception>
         public static List<WeaponRankBonus> BuildList(WeaponRankBonusesConfig config)
         {
             List<WeaponRankBonus> weaponRankBonuses = new List<WeaponRankBonus>();
@@ -73,11 +61,13 @@ namespace RedditEmblemAPI.Models.Output.System
 
             foreach (List<object> row in config.Query.Data)
             {
+                string category = string.Empty;
+                string rank = string.Empty;
                 try
                 {
                     IEnumerable<string> bonus = row.Select(r => r.ToString());
-                    string category = DataParser.OptionalString(bonus, config.Category, "Category");
-                    string rank = DataParser.OptionalString(bonus, config.Rank, "Rank");
+                    category = DataParser.OptionalString(bonus, config.Category, "Category");
+                    rank = DataParser.OptionalString(bonus, config.Rank, "Rank");
 
                     if (string.IsNullOrEmpty(category)) continue;
 
@@ -88,9 +78,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
                 catch (Exception ex)
                 {
-                    throw new WeaponRankBonusProcessingException((row.ElementAtOrDefault(config.Category) ?? string.Empty).ToString(),
-                                                                 (row.ElementAtOrDefault(config.Rank) ?? string.Empty).ToString(),
-                                                                 ex);
+                    throw new WeaponRankBonusProcessingException(category, rank, ex);
                 }
             }
 

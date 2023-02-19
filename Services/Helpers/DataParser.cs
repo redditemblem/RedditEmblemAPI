@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using RedditEmblemAPI.Models.Configuration.Common;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -546,5 +547,67 @@ namespace RedditEmblemAPI.Services.Helpers
         }
 
         #endregion Boolean Parsing
+
+        #region Stat Dictionary Builders
+
+        /// <summary>
+        /// Iterates the <c>NamedStatConfig</c>s in <paramref name="configs"/> and parses them into a dictionary. All values are included.
+        /// </summary>
+        /// <param name="errorFieldNameFormat">Passed into <c>string.Format</c> to create the field name thrown with any parsing errors. The <c>NamedStatConfig</c>'s source name is always {0}.</param>
+        ///<param name="errorFieldNameArgs">Any additional values that will be formatted with <paramref name="errorFieldNameFormat"/>.</param>
+        public static IDictionary<string, int> NamedStatDictionary_Int_Any(IEnumerable<NamedStatConfig> configs, IEnumerable<string> data, bool includeZeroValues = false, string errorFieldNameFormat = "{0}", params string[] errorFieldNameArgs)
+        {
+            IDictionary<string, int> stats = new Dictionary<string, int>();
+
+            foreach (NamedStatConfig stat in configs)
+            {
+                int val = DataParser.Int_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
+                if (val == 0 && !includeZeroValues) continue;
+
+                stats.Add(stat.SourceName, val);
+            }
+
+            return stats;
+        }
+
+        /// <summary>
+        /// Iterates the <c>NamedStatConfig</c>s in <paramref name="configs"/> and parses them into a dictionary. All values are included.
+        /// </summary>
+        /// <param name="errorFieldNameFormat">Passed into <c>string.Format</c> to create the field name thrown with any parsing errors. The <c>NamedStatConfig</c>'s source name is always {0}.</param>
+        ///<param name="errorFieldNameArgs">Any additional values that will be formatted with <paramref name="errorFieldNameFormat"/>.</param>
+        public static IDictionary<string, int> NamedStatDictionary_OptionalInt_Any(IEnumerable<NamedStatConfig> configs, IEnumerable<string> data, bool includeZeroValues = false, string errorFieldNameFormat = "{0}", params string[] errorFieldNameArgs)
+        {
+            IDictionary<string, int> stats = new Dictionary<string, int>();
+
+            foreach (NamedStatConfig stat in configs)
+            {
+                int val = DataParser.OptionalInt_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
+                if (val == 0 && !includeZeroValues) continue;
+
+                stats.Add(stat.SourceName, val);
+            }
+
+            return stats;
+        }
+
+        /// <summary>
+        /// Iterates the <c>NamedStatConfig</c>s in <paramref name="configs"/> and parses them into a dictionary. All values are included.
+        /// </summary>
+        /// <param name="errorFieldNameFormat">Passed into <c>string.Format</c> to create the field name thrown with any parsing errors. The <c>NamedStatConfig</c>'s source name is always {0}.</param>
+        ///<param name="errorFieldNameArgs">Any additional values that will be formatted with <paramref name="errorFieldNameFormat"/>.</param>
+        public static IDictionary<string, int> NamedStatDictionary_Int_NonZeroPositive(IEnumerable<NamedStatConfig> configs, IEnumerable<string> data, string errorFieldNameFormat = "{0}", params string[] errorFieldNameArgs)
+        {
+            IDictionary<string, int> stats = new Dictionary<string, int>();
+
+            foreach (NamedStatConfig stat in configs)
+            {
+                int val = DataParser.Int_NonZeroPositive(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
+                stats.Add(stat.SourceName, val);
+            }
+
+            return stats;
+        }
+
+        #endregion Stat Dictionary Builders
     }
 }

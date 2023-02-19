@@ -249,7 +249,7 @@ namespace UnitTests.Helpers
         [TestMethod]
         public void List_IntCSV_WithInput_Whitespace()
         {
-            List<string> data = new List<string>() { "   " };
+            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
             int index = 0;
 
             List<int> values = DataParser.List_IntCSV(data, index, "List_IntCSV_WithInput_Whitespace", false);

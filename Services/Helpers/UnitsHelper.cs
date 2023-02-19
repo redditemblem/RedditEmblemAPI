@@ -1,6 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Processing;
-using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Models.Output.Map;
@@ -16,38 +15,15 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Services.Helpers
 {
-    public class UnitsHelper
+    public static class UnitsHelper
     {
         /// <summary>
         /// Parses Google Sheets data matrix to return a list of Unit output objects.
         /// </summary>
-        /// <param name="data">Matrix of sheet Value values representing unit data</param>
         /// <param name="config">Parsed JSON configuration mapping Values to output</param>
-        /// <returns></returns>
-        public static List<Unit> Process(UnitsConfig config, SystemInfo systemData, MapObj map)
+        public static List<Unit> Process(UnitsConfig config, SystemInfo system, MapObj map)
         {
-            List<Unit> units = new List<Unit>();
-
-            //Create units
-            foreach (List<object> row in config.Query.Data)
-            {
-                try
-                {
-                    //Convert objects to strings
-                    IEnumerable<string> unit = row.Select(r => r.ToString());
-                    string unitName = DataParser.OptionalString(unit, config.Name, "Name");
-                    if (string.IsNullOrEmpty(unitName)) continue;
-
-                    if (units.Any(u => u.Name == unitName))
-                        throw new NonUniqueObjectNameException("unit");
-
-                    units.Add(new Unit(config, unit, systemData));
-                }
-                catch (Exception ex)
-                {
-                    throw new UnitProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
-                }
-            }
+            List<Unit> units = Unit.BuildList(config, system);
 
             //Add units to the map
             foreach (Unit unit in units)
@@ -60,7 +36,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 catch (Exception ex)
                 when (ex is XYCoordinateFormattingException || ex is AlphanumericCoordinateFormattingException)
                 {
-                    //If the coordinates aren't in an <x,y> format, check if it's the name of another unit.
+                    //If the coordinates aren't in a known format, check if it's the name of another unit.
                     Unit pair = units.FirstOrDefault(u => u.Name == unit.Location.CoordinateString);
 
                     if (pair == null)
@@ -104,26 +80,27 @@ namespace RedditEmblemAPI.Services.Helpers
             foreach (Unit unit in units)
             {
                 //Skill effects
-                try
+                foreach (Skill skill in unit.GetFullSkillsList().Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard)))
                 {
-                    foreach (Skill skill in unit.GetSkills().Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard)))
-                        skill.Effects.Where(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard).ToList().ForEach(e => e.Apply(unit, skill, map, units));
+                    foreach(SkillEffect effect in skill.Effects.Where(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard))
+                    {
+                        try { effect.Apply(unit, skill, map, units); }
+                        catch(Exception ex) { throw new UnitSkillEffectProcessingException(unit.Name, skill.Name, ex); }
+                    }
                 }
-                catch (Exception ex)
-                {
-                    throw new UnitSkillEffectProcessingException(unit.Name, ex);
-                }
-
+   
                 //Status condition effects
-                try
+                foreach (UnitStatus status in unit.StatusConditions)
                 {
-                    foreach (UnitStatus status in unit.StatusConditions)
+                    try
+                    {
                         foreach (StatusConditionEffect effect in status.StatusObj.Effects)
                             effect.Apply(unit, status.StatusObj);
-                }
-                catch (Exception ex)
-                {
-                    throw new UnitStatusConditionEffectProcessingException(unit.Name, ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new UnitStatusConditionEffectProcessingException(unit.Name, status.StatusObj.Name, ex);
+                    }
                 }
             }
 
@@ -159,7 +136,6 @@ namespace RedditEmblemAPI.Services.Helpers
                         if (maxRange > map.Constants.ItemMaxRangeAllowedForCalculation && maxRange < 99)
                             item.MaxRangeExceedsCalculationLimit = true;
                     }
-                        
                 }
                 catch (Exception ex)
                 {
@@ -167,14 +143,13 @@ namespace RedditEmblemAPI.Services.Helpers
                 }
 
                 //Skill effects
-                try
+                foreach (Skill skill in unit.GetFullSkillsList().Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.AfterFinalStatCalculations)))
                 {
-                    foreach (Skill skill in unit.GetSkills().Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.AfterFinalStatCalculations)))
-                        skill.Effects.Where(e => e.ExecutionOrder == SkillEffectExecutionOrder.AfterFinalStatCalculations).ToList().ForEach(e => e.Apply(unit, skill, map, units));
-                }
-                catch (Exception ex)
-                {
-                    throw new UnitSkillEffectProcessingException(unit.Name, ex);
+                    foreach (SkillEffect effect in skill.Effects.Where(e => e.ExecutionOrder == SkillEffectExecutionOrder.AfterFinalStatCalculations))
+                    {
+                        try { effect.Apply(unit, skill, map, units); }
+                        catch (Exception ex) { throw new UnitSkillEffectProcessingException(unit.Name, skill.Name, ex); }
+                    }
                 }
             }
 
@@ -260,5 +235,6 @@ namespace RedditEmblemAPI.Services.Helpers
                 }
             }
         }
+
     }
 }

@@ -59,6 +59,10 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #region Static Functions
 
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Class</c> from each valid row.
+        /// </summary>
+        /// <exception cref="ClassProcessingException"></exception>
         public static IDictionary<string, Class> BuildDictionary(ClassesConfig config)
         {
             IDictionary<string, Class> classes = new Dictionary<string, Class>();
@@ -67,10 +71,11 @@ namespace RedditEmblemAPI.Models.Output.System
 
             foreach (List<object> row in config.Query.Data)
             {
+                string name = string.Empty;
                 try
                 {
                     IEnumerable<string> cls = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(cls, config.Name, "Name");
+                    name = DataParser.OptionalString(cls, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
                     if (!classes.TryAdd(name, new Class(config, cls)))
@@ -78,7 +83,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
                 catch (Exception ex)
                 {
-                    throw new ClassProcessingException((row.ElementAtOrDefault(config.Name) ?? string.Empty).ToString(), ex);
+                    throw new ClassProcessingException(name, ex);
                 }
             }
 
