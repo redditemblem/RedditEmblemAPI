@@ -124,7 +124,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
             object shapeEnum;
             if (!Enum.TryParse(typeof(ItemRangeShape), shape, out shapeEnum))
-                throw new UnmatchedItemRangeShapeException(shape);
+                throw new UnmatchedItemRangeShapeException(shape, Enum.GetNames<ItemRangeShape>());
 
             return (ItemRangeShape)shapeEnum;
         }

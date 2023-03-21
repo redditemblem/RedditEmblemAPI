@@ -66,7 +66,7 @@ namespace RedditEmblemAPI.Models.Configuration.System
         /// <summary>
         /// Optional. Container object for a system's tag configuration.
         /// </summary>
-        public TagConfig Tags { get; set; } = null;
+        public TagsConfig Tags { get; set; } = null;
 
         /// <summary>
         /// Optional. Container object for a system's weapon rank bonus configuration.

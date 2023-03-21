@@ -7,7 +7,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Battalions
     /// <summary>
     /// Container class for deserialized JSON <c>"Gambits"</c> object data.
     /// </summary>
-    public class GambitsConfig
+    public class GambitsConfig : IQueryable
     {
         #region Required Fields
 

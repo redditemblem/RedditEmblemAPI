@@ -47,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Tag(TagConfig config, IEnumerable<string> data)
+        public Tag(TagsConfig config, IEnumerable<string> data)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -62,7 +62,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Tag</c> from each valid row.
         /// </summary>
         /// <exception cref="TagProcessingException"></exception>
-        public static IDictionary<string, Tag> BuildDictionary(TagConfig config)
+        public static IDictionary<string, Tag> BuildDictionary(TagsConfig config)
         {
             IDictionary<string, Tag> tags = new Dictionary<string, Tag>();
             if (config == null || config.Query == null)

@@ -7,7 +7,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.TileObjects
     /// <summary>
     /// Container class for deserialized JSON <c>"TileObjects"</c> object data.
     /// </summary>
-    public class TileObjectsConfig
+    public class TileObjectsConfig : IQueryable
     {
         #region Required Fields
 

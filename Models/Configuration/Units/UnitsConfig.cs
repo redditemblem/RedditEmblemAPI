@@ -8,7 +8,7 @@ namespace RedditEmblemAPI.Models.Configuration.Units
     /// <summary>
     /// Container class for deserialized JSON <c>"Units"</c> object data.
     /// </summary>
-    public class UnitsConfig
+    public class UnitsConfig : IQueryable
     {
         #region Required Fields
 

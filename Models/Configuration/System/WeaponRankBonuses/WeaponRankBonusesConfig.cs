@@ -7,7 +7,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses
     /// <summary>
     /// Container class for deserialized JSON <c>"WeaponRankBonus"</c> object data.
     /// </summary>
-    public class WeaponRankBonusesConfig
+    public class WeaponRankBonusesConfig : IQueryable
     {
         #region Required Fields
 

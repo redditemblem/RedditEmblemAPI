@@ -1,5 +1,4 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
-using RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses;
+﻿using RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Services.Helpers;
@@ -43,8 +42,8 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Category = DataParser.String(data, config.Category, "Category");
             this.Rank = DataParser.OptionalString(data, config.Rank, "Rank");
 
-            this.CombatStatModifiers = DataParser.NamedStatDictionary_Int_Any(config.CombatStatModifiers, data, false, "{0} Modifier");
-            this.StatModifiers = DataParser.NamedStatDictionary_Int_Any(config.StatModifiers, data, false, "{0} Modifier");
+            this.CombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.CombatStatModifiers, data, false, "{0} Modifier");
+            this.StatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.StatModifiers, data, false, "{0} Modifier");
         }
 
         #region Static Functions

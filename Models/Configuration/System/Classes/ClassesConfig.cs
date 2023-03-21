@@ -7,7 +7,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Classes
     /// <summary>
     /// Container class for deserialized JSON <c>"Classes"</c> object data.
     /// </summary>
-    public class ClassesConfig
+    public class ClassesConfig : IQueryable
     {
         #region Required Fields
 

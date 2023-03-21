@@ -6,7 +6,7 @@ namespace RedditEmblemAPI.Models.Configuration.Map
     /// <summary>
     /// Container class for deserialized JSON <c>"MapControls"</c> object data.
     /// </summary>
-    public class MapControlsConfig
+    public class MapControlsConfig : IQueryable
     {
         #region Required Fields
 

@@ -119,27 +119,27 @@ namespace RedditEmblemAPI.Services.Helpers
                 }
 
                 //Item ranges
-                try
-                {
-                    List<UnitInventoryItem> inventoryItems = unit.Inventory.Items;
-                    if (unit.Emblem != null && unit.Emblem.IsEngaged)
-                        inventoryItems = inventoryItems.Union(unit.Emblem.EngageWeapons).ToList();
+                List<UnitInventoryItem> inventoryItems = unit.Inventory.Items;
+                if (unit.Emblem != null && unit.Emblem.IsEngaged)
+                    inventoryItems = inventoryItems.Union(unit.Emblem.EngageWeapons).ToList();
 
-                    foreach (UnitInventoryItem item in inventoryItems)
+                foreach (UnitInventoryItem item in inventoryItems)
+                {
+                    try
                     {
-                        if(item.Item.Range.MinimumRequiresCalculation || item.Item.Range.MaximumRequiresCalculation)
+                        if (item.Item.Range.MinimumRequiresCalculation || item.Item.Range.MaximumRequiresCalculation)
                             item.CalculateItemRanges(unit);
-
-                        int maxRange = item.MaxRange.FinalValue;
-                        if (item.Item.Range.Shape == ItemRangeShape.Square || item.Item.Range.Shape == ItemRangeShape.Saltire || item.Item.Range.Shape == ItemRangeShape.Star)
-                            maxRange *= 2;
-                        if (maxRange > map.Constants.ItemMaxRangeAllowedForCalculation && maxRange < 99)
-                            item.MaxRangeExceedsCalculationLimit = true;
                     }
-                }
-                catch (Exception ex)
-                {
-                    throw new UnitInventoryItemRangeFormulaProcessingException(unit.Name, ex);
+                    catch (Exception ex)
+                    {
+                        throw new UnitInventoryItemRangeFormulaProcessingException(unit.Name, item.FullName, ex);
+                    }
+
+                    int maxRange = item.MaxRange.FinalValue;
+                    if (item.Item.Range.Shape == ItemRangeShape.Square || item.Item.Range.Shape == ItemRangeShape.Saltire || item.Item.Range.Shape == ItemRangeShape.Star)
+                        maxRange *= 2;
+                    if (maxRange > map.Constants.ItemMaxRangeAllowedForCalculation && maxRange < 99)
+                        item.MaxRangeExceedsCalculationLimit = true;
                 }
 
                 //Skill effects

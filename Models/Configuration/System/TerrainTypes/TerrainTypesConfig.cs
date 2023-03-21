@@ -7,7 +7,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
     /// <summary>
     /// Container class for deserialized JSON <c>"TerrainTypes"</c> object data.
     /// </summary>
-    public class TerrainTypesConfig
+    public class TerrainTypesConfig : IQueryable
     {
         #region Required Fields
 

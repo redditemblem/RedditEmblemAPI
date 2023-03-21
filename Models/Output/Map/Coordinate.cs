@@ -67,7 +67,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <exception cref="AlphanumericCoordinateFormattingException"></exception>
         public Coordinate(CoordinateFormat coordinateFormat, string coord)
         {
-            if (string.IsNullOrEmpty(coord))
+            if (string.IsNullOrWhiteSpace(coord))
             {
                 this.X = 0;
                 this.Y = 0;

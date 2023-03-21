@@ -3,7 +3,7 @@
 namespace RedditEmblemAPI.Models.Configuration.Common
 {
     /// <summary>
-    /// Container class for deserialized JSON object data.
+    /// Container class for deserialized JSON object data representing a named stat with a fixed value.
     /// </summary>
     public class NamedStatConfig
     {

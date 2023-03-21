@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;

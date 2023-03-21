@@ -3,7 +3,7 @@ using RedditEmblemAPI.Models.Configuration.Common;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Tags
 {
-    public class TagConfig
+    public class TagsConfig : IQueryable
     {
         #region Required Fields
 

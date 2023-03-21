@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Services.Helpers;
 using System;
@@ -200,13 +201,27 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Checks to see if either the item's minimum or maximum ranges needs to be calculated. If yes, executes on the formula.
         /// </summary>
+        /// <exception cref="MinimumGreaterThanMaximumException"></exception>
         public void CalculateItemRanges(Unit unit)
         {
+            string minRangeLabel = "Minimum Range";
+            string maxRangeLabel = "Maximum Range";
+
             if (this.Item.Range.MinimumRequiresCalculation)
+            {
                 this.MinRange.BaseValue = CalculateItemRange(this.Item.Range.MinimumRaw, unit);
+                minRangeLabel = "Calculated Minimum Range";
+            }
 
             if (this.Item.Range.MaximumRequiresCalculation)
+            {
                 this.MaxRange.BaseValue = CalculateItemRange(this.Item.Range.MaximumRaw, unit);
+                maxRangeLabel = "Calculated Maximum Range";
+            }
+            
+            //After calculating, make sure our values form a valid range.
+            if (this.MinRange.BaseValue > this.MaxRange.BaseValue)
+                throw new MinimumGreaterThanMaximumException(minRangeLabel, maxRangeLabel);
         }
 
         private int CalculateItemRange(string equation, Unit unit)

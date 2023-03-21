@@ -7,7 +7,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
     /// <summary>
     /// Container class for deserialized JSON <c>"StatusConditions"</c> object data.
     /// </summary>
-    public class StatusConditionConfig
+    public class StatusConditionConfig : IQueryable
     {
         #region Required Fields
 

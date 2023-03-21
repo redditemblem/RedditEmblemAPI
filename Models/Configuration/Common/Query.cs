@@ -5,8 +5,9 @@ using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource.BatchGetR
 namespace RedditEmblemAPI.Models.Configuration.Common
 {
     /// <summary>
-    /// Container class for deserialized JSON <c>"Query"</c> object data.
+    /// Container class for deserialized JSON <c>"Query"</c> object data. Used to build Google Sheets API queries.
     /// </summary>
+    /// <see cref="https://developers.google.com/sheets/api/guides/concepts"/>
     public class Query
     {
         #region Required Fields
@@ -18,7 +19,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         public string Sheet { get; set; }
 
         /// <summary>
-        /// The range of cells to execute the query on. Must be in a <c>"StartCell!EndCell"</c> format.
+        /// The range of cells to execute the query on. Must be in a <c>"StartCell:EndCell"</c> format.
         /// </summary>
         [JsonRequired]
         public string Selection { get; set; }
@@ -59,7 +60,6 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         /// <summary>
         /// Overridden. Returns the worksheet query in <c>Sheet!Selection</c> format for passing to the Google Sheets API.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return $"{this.Sheet}!{this.Selection}";

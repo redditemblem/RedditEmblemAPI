@@ -7,7 +7,7 @@ namespace RedditEmblemAPI.Models.Configuration.Convoy
     /// <summary>
     /// Container class for deserialized JSON <c>"Convoy"</c> object data.
     /// </summary>
-    public class ConvoyConfig
+    public class ConvoyConfig : IQueryable
     {
         #region Required Fields
 

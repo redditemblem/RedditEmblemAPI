@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace RedditEmblemAPI.Models.Configuration
 {
     /// <summary>
-    /// Container class for deserialized JSON configuration data.
+    /// Container class for deserialized JSON configuration data. The top-level element.
     /// </summary>
     public class JSONConfiguration
     {
@@ -77,18 +77,17 @@ namespace RedditEmblemAPI.Models.Configuration
             };
 
             //Add optional queries
-            if (this.Map.MapObjects != null) queries.Add(this.Map.MapObjects.Query);
-            if (this.System.TileObjects != null) queries.Add(this.System.TileObjects.Query);
-
-            if (this.System.Classes != null) queries.Add(this.System.Classes.Query);
-            if (this.System.Skills != null) queries.Add(this.System.Skills.Query);
-            if (this.System.StatusConditions != null) queries.Add(this.System.StatusConditions.Query);
-            if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
-            if (this.System.WeaponRankBonuses != null) queries.Add(this.System.WeaponRankBonuses.Query);
-            if (this.System.Engravings != null) queries.Add(this.System.Engravings.Query);
-            if (this.System.Battalions != null) queries.Add(this.System.Battalions.Query);
-            if (this.System.Gambits != null) queries.Add(this.System.Gambits.Query);
-            if (this.System.Emblems != null) queries.Add(this.System.Emblems.Query);
+            queries.AddQueryable(this.Map.MapObjects);
+            queries.AddQueryable(this.System.TileObjects);
+            queries.AddQueryable(this.System.Classes);
+            queries.AddQueryable(this.System.Skills);
+            queries.AddQueryable(this.System.StatusConditions);
+            queries.AddQueryable(this.System.Tags);
+            queries.AddQueryable(this.System.WeaponRankBonuses);
+            queries.AddQueryable(this.System.Engravings);
+            queries.AddQueryable(this.System.Battalions);
+            queries.AddQueryable(this.System.Gambits);
+            queries.AddQueryable(this.System.Emblems);
 
             return queries;
         }
@@ -125,8 +124,8 @@ namespace RedditEmblemAPI.Models.Configuration
             };
 
             //Add optional queries
-            if (this.System.Engravings != null) queries.Add(this.System.Engravings.Query);
-            if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
+            queries.AddQueryable(this.System.Engravings);
+            queries.AddQueryable(this.System.Tags);
 
             return queries;
         }
@@ -145,8 +144,8 @@ namespace RedditEmblemAPI.Models.Configuration
             };
 
             //Add optional queries
-            if (this.System.Engravings != null) queries.Add(this.System.Engravings.Query);
-            if (this.System.Tags != null) queries.Add(this.System.Tags.Query);
+            queries.AddQueryable(this.System.Engravings);
+            queries.AddQueryable(this.System.Tags);
 
             return queries;
         }

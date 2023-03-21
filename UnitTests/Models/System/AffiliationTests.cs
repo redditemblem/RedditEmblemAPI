@@ -89,7 +89,7 @@ namespace UnitTests.Models.System
 
             Affiliation aff = new Affiliation(config, data);
 
-            Assert.AreEqual<bool>(false, aff.FlipUnitSprites);
+            Assert.IsFalse(aff.FlipUnitSprites);
         }
 
         [TestMethod]
@@ -111,7 +111,7 @@ namespace UnitTests.Models.System
 
             Affiliation aff = new Affiliation(config, data);
 
-            Assert.AreEqual<bool>(false, aff.FlipUnitSprites);
+            Assert.IsFalse(aff.FlipUnitSprites);
         }
 
         [TestMethod]
@@ -133,7 +133,7 @@ namespace UnitTests.Models.System
 
             Affiliation aff = new Affiliation(config, data);
 
-            Assert.AreEqual<bool>(true, aff.FlipUnitSprites);
+            Assert.IsTrue(aff.FlipUnitSprites);
         }
 
         #endregion OptionalField_FlipUnitSprites
@@ -247,6 +247,26 @@ namespace UnitTests.Models.System
             };
 
             Assert.ThrowsException<AffiliationProcessingException>(() => Affiliation.BuildDictionary(config));
+        }
+
+        [TestMethod]
+        public void Affiliation_BuildDictionary()
+        {
+            AffiliationsConfig config = new AffiliationsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ INPUT_NAME, "1" }
+                    }
+                },
+                Name = 0,
+                Grouping = 1
+            };
+
+            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            Assert.AreEqual<int>(1, dict.Count);
         }
 
         # endregion BuildDictionary

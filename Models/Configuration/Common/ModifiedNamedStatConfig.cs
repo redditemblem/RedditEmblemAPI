@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace RedditEmblemAPI.Models.Configuration.Common
 {
     /// <summary>
-    /// Container class for deserialized JSON object data.
+    /// Container class for deserialized JSON object data representing a named stat with possible modifiers.
     /// </summary>
     public class ModifiedNamedStatConfig
     {
