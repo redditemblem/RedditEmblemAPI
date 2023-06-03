@@ -374,7 +374,17 @@
         ]
       }
     ],
-    "Skills": [ 0 ], //Optional
+    "Skills": [ //Optional
+      {
+        "Name": 0, //Required
+        "AdditionalStats": [ //Optional
+          {
+            "SourceName": "cooldown",
+            "Value": 0
+          }
+        ]
+      }
+    ],
     "StatusConditions": [ //Optional
       {
         "Name": 0, //Required
@@ -391,6 +401,35 @@
       "Battalion": 0, //Required
       "Endurance": 0, //Required
       "GambitUses": 0 //Required
+    },
+    "Emblem": { //Optional
+      "Name": 0, //Required
+      "BondLevel": 0, //Optional
+      "EngageMeterCount": 0, //Required
+      "IsEngaged": 0, //Required
+      "SyncSkills": [ //Optional
+        {
+          "Name": 0, //Required
+          "AdditionalStats": [ //Optional
+            {
+              "SourceName": "cooldown",
+              "Value": 0
+            }
+          ]
+        }
+      ],
+      "EngageSkills": [ //Optional
+        {
+          "Name": 0, //Required
+          "AdditionalStats": [ //Optional
+            {
+              "SourceName": "cooldown",
+              "Value": 0
+            }
+          ]
+        }
+      ],
+      "EngageWeapons": [ 0 ] //Optional
     }
   },
   "Convoy": { //Optional

@@ -35,15 +35,12 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         /// <summary>
         /// List of the emblem's sync skills.
-        /// </summary>
-        [JsonIgnore]
-        public List<Skill> SyncSkillsList { get; set; }
+        public List<UnitSkill> SyncSkills { get; set; }
 
         /// <summary>
         /// List of the emblem's engage skills.
         /// </summary>
-        [JsonIgnore]
-        public List<Skill> EngageSkillsList { get; set; }
+        public List<UnitSkill> EngageSkills { get; set; }
 
         /// <summary>
         /// List of the emblem's engage weapons.
@@ -57,18 +54,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         [JsonProperty]
         private string Name { get { return this.Emblem.Name; } }
-
-        /// <summary>
-        /// Only for JSON serialization. List of the names of the emblem's sync skills.
-        /// </summary>
-        [JsonProperty]
-        private IEnumerable<string> SyncSkills { get { return this.SyncSkillsList.Select(s => s.Name); } }
-
-        /// <summary>
-        /// Only for JSON serialization. List of the nmaes of the emblem's engage skills.
-        /// </summary>
-        [JsonProperty]
-        private IEnumerable<string> EngageSkills { get { return this.EngageSkillsList.Select(s => s.Name); } }
 
         #endregion JSON Serialization ONLY
 
@@ -86,13 +71,26 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.EngageMeterCount = DataParser.OptionalInt_Positive(data, config.EngageMeterCount, "Engage Meter Count", -1);
             this.IsEngaged = DataParser.OptionalBoolean_YesNo(data, config.IsEngaged, "Is Engaged");
 
-            IEnumerable<string> syncSkills = DataParser.List_Strings(data, config.SyncSkills);
-            this.SyncSkillsList = Skill.MatchNames(systemData.Skills, syncSkills);
-
-            IEnumerable<string> engageSkills = DataParser.List_Strings(data, config.EngageSkills);
-            this.EngageSkillsList = Skill.MatchNames(systemData.Skills, engageSkills);
-
+            this.SyncSkills = BuildUnitSkills(data, config.SyncSkills, systemData.Skills);
+            this.EngageSkills = BuildUnitSkills(data, config.EngageSkills, systemData.Skills);
             BuildItems(data, config, systemData.Items, systemData.Engravings);
+        }
+
+        /// <summary>
+        /// Builds and returns a list of the unit's skills.
+        /// </summary>
+        private List<UnitSkill> BuildUnitSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, Skill> skills)
+        {
+            List<UnitSkill> unitSkills = new List<UnitSkill>();
+            foreach (UnitSkillConfig config in configs)
+            {
+                string name = DataParser.OptionalString(data, config.Name, "Skill Name");
+                if (string.IsNullOrEmpty(name)) continue;
+
+                unitSkills.Add(new UnitSkill(data, config, skills));
+            }
+
+            return unitSkills;
         }
 
         private void BuildItems(IEnumerable<string> data, UnitEmblemConfig config, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -34,15 +35,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         #region Constructors
 
         /// <summary>
-        /// Initializes the class with the values in <paramref name="data"/> at <paramref name="currentIndex"/> and <paramref name="maximumIndex"/>.
+        /// Constructor.
         /// </summary>
-        public HP(IEnumerable<string> data, int currentIndex, int maximumIndex)
+        public HP(IEnumerable<string> data, HPConfig config)
         {
-            int currentVal = DataParser.Int_Positive(data, currentIndex, "Current HP");
-            this.Current = currentVal;
-
-            int maximumVal = DataParser.Int_NonZeroPositive(data, maximumIndex, "Maximum HP");
-            this.Maximum = maximumVal;
+            this.Current = DataParser.Int_Positive(data, config.Current, "Current HP");
+            this.Maximum = DataParser.Int_NonZeroPositive(data, config.Maximum, "Maximum HP");
         }
 
         #endregion

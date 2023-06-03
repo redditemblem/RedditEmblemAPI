@@ -66,7 +66,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Experience = experience;
 
             this.HeldCurrency = DataParser.OptionalInt_Positive(data, config.HeldCurrency, "Currency");
-            this.HP = new HP(data, config.HP.Current, config.HP.Maximum);
+            this.HP = new HP(data, config.HP);
 
             //Build stat dictionaries
             this.Combat = BuildCombatStats(data, config.CombatStats);

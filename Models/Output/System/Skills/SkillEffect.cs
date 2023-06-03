@@ -55,7 +55,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                 if (value == 0) continue;
 
                 ModifiedStatValue stat = unit.Stats.MatchCombatStatName(statName);
-                stat.Modifiers.Add(modifierName, value);
+                if (!stat.Modifiers.TryAdd(modifierName, value))
+                    stat.Modifiers[modifierName] += value;
             }
         }
 
@@ -73,7 +74,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                 if (value == 0) continue;
 
                 ModifiedStatValue stat = unit.Stats.MatchGeneralStatName(statName);
-                stat.Modifiers.Add(modifierName, value);
+                if(!stat.Modifiers.TryAdd(modifierName, value))
+                    stat.Modifiers[modifierName] += value;
             }
         }
 

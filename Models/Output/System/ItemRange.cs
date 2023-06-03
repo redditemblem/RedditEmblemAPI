@@ -80,13 +80,12 @@ namespace RedditEmblemAPI.Models.Output.System
             try
             {
                 this.MinimumRaw = data.ElementAtOrDefault<string>(index) ?? string.Empty;
-                return DataParser.Int_Positive(data, index, "Minimum Range");
+                return DataParser.OptionalInt_Positive(data, index, "Minimum Range");
             }
             catch (PositiveIntegerException ex)
             {
                 //Check if this value needs to be calculated. If yes, return 0. If no, throw the error again.
-                string value = data.ElementAtOrDefault<string>(index) ?? string.Empty;
-                if (value.Contains("{") || value.Contains("}"))
+                if (this.MinimumRaw.Contains("{") || this.MinimumRaw.Contains("}"))
                 {
                     this.MinimumRequiresCalculation = true;
                     return 0;
@@ -101,13 +100,12 @@ namespace RedditEmblemAPI.Models.Output.System
             try
             {
                 this.MaximumRaw = data.ElementAtOrDefault<string>(index) ?? string.Empty;
-                return DataParser.Int_Positive(data, index, "Maximum Range");
+                return DataParser.OptionalInt_Positive(data, index, "Maximum Range");
             }
             catch (PositiveIntegerException ex)
             {
                 //Check if this value needs to be calculated. If yes, return 0. If no, throw the error again.
-                string value = data.ElementAtOrDefault<string>(index) ?? string.Empty;
-                if (value.Contains("{") || value.Contains("}"))
+                if (this.MaximumRaw.Contains("{") || this.MaximumRaw.Contains("}"))
                 {
                     this.MaximumRequiresCalculation = true;
                     return 0;

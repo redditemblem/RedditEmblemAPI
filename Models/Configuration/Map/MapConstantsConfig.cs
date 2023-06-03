@@ -56,7 +56,7 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         public bool CalculatePairedUnitRanges { get; set; } = true;
 
         /// <summary>
-        /// Optional. The maximum item range value that will be allowed to be calculated.
+        /// Optional. The maximum item range value that will be allowed to be calculated. Defaults to 15.
         /// </summary>
         public int ItemMaxRangeAllowedForCalculation { get; set; } = 15;
 

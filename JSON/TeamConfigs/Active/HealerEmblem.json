@@ -410,7 +410,14 @@
         "RemainingTurns": 48
       }
     ],
-    "Skills": [ 49, 50 ]
+    "Skills": [
+      {
+        "Name": 49
+      },
+      {
+        "Name": 50
+      }
+    ]
   },
   "Convoy": {
     "Query": {

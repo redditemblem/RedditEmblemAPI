@@ -35,14 +35,14 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public int BondLevel { get; set; } = -1;
 
         /// <summary>
-        /// Optional. List of cell indexes for the emblem's sync skills.
+        /// Optional. List of container objects for the emblem's sync skills.
         /// </summary>
-        public List<int> SyncSkills { get; set; } = new List<int>();
+        public List<UnitSkillConfig> SyncSkills { get; set; } = new List<UnitSkillConfig>();
 
         /// <summary>
-        /// Optional. List of cell indexes for the emblem's engage skills.
+        /// Optional. List of container objects for the emblem's engage skills.
         /// </summary>
-        public List<int> EngageSkills { get; set; } = new List<int>();
+        public List<UnitSkillConfig> EngageSkills { get; set; } = new List<UnitSkillConfig>();
 
         /// <summary>
         /// Optional. List of cell indexes for the emblem's engage weapons.

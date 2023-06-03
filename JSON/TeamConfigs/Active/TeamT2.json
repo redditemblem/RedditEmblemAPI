@@ -423,7 +423,23 @@
         "BaseValue": 19
       }
     ],
-    "Skills": [ 47, 48, 49, 50, 51 ],
+    "Skills": [
+      {
+        "Name": 47
+      },
+      {
+        "Name": 48
+      },
+      {
+        "Name": 49
+      },
+      {
+        "Name": 50
+      },
+      {
+        "Name": 51
+      }
+    ],
     "StatusConditions": [
       {
         "Name": 57

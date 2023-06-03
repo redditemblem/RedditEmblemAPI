@@ -130,7 +130,7 @@ namespace RedditEmblemAPI.Models.Output.System
             IEnumerable<string> itemEngravings = DataParser.List_Strings(data, config.Engravings).Distinct();
             this.Engravings = Engraving.MatchNames(engravings, itemEngravings, true);
 
-            this.Stats = DataParser.NamedStatDictionary_Int_Any(config.Stats, data, true);
+            this.Stats = DataParser.NamedStatDictionary_OptionalInt_Any(config.Stats, data, true);
             this.EquippedStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.EquippedStatModifiers, data, false, "{0} (Equipped)");
             this.InventoryStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.InventoryStatModifiers, data, false, "{0} (Inventory)");
         }

@@ -5,7 +5,7 @@ using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource.BatchGetR
 namespace RedditEmblemAPI.Models.Configuration.Common
 {
     /// <summary>
-    /// Container class for deserialized JSON <c>"Query"</c> object data. Used to build Google Sheets API queries.
+    /// Container class for deserialized JSON <c>"Query"</c> object data. Represents required fields for Google Sheets API queries.
     /// </summary>
     /// <see cref="https://developers.google.com/sheets/api/guides/concepts"/>
     public class Query

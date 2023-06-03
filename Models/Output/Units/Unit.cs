@@ -96,7 +96,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         public IDictionary<string, string> WeaponRanks { get; set; }
 
         /// <summary>
-        /// List of the statuses the unit has.
+        /// List of the status conditions the unit possesses.
         /// </summary>
         public List<UnitStatus> StatusConditions { get; set; }
 
@@ -108,8 +108,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// List of the skills the unit possesses.
         /// </summary>
-        [JsonIgnore]
-        public List<Skill> SkillList { get; set; }
+        public List<UnitSkill> Skills { get; set; }
 
         /// <summary>
         /// Container for information about a unit's battalion.
@@ -154,12 +153,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         [JsonProperty]
         private string Affiliation { get { return AffiliationObj.Name; } }
 
-        /// <summary>
-        /// Only for JSON serialization. A list of the unit's skills.
-        /// </summary>
-        [JsonProperty]
-        private IEnumerable<string> Skills { get { return this.SkillList.Select(c => c.Name); } }
-
         #endregion JSON Serialization Only
 
         #endregion Attributes
@@ -201,9 +194,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 this.UnitMovementType = DataParser.String(data, config.MovementType, "Movement Type");
             MatchTags(system.Tags);
 
-            IEnumerable<string> skillNames = DataParser.List_Strings(data, config.Skills);
-            this.SkillList = Skill.MatchNames(system.Skills, skillNames);
-
+            this.Skills =  BuildUnitSkills(data, config.Skills, system.Skills);
             this.WeaponRanks = BuildWeaponRanks(data, config.WeaponRanks, system.Constants.WeaponRanks.Any());
             this.StatusConditions = BuildUnitStatusConditions(data, config.StatusConditions, system.StatusConditions);
             this.Battalion = BuildBattalion(data, config.Battalion, system.Battalions);
@@ -213,6 +204,23 @@ namespace RedditEmblemAPI.Models.Output.Units
         }
 
         #region Build Functions
+
+        /// <summary>
+        /// Builds and returns a list of the unit's skills.
+        /// </summary>
+        private List<UnitSkill> BuildUnitSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, Skill> skills)
+        {
+            List<UnitSkill> unitSkills = new List<UnitSkill>();
+            foreach (UnitSkillConfig config in configs)
+            {
+                string name = DataParser.OptionalString(data, config.Name, "Skill Name");
+                if (string.IsNullOrEmpty(name)) continue;
+
+                unitSkills.Add(new UnitSkill(data, config, skills));
+            }
+
+            return unitSkills;
+        }
 
         /// <summary>
         /// Builds and returns the unit's dictionary of weapon rank types/letters.
@@ -490,14 +498,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public IEnumerable<Skill> GetFullSkillsList()
         {
-            IEnumerable<Skill> skills = this.SkillList;
+            IEnumerable<Skill> skills = this.Skills.Select(s => s.SkillObj);
 
             //Union w/ emblem skills
             if(this.Emblem != null)
             {
-                skills = skills.Union(this.Emblem.SyncSkillsList);
+                skills = skills.Union(this.Emblem.SyncSkills.Select(s => s.SkillObj));
                 if (this.Emblem.IsEngaged)
-                    skills = skills.Union(this.Emblem.EngageSkillsList);
+                    skills = skills.Union(this.Emblem.EngageSkills.Select(s => s.SkillObj));
             }
 
             return skills;

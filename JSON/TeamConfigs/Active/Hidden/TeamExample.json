@@ -568,7 +568,32 @@
         }
       ]
     },
-    "Skills": [ 54, 55, 56, 57, 58, 59, 60, 61 ],
+    "Skills": [
+      {
+        "Name": 54
+      },
+      {
+        "Name": 55
+      },
+      {
+        "Name": 56
+      },
+      {
+        "Name": 57
+      },
+      {
+        "Name": 58
+      },
+      {
+        "Name": 59
+      },
+      {
+        "Name": 60
+      },
+      {
+        "Name": 61
+      }
+    ],
     "StatusConditions": [
       {
         "Name": 83,
@@ -606,8 +631,22 @@
       "BondLevel": 63,
       "EngageMeterCount": 64,
       "IsEngaged": 65,
-      "SyncSkills": [ 66, 67, 68 ],
-      "EngageSkills": [ 69 ],
+      "SyncSkills": [
+        {
+          "Name": 66
+        },
+        {
+          "Name": 67
+        },
+        {
+          "Name": 68
+        }
+      ],
+      "EngageSkills": [
+        {
+          "Name": 69
+        }
+      ],
       "EngageWeapons": [ 70, 71, 72 ]
     }
   },
