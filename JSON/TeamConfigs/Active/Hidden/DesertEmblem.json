@@ -243,22 +243,26 @@
         },
         {
           "SourceName": "Mage",
-          "Value": 5
+          "Value": 7
         },
         {
           "SourceName": "Cavalry",
-          "Value": 5
+          "Value": 8
+        },
+        {
+          "SourceName": "Camel",
+          "Value": 9
         },
         {
           "SourceName": "Flier",
-          "Value": 5
+          "Value": 10
         }
       ],
-      "WarpType": 12,
-      "WarpCost": 13,
-      "BlocksItems": 11,
-      "Groupings": 10,
-      "TextFields": [ 14 ]
+      "WarpType": 13,
+      "WarpCost": 14,
+      "BlocksItems": 12,
+      "Groupings": 11,
+      "TextFields": [ 15 ]
     },
     "TileObjects": {
       "Query": {
