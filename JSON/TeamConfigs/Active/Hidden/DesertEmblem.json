@@ -714,14 +714,14 @@
       ]
     },
     "Player": 1,
-    "PortraitURL": 180,
-    "TextFields": [ 179 ],
-    "UnitSize": 178,
+    "PortraitURL": 182,
+    "TextFields": [ 181 ],
+    "UnitSize": 180,
     "HasMoved": 13,
     "Experience": 8,
     "HeldCurrency": 10,
-    "Tags": [ 176, 177 ],
-    "Behavior": 181,
+    "Tags": [ 178, 179 ],
+    "Behavior": 183,
     "SystemStats": [
       {
         "SourceName": "GS Shields",
@@ -777,6 +777,69 @@
           {
             "SourceName": "turn(s) on cooldown",
             "Value": 161
+          }
+        ]
+      },
+      {
+        "Name": 162,
+        "AdditionalStats": [
+          {
+            "SourceName": "turn(s) on cooldown",
+            "Value": 163
+          }
+        ]
+      },
+      {
+        "Name": 164,
+        "AdditionalStats": [
+          {
+            "SourceName": "turn(s) on cooldown",
+            "Value": 165
+          }
+        ]
+      },
+      {
+        "Name": 166,
+        "AdditionalStats": [
+          {
+            "SourceName": "turn(s) on cooldown",
+            "Value": 167
+          }
+        ]
+      },
+      {
+        "Name": 169,
+        "AdditionalStats": [
+          {
+            "SourceName": "turn(s) on cooldown",
+            "Value": 170
+          }
+        ]
+      },
+      {
+        "Name": 171,
+        "AdditionalStats": [
+          {
+            "SourceName": "turn(s) on cooldown",
+            "Value": 172
+          }
+        ]
+      },
+      {
+        "Name": 173,
+        "AdditionalStats": [
+          {
+            "SourceName": "turn(s) on cooldown",
+            "Value": 174
+          }
+        ]
+      },
+      {
+        "Name": 175,
+        "AdditionalStats": [
+          {
+            "SourceName": "turn(s) on cooldown",
+            "Value": 176
           }
         ]
       }
