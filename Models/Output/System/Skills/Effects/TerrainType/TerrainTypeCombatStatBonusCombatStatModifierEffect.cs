@@ -1,5 +1,4 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output.Map;
+﻿using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
@@ -20,40 +19,24 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
         private string TerrainTypeStat { get; set; }
 
         /// <summary>
-        /// Param2. The unit combat stats to be affected.
+        /// Param2/Param3. The unit combat stat modifiers to apply.
         /// </summary>
-        private List<string> Stats { get; set; }
-
-        /// <summary>
-        /// Param3. The values by which to modify the <c>Stats</c>.
-        /// </summary>
-        private List<int> Values { get; set; }
+        private IDictionary<string, int> Modifiers { get; set; }
 
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="RequiredValueNotProvidedException"></exception>
-        /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
         public TerrainTypeCombatStatBonusCombatStatModifierEffect(List<string> parameters)
             : base(parameters)
         {
-            this.TerrainTypeStat = DataParser.String(parameters, 0, "Param1");
-            this.Stats = DataParser.List_StringCSV(parameters, 1); //Param2
-            this.Values = DataParser.List_IntCSV(parameters, 2, "Param3", false);
-
-            if (this.Stats.Count == 0)
-                throw new RequiredValueNotProvidedException("Param2");
-            if (this.Values.Count == 0)
-                throw new RequiredValueNotProvidedException("Param3");
-
-            if (this.Stats.Count != this.Values.Count)
-                throw new SkillEffectParameterLengthsMismatchedException("Param2", "Param3");
+            this.TerrainTypeStat = DataParser.String(parameters, INDEX_PARAM_1, NAME_PARAM_1);
+            this.Modifiers = DataParser.StatValueCSVs_Int_Any(parameters, INDEX_PARAM_2, NAME_PARAM_2, INDEX_PARAM_3, NAME_PARAM_3);
         }
 
         /// <summary>
-        /// When <paramref name="unit"/> is standing on terrain that grants a positive modifier to <c>this.TerrainTypeStat</c>, then the values in <c>Values</c> are added as modifiers to the items in <c>Stats</c>.
+        /// Applies <c>Modifiers</c> to <paramref name="unit"/> if <paramref name="unit"/> is standing on terrain that grants a positive modifier to <c>this.TerrainTypeStat</c>.
         /// </summary>
         public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
@@ -71,7 +54,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
                 if (modifier <= 0)
                     continue;
 
-                ApplyUnitCombatStatModifiers(unit, skill.Name, this.Stats, this.Values);
+                unit.Stats.ApplyCombatStatModifiers(this.Modifiers, skill.Name);
                 break;
             }
             

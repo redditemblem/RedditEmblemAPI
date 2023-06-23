@@ -30,8 +30,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public RadiusAllyMovementCostSetEffect(List<string> parameters)
             : base(parameters)
         {
-            this.Radius = DataParser.Int_Positive(parameters, 0, "Param1");
-            this.MovementCost = DataParser.Int_Positive(parameters, 1, "Param2");
+            this.Radius = DataParser.Int_Positive(parameters, INDEX_PARAM_1, NAME_PARAM_1);
+            this.MovementCost = DataParser.Int_Positive(parameters, INDEX_PARAM_2, NAME_PARAM_2);
         }
 
         public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)

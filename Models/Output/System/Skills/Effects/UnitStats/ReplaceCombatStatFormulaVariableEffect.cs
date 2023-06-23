@@ -34,24 +34,24 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// Constructor.
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
-        /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
+        /// <exception cref="ParameterLengthsMismatchedException"></exception>
         public ReplaceCombatStatFormulaVariableEffect(List<string> parameters)
             : base(parameters)
         {
-            this.Stats = DataParser.List_StringCSV(parameters, 0); //Param1
-            this.VariablesToReplace = CustomCSVParse(parameters, 1); //Param2
-            this.VariablesToUse = CustomCSVParse(parameters, 2); //Param3
+            this.Stats = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);
+            this.VariablesToReplace = CustomCSVParse(parameters, INDEX_PARAM_2);
+            this.VariablesToUse = CustomCSVParse(parameters, INDEX_PARAM_3);
 
 
-            if (this.Stats.Count == 0)
-                throw new RequiredValueNotProvidedException("Param1");
-            if (this.VariablesToReplace.Count == 0)
-                throw new RequiredValueNotProvidedException("Param2");
-            if (this.VariablesToUse.Count == 0)
-                throw new RequiredValueNotProvidedException("Param3");
+            if (!this.Stats.Any())
+                throw new RequiredValueNotProvidedException(NAME_PARAM_1);
+            if (!this.VariablesToReplace.Any())
+                throw new RequiredValueNotProvidedException(NAME_PARAM_2);
+            if (!this.VariablesToUse.Any())
+                throw new RequiredValueNotProvidedException(NAME_PARAM_3);
 
             if (this.VariablesToReplace.Count != this.VariablesToUse.Count)
-                throw new SkillEffectParameterLengthsMismatchedException("Param2", "Param3");
+                throw new ParameterLengthsMismatchedException(NAME_PARAM_2, NAME_PARAM_3);
         }
 
         /// <summary>

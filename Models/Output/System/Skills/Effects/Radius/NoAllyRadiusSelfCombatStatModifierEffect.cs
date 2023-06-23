@@ -1,6 +1,4 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Unmatched;
-using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output.Map;
+﻿using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
@@ -21,42 +19,25 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
         private int Radius { get; set; }
 
         /// <summary>
-        /// Param2. The unit combat stats to be affected.
+        /// Param2/Param3. The unit combat stat modifiers to apply.
         /// </summary>
-        private List<string> Stats { get; set; }
-
-        /// <summary>
-        /// Param3. The values by which to modify the <c>Stats</c>.
-        /// </summary>
-        private List<int> Values { get; set; }
+        private IDictionary<string, int> Modifiers { get; set; }
 
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="RequiredValueNotProvidedException"></exception>
-        /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
         public NoAllyRadiusSelfCombatStatModifierEffect(List<string> parameters)
             : base(parameters)
         {
-            this.Radius = DataParser.Int_NonZeroPositive(parameters, 0, "Param1");
-            this.Stats = DataParser.List_StringCSV(parameters, 1); //Param2
-            this.Values = DataParser.List_IntCSV(parameters, 2, "Param3", false);
-
-            if (this.Stats.Count == 0)
-                throw new RequiredValueNotProvidedException("Param2");
-            if (this.Values.Count == 0)
-                throw new RequiredValueNotProvidedException("Param3");
-
-            if (this.Stats.Count != this.Values.Count)
-                throw new SkillEffectParameterLengthsMismatchedException("Param2", "Param3");
+            this.Radius = DataParser.Int_NonZeroPositive(parameters, INDEX_PARAM_1, NAME_PARAM_1);
+            this.Modifiers = DataParser.StatValueCSVs_Int_Any(parameters, INDEX_PARAM_2, NAME_PARAM_2, INDEX_PARAM_3, NAME_PARAM_3);
         }
 
         /// <summary>
-        /// Searches the <paramref name="units"/> list for friendly units within <c>Radius</c> tiles. If none exist, adds the values in <c>Values</c> as modifiers to the items in <c>Stats</c>.
+        /// Applies <c>Modifiers</c> to <paramref name="unit"/> if a friendly, allied unit does not exist within <c>Radius</c> tiles of <paramref name="unit"/>.
         /// </summary>
-        /// <exception cref="UnmatchedStatException"></exception>
         public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             //If unit is not on the map, don't apply
@@ -69,7 +50,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
                              && u.Location.IsOnMap()
                              && u.Location.OriginTiles.Any(o1 => unit.Location.OriginTiles.Any(o2 => o2.Coordinate.DistanceFrom(o1.Coordinate) <= this.Radius))))
             {
-                ApplyUnitCombatStatModifiers(unit, skill.Name, this.Stats, this.Values);
+                unit.Stats.ApplyCombatStatModifiers(this.Modifiers, skill.Name, true);
             }
         }
     }

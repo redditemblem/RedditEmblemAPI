@@ -31,8 +31,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public HPAboveObstructTileRadiusEffect(List<string> parameters)
             : base(parameters)
         {
-            this.Radius = DataParser.Int_NonZeroPositive(parameters, 0, "Param1");
-            this.HPPercentage = DataParser.Int_Positive(parameters, 1, "Param2");
+            this.Radius = DataParser.Int_NonZeroPositive(parameters, INDEX_PARAM_1, NAME_PARAM_1);
+            this.HPPercentage = DataParser.Int_Positive(parameters, INDEX_PARAM_2, NAME_PARAM_2);
         }
 
         /// <summary>

@@ -608,6 +608,80 @@ namespace RedditEmblemAPI.Services.Helpers
             return stats;
         }
 
+        /// <summary>
+        /// Iterates the <c>NamedStatConfig</c>s in <paramref name="configs"/> and parses them into a dictionary. All values are included.
+        /// </summary>
+        /// <param name="errorFieldNameFormat">Passed into <c>string.Format</c> to create the field name thrown with any parsing errors. The <c>NamedStatConfig</c>'s source name is always {0}.</param>
+        ///<param name="errorFieldNameArgs">Any additional values that will be formatted with <paramref name="errorFieldNameFormat"/>.</param>
+        public static IDictionary<string, decimal> NamedStatDictionary_Decimal_Any(IEnumerable<NamedStatConfig> configs, IEnumerable<string> data, bool includeZeroValues = false, string errorFieldNameFormat = "{0}", params string[] errorFieldNameArgs)
+        {
+            IDictionary<string, decimal> stats = new Dictionary<string, decimal>();
+
+            foreach (NamedStatConfig stat in configs)
+            {
+                decimal val = DataParser.Decimal_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
+                if (val == 0 && !includeZeroValues) continue;
+
+                stats.Add(stat.SourceName, val);
+            }
+
+            return stats;
+        }
+
+        /// <summary>
+        /// Iterates the <c>NamedStatConfig</c>s in <paramref name="configs"/> and parses them into a dictionary. All values are included.
+        /// </summary>
+        /// <param name="errorFieldNameFormat">Passed into <c>string.Format</c> to create the field name thrown with any parsing errors. The <c>NamedStatConfig</c>'s source name is always {0}.</param>
+        ///<param name="errorFieldNameArgs">Any additional values that will be formatted with <paramref name="errorFieldNameFormat"/>.</param>
+        public static IDictionary<string, decimal> NamedStatDictionary_OptionalDecimal_Any(IEnumerable<NamedStatConfig> configs, IEnumerable<string> data, bool includeZeroValues = false, string errorFieldNameFormat = "{0}", params string[] errorFieldNameArgs)
+        {
+            IDictionary<string, decimal> stats = new Dictionary<string, decimal>();
+
+            foreach (NamedStatConfig stat in configs)
+            {
+                decimal val = DataParser.OptionalDecimal_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
+                if (val == 0 && !includeZeroValues) continue;
+
+                stats.Add(stat.SourceName, val);
+            }
+
+            return stats;
+        }
+
+        /// <summary>
+        /// Returns the string CSV at <paramref name="statsIndex"/> and the int CSV at <paramref name="valuesIndex"/> in <paramref name="data"/> as a dictionary.
+        /// </summary>
+        public static IDictionary<string, int> StatValueCSVs_Int_Any(IEnumerable<string> data, int statsIndex, string statsFieldName, int valuesIndex, string valuesFieldName, bool includeZeroValues = false)
+        {
+            List<string> stats = DataParser.List_StringCSV(data, statsIndex);
+            List<int> values = DataParser.List_IntCSV(data, valuesIndex, valuesFieldName, false);
+
+            return StatValueCSVs_Int_Any(stats, statsFieldName, values, valuesFieldName, includeZeroValues);
+        }
+
+        /// <summary>
+        /// Returns a dictionary where <paramref name="stats"/> are keys and <paramref name="values"/> are values.
+        /// </summary>
+        /// <exception cref="RequiredValueNotProvidedException">Thrown if either <paramref name="stats"/> or <paramref name="values"/> is empty.</exception>
+        /// <exception cref="ParameterLengthsMismatchedException">Thrown if the lengths of <paramref name="stats"/> and <paramref name="values"/> are not equal.</exception>
+        public static IDictionary<string, int> StatValueCSVs_Int_Any(List<string> stats, string statsFieldName, List<int> values, string valuesFieldName, bool includeZeroValues = false)
+        {
+            if (!stats.Any()) throw new RequiredValueNotProvidedException(statsFieldName);
+            if (!values.Any()) throw new RequiredValueNotProvidedException(valuesFieldName);
+            if (stats.Count != values.Count) throw new ParameterLengthsMismatchedException(statsFieldName, valuesFieldName);
+
+            IDictionary<string, int> modifiers = new Dictionary<string, int>();
+            for(int i = 0; i < stats.Count; i++)
+            {
+                if (values[i] == 0 && !includeZeroValues)
+                    continue;
+
+                modifiers.Add(stats[i], values[i]);
+            }
+
+            return modifiers;
+        }
+
         #endregion Stat Dictionary Builders
     }
 }

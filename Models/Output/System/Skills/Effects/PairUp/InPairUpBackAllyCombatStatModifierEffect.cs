@@ -1,5 +1,4 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output.Map;
+﻿using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
@@ -14,39 +13,23 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.PairUp
         protected override int ParameterCount { get { return 2; } }
 
         /// <summary>
-        /// Param1. The unit combat stats to be affected.
+        /// Param1/Param2. The unit combat stat modifiers to apply.
         /// </summary>
-        private List<string> Stats { get; set; }
-
-        /// <summary>
-        /// Param2. The values by which to modify the <c>Stats</c>.
-        /// </summary>
-        private List<int> Values { get; set; }
+        private IDictionary<string, int> Modifiers { get; set; }
 
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="RequiredValueNotProvidedException"></exception>
-        /// <exception cref="SkillEffectParameterLengthsMismatchedException"></exception>
         public InPairUpBackAllyCombatStatModifierEffect(List<string> parameters)
             : base(parameters)
         {
-            this.Stats = DataParser.List_StringCSV(parameters, 0); //Param1
-            this.Values = DataParser.List_IntCSV(parameters, 1, "Param2", false);
-
-            if (this.Stats.Count == 0)
-                throw new RequiredValueNotProvidedException("Param1");
-            if (this.Values.Count == 0)
-                throw new RequiredValueNotProvidedException("Param2");
-
-            if (this.Stats.Count != this.Values.Count)
-                throw new SkillEffectParameterLengthsMismatchedException("Param1", "Param2");
+            this.Modifiers = DataParser.StatValueCSVs_Int_Any(parameters, INDEX_PARAM_1, NAME_PARAM_1, INDEX_PARAM_2, NAME_PARAM_2);
         }
 
         /// <summary>
-        /// Adds the items in <c>Values</c> as modifiers to the combat stats in <c>Stats</c> for <paramref name="unit"/>'s paired partner, if one exists.
+        /// Applies <c>Modifiers</c> to <paramref name="unit"/>'s paired partner, if one exists.
         /// </summary>
         public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
@@ -55,7 +38,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.PairUp
                 return;
 
             //Apply modifiers to their ally
-            ApplyUnitCombatStatModifiers(unit.Location.PairedUnitObj, $"{unit.Name}'s {skill.Name}", this.Stats, this.Values);
+            unit.Location.PairedUnitObj.Stats.ApplyCombatStatModifiers(this.Modifiers, $"{unit.Name}'s {skill.Name}", true);
         }
     }
 }

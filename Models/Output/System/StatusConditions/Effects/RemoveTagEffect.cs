@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
@@ -19,10 +20,10 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         public RemoveTagEffect(List<string> parameters)
             : base(parameters)
         {
-            this.Tags = DataParser.List_StringCSV(parameters, 0); //Param1
+            this.Tags = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);
 
-            if (this.Tags.Count == 0)
-                throw new RequiredValueNotProvidedException("Param1");
+            if (!this.Tags.Any())
+                throw new RequiredValueNotProvidedException(NAME_PARAM_1);
         }
 
         /// <summary>

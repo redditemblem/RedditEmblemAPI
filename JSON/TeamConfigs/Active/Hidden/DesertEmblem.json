@@ -79,7 +79,7 @@
       "SpriteURL": 41,
       "Category": 1,
       "WeaponRank": 2,
-      "UtilizedStats": 5,
+      "UtilizedStats": [ 5 ],
       "DealsDamage": 40,
       "Uses": 28,
       "Stats": [
@@ -334,7 +334,7 @@
         "SelectsUsing": 0,
         "Equations": [
           {
-            "Equation": "{WeaponUtilStat} + {WeaponStat[Mt]}"
+            "Equation": "{WeaponUtilStat_Greatest} + {WeaponStat[Mt]}"
           }
         ],
         "Modifiers": [

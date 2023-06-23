@@ -39,9 +39,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public HPAboveAllyRadiusTeleportEffect(List<string> parameters)
             : base(parameters)
         {
-            this.TeleportationRange = DataParser.Int_NonZeroPositive(parameters, 0, "Param1");
-            this.Radius = DataParser.Int_NonZeroPositive(parameters, 1, "Param2");
-            this.HPPercentage = DataParser.Int_Positive(parameters, 2, "Param3");
+            this.TeleportationRange = DataParser.Int_NonZeroPositive(parameters, INDEX_PARAM_1, NAME_PARAM_1);
+            this.Radius = DataParser.Int_NonZeroPositive(parameters, INDEX_PARAM_2, NAME_PARAM_2);
+            this.HPPercentage = DataParser.Int_Positive(parameters, INDEX_PARAM_3, NAME_PARAM_3);
         }
 
         /// <summary>

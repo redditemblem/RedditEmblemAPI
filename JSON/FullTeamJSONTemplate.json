@@ -69,6 +69,7 @@
       "Name": 0, //Required
       "MovementType": 0, //Required
       "Tags": [ 0 ], //Optional
+      "BattleStyle": 0, //Optional
       "TextFields": [ 0 ] //Optional
     },
     "Items": { //Required
@@ -81,7 +82,7 @@
       "SpriteURL": 0, //Optional
       "Category": 0, //Required
       "WeaponRank": 0, //Optional
-      "UtilizedStats": 0, //Required
+      "UtilizedStats": [ 0 ], //Required
       "DealsDamage": 0, //Required
       "Uses": 0, //Required
       "Stats": [ //Required
@@ -90,9 +91,21 @@
           "Value": 0
         }
       ],
+      "EquippedCombatStatModifiers": [ //Optional
+        {
+          "SourceName": "Atk",
+          "Value": 0
+        }
+      ],
       "EquippedStatModifiers": [ //Optional
         {
           "SourceName": "Str",
+          "Value": 0
+        }
+      ],
+      "InventoryCombatStatModifiers": [ //Optional
+        {
+          "SourceName": "Atk",
           "Value": 0
         }
       ],
@@ -286,6 +299,70 @@
         }
       ],
       "TextFields": [ 0 ] //Optional
+    },
+    "BattleStyles": { //Optional
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "SpriteURL": 0, //Optional
+      "TextFields": [ 0 ] //Optional
+    },
+    "Engravings": { //Optional
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "SpriteURL": 0, //Optional
+      "ItemStatModifiers": [ //Optional
+        {
+          "SourceName": "Mt",
+          "Value": 0
+        }
+      ],
+      "ItemRangeOverrides": { //Optional
+        "Minimum": 0,
+        "Maximum": 0
+      },
+      "CombatStatModifiers": [ //Optional
+        {
+          "SourceName": "Avo",
+          "Value": 0
+        }
+      ],
+      "StatModifiers": [ //Optional
+        {
+          "SourceName": "Str",
+          "Value": 0
+        }
+      ],
+      "TextFields": [ 0 ] //Optional
+    },
+    "Emblems": { //Optional
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "SpriteURL": 0, //Optional
+      "Tagline": 0, //Optional
+      "EngagedUnitAura": 0, //Optional
+      "TextFields": [ 0 ] //Optional
+    },
+    "EngageAttacks": { //Optional
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "SpriteURL": 0, //Optional
+      "TextFields": [ 0 ] //Optional
     }
   },
   "Units": { //Required
@@ -348,7 +425,8 @@
       "Slots": [ //Required
         {
           "Name": 0, //Required
-          "Uses": 0 //Optional, only if Uses has its own separate cell
+          "Uses": 0, //Optional, only if Uses has its own separate cell,
+          "Engravings": [ 0 ] //Optional
         }
       ]
     },
@@ -429,7 +507,8 @@
           ]
         }
       ],
-      "EngageWeapons": [ 0 ] //Optional
+      "EngageWeapons": [ 0 ], //Optional
+      "EngageAttacks": [ 0 ] //Optional
     }
   },
   "Convoy": { //Optional
@@ -441,7 +520,8 @@
     "Name": 0, //Required
     "Owner": 0, //Required
     "Quantity": 0, //Optional
-    "Value": 0 //Optional
+    "Value": 0, //Optional
+    "Uses": 0 //Optional
   },
   "Shop": { //Optional
     "Query": {

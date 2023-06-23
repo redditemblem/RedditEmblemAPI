@@ -150,7 +150,8 @@ namespace RedditEmblemAPI.Models.Output.Units
                     EvalUnitCombatStat = true,
                     EvalUnitStat = true,
                     EvalUnitLevel = true,
-                    EvalWeaponUtilStat = true,
+                    EvalWeaponUtilStat_Greatest = true,
+                    EvalWeaponUtilStat_Sum = true,
                     EvalWeaponStat = true,
                     EvalBattalionStat = true
                 };
@@ -196,6 +197,20 @@ namespace RedditEmblemAPI.Models.Output.Units
         }
 
         /// <summary>
+        /// Applies each modifier in <paramref name="modifiers"/> to the matching combat stat.
+        /// </summary>
+        /// <param name="allowModifiersToStack">If true, will add values to any existing modifier with the same <paramref name="modifierName"/>.</param>
+        public void ApplyCombatStatModifiers(IDictionary<string, int> modifiers, string modifierName, bool allowModifiersToStack = false)
+        {
+            foreach (KeyValuePair<string, int> mod in modifiers)
+            {
+                ModifiedStatValue stat = this.MatchCombatStatName(mod.Key);
+                if (!stat.Modifiers.TryAdd(modifierName, mod.Value) && allowModifiersToStack)
+                    stat.Modifiers[modifierName] += mod.Value;
+            }
+        }
+
+        /// <summary>
         /// Returns the stat in <c>System</c> that matches <paramref name="name"/>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
@@ -220,5 +235,20 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             return stat;
         }
+
+        /// <summary>
+        /// Applies each modifier in <paramref name="modifiers"/> to the matching general stat.
+        /// </summary>
+        /// <param name="allowModifiersToStack">If true, will add values to any existing modifier with the same <paramref name="modifierName"/>.</param>
+        public void ApplyGeneralStatModifiers(IDictionary<string, int> modifiers, string modifierName, bool allowModifiersToStack = false)
+        {
+            foreach (KeyValuePair<string, int> mod in modifiers)
+            {
+                ModifiedStatValue stat = this.MatchGeneralStatName(mod.Key);
+                if (!stat.Modifiers.TryAdd(modifierName, mod.Value) && allowModifiersToStack)
+                    stat.Modifiers[modifierName] += mod.Value;
+            }
+        }
+
     }
 }

@@ -85,7 +85,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
 
             //Copy stats data from parent item
             this.Stats = new Dictionary<string, UnitInventoryItemStat>();
-            foreach (KeyValuePair<string, int> stat in this.Item.Stats)
+            foreach (KeyValuePair<string, decimal> stat in this.Item.Stats)
                 this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
 
             this.Price = DataParser.Int_Positive(data, config.Price, "Price");
@@ -104,7 +104,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             foreach (Engraving engraving in this.EngravingsList.Union(this.Item.Engravings))
             {
                 //Apply any modifiers to the item's stats
-                foreach (KeyValuePair<string, int> mod in engraving.StatModifiers)
+                foreach (KeyValuePair<string, int> mod in engraving.ItemStatModifiers)
                 {
                     UnitInventoryItemStat stat = MatchStatName(mod.Key);
                     stat.Modifiers.TryAdd(engraving.Name, mod.Value);

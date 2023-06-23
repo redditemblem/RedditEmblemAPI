@@ -87,7 +87,9 @@ namespace RedditEmblemAPI.Models.Configuration
             queries.AddQueryable(this.System.Engravings);
             queries.AddQueryable(this.System.Battalions);
             queries.AddQueryable(this.System.Gambits);
+            queries.AddQueryable(this.System.BattleStyles);
             queries.AddQueryable(this.System.Emblems);
+            queries.AddQueryable(this.System.EngageAttacks);
 
             return queries;
         }

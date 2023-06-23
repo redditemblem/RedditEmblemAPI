@@ -38,6 +38,24 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Dictionary of the stat modifiers this engraving applies to items.
         /// </summary>
         [JsonIgnore]
+        public IDictionary<string, int> ItemStatModifiers { get; set; }
+
+        /// <summary>
+        /// The engraving's item range overrides.
+        /// </summary>
+        [JsonIgnore]
+        public ItemRange ItemRangeOverrides { get; set; }
+
+        /// <summary>
+        /// Dictionary of the combat stat modifiers this engraving applies to units.
+        /// </summary>
+        [JsonIgnore]
+        public IDictionary<string, int> CombatStatModifiers { get; set; }
+
+        /// <summary>
+        /// Dictionary of the stat modifiers this engraving applies to units.
+        /// </summary>
+        [JsonIgnore]
         public IDictionary<string, int> StatModifiers { get; set; }
 
         /// <summary>
@@ -57,6 +75,9 @@ namespace RedditEmblemAPI.Models.Output.System
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
+            this.ItemStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.ItemStatModifiers, data, false, "{0} Modifier");
+            this.ItemRangeOverrides = new ItemRange(config.ItemRangeOverrides, data);
+            this.CombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.CombatStatModifiers, data, false, "{0} Modifier");
             this.StatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.StatModifiers, data, false, "{0} Modifier");
         }
 

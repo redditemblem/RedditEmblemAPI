@@ -30,7 +30,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// Required. Cell index of an item's utilized stat value.
         /// </summary>
         [JsonRequired]
-        public int UtilizedStats { get; set; }
+        public List<int> UtilizedStats { get; set; }
 
         /// <summary>
         /// Required. Cell index of an item's deal damage flag.
@@ -71,9 +71,19 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         public int WeaponRank { get; set; } = -1;
 
         /// <summary>
+        /// Optional. List of an item's combat stat modifiers when equipped.
+        /// </summary>
+        public List<NamedStatConfig> EquippedCombatStatModifiers { get; set; } = new List<NamedStatConfig>();
+
+        /// <summary>
         /// Optional. List of an item's stat modifiers when equipped.
         /// </summary>
         public List<NamedStatConfig> EquippedStatModifiers { get; set; } = new List<NamedStatConfig>();
+
+        /// <summary>
+        /// Optional. List of an item's combat stat modifiers when in a unit's inventory.
+        /// </summary>
+        public List<NamedStatConfig> InventoryCombatStatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
         /// Optional. List of an item's stat modifiers when in a unit's inventory.
@@ -83,7 +93,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// <summary>
         /// Optional. List of cell indexes for an item's engraving(s).
         /// </summary>
-        public List<int> Engravings = new List<int>();
+        public List<int> Engravings { get; set; } = new List<int>();
 
         /// <summary>
         /// Optional. List of cell indexes for an item's tag(s).

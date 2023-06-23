@@ -12,6 +12,18 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
     public abstract class SkillEffect
     {
+        #region Constants
+
+        protected const int INDEX_PARAM_1 = 0;
+        protected const int INDEX_PARAM_2 = 1;
+        protected const int INDEX_PARAM_3 = 2;
+
+        protected const string NAME_PARAM_1 = "Param1";
+        protected const string NAME_PARAM_2 = "Param2";
+        protected const string NAME_PARAM_3 = "Param3";
+
+        #endregion Constants
+
         #region Attributes
 
         protected abstract string Name { get; }
@@ -40,44 +52,6 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         }
 
         #region Shared Functionality Helpers
-
-        /// <summary>
-        /// Helper function. Applies the values in <paramref name="modifiers"/> to the stats in <paramref name="combatStats"/>. Assumes both lists are the same length.
-        /// </summary>
-        /// <exception cref="UnmatchedStatException"></exception>
-        protected void ApplyUnitCombatStatModifiers(Unit unit, string modifierName, List<string> combatStats, List<int> modifiers)
-        {
-            for (int i = 0; i < combatStats.Count; i++)
-            {
-                string statName = combatStats[i];
-                int value = modifiers[i];
-
-                if (value == 0) continue;
-
-                ModifiedStatValue stat = unit.Stats.MatchCombatStatName(statName);
-                if (!stat.Modifiers.TryAdd(modifierName, value))
-                    stat.Modifiers[modifierName] += value;
-            }
-        }
-
-        /// <summary>
-        /// Helper function. Applies the values in <paramref name="modifiers"/> to the stats in <paramref name="stats"/>. Assumes both lists are the same length.
-        /// </summary>
-        /// <exception cref="UnmatchedStatException"></exception>
-        protected void ApplyUnitStatModifiers(Unit unit, string modifierName, List<string> stats, List<int> modifiers)
-        {
-            for (int i = 0; i < stats.Count; i++)
-            {
-                string statName = stats[i];
-                int value = modifiers[i];
-
-                if (value == 0) continue;
-
-                ModifiedStatValue stat = unit.Stats.MatchGeneralStatName(statName);
-                if(!stat.Modifiers.TryAdd(modifierName, value))
-                    stat.Modifiers[modifierName] += value;
-            }
-        }
 
         /// <summary>
         /// Helper function used by the <c>...RadiusTeleportEffect</c>s. Tests each tile in <paramref name="targetTiles"/> to ensure that <paramref name="unit"/> is capable of teleporting there, then adds valid tiles to the <paramref name="unit"/>'s movement range.

@@ -165,7 +165,7 @@ namespace UnitTests.Models.System
             EngravingsConfig config = new EngravingsConfig()
             {
                 Name = 0,
-                StatModifiers = new List<NamedStatConfig>()
+                ItemStatModifiers = new List<NamedStatConfig>()
                 {
                     new NamedStatConfig { SourceName = stat1, Value = 1 },
                     new NamedStatConfig { SourceName = stat2, Value = 2 }
@@ -181,7 +181,7 @@ namespace UnitTests.Models.System
 
             Engraving engraving = new Engraving(config, data);
 
-            Assert.AreEqual<int>(0, engraving.StatModifiers.Count);
+            Assert.AreEqual<int>(0, engraving.ItemStatModifiers.Count);
         }
 
         [TestMethod]
@@ -193,7 +193,7 @@ namespace UnitTests.Models.System
             EngravingsConfig config = new EngravingsConfig()
             {
                 Name = 0,
-                StatModifiers = new List<NamedStatConfig>()
+                ItemStatModifiers = new List<NamedStatConfig>()
                 {
                     new NamedStatConfig { SourceName = stat1, Value = 1 },
                     new NamedStatConfig { SourceName = stat2, Value = 2 }
@@ -209,9 +209,9 @@ namespace UnitTests.Models.System
 
             Engraving engraving = new Engraving(config, data);
 
-            Assert.AreEqual<int>(2, engraving.StatModifiers.Count);
-            Assert.AreEqual<int>(1, engraving.StatModifiers[stat1]);
-            Assert.AreEqual<int>(-1, engraving.StatModifiers[stat2]);
+            Assert.AreEqual<int>(2, engraving.ItemStatModifiers.Count);
+            Assert.AreEqual<int>(1, engraving.ItemStatModifiers[stat1]);
+            Assert.AreEqual<int>(-1, engraving.ItemStatModifiers[stat2]);
         }
 
         #endregion OptionalField_StatModifiers

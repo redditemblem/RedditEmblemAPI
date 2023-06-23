@@ -31,6 +31,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Classes
         #region Optional Fields
 
         /// <summary>
+        /// Optional. Cell index of a class's battle style.
+        /// </summary>
+        public int BattleStyle { get; set; } = -1;
+
+        /// <summary>
         /// Optional. List of cell indexes for a class's tag field(s).
         /// </summary>
         public List<int> Tags { get; set; } = new List<int>();

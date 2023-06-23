@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System.Affiliations;
 using RedditEmblemAPI.Models.Configuration.System.Battalions;
+using RedditEmblemAPI.Models.Configuration.System.BattleStyles;
 using RedditEmblemAPI.Models.Configuration.System.Classes;
 using RedditEmblemAPI.Models.Configuration.System.Emblems;
 using RedditEmblemAPI.Models.Configuration.System.Items;
@@ -94,9 +95,19 @@ namespace RedditEmblemAPI.Models.Configuration.System
         public GambitsConfig Gambits { get; set; } = null;
 
         /// <summary>
+        /// Optional. Container object for a system's battle styles configuration.
+        /// </summary>
+        public BattleStylesConfig BattleStyles { get; set; } = null;
+
+        /// <summary>
         /// Optional. Container object for a system's emblem configuration.
         /// </summary>
         public EmblemsConfig Emblems { get; set; } = null;
+
+        /// <summary>
+        /// Optional. Container object for a system's engage attacks configuration.
+        /// </summary>
+        public EngageAttacksConfig EngageAttacks { get; set; } = null;
 
         #endregion
     }

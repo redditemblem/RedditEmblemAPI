@@ -47,6 +47,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public List<UnitInventoryItem> EngageWeapons { get; set; }
 
+        /// <summary>
+        /// List of the emblem's engage attacks.
+        /// </summary>
+        [JsonIgnore]
+        public List<EngageAttack> EngageAttacksList { get; set; }
+
         #region JSON Serialization ONLY
 
         /// <summary>
@@ -54,6 +60,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         [JsonProperty]
         private string Name { get { return this.Emblem.Name; } }
+
+        /// <summary>
+        /// Only for JSON serialization. List of the emblem's engage attack names.
+        /// </summary>
+        [JsonProperty]
+        private IEnumerable<string> EngageAttacks { get { return this.EngageAttacksList.Select(a => a.Name); } }
 
         #endregion JSON Serialization ONLY
 
@@ -73,6 +85,10 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             this.SyncSkills = BuildUnitSkills(data, config.SyncSkills, systemData.Skills);
             this.EngageSkills = BuildUnitSkills(data, config.EngageSkills, systemData.Skills);
+
+            List<string> engageAttacks = DataParser.List_Strings(data, config.EngageAttacks);
+            this.EngageAttacksList = EngageAttack.MatchNames(systemData.EngageAttacks, engageAttacks);
+
             BuildItems(data, config, systemData.Items, systemData.Engravings);
         }
 

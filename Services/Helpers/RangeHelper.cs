@@ -683,10 +683,10 @@ namespace RedditEmblemAPI.Services.Helpers
         public bool DealsDamage;
         public bool AllowMeleeRange;
 
-        public UnitItemRange(int minRange, int maxRange, ItemRangeShape shape, bool canOnlyBeUsedBeforeMovement, bool dealsDamage, bool allowMeleeRange)
+        public UnitItemRange(decimal minRange, decimal maxRange, ItemRangeShape shape, bool canOnlyBeUsedBeforeMovement, bool dealsDamage, bool allowMeleeRange)
         {
-            this.MinRange = minRange;
-            this.MaxRange = maxRange;
+            this.MinRange = (int)decimal.Floor(minRange);
+            this.MaxRange = (int)decimal.Floor(maxRange);
             this.Shape = shape;
             this.CanOnlyUseBeforeMovement = canOnlyBeUsedBeforeMovement;
             this.DealsDamage = dealsDamage;

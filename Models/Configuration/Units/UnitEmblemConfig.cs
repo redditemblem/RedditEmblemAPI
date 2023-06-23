@@ -49,6 +49,11 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// </summary>
         public List<int> EngageWeapons { get; set; } = new List<int>();
 
+        /// <summary>
+        /// Optional. List of cell indexes for the emblem's engage attacks.
+        /// </summary>
+        public List<int> EngageAttacks { get; set; } = new List<int>();
+
         #endregion Optional Fields
     }
 }

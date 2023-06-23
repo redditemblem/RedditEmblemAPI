@@ -32,6 +32,12 @@ namespace RedditEmblemAPI.Models.Output.System
         public string MovementType { get; set; }
 
         /// <summary>
+        /// The class's battle style.
+        /// </summary>
+        [JsonIgnore]
+        public BattleStyle BattleStyle { get; set; }
+
+        /// <summary>
         /// List of the class's tags.
         /// </summary>
         [JsonIgnore]
@@ -47,11 +53,15 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Class(ClassesConfig config, IEnumerable<string> data)
+        public Class(ClassesConfig config, IEnumerable<string> data, IDictionary<string, BattleStyle> battleStyles)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.MovementType = DataParser.String(data, config.MovementType, "Movement Type");
+
+            string battleStyle = DataParser.OptionalString(data, config.BattleStyle, "Battle Style");
+            if(!string.IsNullOrEmpty(battleStyle))
+                this.BattleStyle = BattleStyle.MatchName(battleStyles, battleStyle, true);
 
             this.Tags = DataParser.List_StringCSV(data, config.Tags).Distinct().ToList();
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
@@ -63,7 +73,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Class</c> from each valid row.
         /// </summary>
         /// <exception cref="ClassProcessingException"></exception>
-        public static IDictionary<string, Class> BuildDictionary(ClassesConfig config)
+        public static IDictionary<string, Class> BuildDictionary(ClassesConfig config, IDictionary<string, BattleStyle> battleStyles)
         {
             IDictionary<string, Class> classes = new Dictionary<string, Class>();
             if (config == null || config.Query == null)
@@ -78,7 +88,7 @@ namespace RedditEmblemAPI.Models.Output.System
                     name = DataParser.OptionalString(cls, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!classes.TryAdd(name, new Class(config, cls)))
+                    if (!classes.TryAdd(name, new Class(config, cls, battleStyles)))
                         throw new NonUniqueObjectNameException("class");
                 }
                 catch (Exception ex)
@@ -110,7 +120,13 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!classes.TryGetValue(name, out match))
                 throw new UnmatchedClassException(name);
 
-            if (!skipMatchedStatusSet) match.Matched = true;
+            if (!skipMatchedStatusSet)
+            {
+                match.Matched = true;
+
+                if(match.BattleStyle != null)
+                    match.BattleStyle.Matched = true;
+            }
 
             return match;
         }

@@ -12,32 +12,25 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         protected override string Name { get { return "CombatStatModifier"; } }
         protected override int ParameterCount { get { return 2; } }
 
-        private List<string> Stats { get; set; }
-        private List<int> Values { get; set; }
+        /// <summary>
+        /// Param1/Param2. The unit combat stat modifiers to apply.
+        /// </summary>
+        private IDictionary<string, int> Modifiers { get; set; }
 
         #endregion
 
         public CombatStatModifierEffect(List<string> parameters)
             : base(parameters)
         {
-            this.Stats = DataParser.List_StringCSV(parameters, 0); //Param1
-            this.Values = DataParser.List_IntCSV(parameters, 1, "Param2", false);
-
-            if (this.Stats.Count == 0)
-                throw new RequiredValueNotProvidedException("Param1");
-            if (this.Values.Count == 0)
-                throw new RequiredValueNotProvidedException("Param2");
-
-            if (this.Stats.Count != this.Values.Count)
-                throw new SkillEffectParameterLengthsMismatchedException("Param1", "Param2");
+            this.Modifiers = DataParser.StatValueCSVs_Int_Any(parameters, INDEX_PARAM_1, NAME_PARAM_1, INDEX_PARAM_2, NAME_PARAM_2);
         }
 
         /// <summary>
-        /// Adds the items in <c>Values</c> as modifiers to the combat stats in <c>Stats</c> for <paramref name="unit"/>.
+        /// Applies <c>Modifiers</c> to <paramref name="unit"/>.
         /// </summary>
         public override void Apply(Unit unit, StatusCondition status)
         {
-            ApplyUnitCombatStatModifiers(unit, status.Name, this.Stats, this.Values);
+            unit.Stats.ApplyCombatStatModifiers(this.Modifiers, status.Name, true);
         }
     }
 }

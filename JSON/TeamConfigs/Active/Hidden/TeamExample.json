@@ -56,7 +56,7 @@
       "SpriteURL": 1,
       "Category": 2,
       "WeaponRank": 3,
-      "UtilizedStats": 4,
+      "UtilizedStats": [ 4 ],
       "DealsDamage": 5,
       "Uses": 6,
       "Stats": [
@@ -345,12 +345,12 @@
     "Engravings": {
       "Query": {
         "Sheet": "Item Engravings",
-        "Selection": "B2:J",
+        "Selection": "B2:T",
         "Orientation": 1
       },
       "Name": 0,
       "SpriteURL": 1,
-      "StatModifiers": [
+      "ItemStatModifiers": [
         {
           "SourceName": "Mt",
           "Value": 2
@@ -372,7 +372,45 @@
           "Value": 6
         }
       ],
-      "TextFields": [ 7, 8 ]
+      "ItemRangeOverrides": {
+        "Minimum": 7,
+        "Maximum": 8
+      },
+      "StatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 9
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 10
+        },
+        {
+          "SourceName": "Skl",
+          "Value": 11
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 12
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 13
+        },
+        {
+          "SourceName": "Def",
+          "Value": 14
+        },
+        {
+          "SourceName": "Res",
+          "Value": 15
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 16
+        }
+      ],
+      "TextFields": [ 17, 18 ]
     },
     "Emblems": {
       "Query": {
@@ -385,6 +423,16 @@
       "EngagedUnitAura": 2,
       "Tagline": 3,
       "TextFields": [ 4 ]
+    },
+    "EngageAttacks": {
+      "Query": {
+        "Sheet": "Engage Attacks",
+        "Selection": "B2:D",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "TextFields": [ 2 ]
     }
   },
   "Units": {
@@ -418,7 +466,7 @@
         "SourceName": "Atk",
         "Equations": [
           {
-            "Equation": "{WeaponUtilStat}+{WeaponStat[Mt]}"
+            "Equation": "{WeaponUtilStat_Greatest}+{WeaponStat[Mt]}"
           }
         ]
       },
@@ -454,7 +502,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 74
+            "Value": 76
           }
         ]
       },
@@ -464,7 +512,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 79
+            "Value": 81
           }
         ]
       },
@@ -474,7 +522,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 75
+            "Value": 77
           }
         ]
       },
@@ -484,7 +532,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 80
+            "Value": 82
           }
         ]
       },
@@ -494,7 +542,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 78
+            "Value": 80
           }
         ]
       },
@@ -504,7 +552,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 77
+            "Value": 79
           }
         ]
       },
@@ -514,7 +562,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 76
+            "Value": 78
           }
         ]
       },
@@ -524,7 +572,7 @@
         "Modifiers": [
           {
             "SourceName": "Buff",
-            "Value": 81
+            "Value": 83
           }
         ]
       }
@@ -596,32 +644,32 @@
     ],
     "StatusConditions": [
       {
-        "Name": 83,
-        "RemainingTurns": 84,
+        "Name": 85,
+        "RemainingTurns": 86,
         "AdditionalStats": [
           {
             "SourceName": "Intensity",
-            "Value": 85
+            "Value": 87
           }
         ]
       },
       {
-        "Name": 86,
-        "RemainingTurns": 87,
+        "Name": 88,
+        "RemainingTurns": 89,
         "AdditionalStats": [
           {
             "SourceName": "Intensity",
-            "Value": 88
+            "Value": 90
           }
         ]
       },
       {
-        "Name": 89,
-        "RemainingTurns": 90,
+        "Name": 91,
+        "RemainingTurns": 92,
         "AdditionalStats": [
           {
             "SourceName": "Intensity",
-            "Value": 91
+            "Value": 93
           }
         ]
       }
@@ -647,7 +695,8 @@
           "Name": 69
         }
       ],
-      "EngageWeapons": [ 70, 71, 72 ]
+      "EngageWeapons": [ 70, 71, 72 ],
+      "EngageAttacks": [ 73, 74 ]
     }
   },
   "Convoy": {

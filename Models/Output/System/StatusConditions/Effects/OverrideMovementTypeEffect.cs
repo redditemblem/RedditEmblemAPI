@@ -17,7 +17,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         public OverrideMovementTypeEffect(List<string> parameters)
             : base(parameters)
         {
-            this.MovementType = DataParser.String(parameters, 0, "Param1");
+            this.MovementType = DataParser.String(parameters, INDEX_PARAM_1, NAME_PARAM_1);
         }
     }
 }

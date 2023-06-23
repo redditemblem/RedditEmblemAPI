@@ -1,7 +1,9 @@
-﻿using RedditEmblemAPI.Models.Output.Map;
+﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
 {
@@ -27,11 +29,15 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <exception cref="RequiredValueNotProvidedException"></exception>
         public ItemMinRangeModifierEffect(List<string> parameters)
             : base(parameters)
         {
-            this.Categories = DataParser.List_StringCSV(parameters, 0);
-            this.Value = DataParser.Int_Negative(parameters, 1, "Param2");
+            this.Categories = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);
+            this.Value = DataParser.Int_Negative(parameters, INDEX_PARAM_2, NAME_PARAM_2);
+
+            if (!this.Categories.Any())
+                throw new RequiredValueNotProvidedException(NAME_PARAM_1);
         }
 
         /// <summary>

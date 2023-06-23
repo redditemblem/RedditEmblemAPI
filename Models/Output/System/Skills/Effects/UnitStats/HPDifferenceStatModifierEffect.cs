@@ -1,8 +1,10 @@
-﻿using RedditEmblemAPI.Models.Output.Map;
+﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
 {
@@ -28,11 +30,15 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <exception cref="RequiredValueNotProvidedException"></exception>
         public HPDifferenceStatModifierEffect(List<string> parameters)
             : base(parameters)
         {
-            this.Multiplier = DataParser.Decimal_NonZeroPositive(parameters, 0, "Param1");
-            this.Stats = DataParser.List_StringCSV(parameters, 1); //Param2
+            this.Multiplier = DataParser.Decimal_NonZeroPositive(parameters, INDEX_PARAM_1, NAME_PARAM_1);
+            this.Stats = DataParser.List_StringCSV(parameters, INDEX_PARAM_2);
+
+            if (!this.Stats.Any())
+                throw new RequiredValueNotProvidedException(NAME_PARAM_2);
         }
 
         /// <summary>
@@ -41,14 +47,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
             int modifier = (int)Math.Floor(unit.Stats.HP.Difference * this.Multiplier);
-            if (modifier == 0)
-                return;
+            if (modifier == 0) return;
 
-            foreach (string statName in this.Stats)
-            {
-                ModifiedStatValue stat = unit.Stats.MatchGeneralStatName(statName);
-                stat.Modifiers.Add(skill.Name, modifier);
-            }
+            IDictionary<string, int> modifiers = this.Stats.Select(stat => new { stat, modifier }).ToDictionary(m => m.stat, m => m.modifier);
+            unit.Stats.ApplyGeneralStatModifiers(modifiers, skill.Name, true);
         }
     }
 }

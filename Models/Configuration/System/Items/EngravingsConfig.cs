@@ -32,6 +32,21 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// <summary>
         /// Optional. List of stat modifiers to apply to engraved items.
         /// </summary>
+        public List<NamedStatConfig> ItemStatModifiers { get; set; } = new List<NamedStatConfig>();
+
+        /// <summary>
+        /// Optional. Container for item range override values.
+        /// </summary>
+        public ItemRangeConfig ItemRangeOverrides { get; set; } = null;
+
+        /// <summary>
+        /// Optional. List of combat stat modifiers to apply to units.
+        /// </summary>
+        public List<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
+
+        /// <summary>
+        /// Optional. List of stat modifiers to apply to units.
+        /// </summary>
         public List<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>

@@ -26,7 +26,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public ObstructTileRadiusEffect(List<string> parameters)
             : base(parameters)
         {
-            this.Radius = DataParser.Int_NonZeroPositive(parameters, 0, "Param1");
+            this.Radius = DataParser.Int_NonZeroPositive(parameters, INDEX_PARAM_1, NAME_PARAM_1);
         }
 
         /// <summary>

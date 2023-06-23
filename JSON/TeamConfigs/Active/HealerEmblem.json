@@ -76,7 +76,7 @@
       },
       "Name": 0,
       "Category": 1,
-      "UtilizedStats": 11,
+      "UtilizedStats": [ 11 ],
       "DealsDamage": 15,
       "Uses": 2,
       "Stats": [
@@ -245,7 +245,7 @@
         "SourceName": "Atk",
         "Equations": [
           {
-            "Equation": "{WeaponUtilStat} + {WeaponStat[Mt]}"
+            "Equation": "{WeaponUtilStat_Greatest} + {WeaponStat[Mt]}"
           }
         ]
       },

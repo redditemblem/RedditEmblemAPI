@@ -100,6 +100,25 @@ namespace RedditEmblemAPI.Models.Output.Units
         [JsonIgnore]
         public List<Engraving> EngravingsList { get; set; }
 
+        /// <summary>
+        /// The engraving that overrides the item's default range values, if one exists.
+        /// </summary>
+        [JsonIgnore]
+        private Engraving EngravingOverridesRanges { get; set; }
+
+        /// <summary>
+        /// Is true if this item possesses a minimum or maximum range that requires calculation.
+        /// </summary>
+        [JsonIgnore]
+        public bool HasRangeThatRequiresCalculation
+        {
+            get {
+                return this.Item.Range.MinimumRequiresCalculation
+                    || this.Item.Range.MaximumRequiresCalculation
+                    || (this.EngravingOverridesRanges != null && (this.EngravingOverridesRanges.ItemRangeOverrides.MinimumRequiresCalculation || this.EngravingOverridesRanges.ItemRangeOverrides.MaximumRequiresCalculation));
+            }
+        }
+
         #region JSON Serialization Only
 
         /// <summary>
@@ -113,7 +132,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// For JSON Serialization ONLY. Complete list of the item's engravings.
         /// </summary>
         [JsonProperty]
-        private IEnumerable<string> Engravings { get { return this.EngravingsList.Select(e => e.Name).Union(this.Item.Engravings.Select(e => e.Name)).Distinct(); } }
+        private IEnumerable<string> Engravings { get { return this.EngravingsList.Select(e => e.Name); } }
 
         #endregion JSON Serialization Only
 
@@ -178,7 +197,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.MinRange = new UnitInventoryItemStat(this.Item.Range.Minimum);
             this.MaxRange = new UnitInventoryItemStat(this.Item.Range.Maximum);
 
-            foreach (KeyValuePair<string, int> stat in this.Item.Stats)
+            foreach (KeyValuePair<string, decimal> stat in this.Item.Stats)
                 this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
 
             MatchEngravings(itemEngravings, engravings);   
@@ -187,13 +206,28 @@ namespace RedditEmblemAPI.Models.Output.Units
         private void MatchEngravings(IEnumerable<string> itemEngravings, IDictionary<string, Engraving> engravings)
         {
             this.EngravingsList = Engraving.MatchNames(engravings, itemEngravings);
-            foreach (Engraving engraving in this.EngravingsList.Union(this.Item.Engravings))
+            this.EngravingsList = this.EngravingsList.Union(this.Item.Engravings).DistinctBy(e => e.Name).ToList();
+            this.EngravingOverridesRanges = null;
+
+            foreach (Engraving engraving in this.EngravingsList)
             {
                 //Apply any modifiers to the item's stats
-                foreach (KeyValuePair<string, int> mod in engraving.StatModifiers)
+                foreach (KeyValuePair<string, int> mod in engraving.ItemStatModifiers)
                 {
                     UnitInventoryItemStat stat = MatchStatName(mod.Key);
                     stat.Modifiers.TryAdd(engraving.Name, mod.Value);
+                }
+
+                if( this.EngravingOverridesRanges == null
+                 && (engraving.ItemRangeOverrides.Minimum != 0 || engraving.ItemRangeOverrides.MinimumRequiresCalculation)
+                 && (engraving.ItemRangeOverrides.Maximum != 0 || engraving.ItemRangeOverrides.MaximumRequiresCalculation))
+                {
+                    this.EngravingOverridesRanges = engraving;
+
+                    if (engraving.ItemRangeOverrides.Minimum != 0)
+                        this.MinRange.BaseValue = engraving.ItemRangeOverrides.Minimum;
+                    if (engraving.ItemRangeOverrides.Maximum != 0)
+                        this.MaxRange.BaseValue = engraving.ItemRangeOverrides.Maximum;
                 }
             }
         }
@@ -207,19 +241,25 @@ namespace RedditEmblemAPI.Models.Output.Units
             string minRangeLabel = "Minimum Range";
             string maxRangeLabel = "Maximum Range";
 
-            if (this.Item.Range.MinimumRequiresCalculation)
+            ItemRange range;
+            if (this.EngravingOverridesRanges != null) range = this.EngravingOverridesRanges.ItemRangeOverrides;
+            else range = this.Item.Range;
+
+            if (range.MinimumRequiresCalculation)
             {
-                this.MinRange.BaseValue = CalculateItemRange(this.Item.Range.MinimumRaw, unit);
+                this.MinRange.BaseValue = CalculateItemRange(range.MinimumRaw, unit);
                 minRangeLabel = "Calculated Minimum Range";
             }
 
-            if (this.Item.Range.MaximumRequiresCalculation)
+            if (range.MaximumRequiresCalculation)
             {
-                this.MaxRange.BaseValue = CalculateItemRange(this.Item.Range.MaximumRaw, unit);
+                this.MaxRange.BaseValue = CalculateItemRange(range.MaximumRaw, unit);
                 maxRangeLabel = "Calculated Maximum Range";
             }
-            
+
             //After calculating, make sure our values form a valid range.
+            if(this.MinRange.BaseValue == 0 && this.MaxRange.BaseValue > 0)
+                throw new ItemRangeMinimumNotSetException(minRangeLabel, maxRangeLabel);
             if (this.MinRange.BaseValue > this.MaxRange.BaseValue)
                 throw new MinimumGreaterThanMaximumException(minRangeLabel, maxRangeLabel);
         }

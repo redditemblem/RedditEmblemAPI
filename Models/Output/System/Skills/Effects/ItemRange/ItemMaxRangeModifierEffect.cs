@@ -1,9 +1,11 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
 {
@@ -34,12 +36,16 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <exception cref="RequiredValueNotProvidedException"></exception>
         public ItemMaxRangeModifierEffect(List<string> parameters)
             : base(parameters)
         {
-            this.Categories = DataParser.List_StringCSV(parameters, 0);
-            this.Value = DataParser.Int_NonZeroPositive(parameters, 1, "Param2");
-            this.DealsDamageFilter = GetDealsDamageFilterType(DataParser.OptionalString(parameters, 2, "Param3"));
+            this.Categories = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);
+            this.Value = DataParser.Int_NonZeroPositive(parameters, INDEX_PARAM_2, NAME_PARAM_2);
+            this.DealsDamageFilter = GetDealsDamageFilterType(DataParser.OptionalString(parameters, INDEX_PARAM_3, NAME_PARAM_3));
+
+            if (!this.Categories.Any())
+                throw new RequiredValueNotProvidedException(NAME_PARAM_1);
         }
 
         /// <summary>

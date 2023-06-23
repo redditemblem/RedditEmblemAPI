@@ -27,8 +27,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public TerrainTypeMovementCostModifierEffect(List<string> parameters)
             : base(parameters)
         {
-            this.TerrainTypeGrouping = DataParser.Int_Positive(parameters, 0, "Param1");
-            this.Value = DataParser.Int_Any(parameters, 1, "Param2");
+            this.TerrainTypeGrouping = DataParser.Int_Positive(parameters, INDEX_PARAM_1, NAME_PARAM_1);
+            this.Value = DataParser.Int_Any(parameters, INDEX_PARAM_2, NAME_PARAM_2);
         }
     }
 }

@@ -78,7 +78,7 @@
       "SpriteURL": 2,
       "Category": 17,
       "WeaponRank": 3,
-      "UtilizedStats": 19,
+      "UtilizedStats": [ 19 ],
       "DealsDamage": 21,
       "Uses": 4,
       "Stats": [
@@ -242,7 +242,7 @@
         "SourceName": "Atk",
         "Equations": [
           {
-            "Equation": "{WeaponStat[Mt]} + {WeaponUtilStat}"
+            "Equation": "{WeaponStat[Mt]} + {WeaponUtilStat_Greatest}"
           }
         ]
       },

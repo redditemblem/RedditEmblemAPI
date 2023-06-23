@@ -8,7 +8,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
         /// Thrown when the minimum value in a value pair is greater than the maximum value.
         /// </summary>
         public MinimumGreaterThanMaximumException(string minimumValueDescription, string maximumValueDescription)
-            : base($"The value of \"{minimumValueDescription}\" cannot be less than the value of \"{maximumValueDescription}\".")
+            : base($"The value of \"{minimumValueDescription}\" cannot be greater than the value of \"{maximumValueDescription}\".")
         { }
     }
 }

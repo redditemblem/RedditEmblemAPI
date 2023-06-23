@@ -63,13 +63,25 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Collection of stat values for the item. (ex. Hit)
         /// </summary>
         [JsonIgnore]
-        public IDictionary<string, int> Stats { get; set; }
+        public IDictionary<string, decimal> Stats { get; set; }
+
+        /// <summary>
+        /// Collection of combat stat modifiers that will be applied to the owning unit when this item is equipped.
+        /// </summary>
+        [JsonIgnore]
+        public IDictionary<string, int> EquippedCombatStatModifiers { get; set; }
 
         /// <summary>
         /// Collection of stat modifiers that will be applied to the owning unit when this item is equipped.
         /// </summary>
         [JsonIgnore]
         public IDictionary<string, int> EquippedStatModifiers { get; set; }
+
+        /// <summary>
+        /// Collection of combat stat modifiers that will be applied to the owning unit when this item is not equipped.
+        /// </summary>
+        [JsonIgnore]
+        public IDictionary<string, int> InventoryCombatStatModifiers { get; set; }
 
         /// <summary>
         /// Collection of stat modifiers that will be applied to the owning unit when this item is not equipped.
@@ -120,7 +132,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.WeaponRank = DataParser.OptionalString(data, config.WeaponRank, "Weapon Rank");
             this.UtilizedStats = DataParser.List_StringCSV(data, config.UtilizedStats);
             this.DealsDamage = DataParser.OptionalBoolean_YesNo(data, config.DealsDamage, "Deals Damage");
-            this.MaxUses = DataParser.Int_Positive(data, config.Uses, "Uses");
+            this.MaxUses = DataParser.OptionalInt_Positive(data, config.Uses, "Uses");
             this.Range = new ItemRange(config.Range, data);
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
@@ -130,8 +142,10 @@ namespace RedditEmblemAPI.Models.Output.System
             IEnumerable<string> itemEngravings = DataParser.List_Strings(data, config.Engravings).Distinct();
             this.Engravings = Engraving.MatchNames(engravings, itemEngravings, true);
 
-            this.Stats = DataParser.NamedStatDictionary_OptionalInt_Any(config.Stats, data, true);
+            this.Stats = DataParser.NamedStatDictionary_OptionalDecimal_Any(config.Stats, data, true);
+            this.EquippedCombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.EquippedCombatStatModifiers, data, false, "{0} (Equipped)");
             this.EquippedStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.EquippedStatModifiers, data, false, "{0} (Equipped)");
+            this.InventoryCombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.InventoryCombatStatModifiers, data, false, "{0} (Inventory)");
             this.InventoryStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.InventoryStatModifiers, data, false, "{0} (Inventory)");
         }
 

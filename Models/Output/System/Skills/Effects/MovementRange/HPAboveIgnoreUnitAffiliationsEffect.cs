@@ -24,7 +24,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public HPAboveIgnoreUnitAffiliationsEffect(List<string> parameters)
             : base(parameters)
         {
-            this.HPPercentage = DataParser.Int_Positive(parameters, 0, "Param1");
+            this.HPPercentage = DataParser.Int_Positive(parameters, INDEX_PARAM_1, NAME_PARAM_1);
         }
 
         public bool IsActive(Unit unit)

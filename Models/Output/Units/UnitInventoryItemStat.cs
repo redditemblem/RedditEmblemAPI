@@ -11,12 +11,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// The base value of the stat without any modifiers applied.
         /// </summary>
-        public int BaseValue { get; set; }
+        public decimal BaseValue { get; set; }
 
         /// <summary>
         /// Returns the stat's <c>BaseValue</c> summed with <c>ForcedModifier</c> OR all items in the <c>Modifiers</c> list.
         /// </summary>
-        public int FinalValue { get { return this.BaseValue + (this.ForcedModifier != 0 ? this.ForcedModifier : this.Modifiers.Sum(m => m.Value)); } }
+        public decimal FinalValue { get { return this.BaseValue + (this.ForcedModifier != 0 ? this.ForcedModifier : this.Modifiers.Sum(m => m.Value)); } }
 
         /// <summary>
         /// Collection of all values that modify this stat. (ex. "Debuff",-2)
@@ -43,7 +43,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Constructor.
         /// </summary>
-        public UnitInventoryItemStat(int baseValue)
+        public UnitInventoryItemStat(decimal baseValue)
         {
             this.BaseValue = baseValue;
             this.Modifiers = new Dictionary<string, int>();

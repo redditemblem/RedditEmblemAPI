@@ -1,7 +1,6 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
@@ -127,7 +126,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     try
                     {
-                        if (item.Item.Range.MinimumRequiresCalculation || item.Item.Range.MaximumRequiresCalculation)
+                        if (item.HasRangeThatRequiresCalculation)
                             item.CalculateItemRanges(unit);
                     }
                     catch (Exception ex)
@@ -135,7 +134,7 @@ namespace RedditEmblemAPI.Services.Helpers
                         throw new UnitInventoryItemRangeFormulaProcessingException(unit.Name, item.FullName, ex);
                     }
 
-                    int maxRange = item.MaxRange.FinalValue;
+                    int maxRange = (int)decimal.Floor(item.MaxRange.FinalValue);
                     if (item.Item.Range.Shape == ItemRangeShape.Square || item.Item.Range.Shape == ItemRangeShape.Saltire || item.Item.Range.Shape == ItemRangeShape.Star)
                         maxRange *= 2;
                     if (maxRange > map.Constants.ItemMaxRangeAllowedForCalculation && maxRange < 99)
@@ -192,47 +191,23 @@ namespace RedditEmblemAPI.Services.Helpers
                         }
                     }
 
-                    //Apply tile modifiers
-                    ApplyTileTerrainTypeToUnit(unit, tile);
-                    ApplyTileObjectModsToUnit(unit, tile);
+                    ApplyTileModifiersToUnit(unit, tile);
                 }
             }
         }
 
-        private static void ApplyTileTerrainTypeToUnit(Unit unit, Tile tile)
+        /// <summary>
+        /// Applies modifiers from the <paramref name="tile"/>'s terrain type and tile effects to <paramref name="unit"/>.
+        /// </summary>
+        private static void ApplyTileModifiersToUnit(Unit unit, Tile tile)
         {
-            //Apply combat stat modifiers
-            foreach (KeyValuePair<string, int> modifier in tile.TerrainTypeObj.CombatStatModifiers)
-            {
-                ModifiedStatValue stat = unit.Stats.MatchCombatStatName(modifier.Key);
-                stat.Modifiers.TryAdd(tile.TerrainTypeObj.Name, modifier.Value);
-            }
+            unit.Stats.ApplyCombatStatModifiers(tile.TerrainTypeObj.CombatStatModifiers, tile.TerrainTypeObj.Name);
+            unit.Stats.ApplyGeneralStatModifiers(tile.TerrainTypeObj.StatModifiers, tile.TerrainTypeObj.Name);
 
-            //Apply stat modifiers
-            foreach (KeyValuePair<string, int> modifier in tile.TerrainTypeObj.StatModifiers)
-            {
-                ModifiedStatValue stat = unit.Stats.MatchGeneralStatName(modifier.Key);
-                stat.Modifiers.TryAdd(tile.TerrainTypeObj.Name, modifier.Value);
-            }
-        }
-
-        private static void ApplyTileObjectModsToUnit(Unit unit, Tile tile)
-        {
             foreach (TileObjectInstance effect in tile.TileObjects)
             {
-                //Apply combat stat modifiers
-                foreach (KeyValuePair<string, int> modifier in effect.TileObject.CombatStatModifiers)
-                {
-                    ModifiedStatValue stat = unit.Stats.MatchCombatStatName(modifier.Key);
-                    stat.Modifiers.TryAdd(effect.TileObject.Name, modifier.Value);
-                }
-
-                //Apply stat modifiers
-                foreach (KeyValuePair<string, int> modifier in effect.TileObject.StatModifiers)
-                {
-                    ModifiedStatValue stat = unit.Stats.MatchGeneralStatName(modifier.Key);
-                    stat.Modifiers.TryAdd(effect.TileObject.Name, modifier.Value);
-                }
+                unit.Stats.ApplyCombatStatModifiers(effect.TileObject.CombatStatModifiers, effect.TileObject.Name);
+                unit.Stats.ApplyGeneralStatModifiers(effect.TileObject.StatModifiers, effect.TileObject.Name);
             }
         }
 

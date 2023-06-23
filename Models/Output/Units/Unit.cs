@@ -153,6 +153,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         [JsonProperty]
         private string Affiliation { get { return AffiliationObj.Name; } }
 
+        /// <summary>
+        /// The unit's battle style.
+        /// </summary>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private string BattleStyle { 
+            get { return this.ClassList.FirstOrDefault()?.BattleStyle?.Name; }
+        }
+
         #endregion JSON Serialization Only
 
         #endregion Attributes
@@ -190,7 +198,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             //Classes handling. If the system does not use classes, fall back on the MovementType field
             this.ClassList = BuildClasses(data, config.Classes, system.Classes);
-            if (this.ClassList.Count == 0)
+            if (!this.ClassList.Any())
                 this.UnitMovementType = DataParser.String(data, config.MovementType, "Movement Type");
             MatchTags(system.Tags);
 
@@ -242,7 +250,12 @@ namespace RedditEmblemAPI.Models.Output.Units
                 if (!string.IsNullOrEmpty(rankType))
                 {
                     if (validateWeaponRankLetters && string.IsNullOrEmpty(rankLetter))
-                        throw new WeaponRankMissingLetterException(rankType);
+                    {
+                        //If we're using fixed weapon rank sources (i.e. 3H-style), just skip blank ranks.
+                        if (!string.IsNullOrEmpty(rank.SourceName)) continue;
+                        else throw new WeaponRankMissingLetterException(rankType);
+                    }
+                        
                     if (!weaponRanks.TryAdd(rankType, rankLetter))
                         throw new NonUniqueObjectNameException("weapon rank", rankType);
                 }
@@ -313,39 +326,42 @@ namespace RedditEmblemAPI.Models.Output.Units
                     WeaponRankBonus rankBonus = system.WeaponRankBonuses.FirstOrDefault(b => b.Category == primaryEquipped.Item.Category && b.Rank == unitRank);
                     if (rankBonus != null)
                     {
-                        foreach (KeyValuePair<string, int> mod in rankBonus.CombatStatModifiers)
-                        {
-                            ModifiedStatValue stat = this.Stats.MatchCombatStatName(mod.Key);
-                            stat.Modifiers.Add($"{primaryEquipped.Item.Category} {unitRank} Rank Bonus", mod.Value);
-                        }
-
-                        foreach (KeyValuePair<string, int> mod in rankBonus.StatModifiers)
-                        {
-                            ModifiedStatValue stat = this.Stats.MatchGeneralStatName(mod.Key);
-                            stat.Modifiers.Add($"{primaryEquipped.Item.Category} {unitRank} Rank Bonus", mod.Value);
-                        }
+                        string modifierName = $"{primaryEquipped.Item.Category} {unitRank} Rank Bonus";
+                        this.Stats.ApplyCombatStatModifiers(rankBonus.CombatStatModifiers, modifierName);
+                        this.Stats.ApplyGeneralStatModifiers(rankBonus.StatModifiers, modifierName);
                     }
                 }
             }
 
             //Apply equipped stat modifiers
-            foreach (UnitInventoryItem equipped in inventory.GetAllEquippedItems())
+            IEnumerable<UnitInventoryItem> equippedItems = inventory.GetAllEquippedItems();
+            if(this.Emblem != null)
             {
-                foreach (KeyValuePair<string, int> mod in equipped.Item.EquippedStatModifiers)
+                UnitInventoryItem emblemEquipped = this.Emblem.EngageWeapons.SingleOrDefault(i => i.IsPrimaryEquipped);
+                if (emblemEquipped != null) equippedItems = equippedItems.Append(emblemEquipped);
+            }
+                
+            foreach (UnitInventoryItem equipped in equippedItems)
+            {
+                string modifierName = $"{equipped.Item.Name} (Eqp)";
+                this.Stats.ApplyCombatStatModifiers(equipped.Item.EquippedCombatStatModifiers, modifierName);
+                this.Stats.ApplyGeneralStatModifiers(equipped.Item.EquippedStatModifiers, modifierName);
+
+                //If the equipped item has an engraving, apply those modifiers too.
+                foreach(Engraving engraving in equipped.EngravingsList)
                 {
-                    ModifiedStatValue stat = this.Stats.MatchGeneralStatName(mod.Key);
-                    stat.Modifiers.Add($"{equipped.Item.Name} (Eqp)", mod.Value);
+                    string engravingModifierName = $"{equipped.Item.Name} (Eqp) {engraving.Name}";
+                    this.Stats.ApplyCombatStatModifiers(engraving.CombatStatModifiers, engravingModifierName);
+                    this.Stats.ApplyGeneralStatModifiers(engraving.StatModifiers, engravingModifierName);
                 }
             }
 
             //Apply inventory stat modifiers for all nonequipped items
             foreach (UnitInventoryItem inv in inventory.GetAllUnequippedItems())
             {
-                foreach (KeyValuePair<string, int> mod in inv.Item.InventoryStatModifiers)
-                {
-                    ModifiedStatValue stat = this.Stats.MatchGeneralStatName(mod.Key);
-                    stat.Modifiers.Add($"{inv.Item.Name} (Inv)", mod.Value);
-                }
+                string modifierName = $"{inv.Item.Name} (Inv)";
+                this.Stats.ApplyCombatStatModifiers(inv.Item.InventoryCombatStatModifiers, modifierName);
+                this.Stats.ApplyGeneralStatModifiers(inv.Item.InventoryStatModifiers, modifierName);
             }
 
             return inventory;
@@ -402,13 +418,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             if (string.IsNullOrEmpty(name)) return null;
 
             UnitBattalion battalion = new UnitBattalion(config, data, battalions);
-
-            //Apply any stat modifiers from the battalion
-            foreach (KeyValuePair<string, int> mod in battalion.BattalionObj.StatModifiers)
-            {
-                ModifiedStatValue stat = this.Stats.MatchGeneralStatName(mod.Key);
-                stat.Modifiers.Add(battalion.BattalionObj.Name, mod.Value);
-            }
+            this.Stats.ApplyGeneralStatModifiers(battalion.BattalionObj.StatModifiers, battalion.BattalionObj.Name);
 
             return battalion;
         }
@@ -447,7 +457,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         private void MatchTags(IDictionary<string, Tag> tags)
         {
-            if (tags.Count == 0) return;
+            if (!tags.Any()) return;
 
             List<Tag> matched = Tag.MatchNames(tags, this.Tags);
             
