@@ -444,7 +444,7 @@
         "SelectsUsing": 0,
         "Equations": [
           {
-            "Equation": "(({UnitStat[Spd]} - ({WeaponStat[Wgt]} - {UnitStat[Bld]})) * 2) + ({UnitStat[Lck]} / 2)"
+            "Equation": "(({UnitStat[Spd]} - Max({WeaponStat[Wgt]} - {UnitStat[Bld]}, 0)) * 2) + ({UnitStat[Lck]} / 2)"
           }
         ],
         "Modifiers": [
