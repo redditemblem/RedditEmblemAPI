@@ -1,9 +1,9 @@
 ﻿using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
-namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
+namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
 {
-    public class OverrideMovementTypeEffect : StatusConditionEffect
+    public class OverrideMovementTypeEffect_Skill : SkillEffect
     {
         #region Attributes
 
@@ -14,7 +14,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 
         #endregion
 
-        public OverrideMovementTypeEffect(List<string> parameters)
+        public OverrideMovementTypeEffect_Skill(List<string> parameters)
             : base(parameters)
         {
             this.MovementType = DataParser.String(parameters, INDEX_PARAM_1, NAME_PARAM_1);

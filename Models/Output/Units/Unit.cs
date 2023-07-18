@@ -5,6 +5,7 @@ using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
 using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
 using RedditEmblemAPI.Services.Helpers;
@@ -494,13 +495,18 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public string GetUnitMovementType()
         {
-            OverrideMovementTypeEffect overrideMovementType = this.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<OverrideMovementTypeEffect>().FirstOrDefault();
-            if (overrideMovementType != null)
-                return overrideMovementType.MovementType;
+            OverrideMovementTypeEffect_Status statusOverride = this.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<OverrideMovementTypeEffect_Status>().FirstOrDefault();
+            if (statusOverride != null)
+                return statusOverride.MovementType;
+
+            OverrideMovementTypeEffect_Skill skillOverride = this.GetFullSkillsList().SelectMany(s => s.Effects).OfType<OverrideMovementTypeEffect_Skill>().FirstOrDefault();
+            if(skillOverride != null)
+                return skillOverride.MovementType;
 
             if (this.ClassList.Count > 0)
                 return this.ClassList.First().MovementType;
-            else return this.UnitMovementType;
+            
+            return this.UnitMovementType;
         }
 
         /// <summary>

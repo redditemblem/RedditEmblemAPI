@@ -114,6 +114,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
                 case "TerrainTypeStatBonusStatModifier": return new TerrainTypeStatBonusStatModifierEffect(parameters);
                 //Unit Movement Range Effects
                 //Movement Costs
+                case "OverrideMovementType": return new OverrideMovementTypeEffect_Skill(parameters);
                 case "TerrainTypeMovementCostModifier": return new TerrainTypeMovementCostModifierEffect(parameters);
                 case "TerrainTypeMovementCostSet": return new TerrainTypeMovementCostSetEffect_Skill(parameters);
                 case "WarpMovementCostModifier": return new WarpMovementCostModifierEffect(parameters);
