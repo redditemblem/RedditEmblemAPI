@@ -1,0 +1,815 @@
+{
+  "Team": {
+    "Name": "Team Vex A",
+    "WorkbookID": "1ua-8GbcR6HeGCmwJmoUN04WPYZhMDuqcXVtyRRJZnSk"
+  },
+  "Map": {
+    "Constants": {
+      "TileSize": 32,
+      "TileSpacing": 0,
+      "HasHeaderTopLeft": true,
+      "CalculatePairedUnitRanges": true,
+      "ItemMaxRangeAllowedForCalculation": 9,
+      "CoordinateFormat": 1
+    },
+    "MapControls": {
+      "Query": {
+        "Sheet": "System Control",
+        "Selection": "B1:B",
+        "Orientation": 2
+      },
+      "MapSwitch": 0,
+      "MapImageURL": 2,
+      "ChapterPostURL": 1
+    },
+    "MapTiles": {
+      "Query": {
+        "Sheet": "Map Tiles",
+        "Selection": "A1:ZZ",
+        "Orientation": 1
+      }
+    }
+  },
+  "System": {
+    "Constants": {
+      "Currency": {
+        "CurrencySymbol": "G",
+        "IsSymbolLeftAligned": false,
+        "IncludeSpace": true
+      },
+      "WeaponRanks": [ "E", "E+", "D", "D+", "C", "C+", "B", "B+", "A", "A+", "S", "S+"]
+    },
+    "Affiliations": {
+      "Query": {
+        "Sheet": "Affiliations",
+        "Selection": "A2:C",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Grouping": 1,
+      "TextFields": [ 2 ]
+    },
+    "Classes": {
+      "Query": {
+        "Sheet": "Class Information",
+        "Selection": "B3:K",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "MovementType": 8,
+      "Tags": [ 9 ]
+    },
+    "Items": {
+      "Query": {
+        "Sheet": "Items",
+        "Selection": "A4:BD",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Category": 27,
+      "WeaponRank": 34,
+      "UtilizedStats": [ 39 ],
+      "DealsDamage": 40,
+      "Uses": 41,
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 35
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 31
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 32
+        },
+        {
+          "SourceName": "Wt",
+          "Value": 30
+        }
+      ],
+      "EquippedCombatStatModifiers": [
+        {
+          "SourceName": "Prt",
+          "Value": 43
+        },
+        {
+          "SourceName": "Rsl",
+          "Value": 44
+        },
+        {
+          "SourceName": "Atk",
+          "Value": 45
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 53
+        },
+        {
+          "SourceName": "Crit Avo",
+          "Value": 54
+        }
+      ],
+      "EquippedStatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 46
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 47
+        },
+        {
+          "SourceName": "Dex",
+          "Value": 48
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 49
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 50
+        },
+        {
+          "SourceName": "Cha",
+          "Value": 51
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 52
+        }
+      ],
+      "Range": {
+        "Minimum": 37,
+        "Maximum": 38
+      },
+      "Tags": [ 42 ],
+      "TextFields": [ 33 ]
+    },
+    "Skills": {
+      "Query": {
+        "Sheet": "Abilities",
+        "Selection": "A5:P",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "TextFields": [ 3 ],
+      "Effects": [
+        {
+          "Type": 12,
+          "Parameters": [ 13, 14, 15 ]
+        }
+      ]
+    },
+    "StatusConditions": {
+      "Query": {
+        "Sheet": "Conditions",
+        "Selection": "A3:I",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Type": 4,
+      "TextFields": [ 1 ],
+      "Effects": [
+        {
+          "Type": 5,
+          "Parameters": [ 6, 7, 8 ]
+        }
+      ]
+    },
+    "Tags": {
+      "Query": {
+        "Sheet": "Tags",
+        "Selection": "B2:E",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "SpriteURL": 1,
+      "ShowOnUnit": 2,
+      "UnitAura": 3
+    },
+    "TerrainTypes": {
+      "Query": {
+        "Sheet": "Terrain",
+        "Selection": "A2:N",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "HPModifier": 5,
+      "CombatStatModifiers": [
+        {
+          "SourceName": "Avo",
+          "Value": 2
+        }
+      ],
+      "StatModifiers": [
+        {
+          "SourceName": "Def",
+          "Value": 1
+        }
+      ],
+      "MovementCosts": [
+        {
+          "SourceName": "Foot",
+          "Value": 6
+        },
+        {
+          "SourceName": "Mounted",
+          "Value": 7
+        },
+        {
+          "SourceName": "Flying",
+          "Value": 8
+        }
+      ],
+      "BlocksItems": 9,
+      "Groupings": 10,
+      "TextFields": [ 11 ]
+    },
+    "Battalions": {
+      "Query": {
+        "Sheet": "Battalions",
+        "Selection": "A4:O",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Gambit": 3,
+      "MaxEndurance": 6,
+      "Rank": 4,
+      "Stats": [
+        {
+          "SourceName": "Phys Atk",
+          "Value": 7
+        },
+        {
+          "SourceName": "Mag Atk",
+          "Value": 8
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 9
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 10
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 11
+        },
+        {
+          "SourceName": "Prt",
+          "Value": 12
+        },
+        {
+          "SourceName": "Rsl",
+          "Value": 13
+        }
+      ],
+      "StatModifiers": [
+        {
+          "SourceName": "Cha",
+          "Value": 14
+        }
+      ]
+    },
+    "Gambits": {
+      "Query": {
+        "Sheet": "Gambits",
+        "Selection": "A4:M",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "MaxUses": 6,
+      "UtilizedStats": 7,
+      "Range": {
+        "Minimum": 4,
+        "Maximum": 5
+      },
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 1
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 2
+        }
+      ],
+      "TextFields": [ 8 ]
+    }
+  },
+  "Units": {
+    "Query": {
+      "Sheet": "Combined Units",
+      "Selection": "A4:FI",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "SpriteURL": 3,
+    "Level": 10,
+    "Classes": [ 6 ],
+    "Affiliation": 12,
+    "Coordinate": 7,
+    "HP": {
+      "Current": 15,
+      "Maximum": 16
+    },
+    "CombatStats": [
+      {
+        "SourceName": "Atk",
+        "SelectsUsing": 1,
+        "Equations": [
+          {
+            "SelectValue": "Str",
+            "Equation": "{WeaponStat[Mt]} + {WeaponUtilStat_Greatest} + {BattalionStat[Phys Atk]}"
+          },
+          {
+            "SelectValue": "Mag",
+            "Equation": "{WeaponStat[Mt]} + {WeaponUtilStat_Greatest} + {BattalionStat[Mag Atk]}"
+          }
+        ],
+        "Modifiers": [
+
+        ]
+      },
+      {
+        "SourceName": "Wt",
+        "Equations": [
+          {
+            "Equation": "{WeaponStat[Wt]}"
+          }
+        ],
+        "Modifiers": []
+      },
+      {
+        "SourceName": "Hit",
+        "SelectsUsing": 1,
+        "Equations": [
+          {
+            "SelectValue": "Str",
+            "Equation": "{WeaponStat[Hit]} + {BattalionStat[Hit]} + {UnitStat[Dex]}"
+          },
+          {
+            "SelectValue": "Mag",
+            "Equation": "{WeaponStat[Hit]} + {BattalionStat[Hit]} + (({UnitStat[Dex]} + {UnitStat[Lck]}) / 2)"
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 78
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 92
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 106
+          }
+        ]
+      },
+      {
+        "SourceName": "Prt",
+        "Equations": [
+          {
+            "Equation": "{UnitStat[Def]} + {BattalionStat[Prt]}"
+          }
+        ],
+        "Modifiers": []
+      },
+      {
+        "SourceName": "Avo",
+        "SelectsUsing": 1,
+        "Equations": [
+          {
+            "SelectValue": "Str",
+            "Equation": "{BattalionStat[Avo]} + {UnitStat[Spd]} - Max({UnitCombatStat[Wt]} - ({UnitStat[Str]} / 5),0)"
+          },
+          {
+            "SelectValue": "Mag",
+            "Equation": "{BattalionStat[Avo]} + (({UnitStat[Spd]} + {UnitStat[Lck]}) / 2)"
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 79
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 93
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 107
+          }
+        ]
+      },
+      {
+        "SourceName": "Rsl",
+        "Equations": [
+          {
+            "Equation": "{UnitStat[Res]} + {BattalionStat[Rsl]}"
+          }
+        ],
+        "Modifiers": []
+      },
+      {
+        "SourceName": "Crit",
+        "Equations": [
+          {
+            "Equation": "{WeaponStat[Crit]} + {BattalionStat[Crit]} + (({UnitStat[Dex]} + {UnitStat[Lck]})/2)"
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 80
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 94
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 108
+          }
+        ]
+      },
+      {
+        "SourceName": "Crit Avo",
+        "Equations": [
+          {
+            "Equation": "{UnitStat[Lck]}"
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 81
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 95
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 109
+          }
+        ]
+      },
+      {
+        "SourceName": "AS",
+        "Equations": [
+          {
+            "Equation": "{UnitStat[Spd]} - Max({UnitCombatStat[Wt]} - ({UnitStat[Str]} / 5), 0)"
+          }
+        ],
+        "Modifiers": []
+      }
+    ],
+    "Stats": [
+      {
+        "SourceName": "Str",
+        "BaseValue": 18,
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 69
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 83
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 97
+          }
+        ]
+      },
+      {
+        "SourceName": "Mag",
+        "BaseValue": 19,
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 70
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 84
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 98
+          }
+        ]
+      },
+      {
+        "SourceName": "Dex",
+        "BaseValue": 20,
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 71
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 85
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 99
+          }
+        ]
+      },
+      {
+        "SourceName": "Spd",
+        "BaseValue": 21,
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 72
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 86
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 100
+          }
+        ]
+      },
+      {
+        "SourceName": "Lck",
+        "BaseValue": 22,
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 73
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 87
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 101
+          }
+        ]
+      },
+      {
+        "SourceName": "Def",
+        "BaseValue": 23,
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 74
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 88
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 102
+          }
+        ]
+      },
+      {
+        "SourceName": "Res",
+        "BaseValue": 24,
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 75
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 89
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 103
+          }
+        ]
+      },
+      {
+        "SourceName": "Cha",
+        "BaseValue": 25,
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 76
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 90
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 104
+          }
+        ]
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 26,
+        "Modifiers": [
+          {
+            "SourceName": "Buffs",
+            "Value": 77
+          },
+          {
+            "SourceName": "Debuffs",
+            "Value": 91
+          },
+          {
+            "SourceName": "Crossroads",
+            "Value": 105
+          }
+        ]
+      }
+    ],
+    "WeaponRanks": [
+      {
+        "SourceName": "Sword",
+        "Rank": 28
+      },
+      {
+        "SourceName": "Lance",
+        "Rank": 29
+      },
+      {
+        "SourceName": "Axe",
+        "Rank": 30
+      },
+      {
+        "SourceName": "Bow",
+        "Rank": 31
+      },
+      {
+        "SourceName": "CQC",
+        "Rank": 32
+      },
+      {
+        "SourceName": "Reason",
+        "Rank": 33
+      },
+      {
+        "SourceName": "Faith",
+        "Rank": 34
+      },
+      {
+        "SourceName": "Authority",
+        "Rank": 35
+      },
+      {
+        "SourceName": "Heavy Armor",
+        "Rank": 36
+      },
+      {
+        "SourceName": "Riding",
+        "Rank": 37
+      },
+      {
+        "SourceName": "Flying",
+        "Rank": 38
+      }
+    ],
+    "Inventory": {
+      "PrimaryEquippedItem": 39,
+      "SecondaryEquippedItems": [ 110 ],
+      "Slots": [
+        {
+          "Name": 40
+        },
+        {
+          "Name": 41
+        },
+        {
+          "Name": 42
+        },
+        {
+          "Name": 43
+        },
+        {
+          "Name": 44
+        },
+        {
+          "Name": 45
+        },
+        {
+          "Name": 46
+        },
+        {
+          "Name": 47
+        },
+        {
+          "Name": 48
+        },
+        {
+          "Name": 49
+        },
+        {
+          "Name": 50
+        },
+        {
+          "Name": 51
+        },
+        {
+          "Name": 52
+        },
+        {
+          "Name": 53
+        },
+        {
+          "Name": 54
+        },
+        {
+          "Name": 55
+        },
+        {
+          "Name": 56
+        },
+        {
+          "Name": 57
+        }
+      ]
+    },
+    "Player": 1,
+    "PortraitURL": 4,
+    "TextFields": [ 5 ],
+    "UnitSize": 9,
+    "HasMoved": 8,
+    "HeldCurrency": 11,
+    "Tags": [ 13 ],
+    "Behavior": 14,
+    "Skills": [
+      {
+        "Name": 58
+      },
+      {
+        "Name": 59
+      },
+      {
+        "Name": 60
+      },
+      {
+        "Name": 61
+      },
+      {
+        "Name": 62
+      },
+      {
+        "Name": 63
+      },
+      {
+        "Name": 64
+      },
+      {
+        "Name": 65
+      },
+      {
+        "Name": 66
+      }
+    ],
+    "StatusConditions": [
+      {
+        "Name": 160
+      },
+      {
+        "Name": 161
+      },
+      {
+        "Name": 162
+      },
+      {
+        "Name": 163
+      },
+      {
+        "Name": 164
+      }
+    ],
+    "Battalion": { 
+      "Battalion": 128,
+      "Endurance": 141,
+      "GambitUses": 138
+    }
+  },
+  "Convoy": {
+    "Query": {
+      "Sheet": "Convoy",
+      "Selection": "A2:D",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "Owner": 1,
+    "Uses": 2
+  }
+}

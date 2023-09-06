@@ -10,7 +10,7 @@
       "HasHeaderTopLeft": true,
       "HasHeaderBottomRight": false,
       "CalculatePairedUnitRanges": true,
-      "ItemMaxRangeAllowedForCalculation": 15,
+      "ItemMaxRangeAllowedForCalculation": 6,
       "UnitMovementStatName": "Mov",
       "CoordinateFormat": 1
     },

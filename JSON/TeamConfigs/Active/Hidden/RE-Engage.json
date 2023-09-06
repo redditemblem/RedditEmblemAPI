@@ -154,15 +154,15 @@
     "Skills": {
       "Query": {
         "Sheet": "Skills",
-        "Selection": "A2:I",
+        "Selection": "A2:J",
         "Orientation": 1
       },
       "Name": 0,
       "TextFields": [ 4 ],
       "Effects": [
         {
-          "Type": 5,
-          "Parameters": [ 6, 7, 8 ]
+          "Type": 6,
+          "Parameters": [ 7, 8, 9 ]
         }
       ]
     },
@@ -358,7 +358,7 @@
     },
     "Emblems": {
       "Query": {
-        "Sheet": "Rings",
+        "Sheet": "Regalia",
         "Selection": "B1:ZZ",
         "Orientation": 2
       },
@@ -384,10 +384,10 @@
       "Orientation": 2
     },
     "Name": 0,
-    "SpriteURL": 76,
-    "Level": 69,
-    "Classes": [ 71 ],
-    "Affiliation": 70,
+    "SpriteURL": 78,
+    "Level": 71,
+    "Classes": [ 73 ],
+    "Affiliation": 72,
     "Coordinate": 5,
     "HP": {
       "Current": 10,
@@ -420,7 +420,7 @@
         "Modifiers": [
           {
             "SourceName": "Mods",
-            "Value": 38
+            "Value": 40
           }
         ]
       },
@@ -435,7 +435,7 @@
         "Modifiers": [
           {
             "SourceName": "Mods",
-            "Value": 39
+            "Value": 41
           }
         ]
       },
@@ -450,7 +450,7 @@
         "Modifiers": [
           {
             "SourceName": "Mods",
-            "Value": 40
+            "Value": 42
           }
         ]
       },
@@ -465,7 +465,7 @@
         "Modifiers": [
           {
             "SourceName": "Mods",
-            "Value": 41
+            "Value": 43
           }
         ]
       }
@@ -473,7 +473,7 @@
     "Stats": [
       {
         "SourceName": "Str",
-        "BaseValue": 97,
+        "BaseValue": 103,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -483,7 +483,7 @@
       },
       {
         "SourceName": "Mag",
-        "BaseValue": 98,
+        "BaseValue": 104,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -493,7 +493,7 @@
       },
       {
         "SourceName": "Dex",
-        "BaseValue": 99,
+        "BaseValue": 105,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -503,7 +503,7 @@
       },
       {
         "SourceName": "Spd",
-        "BaseValue": 100,
+        "BaseValue": 106,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -513,7 +513,7 @@
       },
       {
         "SourceName": "Def",
-        "BaseValue": 101,
+        "BaseValue": 107,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -523,7 +523,7 @@
       },
       {
         "SourceName": "Res",
-        "BaseValue": 102,
+        "BaseValue": 108,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -533,7 +533,7 @@
       },
       {
         "SourceName": "Lck",
-        "BaseValue": 103,
+        "BaseValue": 109,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -543,7 +543,7 @@
       },
       {
         "SourceName": "Bld",
-        "BaseValue": 104,
+        "BaseValue": 110,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -553,7 +553,7 @@
       },
       {
         "SourceName": "Mov",
-        "BaseValue": 105,
+        "BaseValue": 111,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -565,126 +565,142 @@
     "WeaponRanks": [
       {
         "SourceName": "Sword",
-        "Rank": 86
-      },
-      {
-        "SourceName": "Lance",
-        "Rank": 87
-      },
-      {
-        "SourceName": "Axe",
         "Rank": 88
       },
       {
-        "SourceName": "Bow",
+        "SourceName": "Lance",
         "Rank": 89
       },
       {
-        "SourceName": "Knife",
+        "SourceName": "Axe",
         "Rank": 90
       },
       {
-        "SourceName": "Tome",
+        "SourceName": "Bow",
         "Rank": 91
       },
       {
-        "SourceName": "Staff",
+        "SourceName": "Knife",
         "Rank": 92
       },
       {
-        "SourceName": "Arts",
+        "SourceName": "Tome",
         "Rank": 93
       },
       {
-        "SourceName": "Special",
+        "SourceName": "Staff",
         "Rank": 94
+      },
+      {
+        "SourceName": "Arts",
+        "Rank": 95
+      },
+      {
+        "SourceName": "Breath",
+        "Rank": 96
+      },
+      {
+        "SourceName": "Body",
+        "Rank": 97
+      },
+      {
+        "SourceName": "Monstrous",
+        "Rank": 98
+      },
+      {
+        "SourceName": "Dark",
+        "Rank": 99
+      },
+      {
+        "SourceName": "Special",
+        "Rank": 100
       }
     ],
     "Inventory": {
-      "PrimaryEquippedItem": 157,
+      "PrimaryEquippedItem": 163,
       "Slots": [
         {
-          "Name": 43,
-          "Uses": 45,
-          "Engravings": [ 44 ]
+          "Name": 45,
+          "Uses": 47,
+          "Engravings": [ 46 ]
         },
         {
-          "Name": 46,
-          "Uses": 48,
-          "Engravings": [ 47 ]
+          "Name": 48,
+          "Uses": 50,
+          "Engravings": [ 49 ]
         },
         {
-          "Name": 49,
-          "Uses": 51,
-          "Engravings": [ 50 ]
+          "Name": 51,
+          "Uses": 53,
+          "Engravings": [ 52 ]
         },
         {
-          "Name": 52,
-          "Uses": 54,
-          "Engravings": [ 53 ]
+          "Name": 54,
+          "Uses": 56,
+          "Engravings": [ 55 ]
         },
         {
-          "Name": 55,
-          "Uses": 57,
-          "Engravings": [ 56 ]
+          "Name": 57,
+          "Uses": 59,
+          "Engravings": [ 58 ]
         }
       ]
     },
     "Player": 1,
-    "PortraitURL": 75,
-    "TextFields": [ 73 ],
-    "UnitSize": 72,
+    "PortraitURL": 77,
+    "TextFields": [ 75 ],
+    "UnitSize": 74,
     "HasMoved": 6,
     "Experience": 4,
-    "HeldCurrency": 68,
-    "Tags": [ 67 ],
+    "HeldCurrency": 70,
+    "Tags": [ 69 ],
     "Skills": [
-      {
-        "Name": 77
-      },
-      {
-        "Name": 78
-      },
       {
         "Name": 79
       },
       {
         "Name": 80
+      },
+      {
+        "Name": 81
+      },
+      {
+        "Name": 82
       }
     ],
     "StatusConditions": [
       {
-        "Name": 62
-      },
-      {
-        "Name": 63
-      },
-      {
         "Name": 64
+      },
+      {
+        "Name": 65
+      },
+      {
+        "Name": 66
       }
     ],
     "Emblem": {
-      "Name": 58,
+      "Name": 60,
       "EngageMeterCount": 9,
       "IsEngaged": 8,
       "SyncSkills": [
         {
-          "Name": 81
-        },
-        {
-          "Name": 82
-        },
-        {
           "Name": 83
+        },
+        {
+          "Name": 84
+        },
+        {
+          "Name": 85
         }
       ],
       "EngageSkills": [
         {
-          "Name": 84
+          "Name": 86
         }
       ],
-      "EngageWeapons": [ 59, 60, 61 ],
-      "EngageAttacks": [ 85 ]
+      "EngageWeapons": [ 61, 62, 63 ],
+      "EngageAttacks": [ 87 ]
     }
   },
   "Convoy": {
