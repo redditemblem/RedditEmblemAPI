@@ -37,7 +37,7 @@
         "IsSymbolLeftAligned": false,
         "IncludeSpace": true
       },
-      "WeaponRanks": [ "E", "E+", "D", "D+", "C", "C+", "B", "B+", "A", "A+", "S", "S+"]
+      "WeaponRanks": [ "E", "E+", "D", "D+", "C", "C+", "B", "B+", "A", "A+", "S", "S+" ]
     },
     "Affiliations": {
       "Query": {
@@ -228,6 +228,42 @@
       "Groupings": 10,
       "TextFields": [ 11 ]
     },
+    "CombatArts": {
+      "Query": {
+        "Sheet": "Combat Arts",
+        "Selection": "A2:Q",
+        "Orientation": 1
+      },
+      "Name": 1,
+      "WeaponRank": 3,
+      "Category": 0,
+      "UtilizedStats": [ 16 ],
+      "Range": {
+        "Minimum": 10,
+        "Maximum": 11
+      },
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 5
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 6
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 7
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 8
+        }
+      ],
+      "DurabilityCost": 4,
+      "Tags": [ 15 ],
+      "TextFields": [ 12 ]
+    },
     "Battalions": {
       "Query": {
         "Sheet": "Battalions",
@@ -304,7 +340,7 @@
   "Units": {
     "Query": {
       "Sheet": "Combined Units",
-      "Selection": "A4:FI",
+      "Selection": "A4:FO",
       "Orientation": 1
     },
     "Name": 0,
@@ -794,9 +830,13 @@
       },
       {
         "Name": 164
+      },
+      {
+        "Name": 165
       }
     ],
-    "Battalion": { 
+    "CombatArts": [ 166, 167, 168, 169, 170 ],
+    "Battalion": {
       "Battalion": 128,
       "Endurance": 141,
       "GambitUses": 138

@@ -175,7 +175,7 @@
       "Effects": [ //Optional
         {
           "Type": 0, //Required
-          "Parameters": [ 0, 0 ] //Required
+          "Parameters": [ 0, 0, 0 ] //Required
         }
       ]
     },
@@ -251,6 +251,31 @@
           "Value": 0
         }
       ],
+      "TextFields": [ 0 ] //Optional
+    },
+    "CombatArts": { //Optional
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "SpriteURL": 0, //Optional
+      "WeaponRank": 0, //Optional
+      "Category": 0, //Optional
+      "UtilizedStats": [ 0 ], //Optional
+      "Range": { //Required
+        "Minimum": 0,
+        "Maximum": 0
+      },
+      "Stats": [ //Required
+        {
+          "SourceName": "Mt",
+          "Value": 0
+        }
+      ],
+      "DurabilityCost": 0,
+      "Tags": [ 0 ], //Optional
       "TextFields": [ 0 ] //Optional
     },
     "Battalions": { //Optional
@@ -475,6 +500,7 @@
         ]
       }
     ],
+    "CombatArts": [ 0 ], //Optional
     "Battalion": { //Optional
       "Battalion": 0, //Required
       "Endurance": 0, //Required

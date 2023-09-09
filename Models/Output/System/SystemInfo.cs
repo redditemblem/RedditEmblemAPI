@@ -76,6 +76,11 @@ namespace RedditEmblemAPI.Models.Output.System
         public IDictionary<string, Engraving> Engravings { get; set; }
 
         /// <summary>
+        /// Container dictionary for data about combat arts.
+        /// </summary>
+        public IDictionary<string, CombatArt> CombatArts { get; set; }
+
+        /// <summary>
         /// Container dictionary for data about battalions.
         /// </summary>
         public IDictionary<string, Battalion> Battalions { get; set; }
@@ -127,6 +132,7 @@ namespace RedditEmblemAPI.Models.Output.System
             CullDictionary(this.Skills);
             CullDictionary(this.StatusConditions);
             CullDictionary(this.Tags);
+            CullDictionary(this.CombatArts);
             CullDictionary(this.Battalions);
             CullDictionary(this.Gambits);
             CullDictionary(this.Engravings);
@@ -161,18 +167,24 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         private void ParseOptionalData(SystemConfig config)
         {
+            //Lots of things are dependent on tags, so I'm putting it first.
+            this.Tags = Tag.BuildDictionary(config.Tags);
+
+            //Non-dependent objects
             this.TileObjects = TileObject.BuildDictionary(config.TileObjects);
             this.BattleStyles = BattleStyle.BuildDictionary(config.BattleStyles);
-            this.Classes = Class.BuildDictionary(config.Classes, this.BattleStyles);
             this.Skills = Skill.BuildDictionary(config.Skills);
             this.StatusConditions = StatusCondition.BuildDictionary(config.StatusConditions);
-            this.Tags = Tag.BuildDictionary(config.Tags);
             this.WeaponRankBonuses = WeaponRankBonus.BuildList(config.WeaponRankBonuses);
             this.Engravings = Engraving.BuildDictionary(config.Engravings);
             this.Gambits = Gambit.BuildDictionary(config.Gambits);
-            this.Battalions = Battalion.BuildDictionary(config.Battalions, this.Gambits);
             this.Emblems = Emblem.BuildDictionary(config.Emblems);
             this.EngageAttacks = EngageAttack.BuildDictionary(config.EngageAttacks);
+
+            //Dependent objects
+            this.Classes = Class.BuildDictionary(config.Classes, this.BattleStyles);
+            this.CombatArts = CombatArt.BuildDictionary(config.CombatArts, this.Tags);
+            this.Battalions = Battalion.BuildDictionary(config.Battalions, this.Gambits);
         }
 
         #endregion

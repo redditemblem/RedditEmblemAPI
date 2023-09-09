@@ -3,6 +3,7 @@ using RedditEmblemAPI.Models.Configuration.System.Affiliations;
 using RedditEmblemAPI.Models.Configuration.System.Battalions;
 using RedditEmblemAPI.Models.Configuration.System.BattleStyles;
 using RedditEmblemAPI.Models.Configuration.System.Classes;
+using RedditEmblemAPI.Models.Configuration.System.CombatArts;
 using RedditEmblemAPI.Models.Configuration.System.Emblems;
 using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Configuration.System.Skills;
@@ -83,6 +84,11 @@ namespace RedditEmblemAPI.Models.Configuration.System
         /// Optional. Container object for a system's tile objects configuration.
         /// </summary>
         public TileObjectsConfig TileObjects { get; set; } = null;
+
+        /// <summary>
+        /// Optional. Container object for a system's combat arts configuration.
+        /// </summary>
+        public CombatArtsConfig CombatArts { get; set; }
 
         /// <summary>
         /// Optional. Container object for a system's battalion configuration.

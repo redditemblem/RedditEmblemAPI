@@ -112,6 +112,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         public List<UnitSkill> Skills { get; set; }
 
         /// <summary>
+        /// List of the combat arts the unit possesses.
+        /// </summary>
+        [JsonIgnore]
+        public List<CombatArt> CombatArtsList { get; set; }
+
+        /// <summary>
         /// Container for information about a unit's battalion.
         /// </summary>
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
@@ -155,7 +161,13 @@ namespace RedditEmblemAPI.Models.Output.Units
         private string Affiliation { get { return AffiliationObj.Name; } }
 
         /// <summary>
-        /// The unit's battle style.
+        /// Only for JSON serialization. A list of the unit's combat arts.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        private IEnumerable<string> CombatArts { get { return this.CombatArtsList.Any() ? this.CombatArtsList.Select(c => c.Name) : null; } } 
+
+        /// <summary>
+        /// Only for JSON serialization. The unit's battle style.
         /// </summary>
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         private string BattleStyle { 
@@ -206,6 +218,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Skills =  BuildUnitSkills(data, config.Skills, system.Skills);
             this.WeaponRanks = BuildWeaponRanks(data, config.WeaponRanks, system.Constants.WeaponRanks.Any());
             this.StatusConditions = BuildUnitStatusConditions(data, config.StatusConditions, system.StatusConditions);
+            this.CombatArtsList = BuildCombatArts(data, config.CombatArts, system.CombatArts);
             this.Battalion = BuildBattalion(data, config.Battalion, system.Battalions);
             this.Emblem = BuildUnitEmblem(data, config.Emblem, system);
 
@@ -400,6 +413,16 @@ namespace RedditEmblemAPI.Models.Output.Units
                 throw new Exception("Unit must have at least one class defined.");
 
             return unitClasses;
+        }
+
+        /// <summary>
+        /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>CombatArt</c> from <paramref name="combatArts"/>.
+        /// </summary>
+        /// <returns></returns>
+        private List<CombatArt> BuildCombatArts(IEnumerable<string> data, List<int> indexes, IDictionary<string, CombatArt> combatArts) 
+        {
+            List<string> names = DataParser.List_Strings(data, indexes);
+            return CombatArt.MatchNames(combatArts, names);
         }
 
         /// <summary>

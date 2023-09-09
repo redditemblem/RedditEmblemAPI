@@ -155,6 +155,11 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public List<UnitSkillConfig> Skills { get; set; } = new List<UnitSkillConfig>();
 
         /// <summary>
+        /// Optional. List of cell indexes of a unit's combat art(s).
+        /// </summary>
+        public List<int> CombatArts { get; set; } = new List<int>();
+
+        /// <summary>
         /// Optional. Container object for a unit's battalion configuration.
         /// </summary>
         public UnitBattalionConfig Battalion { get; set; } = null;

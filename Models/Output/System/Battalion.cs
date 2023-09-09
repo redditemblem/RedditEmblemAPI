@@ -90,7 +90,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Rank = DataParser.OptionalString(data, config.Rank, "Rank");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
-            this.Stats = DataParser.NamedStatDictionary_Int_Any(config.Stats, data, true);
+            this.Stats = DataParser.NamedStatDictionary_OptionalInt_Any(config.Stats, data, true);
             this.StatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.StatModifiers, data, false, "{0} Modifier");
         }
 
