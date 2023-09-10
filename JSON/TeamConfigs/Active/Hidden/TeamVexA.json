@@ -335,6 +335,76 @@
         }
       ],
       "TextFields": [ 8 ]
+    },
+    "Adjutants": {
+      "Query": {
+        "Sheet": "Adjutants",
+        "Selection": "A2:P",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "CombatStatModifiers": [
+        {
+          "SourceName": "Prt",
+          "Value": 1
+        },
+        {
+          "SourceName": "Rsl",
+          "Value": 2
+        },
+        {
+          "SourceName": "Atk",
+          "Value": 3
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 11
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 12
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 13
+        },
+        {
+          "SourceName": "Crit Avo",
+          "Value": 14
+        }
+      ],
+      "StatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 4
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 5
+        },
+        {
+          "SourceName": "Dex",
+          "Value": 6
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 7
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 8
+        },
+        {
+          "SourceName": "Cha",
+          "Value": 9
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 10
+        }
+
+      ],
+      "TextFields": [ 15 ]
     }
   },
   "Units": {
@@ -840,7 +910,8 @@
       "Battalion": 128,
       "Endurance": 141,
       "GambitUses": 138
-    }
+    },
+    "Adjutants": [ 143 ]
   },
   "Convoy": {
     "Query": {

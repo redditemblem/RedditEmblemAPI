@@ -20,7 +20,7 @@ namespace RedditEmblemAPI.Models.Output.Units
     /// <summary>
     /// Object representing a single Unit.
     /// </summary>
-    public class Unit
+    public partial class Unit
     {
         #region Attributes
 
@@ -92,42 +92,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         public string Behavior { get; set; }
 
         /// <summary>
-        /// Collection of the unit's weapon ranks.
-        /// </summary>
-        public IDictionary<string, string> WeaponRanks { get; set; }
-
-        /// <summary>
         /// List of the status conditions the unit possesses.
         /// </summary>
         public List<UnitStatus> StatusConditions { get; set; }
 
         /// <summary>
-        /// Container for information about the unit's inventory.
-        /// </summary>
-        public UnitInventory Inventory { get; set; }
-
-        /// <summary>
         /// List of the skills the unit possesses.
         /// </summary>
         public List<UnitSkill> Skills { get; set; }
-
-        /// <summary>
-        /// List of the combat arts the unit possesses.
-        /// </summary>
-        [JsonIgnore]
-        public List<CombatArt> CombatArtsList { get; set; }
-
-        /// <summary>
-        /// Container for information about a unit's battalion.
-        /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public UnitBattalion Battalion { get; set; }
-
-        /// <summary>
-        /// Container for information about a unit's emblem.
-        /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public UnitEmblem Emblem { get; set; }
 
         /// <summary>
         /// Container for information about a unit's movement/item ranges.
@@ -160,19 +132,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         [JsonProperty]
         private string Affiliation { get { return AffiliationObj.Name; } }
 
-        /// <summary>
-        /// Only for JSON serialization. A list of the unit's combat arts.
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        private IEnumerable<string> CombatArts { get { return this.CombatArtsList.Any() ? this.CombatArtsList.Select(c => c.Name) : null; } } 
-
-        /// <summary>
-        /// Only for JSON serialization. The unit's battle style.
-        /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        private string BattleStyle { 
-            get { return this.ClassList.FirstOrDefault()?.BattleStyle?.Name; }
-        }
 
         #endregion JSON Serialization Only
 
@@ -186,7 +145,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         #endregion
 
         /// <summary>
-        /// Constructor.
+        /// Main constructor.
         /// </summary>
         public Unit(UnitsConfig config, IEnumerable<string> data, SystemInfo system)
         {
@@ -216,13 +175,11 @@ namespace RedditEmblemAPI.Models.Output.Units
             MatchTags(system.Tags);
 
             this.Skills =  BuildUnitSkills(data, config.Skills, system.Skills);
-            this.WeaponRanks = BuildWeaponRanks(data, config.WeaponRanks, system.Constants.WeaponRanks.Any());
             this.StatusConditions = BuildUnitStatusConditions(data, config.StatusConditions, system.StatusConditions);
-            this.CombatArtsList = BuildCombatArts(data, config.CombatArts, system.CombatArts);
-            this.Battalion = BuildBattalion(data, config.Battalion, system.Battalions);
-            this.Emblem = BuildUnitEmblem(data, config.Emblem, system);
 
-            this.Inventory = BuildUnitInventory(data, config.Inventory, system);
+            Constructor_Unit_3H(config, data, system);
+            Constructor_Unit_Engage(config, data, system);
+            Constructor_Unit_Inventory(config, data, system);
         }
 
         #region Build Functions
@@ -245,40 +202,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         }
 
         /// <summary>
-        /// Builds and returns the unit's dictionary of weapon rank types/letters.
-        /// </summary>
-        /// <param name="validateWeaponRankLetters">Flag indicating if weapon rank types should have an accompanying letter.</param>
-        /// <exception cref="WeaponRankMissingLetterException"></exception>
-        /// <exception cref="NonUniqueObjectNameException"></exception>
-        private IDictionary<string, string> BuildWeaponRanks(IEnumerable<string> data, List<UnitWeaponRanksConfig> config, bool validateWeaponRankLetters)
-        {
-            IDictionary<string, string> weaponRanks = new Dictionary<string, string>();
-            foreach (UnitWeaponRanksConfig rank in config)
-            {
-                string rankType;
-                if (!string.IsNullOrEmpty(rank.SourceName)) rankType = rank.SourceName;
-                else rankType = DataParser.OptionalString(data, rank.Type, "Weapon Rank Type");
-
-                string rankLetter = DataParser.OptionalString(data, rank.Rank, "Weapon Rank Letter");
-
-                if (!string.IsNullOrEmpty(rankType))
-                {
-                    if (validateWeaponRankLetters && string.IsNullOrEmpty(rankLetter))
-                    {
-                        //If we're using fixed weapon rank sources (i.e. 3H-style), just skip blank ranks.
-                        if (!string.IsNullOrEmpty(rank.SourceName)) continue;
-                        else throw new WeaponRankMissingLetterException(rankType);
-                    }
-                        
-                    if (!weaponRanks.TryAdd(rankType, rankLetter))
-                        throw new NonUniqueObjectNameException("weapon rank", rankType);
-                }
-            }
-
-            return weaponRanks;
-        }
-
-        /// <summary>
         /// Builds and returns a list of the unit's status conditions.
         /// </summary>
         private List<UnitStatus> BuildUnitStatusConditions(IEnumerable<string> data, List<UnitStatusConditionConfig> configs, IDictionary<string, StatusCondition> statuses)
@@ -293,92 +216,6 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             return statusConditions;
-        }
-
-        /// <summary>
-        /// Builds and returns the unit's inventory container.
-        /// </summary>
-        /// <remarks>
-        /// Depends on the following being built beforehand:
-        /// <list type="bullet">
-        /// <item>Stats</item>
-        /// <item>WeaponRanks</item>
-        /// <item>Emblem</item>
-        /// </list>
-        /// </remarks>
-        private UnitInventory BuildUnitInventory(IEnumerable<string> data, InventoryConfig config, SystemInfo system)
-        {
-            UnitInventory inventory = new UnitInventory(config, system, data, this.Emblem);
-
-            foreach (UnitInventoryItem item in inventory.Items)
-            {
-                //Check if the item can be equipped
-                string unitRank;
-                if (this.WeaponRanks.TryGetValue(item.Item.Category, out unitRank))
-                {
-                    if (string.IsNullOrEmpty(unitRank)
-                     || string.IsNullOrEmpty(item.Item.WeaponRank)
-                     || system.Constants.WeaponRanks.IndexOf(unitRank) >= system.Constants.WeaponRanks.IndexOf(item.Item.WeaponRank))
-                        item.CanEquip = true;
-                }
-                else if (string.IsNullOrEmpty(item.Item.WeaponRank) && !item.Item.UtilizedStats.Any())
-                {
-                    item.CanEquip = true;
-                }
-
-            }
-
-            UnitInventoryItem primaryEquipped = inventory.GetPrimaryEquippedItem();
-            if (primaryEquipped != null)
-            {
-                //Check if we need to apply weapon rank bonuses for the primary equipped item
-                if (this.WeaponRanks.ContainsKey(primaryEquipped.Item.Category))
-                {
-                    string unitRank;
-                    this.WeaponRanks.TryGetValue(primaryEquipped.Item.Category, out unitRank);
-
-                    WeaponRankBonus rankBonus = system.WeaponRankBonuses.FirstOrDefault(b => b.Category == primaryEquipped.Item.Category && b.Rank == unitRank);
-                    if (rankBonus != null)
-                    {
-                        string modifierName = $"{primaryEquipped.Item.Category} {unitRank} Rank Bonus";
-                        this.Stats.ApplyCombatStatModifiers(rankBonus.CombatStatModifiers, modifierName);
-                        this.Stats.ApplyGeneralStatModifiers(rankBonus.StatModifiers, modifierName);
-                    }
-                }
-            }
-
-            //Apply equipped stat modifiers
-            IEnumerable<UnitInventoryItem> equippedItems = inventory.GetAllEquippedItems();
-            if(this.Emblem != null)
-            {
-                UnitInventoryItem emblemEquipped = this.Emblem.EngageWeapons.SingleOrDefault(i => i.IsPrimaryEquipped);
-                if (emblemEquipped != null) equippedItems = equippedItems.Append(emblemEquipped);
-            }
-                
-            foreach (UnitInventoryItem equipped in equippedItems)
-            {
-                string modifierName = $"{equipped.Item.Name} (Eqp)";
-                this.Stats.ApplyCombatStatModifiers(equipped.Item.EquippedCombatStatModifiers, modifierName);
-                this.Stats.ApplyGeneralStatModifiers(equipped.Item.EquippedStatModifiers, modifierName);
-
-                //If the equipped item has an engraving, apply those modifiers too.
-                foreach(Engraving engraving in equipped.EngravingsList)
-                {
-                    string engravingModifierName = $"{equipped.Item.Name} (Eqp) {engraving.Name}";
-                    this.Stats.ApplyCombatStatModifiers(engraving.CombatStatModifiers, engravingModifierName);
-                    this.Stats.ApplyGeneralStatModifiers(engraving.StatModifiers, engravingModifierName);
-                }
-            }
-
-            //Apply inventory stat modifiers for all nonequipped items
-            foreach (UnitInventoryItem inv in inventory.GetAllUnequippedItems())
-            {
-                string modifierName = $"{inv.Item.Name} (Inv)";
-                this.Stats.ApplyCombatStatModifiers(inv.Item.InventoryCombatStatModifiers, modifierName);
-                this.Stats.ApplyGeneralStatModifiers(inv.Item.InventoryStatModifiers, modifierName);
-            }
-
-            return inventory;
         }
 
         /// <summary>
@@ -413,63 +250,6 @@ namespace RedditEmblemAPI.Models.Output.Units
                 throw new Exception("Unit must have at least one class defined.");
 
             return unitClasses;
-        }
-
-        /// <summary>
-        /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>CombatArt</c> from <paramref name="combatArts"/>.
-        /// </summary>
-        /// <returns></returns>
-        private List<CombatArt> BuildCombatArts(IEnumerable<string> data, List<int> indexes, IDictionary<string, CombatArt> combatArts) 
-        {
-            List<string> names = DataParser.List_Strings(data, indexes);
-            return CombatArt.MatchNames(combatArts, names);
-        }
-
-        /// <summary>
-        /// Builds and returns the unit's battalion.
-        /// </summary>
-        /// <remarks>
-        /// Depends on the following being built beforehand:
-        /// <list type="bullet">
-        /// <item>Stats</item>
-        /// </list>
-        /// </remarks>
-        private UnitBattalion BuildBattalion(IEnumerable<string> data, UnitBattalionConfig config, IDictionary<string, Battalion> battalions)
-        {
-            if (config == null) return null;
-
-            string name = DataParser.OptionalString(data, config.Battalion, "Battalion");
-            if (string.IsNullOrEmpty(name)) return null;
-
-            UnitBattalion battalion = new UnitBattalion(config, data, battalions);
-            this.Stats.ApplyGeneralStatModifiers(battalion.BattalionObj.StatModifiers, battalion.BattalionObj.Name);
-
-            return battalion;
-        }
-
-        /// <summary>
-        /// Builds and returns the unit's emblem.
-        /// </summary>
-        /// <remarks>
-        /// Depends on the following being built beforehand:
-        /// <list type="bullet">
-        /// <item>Sprite</item>
-        /// </list>
-        /// </remarks>
-        private UnitEmblem BuildUnitEmblem(IEnumerable<string> data, UnitEmblemConfig config, SystemInfo systemData)
-        {
-            if (config == null) return null;
-
-            string name = DataParser.OptionalString(data, config.Name, "Emblem");
-            if (string.IsNullOrEmpty(name)) return null;
-
-            UnitEmblem emblem = new UnitEmblem(config, data, systemData);
-
-            //Set unit aura
-            if (emblem.IsEngaged && !string.IsNullOrEmpty(emblem.Emblem.EngagedUnitAura))
-                this.Sprite.Aura = emblem.Emblem.EngagedUnitAura;
-
-            return emblem;
         }
 
         #endregion Build Functions

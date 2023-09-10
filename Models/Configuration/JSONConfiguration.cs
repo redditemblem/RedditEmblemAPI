@@ -91,6 +91,7 @@ namespace RedditEmblemAPI.Models.Configuration
             queries.AddQueryable(this.System.BattleStyles);
             queries.AddQueryable(this.System.Emblems);
             queries.AddQueryable(this.System.EngageAttacks);
+            queries.AddQueryable(this.System.Adjutants);
 
             return queries;
         }

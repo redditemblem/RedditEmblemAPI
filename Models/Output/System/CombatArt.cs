@@ -1,5 +1,4 @@
-﻿using RedditEmblemAPI.Models.Configuration.System.Battalions;
-using RedditEmblemAPI.Models.Exceptions.Processing;
+﻿using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
@@ -9,8 +8,6 @@ using System;
 using RedditEmblemAPI.Models.Configuration.System.CombatArts;
 using System.Linq;
 using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.System.Emblems;
-using Amazon.S3.Model;
 
 namespace RedditEmblemAPI.Models.Output.System
 {

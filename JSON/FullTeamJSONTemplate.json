@@ -388,6 +388,28 @@
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "TextFields": [ 0 ] //Optional
+    },
+    "Adjutants": {
+      "Query": {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      },
+      "Name": 0, //Required
+      "SpriteURL": 0, //Optional
+      "CombatStatModifiers": [ //Optional
+        {
+          "SourceName": "Atk",
+          "Value": 0
+        }
+      ],
+      "StatModifiers": [ //Optional
+        {
+          "SourceName": "Str",
+          "Value": 0
+        }
+      ],
+      "TextFields": [ 0 ] //Optional
     }
   },
   "Units": { //Required
@@ -506,6 +528,7 @@
       "Endurance": 0, //Required
       "GambitUses": 0 //Required
     },
+    "Adjutants": [ 0 ], //Optional
     "Emblem": { //Optional
       "Name": 0, //Required
       "BondLevel": 0, //Optional

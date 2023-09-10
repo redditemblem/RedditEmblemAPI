@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Configuration.System.Adjutants;
 using RedditEmblemAPI.Models.Configuration.System.Affiliations;
 using RedditEmblemAPI.Models.Configuration.System.Battalions;
 using RedditEmblemAPI.Models.Configuration.System.BattleStyles;
@@ -114,6 +115,11 @@ namespace RedditEmblemAPI.Models.Configuration.System
         /// Optional. Container object for a system's engage attacks configuration.
         /// </summary>
         public EngageAttacksConfig EngageAttacks { get; set; } = null;
+
+        /// <summary>
+        /// Optional. Container object for a system's adjutants configuration.
+        /// </summary>
+        public AdjutantsConfig Adjutants { get; set; } = null;
 
         #endregion
     }

@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
-using RedditEmblemAPI.Models.Configuration.System.Battalions;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.CombatArts

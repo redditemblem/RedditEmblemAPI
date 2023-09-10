@@ -165,6 +165,11 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public UnitBattalionConfig Battalion { get; set; } = null;
 
         /// <summary>
+        /// Optional. List of cell indexes for a unit's adjutant(s).
+        /// </summary>
+        public List<int> Adjutants { get; set; } = new List<int>();
+
+        /// <summary>
         /// Optional. Container object for a unit's emblem configuration.
         /// </summary>
         public UnitEmblemConfig Emblem { get; set; } = null;

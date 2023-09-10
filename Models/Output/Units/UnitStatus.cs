@@ -47,7 +47,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         #endregion
 
         private static Regex turnsRegex = new Regex(@"\([0-9]+\)"); //match status turns (ex. "(5)")
-        private static Regex bracketsRegex = new Regex(@"\[([0-9]+)\]"); //match values surrounded by square brackets
 
         /// <summary>
         /// Searches for a <c>StatusCondition</c> in <paramref name="statusConditions"/> that matches <paramref name="fullStatusName"/>.
@@ -85,17 +84,6 @@ namespace RedditEmblemAPI.Models.Output.Units
 
                 this.AdditionalStats.Add(stat.SourceName, value);
             }
-
-            //TEMPORARY - HEALER EMBLEM
-            //Remove anything between square brackets
-            #warning "Team-specific temporary code. Remove ASAP."
-            Match bracketMatch = bracketsRegex.Match(name);
-            if (bracketMatch.Success)
-            {
-                this.AdditionalStats.Add("Potency", int.Parse(bracketMatch.Groups[1].Value));
-                name = bracketsRegex.Replace(name, string.Empty);
-            }
-            //END TEMP
 
             name = name.Trim();
             this.StatusObj = StatusCondition.MatchName(statusConditions, name);

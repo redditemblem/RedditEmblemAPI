@@ -91,6 +91,11 @@ namespace RedditEmblemAPI.Models.Output.System
         public IDictionary<string, Gambit> Gambits { get; set; }
 
         /// <summary>
+        /// Container dictionary for data about adjutants.
+        /// </summary>
+        public IDictionary<string, Adjutant> Adjutants { get; set; }
+
+        /// <summary>
         /// Container dictionary for data about battle styles.
         /// </summary>
         public IDictionary<string, BattleStyle> BattleStyles { get; set; }
@@ -105,7 +110,8 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public IDictionary<string, EngageAttack> EngageAttacks { get; set; }
 
-        #endregion
+
+        #endregion Optional Data
 
         /// <summary>
         /// Constructor.
@@ -139,6 +145,7 @@ namespace RedditEmblemAPI.Models.Output.System
             CullDictionary(this.BattleStyles);
             CullDictionary(this.Emblems);
             CullDictionary(this.EngageAttacks);
+            CullDictionary(this.Adjutants);
         }
 
         private void CullDictionary<T>(IDictionary<string, T> dictionary) where T : IMatchable
@@ -180,6 +187,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Gambits = Gambit.BuildDictionary(config.Gambits);
             this.Emblems = Emblem.BuildDictionary(config.Emblems);
             this.EngageAttacks = EngageAttack.BuildDictionary(config.EngageAttacks);
+            this.Adjutants = Adjutant.BuildDictionary(config.Adjutants);
 
             //Dependent objects
             this.Classes = Class.BuildDictionary(config.Classes, this.BattleStyles);

@@ -1,5 +1,4 @@
-﻿using RedditEmblemAPI.Models.Configuration.System.Battalions;
-using RedditEmblemAPI.Models.Configuration.System.CombatArts;
+﻿using RedditEmblemAPI.Models.Configuration.System.CombatArts;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
