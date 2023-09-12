@@ -6,18 +6,18 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
-    public class RemoveTagEffect : StatusConditionEffect
+    public class AddTagEffect : StatusConditionEffect
     {
         #region Attributes
 
-        protected override string Name { get { return "RemoveTag"; } }
+        protected override string Name { get { return "AddTag"; } }
         protected override int ParameterCount { get { return 1; } }
 
         private List<string> Tags { get; set; }
 
         #endregion
 
-        public RemoveTagEffect(List<string> parameters)
+        public AddTagEffect(List<string> parameters)
             : base(parameters)
         {
             this.Tags = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);
@@ -27,12 +27,22 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         }
 
         /// <summary>
-        /// Removes the tags in <c>Tags</c> from <paramref name="unit"/>.
+        /// Adds the tags in <c>Tags</c> to <paramref name="unit"/>, if they don't already exist.
         /// </summary>
         public override void Apply(Unit unit, StatusCondition status, IDictionary<string, Tag> tags)
         {
             foreach (string tag in this.Tags)
-                unit.Tags.Remove(tag);
+            {
+                if (!unit.Tags.Contains(tag))
+                {
+                    unit.Tags.Add(tag);
+
+                    //If system uses tags, match it
+                    if (tags.Any())
+                        Tag.MatchName(tags, tag);
+                }
+            }
+
         }
     }
 }
