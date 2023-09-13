@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Shop;
+using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -120,5 +122,39 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
 
             return stat;
         }
+
+        #region Static Functions
+
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>ShopItem</c> from each valid row.
+        /// </summary>
+        /// <exception cref="ShopItemProcessingException"></exception>
+        public static List<ShopItem> BuildList(ShopConfig config, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        {
+            List<ShopItem> shopItems = new List<ShopItem>();
+            if (config == null || config.Query == null)
+                return shopItems;
+
+            foreach (List<object> row in config.Query.Data)
+            {
+                string name = string.Empty;
+                try
+                {
+                    IEnumerable<string> shopItem = row.Select(r => r.ToString());
+                    name = DataParser.OptionalString(shopItem, config.Name, "Name");
+                    if (string.IsNullOrEmpty(name)) continue;
+
+                    shopItems.Add(new ShopItem(config, shopItem, items, engravings));
+                }
+                catch (Exception ex)
+                {
+                    throw new ShopItemProcessingException(name, ex);
+                }
+            }
+
+            return shopItems;
+        }
+
+        #endregion Static Functions
     }
 }

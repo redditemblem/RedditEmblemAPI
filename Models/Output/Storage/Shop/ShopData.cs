@@ -1,10 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Configuration.System;
-using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
-using RedditEmblemAPI.Services.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,12 +12,21 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
     /// </summary>
     public class ShopData
     {
-        #region Attributes
+        #region Constants
 
         /// <summary>
         /// Container for currency constants.
         /// </summary>
         public CurrencyConstsConfig Currency { get; set; }
+
+        /// <summary>
+        /// Container for interface label constants.
+        /// </summary>
+        public InterfaceLabelsConfig InterfaceLabels { get; set; }
+
+        #endregion Constants
+
+        #region Attributes
 
         /// <summary>
         /// Parameters for the Shop page display.
@@ -62,34 +68,18 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="ItemProcessingException"></exception>
-        /// <exception cref="ShopItemProcessingException"></exception>
         public ShopData(JSONConfiguration config)
         {
             this.Currency = config.System.Constants.Currency;
+            this.InterfaceLabels = config.System.InterfaceLabels;
+
             this.WorkbookID = config.Team.WorkbookID;
             this.ShowConvoyLink = (config.Convoy != null);
 
             this.Tags = Tag.BuildDictionary(config.System.Tags);
             this.Engravings = Engraving.BuildDictionary(config.System.Engravings);
             this.Items = Item.BuildDictionary(config.System.Items, this.Tags, this.Engravings);
-
-            //Build the shop item list
-            this.ShopItems = new List<ShopItem>();
-            foreach (List<object> row in config.Shop.Query.Data)
-            {
-                try
-                {
-                    IEnumerable<string> item = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(item, config.Shop.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
-                    this.ShopItems.Add(new ShopItem(config.Shop, item, this.Items, this.Engravings));
-                }
-                catch (Exception ex)
-                {
-                    throw new ShopItemProcessingException((row.ElementAtOrDefault(config.Shop.Name) ?? string.Empty).ToString(), ex);
-                }
-            }
+            this.ShopItems = ShopItem.BuildList(config.Shop, this.Items, this.Engravings);
 
             //Build page parameters
             List<ItemSort> sorts = new List<ItemSort>() {
@@ -98,7 +88,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
                 new ItemSort("Category", "category", true)
             };
             if (config.System.Constants.WeaponRanks.Count > 0)
-                sorts.Add(new ItemSort("Weapon Rank", "weaponRank", true));
+                sorts.Add(new ItemSort(this.InterfaceLabels.WeaponRanks, "weaponRank", true));
 
             IDictionary<string, bool> filters = new Dictionary<string, bool>();
             filters.Add("AllowNew", (config.Shop.IsNew != -1));

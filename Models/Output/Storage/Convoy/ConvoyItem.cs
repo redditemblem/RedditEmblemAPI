@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Convoy;
+using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -140,5 +142,39 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
 
             return stat;
         }
+
+        #region Static Functions
+
+        /// <summary>
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>ConvoyItem</c> from each valid row.
+        /// </summary>
+        /// <exception cref="ConvoyItemProcessingException"></exception>
+        public static List<ConvoyItem> BuildList(ConvoyConfig config, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        {
+            List<ConvoyItem> convoyItems = new List<ConvoyItem>();
+            if (config == null || config.Query == null)
+                return convoyItems;
+
+            foreach (List<object> row in config.Query.Data)
+            {
+                string name = string.Empty;
+                try
+                {
+                    IEnumerable<string> convoyItem = row.Select(r => r.ToString());
+                    name = DataParser.OptionalString(convoyItem, config.Name, "Name");
+                    if (string.IsNullOrEmpty(name)) continue;
+
+                    convoyItems.Add(new ConvoyItem(config, convoyItem, items, engravings));
+                }
+                catch (Exception ex)
+                {
+                    throw new ConvoyItemProcessingException(name, ex);
+                }
+            }
+
+            return convoyItems;
+        }
+
+        #endregion Static Functions
     }
 }

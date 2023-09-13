@@ -16,6 +16,11 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public SystemConstantsConfig Constants { get; set; }
 
+        /// <summary>
+        /// Container for interface label constants.
+        /// </summary>
+        public InterfaceLabelsConfig InterfaceLabels { get; set; }
+
         #endregion Constants
 
         #region Required Data
@@ -120,6 +125,7 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             //Copy over constants from config
             this.Constants = config.Constants;
+            this.InterfaceLabels = config.InterfaceLabels;
 
             ParseOptionalData(config);
             ParseRequiredData(config); //some required data reliant on optional data

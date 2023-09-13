@@ -1,10 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Configuration.System;
-using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
-using RedditEmblemAPI.Services.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,12 +12,21 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
     /// </summary>
     public class ConvoyData
     {
-        #region Attributes
+        #region Constants
 
         /// <summary>
         /// Container for currency constants.
         /// </summary>
         public CurrencyConstsConfig Currency { get; set; }
+
+        /// <summary>
+        /// Container for interface label constants.
+        /// </summary>
+        public InterfaceLabelsConfig InterfaceLabels { get; set; }
+
+        #endregion Constants
+
+        #region Attributes
 
         /// <summary>
         /// Parameters for the Convoy page display.
@@ -62,34 +68,18 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <exception cref="ConvoyItemProcessingException"></exception>
         public ConvoyData(JSONConfiguration config)
         {
             this.Currency = config.System.Constants.Currency;
+            this.InterfaceLabels = config.System.InterfaceLabels;
+
             this.WorkbookID = config.Team.WorkbookID;
             this.ShowShopLink = (config.Shop != null);
 
             this.Tags = Tag.BuildDictionary(config.System.Tags);
             this.Engravings = Engraving.BuildDictionary(config.System.Engravings);
             this.Items = Item.BuildDictionary(config.System.Items, this.Tags, this.Engravings);
-
-            //Build the convoy item list
-            this.ConvoyItems = new List<ConvoyItem>();
-            foreach (List<object> row in config.Convoy.Query.Data)
-            {
-                try
-                {
-                    IEnumerable<string> item = row.Select(r => r.ToString());
-                    string name = DataParser.OptionalString(item, config.Convoy.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
-
-                    this.ConvoyItems.Add(new ConvoyItem(config.Convoy, item, this.Items, this.Engravings));
-                }
-                catch (Exception ex)
-                {
-                    throw new ConvoyItemProcessingException((row.ElementAtOrDefault(config.Convoy.Name) ?? string.Empty).ToString(), ex);
-                }
-            }
+            this.ConvoyItems = ConvoyItem.BuildList(config.Convoy, this.Items, this.Engravings);
 
             //Build page parameters
             List<ItemSort> sorts = new List<ItemSort>() {
@@ -99,7 +89,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
                 new ItemSort("Uses", "maxUses", true)
             };
             if (config.System.Constants.WeaponRanks.Count > 0)
-                sorts.Add(new ItemSort("Weapon Rank", "weaponRank", true));
+                sorts.Add(new ItemSort(this.InterfaceLabels.WeaponRanks, "weaponRank", true));
 
             IDictionary<string, bool> filters = new Dictionary<string, bool>();
             filters.Add("AllowEngravings", config.Convoy.Engravings.Any() || config.System.Items.Engravings.Any());

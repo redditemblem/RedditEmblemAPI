@@ -52,6 +52,11 @@ namespace RedditEmblemAPI.Models.Configuration.System
         #region Optional Fields
 
         /// <summary>
+        /// Optional. Container object for setting/overriding labels in the UI.
+        /// </summary>
+        public InterfaceLabelsConfig InterfaceLabels { get; set; } = new InterfaceLabelsConfig();
+
+        /// <summary>
         /// Optional. Container object for a system's class configuration.
         /// </summary>
         public ClassesConfig Classes { get; set; } = null;
