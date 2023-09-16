@@ -34,7 +34,7 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// Only for JSON serialization. List of warp tile coordinates that this tile is linked to.
         /// </summary>
         [JsonProperty]
-        private string WarpGroupCoordinates { get { return string.Join("; ", this.WarpGroup.OrderBy(t => t.Coordinate.X).ThenBy(t => t.Coordinate.Y).Select(t => $"({t.Coordinate.ToString()})")); } }
+        private string WarpGroupCoordinates { get { return string.Join("; ", this.WarpGroup.OrderBy(t => t.Coordinate.X).ThenBy(t => t.Coordinate.Y).Select(t => t.Coordinate.ToString())); } }
 
 
         #endregion JSON Serialization Only

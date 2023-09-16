@@ -237,52 +237,94 @@
     "TerrainTypes": {
       "Query": {
         "Sheet": "Terrain Types",
-        "Selection": "A2:ZZ",
+        "Selection": "A3:ZZ",
         "Orientation": 1
       },
       "Name": 0,
-      "HPModifier": 4,
-      "CombatStatModifiers": [
+      "StatGroups": [
         {
-          "SourceName": "Avo",
-          "Value": 1
+          "HPModifier": 4,
+          "CombatStatModifiers": [
+            {
+              "SourceName": "Avo",
+              "Value": 1
+            },
+            {
+              "SourceName": "Atk",
+              "Value": 2
+            }
+          ],
+          "StatModifiers": [
+            {
+              "SourceName": "Def",
+              "Value": 3
+            },
+            {
+              "SourceName": "Res",
+              "Value": 3
+            }
+          ],
+          "MovementCosts": [
+            {
+              "SourceName": "Foot",
+              "Value": 10
+            },
+            {
+              "SourceName": "Mounted",
+              "Value": 11
+            },
+            {
+              "SourceName": "Flying",
+              "Value": 12
+            }
+          ]
         },
         {
-          "SourceName": "Atk",
-          "Value": 2
+          "AffiliationGroupings": 5,
+          "HPModifier": 9,
+          "CombatStatModifiers": [
+            {
+              "SourceName": "Avo",
+              "Value": 6
+            },
+            {
+              "SourceName": "Atk",
+              "Value": 7
+            }
+          ],
+          "StatModifiers": [
+            {
+              "SourceName": "Def",
+              "Value": 8
+            },
+            {
+              "SourceName": "Res",
+              "Value": 8
+            }
+          ],
+          "MovementCosts": [
+            {
+              "SourceName": "Foot",
+              "Value": 10
+            },
+            {
+              "SourceName": "Mounted",
+              "Value": 11
+            },
+            {
+              "SourceName": "Flying",
+              "Value": 12
+            }
+          ]
         }
       ],
-      "StatModifiers": [
-        {
-          "SourceName": "Def",
-          "Value": 3
-        },
-        {
-          "SourceName": "Res",
-          "Value": 3
-        }
-      ],
-      "MovementCosts": [
-        {
-          "SourceName": "Foot",
-          "Value": 5
-        },
-        {
-          "SourceName": "Mounted",
-          "Value": 6
-        },
-        {
-          "SourceName": "Flying",
-          "Value": 7
-        }
-      ],
-      "WarpType": 8,
-      "WarpCost": 9,
-      "CannotStopOn": 10,
-      "BlocksItems": 11,
-      "RestrictAffiliations": 12,
-      "TextFields": [ 13 ],
-      "Groupings": 14
+      "WarpType": 13,
+      "WarpCost": 14,
+      "CannotStopOn": 15,
+      "BlocksItems": 16,
+      "RestrictAffiliations": 17,
+      "TextFields": [ 18 ],
+      "Groupings": 19
     },
     "TileObjects": {
       "Query": {

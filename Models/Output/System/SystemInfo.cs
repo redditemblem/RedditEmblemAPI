@@ -169,8 +169,8 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <param name="config"></param>
         private void ParseRequiredData(SystemConfig config)
         {
-            this.TerrainTypes = TerrainType.BuildDictionary(config.TerrainTypes);
             this.Affiliations = Affiliation.BuildDictionary(config.Affiliations);
+            this.TerrainTypes = TerrainType.BuildDictionary(config.TerrainTypes, this.Affiliations);
             this.Items = Item.BuildDictionary(config.Items, this.Tags, this.Engravings); //note: items are dependent on Tags & Engravings
 
         }

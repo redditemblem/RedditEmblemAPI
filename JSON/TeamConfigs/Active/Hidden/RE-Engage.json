@@ -49,6 +49,9 @@
       "WeaponRanks": [ "F", "E", "D", "C", "B", "A", "S" ],
       "AllowNonInventoryEquippedItems": true
     },
+    "InterfaceLabels": {
+      "Emblem": "Regalia"
+    },
     "Affiliations": {
       "Query": {
         "Sheet": "Affiliations",
@@ -195,43 +198,47 @@
         "Orientation": 1
       },
       "Name": 0,
-      "HPModifier": 3,
-      "CombatStatModifiers": [
+      "StatGroups": [
         {
-          "SourceName": "Avo",
-          "Value": 1
-        }
-      ],
-      "StatModifiers": [
-        {
-          "SourceName": "Def",
-          "Value": 2
-        },
-        {
-          "SourceName": "Res",
-          "Value": 2
-        }
-      ],
-      "MovementCosts": [
-        {
-          "SourceName": "Infantry",
-          "Value": 5
-        },
-        {
-          "SourceName": "Cavalry",
-          "Value": 6
-        },
-        {
-          "SourceName": "Cavalry (Promoted)",
-          "Value": 7
-        },
-        {
-          "SourceName": "Flier",
-          "Value": 8
-        },
-        {
-          "SourceName": "Armour",
-          "Value": 9
+          "HPModifier": 3,
+          "CombatStatModifiers": [
+            {
+              "SourceName": "Avo",
+              "Value": 1
+            }
+          ],
+          "StatModifiers": [
+            {
+              "SourceName": "Def",
+              "Value": 2
+            },
+            {
+              "SourceName": "Res",
+              "Value": 2
+            }
+          ],
+          "MovementCosts": [
+            {
+              "SourceName": "Infantry",
+              "Value": 5
+            },
+            {
+              "SourceName": "Cavalry",
+              "Value": 6
+            },
+            {
+              "SourceName": "Cavalry (Promoted)",
+              "Value": 7
+            },
+            {
+              "SourceName": "Flier",
+              "Value": 8
+            },
+            {
+              "SourceName": "Armour",
+              "Value": 9
+            }
+          ]
         }
       ],
       "WarpType": 10,
@@ -363,7 +370,7 @@
         "Orientation": 2
       },
       "Name": 0,
-      "SpriteURL": 103,
+      "SpriteURL": 102,
       "EngagedUnitAura": 4,
       "TextFields": [ 2 ]
     },
@@ -384,14 +391,14 @@
       "Orientation": 2
     },
     "Name": 0,
-    "SpriteURL": 78,
-    "Level": 71,
-    "Classes": [ 73 ],
-    "Affiliation": 72,
+    "SpriteURL": 86,
+    "Level": 79,
+    "Classes": [ 81 ],
+    "Affiliation": 80,
     "Coordinate": 5,
     "HP": {
-      "Current": 10,
-      "Maximum": 11
+      "Current": 11,
+      "Maximum": 12
     },
     "CombatStats": [
       {
@@ -405,7 +412,7 @@
         "Modifiers": [
           {
             "SourceName": "Mods",
-            "Value": 37
+            "Value": 38
           }
         ]
       },
@@ -420,7 +427,7 @@
         "Modifiers": [
           {
             "SourceName": "Mods",
-            "Value": 40
+            "Value": 41
           }
         ]
       },
@@ -435,7 +442,7 @@
         "Modifiers": [
           {
             "SourceName": "Mods",
-            "Value": 41
+            "Value": 42
           }
         ]
       },
@@ -450,7 +457,7 @@
         "Modifiers": [
           {
             "SourceName": "Mods",
-            "Value": 42
+            "Value": 43
           }
         ]
       },
@@ -465,7 +472,7 @@
         "Modifiers": [
           {
             "SourceName": "Mods",
-            "Value": 43
+            "Value": 44
           }
         ]
       }
@@ -473,17 +480,7 @@
     "Stats": [
       {
         "SourceName": "Str",
-        "BaseValue": 103,
-        "Modifiers": [
-          {
-            "SourceName": "Mods",
-            "Value": 28
-          }
-        ]
-      },
-      {
-        "SourceName": "Mag",
-        "BaseValue": 104,
+        "BaseValue": 111,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -492,8 +489,8 @@
         ]
       },
       {
-        "SourceName": "Dex",
-        "BaseValue": 105,
+        "SourceName": "Mag",
+        "BaseValue": 112,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -502,8 +499,8 @@
         ]
       },
       {
-        "SourceName": "Spd",
-        "BaseValue": 106,
+        "SourceName": "Dex",
+        "BaseValue": 113,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -512,8 +509,8 @@
         ]
       },
       {
-        "SourceName": "Def",
-        "BaseValue": 107,
+        "SourceName": "Spd",
+        "BaseValue": 114,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -522,8 +519,8 @@
         ]
       },
       {
-        "SourceName": "Res",
-        "BaseValue": 108,
+        "SourceName": "Def",
+        "BaseValue": 115,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -532,8 +529,8 @@
         ]
       },
       {
-        "SourceName": "Lck",
-        "BaseValue": 109,
+        "SourceName": "Res",
+        "BaseValue": 116,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -542,8 +539,8 @@
         ]
       },
       {
-        "SourceName": "Bld",
-        "BaseValue": 110,
+        "SourceName": "Lck",
+        "BaseValue": 117,
         "Modifiers": [
           {
             "SourceName": "Mods",
@@ -552,12 +549,22 @@
         ]
       },
       {
-        "SourceName": "Mov",
-        "BaseValue": 111,
+        "SourceName": "Bld",
+        "BaseValue": 118,
         "Modifiers": [
           {
             "SourceName": "Mods",
             "Value": 36
+          }
+        ]
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 119,
+        "Modifiers": [
+          {
+            "SourceName": "Mods",
+            "Value": 37
           }
         ]
       }
@@ -565,142 +572,153 @@
     "WeaponRanks": [
       {
         "SourceName": "Sword",
-        "Rank": 88
-      },
-      {
-        "SourceName": "Lance",
-        "Rank": 89
-      },
-      {
-        "SourceName": "Axe",
-        "Rank": 90
-      },
-      {
-        "SourceName": "Bow",
-        "Rank": 91
-      },
-      {
-        "SourceName": "Knife",
-        "Rank": 92
-      },
-      {
-        "SourceName": "Tome",
-        "Rank": 93
-      },
-      {
-        "SourceName": "Staff",
-        "Rank": 94
-      },
-      {
-        "SourceName": "Arts",
-        "Rank": 95
-      },
-      {
-        "SourceName": "Breath",
         "Rank": 96
       },
       {
-        "SourceName": "Body",
+        "SourceName": "Lance",
         "Rank": 97
       },
       {
-        "SourceName": "Monstrous",
+        "SourceName": "Axe",
         "Rank": 98
       },
       {
-        "SourceName": "Dark",
+        "SourceName": "Bow",
         "Rank": 99
       },
       {
-        "SourceName": "Special",
+        "SourceName": "Knife",
         "Rank": 100
+      },
+      {
+        "SourceName": "Tome",
+        "Rank": 101
+      },
+      {
+        "SourceName": "Staff",
+        "Rank": 102
+      },
+      {
+        "SourceName": "Arts",
+        "Rank": 103
+      },
+      {
+        "SourceName": "Breath",
+        "Rank": 104
+      },
+      {
+        "SourceName": "Body",
+        "Rank": 105
+      },
+      {
+        "SourceName": "Monstrous",
+        "Rank": 106
+      },
+      {
+        "SourceName": "Dark",
+        "Rank": 107
+      },
+      {
+        "SourceName": "Special",
+        "Rank": 108
       }
     ],
     "Inventory": {
-      "PrimaryEquippedItem": 163,
+      "PrimaryEquippedItem": 171,
       "Slots": [
         {
-          "Name": 45,
-          "Uses": 47,
-          "Engravings": [ 46 ]
+          "Name": 46,
+          "Uses": 48,
+          "Engravings": [ 47 ]
         },
         {
-          "Name": 48,
-          "Uses": 50,
-          "Engravings": [ 49 ]
+          "Name": 49,
+          "Uses": 51,
+          "Engravings": [ 50 ]
         },
         {
-          "Name": 51,
-          "Uses": 53,
-          "Engravings": [ 52 ]
+          "Name": 52,
+          "Uses": 54,
+          "Engravings": [ 53 ]
         },
         {
-          "Name": 54,
-          "Uses": 56,
-          "Engravings": [ 55 ]
+          "Name": 55,
+          "Uses": 57,
+          "Engravings": [ 56 ]
         },
         {
-          "Name": 57,
-          "Uses": 59,
-          "Engravings": [ 58 ]
+          "Name": 58,
+          "Uses": 60,
+          "Engravings": [ 59 ]
         }
       ]
     },
     "Player": 1,
-    "PortraitURL": 77,
-    "TextFields": [ 75 ],
-    "UnitSize": 74,
+    "PortraitURL": 85,
+    "TextFields": [ 83 ],
+    "UnitSize": 82,
     "HasMoved": 6,
     "Experience": 4,
-    "HeldCurrency": 70,
-    "Tags": [ 69 ],
+    "HeldCurrency": 78,
+    "Tags": [ 77 ],
     "Skills": [
       {
-        "Name": 79
+        "Name": 87
       },
       {
-        "Name": 80
+        "Name": 88
       },
       {
-        "Name": 81
+        "Name": 89
       },
       {
-        "Name": 82
+        "Name": 90
       }
     ],
     "StatusConditions": [
       {
-        "Name": 64
+        "Name": 65,
+        "RemainingTurns": 66
       },
       {
-        "Name": 65
+        "Name": 67,
+        "RemainingTurns": 68
       },
       {
-        "Name": 66
+        "Name": 69,
+        "RemainingTurns": 70
+      },
+      {
+        "Name": 71,
+        "RemainingTurns": 72
+      },
+      {
+        "Name": 73,
+        "RemainingTurns": 74
       }
     ],
     "Emblem": {
-      "Name": 60,
-      "EngageMeterCount": 9,
-      "IsEngaged": 8,
+      "Name": 61,
+      "EngageMeterCount": 10,
+      "IsEngaged": 9,
       "SyncSkills": [
         {
-          "Name": 83
+          "Name": 91
         },
         {
-          "Name": 84
+          "Name": 92
         },
         {
-          "Name": 85
+          "Name": 93
         }
       ],
       "EngageSkills": [
         {
-          "Name": 86
+          "Name": 94
         }
       ],
-      "EngageWeapons": [ 61, 62, 63 ],
-      "EngageAttacks": [ 87 ]
+      "EngageWeapons": [ 62, 63, 64 ],
+      "EngageAttacks": [ 95 ]
     }
   },
   "Convoy": {

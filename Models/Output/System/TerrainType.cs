@@ -31,24 +31,9 @@ namespace RedditEmblemAPI.Models.Output.System
         public string Name { get; set; }
 
         /// <summary>
-        /// The value by which the terrain type modifies a unit's HP. Assumed to be a percentage.
+        /// List of stat groups.
         /// </summary>
-        public int HPModifier { get; set; }
-
-        /// <summary>
-        /// List of combat stat modifiers applied by the terrain type.
-        /// </summary>
-        public IDictionary<string, int> CombatStatModifiers { get; set; }
-
-        /// <summary>
-        /// List of stat modifiers applied by the terrain type.
-        /// </summary>
-        public IDictionary<string, int> StatModifiers { get; set; }
-
-        /// <summary>
-        /// List of movement costs for the terrain type.
-        /// </summary>
-        public IDictionary<string, int> MovementCosts { get; set; }
+        public List<TerrainTypeStats> StatGroups { get; set; }
 
         /// <summary>
         /// The warp type of the terrain type.
@@ -77,12 +62,6 @@ namespace RedditEmblemAPI.Models.Output.System
         public List<int> RestrictAffiliations { get; set; }
 
         /// <summary>
-        /// Only for JSON serialization. True when there's any items in the <c>RestrictAffiliations</c> list.
-        /// </summary>
-        [JsonProperty]
-        private bool CanRestrictAffiliations { get { return this.RestrictAffiliations.Any(); } }
-
-        /// <summary>
         /// The groupings that the terrain type belongs to.
         /// </summary>
         [JsonIgnore]
@@ -93,12 +72,22 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public List<string> TextFields { get; set; }
 
-        #endregion
+        #region JSON Serialization
+
+        /// <summary>
+        /// Only for JSON serialization. True when there's any items in the <c>RestrictAffiliations</c> list.
+        /// </summary>
+        [JsonProperty]
+        private bool CanRestrictAffiliations { get { return this.RestrictAffiliations.Any(); } }
+
+        #endregion JSON Serialization
+
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public TerrainType(TerrainTypesConfig config, IEnumerable<string> data)
+        public TerrainType(TerrainTypesConfig config, IEnumerable<string> data, IDictionary<string, Affiliation> affiliations)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -107,11 +96,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.RestrictAffiliations = DataParser.List_IntCSV(data, config.RestrictAffiliations, "Restrict Affiliations", true);
             this.Groupings = DataParser.List_IntCSV(data, config.Groupings, "Groupings", true);
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
-
-            this.HPModifier = DataParser.OptionalInt_Any(data, config.HPModifier, "HP Modifier");
-            this.CombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.CombatStatModifiers, data);
-            this.StatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.StatModifiers, data);
-            this.MovementCosts = DataParser.NamedStatDictionary_Int_NonZeroPositive(config.MovementCosts, data, "{0} Movement Cost");
+            this.StatGroups = BuildTerrainTypeStats(data, config.StatGroups, affiliations);
 
             this.WarpType = GetWarpTypeEnum(DataParser.OptionalString(data, config.WarpType, "Warp Type"));
             if (this.WarpType == WarpType.Entrance || this.WarpType == WarpType.Dual)
@@ -119,6 +104,31 @@ namespace RedditEmblemAPI.Models.Output.System
                 this.WarpCost = DataParser.Int_Positive(data, config.WarpCost, "Warp Cost");
             }
             else this.WarpCost = -1;
+        }
+
+        /// <summary>
+        /// Iterates through <paramref name="configs"/> and builds a list of <c>TerrainTypeStats</c>.
+        /// </summary>
+        /// <exception cref="DuplicateTerrainTypeStatsException"></exception>
+        private List<TerrainTypeStats> BuildTerrainTypeStats(IEnumerable<string> data, List<TerrainTypeStatsConfig> configs, IDictionary<string, Affiliation> affiliations)
+        {
+            List<TerrainTypeStats> groups = new List<TerrainTypeStats>();
+            foreach (TerrainTypeStatsConfig config in configs)
+            {
+                //We want to include the group only if it's the default group or if it has at least one grouping value included.
+                string values = DataParser.OptionalString(data, config.AffiliationGroupings, "Affiliation Groupings");
+                if (config.AffiliationGroupings != -1 && string.IsNullOrEmpty(values))
+                    continue;
+
+                groups.Add(new TerrainTypeStats(config, data, affiliations));
+            }
+
+            //Check if an affiliation grouping is repeated anywhere. Each grouping can only be in one set.
+            IEnumerable<IGrouping<int, int>> duplicates = groups.SelectMany(g => g.AffiliationGroupings).GroupBy(g => g).Where(g => g.Count() > 1);
+            if (duplicates.Any())
+                throw new DuplicateTerrainTypeStatsException(duplicates.First().Key);
+
+            return groups;
         }
 
         /// <summary>
@@ -137,13 +147,32 @@ namespace RedditEmblemAPI.Models.Output.System
             return (WarpType)warpEnum;
         }
 
+        /// <summary>
+        /// Returns the <c>TerrainTypeStats</c> that matches <paramref name="affiliation"/>. If one is not found, returns the default group instead.
+        /// </summary>
+        public TerrainTypeStats GetTerrainTypeStatsByAffiliation(Affiliation affiliation)
+        {
+            return GetTerrainTypeStatsByAffiliation(affiliation.Grouping);
+        }
+
+        /// <summary>
+        /// Returns the <c>TerrainTypeStats</c> that matches <paramref name="affiliationGrouping"/>. If one is not found, returns the default group instead.
+        /// </summary>
+        public TerrainTypeStats GetTerrainTypeStatsByAffiliation(int affiliationGrouping)
+        {
+            TerrainTypeStats match = this.StatGroups.FirstOrDefault(g => g.AffiliationGroupings.Contains(affiliationGrouping));
+            if (match != null) return match;
+
+            return this.StatGroups.First(g => g.IsDefaultGroup);
+        }
+
         #region Static Functions
 
         /// <summary>
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>TerrainType</c> from each valid row.
         /// </summary>
         /// <exception cref="TerrainTypeProcessingException"></exception>
-        public static IDictionary<string, TerrainType> BuildDictionary(TerrainTypesConfig config)
+        public static IDictionary<string, TerrainType> BuildDictionary(TerrainTypesConfig config, IDictionary<string, Affiliation> affiliations)
         {
             IDictionary<string, TerrainType> terrainTypes = new Dictionary<string, TerrainType>();
             if (config == null || config.Query == null)
@@ -158,7 +187,7 @@ namespace RedditEmblemAPI.Models.Output.System
                     name = DataParser.OptionalString(type, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!terrainTypes.TryAdd(name, new TerrainType(config, type)))
+                    if (!terrainTypes.TryAdd(name, new TerrainType(config, type, affiliations)))
                         throw new NonUniqueObjectNameException("terrain type");
                 }
                 catch (Exception ex)

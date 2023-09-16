@@ -293,10 +293,12 @@ namespace RedditEmblemAPI.Services.Helpers
                )
                 return 99;
 
+            TerrainTypeStats terrainStats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(parms.Unit.AffiliationObj);
+
             //Test that the unit can move to this tile
             int moveCost;
-            if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(parms.Unit.GetUnitMovementType(), out moveCost))
-                throw new UnmatchedMovementTypeException(parms.Unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys);
+            if (!terrainStats.MovementCosts.TryGetValue(parms.Unit.GetUnitMovementType(), out moveCost))
+                throw new UnmatchedMovementTypeException(parms.Unit.GetUnitMovementType(), terrainStats.MovementCosts.Keys);
 
             //Apply movement cost modifiers
             TerrainTypeMovementCostSetEffect_Skill movCostSet_Skill = parms.MoveCostSets_Skills.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));

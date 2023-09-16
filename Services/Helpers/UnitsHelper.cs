@@ -201,9 +201,10 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         private static void ApplyTileModifiersToUnit(Unit unit, Tile tile)
         {
-            unit.Stats.ApplyCombatStatModifiers(tile.TerrainTypeObj.CombatStatModifiers, tile.TerrainTypeObj.Name);
-            unit.Stats.ApplyGeneralStatModifiers(tile.TerrainTypeObj.StatModifiers, tile.TerrainTypeObj.Name);
-
+            TerrainTypeStats stats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(unit.AffiliationObj);
+            unit.Stats.ApplyCombatStatModifiers(stats.CombatStatModifiers, tile.TerrainTypeObj.Name);
+            unit.Stats.ApplyGeneralStatModifiers(stats.StatModifiers, tile.TerrainTypeObj.Name);
+            
             foreach (TileObjectInstance effect in tile.TileObjects)
             {
                 unit.Stats.ApplyCombatStatModifiers(effect.TileObject.CombatStatModifiers, effect.TileObject.Name);

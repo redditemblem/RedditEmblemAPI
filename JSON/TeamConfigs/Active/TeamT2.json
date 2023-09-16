@@ -168,42 +168,46 @@
         "Orientation": 1
       },
       "Name": 0,
-      "CombatStatModifiers": [
+      "StatGroups": [
         {
-          "SourceName": "Avo",
-          "Value": 1
-        }
-      ],
-      "StatModifiers": [
-        {
-          "SourceName": "Def",
-          "Value": 2
-        }
-      ],
-      "MovementCosts": [
-        {
-          "SourceName": "Infantry",
-          "Value": 4
-        },
-        {
-          "SourceName": "Mounted",
-          "Value": 5
-        },
-        {
-          "SourceName": "Mounted (Promoted)",
-          "Value": 6
-        },
-        {
-          "SourceName": "Flier",
-          "Value": 7
-        },
-        {
-          "SourceName": "Armor",
-          "Value": 8
-        },
-        {
-          "SourceName": "Brigand",
-          "Value": 9
+          "CombatStatModifiers": [
+            {
+              "SourceName": "Avo",
+              "Value": 1
+            }
+          ],
+          "StatModifiers": [
+            {
+              "SourceName": "Def",
+              "Value": 2
+            }
+          ],
+          "MovementCosts": [
+            {
+              "SourceName": "Infantry",
+              "Value": 4
+            },
+            {
+              "SourceName": "Mounted",
+              "Value": 5
+            },
+            {
+              "SourceName": "Mounted (Promoted)",
+              "Value": 6
+            },
+            {
+              "SourceName": "Flier",
+              "Value": 7
+            },
+            {
+              "SourceName": "Armor",
+              "Value": 8
+            },
+            {
+              "SourceName": "Brigand",
+              "Value": 9
+            }
+          ]
         }
       ],
       "TextFields": [ 3 ]

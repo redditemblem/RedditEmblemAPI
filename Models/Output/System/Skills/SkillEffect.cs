@@ -64,10 +64,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 
             foreach (Tile tile in targetTiles)
             {
+                TerrainTypeStats terrainStats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(unit.AffiliationObj);
+
                 //Ensure that this unit can move to this tile
                 int moveCost;
-                if (!tile.TerrainTypeObj.MovementCosts.TryGetValue(unit.GetUnitMovementType(), out moveCost))
-                    throw new UnmatchedMovementTypeException(unit.GetUnitMovementType(), tile.TerrainTypeObj.MovementCosts.Keys);
+                if (!terrainStats.MovementCosts.TryGetValue(unit.GetUnitMovementType(), out moveCost))
+                    throw new UnmatchedMovementTypeException(unit.GetUnitMovementType(), terrainStats.MovementCosts.Keys);
 
                 //If unit is blocked from this tile, check for an effect that would allow it to access it
                 if (moveCost == 99)

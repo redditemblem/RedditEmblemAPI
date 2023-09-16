@@ -177,46 +177,50 @@
         "Orientation": 1
       },
       "Name": 0,
-      "CombatStatModifiers": [
+      "StatGroups": [
         {
-          "SourceName": "Avo",
-          "Value": 1
-        }
-      ],
-      "StatModifiers": [
-        {
-          "SourceName": "Def",
-          "Value": 2
-        },
-        {
-          "SourceName": "Res",
-          "Value": 3
-        }
-      ],
-      "MovementCosts": [
-        {
-          "SourceName": "Foot",
-          "Value": 4
-        },
-        {
-          "SourceName": "Armor",
-          "Value": 5
-        },
-        {
-          "SourceName": "Cavalry",
-          "Value": 6
-        },
-        {
-          "SourceName": "Barbarian",
-          "Value": 7
-        },
-        {
-          "SourceName": "Mage",
-          "Value": 8
-        },
-        {
-          "SourceName": "Flying",
-          "Value": 9
+          "CombatStatModifiers": [
+            {
+              "SourceName": "Avo",
+              "Value": 1
+            }
+          ],
+          "StatModifiers": [
+            {
+              "SourceName": "Def",
+              "Value": 2
+            },
+            {
+              "SourceName": "Res",
+              "Value": 3
+            }
+          ],
+          "MovementCosts": [
+            {
+              "SourceName": "Foot",
+              "Value": 4
+            },
+            {
+              "SourceName": "Armor",
+              "Value": 5
+            },
+            {
+              "SourceName": "Cavalry",
+              "Value": 6
+            },
+            {
+              "SourceName": "Barbarian",
+              "Value": 7
+            },
+            {
+              "SourceName": "Mage",
+              "Value": 8
+            },
+            {
+              "SourceName": "Flying",
+              "Value": 9
+            }
+          ]
         }
       ],
       "Groupings": 16,

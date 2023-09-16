@@ -197,31 +197,35 @@
         "Orientation": 1
       },
       "Name": 0,
-      "HPModifier": 5,
-      "CombatStatModifiers": [
+      "StatGroups": [
         {
-          "SourceName": "Avo",
-          "Value": 2
-        }
-      ],
-      "StatModifiers": [
-        {
-          "SourceName": "Def",
-          "Value": 1
-        }
-      ],
-      "MovementCosts": [
-        {
-          "SourceName": "Foot",
-          "Value": 6
-        },
-        {
-          "SourceName": "Mounted",
-          "Value": 7
-        },
-        {
-          "SourceName": "Flying",
-          "Value": 8
+          "HPModifier": 5,
+          "CombatStatModifiers": [
+            {
+              "SourceName": "Avo",
+              "Value": 2
+            }
+          ],
+          "StatModifiers": [
+            {
+              "SourceName": "Def",
+              "Value": 1
+            }
+          ],
+          "MovementCosts": [
+            {
+              "SourceName": "Foot",
+              "Value": 6
+            },
+            {
+              "SourceName": "Mounted",
+              "Value": 7
+            },
+            {
+              "SourceName": "Flying",
+              "Value": 8
+            }
+          ]
         }
       ],
       "BlocksItems": 9,

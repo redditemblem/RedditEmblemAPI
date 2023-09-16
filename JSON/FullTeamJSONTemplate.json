@@ -197,23 +197,28 @@
         "Orientation": 0
       },
       "Name": 0, //Required
-      "HPModifier": 0, //Optional
-      "CombatStatModifiers": [ //Optional
+      "StatGroups": [ //Required
         {
-          "SourceName": "Avo",
-          "Value": 1
-        }
-      ],
-      "StatModifiers": [ //Optional
-        {
-          "SourceName": "Avo",
-          "Value": 0
-        }
-      ],
-      "MovementCosts": [ //Required
-        {
-          "SourceName": "Mounted",
-          "Value": 0
+          "AffiliationGroupings": 0, //Optional, only one item in the list should be missing this attribute
+          "HPModifier": 0, //Optional
+          "CombatStatModifiers": [ //Optional
+            {
+              "SourceName": "Avo",
+              "Value": 1
+            }
+          ],
+          "StatModifiers": [ //Optional
+            {
+              "SourceName": "Avo",
+              "Value": 0
+            }
+          ],
+          "MovementCosts": [ //Required
+            {
+              "SourceName": "Mounted",
+              "Value": 0
+            }
+          ]
         }
       ],
       "WarpType": 0, //Optional, required if WarpCost provided
