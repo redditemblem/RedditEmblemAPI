@@ -108,7 +108,8 @@ namespace RedditEmblemAPI.Models.Configuration
             {
                 this.Map.MapControls.Query,
                 this.Map.MapTiles.Query,
-                this.System.TerrainTypes.Query
+                this.System.TerrainTypes.Query,
+                this.System.Affiliations.Query
             };
 
             return queries;

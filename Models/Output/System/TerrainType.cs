@@ -212,7 +212,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Matches <paramref name="name"/> to a <c>TerrainType</c> in <paramref name="terrainTypes"/> and returns it.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
-        /// <exception cref="UnmatchedTerrainTypeException"></exception>
+        /// <exception cref="UnmatchedTileTerrainTypeException"></exception>
         public static TerrainType MatchName(IDictionary<string, TerrainType> terrainTypes, string name, Coordinate coord, bool skipMatchedStatusSet = false)
         {
             TerrainType match;
