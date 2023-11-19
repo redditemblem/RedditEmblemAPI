@@ -103,6 +103,11 @@
           "Value": 0
         }
       ],
+      "EquippedSkills": [ //Optional
+        {
+          "Name": 0
+        }
+      ],
       "InventoryCombatStatModifiers": [ //Optional
         {
           "SourceName": "Atk",

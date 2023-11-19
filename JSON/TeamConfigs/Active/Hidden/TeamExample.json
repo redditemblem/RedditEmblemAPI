@@ -157,7 +157,12 @@
       },
       "Tags": [ 32 ],
       "Engravings": [ 33 ],
-      "TextFields": [ 34, 35 ]
+      "EquippedSkills": [
+        {
+          "Name": 34
+        }
+      ],
+      "TextFields": [ 35, 36 ]
     },
     "WeaponRankBonuses": {
       "Query": {

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
+using RedditEmblemAPI.Models.Configuration.Units;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Items
@@ -79,6 +80,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// Optional. List of an item's stat modifiers when equipped.
         /// </summary>
         public List<NamedStatConfig> EquippedStatModifiers { get; set; } = new List<NamedStatConfig>();
+
+        /// <summary>
+        /// Optional. List of an item's skills that activate when equipped.
+        /// </summary>
+        public List<UnitSkillConfig> EquippedSkills { get; set; } = new List<UnitSkillConfig>();
 
         /// <summary>
         /// Optional. List of an item's combat stat modifiers when in a unit's inventory.

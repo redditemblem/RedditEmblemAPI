@@ -1,9 +1,12 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System.Items;
+using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
+using RedditEmblemAPI.Models.Output.System.Skills;
+using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -78,6 +81,11 @@ namespace RedditEmblemAPI.Models.Output.System
         public IDictionary<string, int> EquippedStatModifiers { get; set; }
 
         /// <summary>
+        /// Collection of skills active on the owning unit when this item is equipped.
+        /// </summary>
+        public List<UnitSkill> EquippedSkills { get; set; }
+
+        /// <summary>
         /// Collection of combat stat modifiers that will be applied to the owning unit when this item is not equipped.
         /// </summary>
         [JsonIgnore]
@@ -123,7 +131,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Item(ItemsConfig config, IEnumerable<string> data, IDictionary<string, Tag> tags, IDictionary<string, Engraving> engravings)
+        public Item(ItemsConfig config, IEnumerable<string> data, IDictionary<string, Skill> skills, IDictionary<string, Tag> tags, IDictionary<string, Engraving> engravings)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -145,9 +153,33 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Stats = DataParser.NamedStatDictionary_OptionalDecimal_Any(config.Stats, data, true);
             this.EquippedCombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.EquippedCombatStatModifiers, data, false, "{0} (Equipped)");
             this.EquippedStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.EquippedStatModifiers, data, false, "{0} (Equipped)");
+            this.EquippedSkills = BuildEquippedSkills(data, config.EquippedSkills, skills);
+
             this.InventoryCombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.InventoryCombatStatModifiers, data, false, "{0} (Inventory)");
             this.InventoryStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.InventoryStatModifiers, data, false, "{0} (Inventory)");
         }
+
+        #region Build Functions
+
+        /// <summary>
+        /// Builds and returns a list of the item's equipped skills.
+        /// </summary>
+        private List<UnitSkill> BuildEquippedSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, Skill> skills)
+        {
+            //Note: I'm using UnitSkill here because that's what input structure the skill display is expecting
+            List<UnitSkill> equippedSkills = new List<UnitSkill>();
+            foreach (UnitSkillConfig config in configs)
+            {
+                string name = DataParser.OptionalString(data, config.Name, "Skill Name");
+                if (string.IsNullOrEmpty(name)) continue;
+
+                equippedSkills.Add(new UnitSkill(data, config, skills, true));
+            }
+
+            return equippedSkills;
+        }
+
+        #endregion Build Functions
 
         #region Static Functions
 
@@ -155,7 +187,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Item</c> from each valid row.
         /// </summary>
         /// <exception cref="ItemProcessingException"></exception>
-        public static IDictionary<string, Item> BuildDictionary(ItemsConfig config, IDictionary<string, Tag> tags, IDictionary<string, Engraving> engravings)
+        public static IDictionary<string, Item> BuildDictionary(ItemsConfig config, IDictionary<string, Skill> skills, IDictionary<string, Tag> tags, IDictionary<string, Engraving> engravings)
         {
             IDictionary<string, Item> items = new Dictionary<string, Item>();
             if (config == null || config.Query == null)
@@ -170,7 +202,7 @@ namespace RedditEmblemAPI.Models.Output.System
                     name = DataParser.OptionalString(item, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!items.TryAdd(name, new Item(config, item, tags, engravings)))
+                    if (!items.TryAdd(name, new Item(config, item, skills, tags, engravings)))
                         throw new NonUniqueObjectNameException("item");
                 }
                 catch (Exception ex)
@@ -205,6 +237,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!skipMatchedStatusSet)
             {
                 match.Matched = true;
+                match.EquippedSkills.ForEach(s => s.SkillObj.Matched = true);
                 match.TagsList.ForEach(t => t.Matched = true);
                 match.Engravings.ForEach(e => e.Matched = true);
             }

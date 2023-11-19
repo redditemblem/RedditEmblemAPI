@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
+using RedditEmblemAPI.Models.Output.System.Skills;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -54,6 +55,11 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         public IDictionary<string, Item> Items { get; set; }
 
         /// <summary>
+        /// Container dictionary for data about skills.
+        /// </summary>
+        public IDictionary<string, Skill> Skills { get; set; }
+
+        /// <summary>
         /// Container dictionary for data about tags.
         /// </summary>
         public IDictionary<string, Tag> Tags { get; set; }
@@ -76,9 +82,10 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             this.WorkbookID = config.Team.WorkbookID;
             this.ShowConvoyLink = (config.Convoy != null);
 
+            this.Skills = Skill.BuildDictionary(config.System.Skills);
             this.Tags = Tag.BuildDictionary(config.System.Tags);
             this.Engravings = Engraving.BuildDictionary(config.System.Engravings);
-            this.Items = Item.BuildDictionary(config.System.Items, this.Tags, this.Engravings);
+            this.Items = Item.BuildDictionary(config.System.Items, this.Skills, this.Tags, this.Engravings);
             this.ShopItems = ShopItem.BuildList(config.Shop, this.Items, this.Engravings);
 
             //Build page parameters
@@ -94,6 +101,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             filters.Add("AllowNew", (config.Shop.IsNew != -1));
             filters.Add("AllowSales", (config.Shop.SalePrice != -1));
             filters.Add("AllowEngravings", config.Shop.Engravings.Any() || config.System.Items.Engravings.Any());
+            filters.Add("AllowEquippedSkills", config.System.Items.EquippedSkills.Any());
 
             this.Parameters = new FilterParameters(sorts,
                 new List<string>(), //shop items don't have owners
@@ -111,6 +119,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         private void RemoveUnusedObjects()
         {
             CullDictionary(this.Items);
+            CullDictionary(this.Skills);
             CullDictionary(this.Tags);
             CullDictionary(this.Engravings);
         }

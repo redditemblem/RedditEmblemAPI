@@ -171,8 +171,7 @@ namespace RedditEmblemAPI.Models.Output.System
         {
             this.Affiliations = Affiliation.BuildDictionary(config.Affiliations);
             this.TerrainTypes = TerrainType.BuildDictionary(config.TerrainTypes, this.Affiliations);
-            this.Items = Item.BuildDictionary(config.Items, this.Tags, this.Engravings); //note: items are dependent on Tags & Engravings
-
+            this.Items = Item.BuildDictionary(config.Items, this.Skills, this.Tags, this.Engravings);
         }
 
         /// <summary>
