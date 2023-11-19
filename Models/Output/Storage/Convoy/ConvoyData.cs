@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
+using RedditEmblemAPI.Models.Output.System.Skills;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -54,6 +55,11 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         public IDictionary<string, Item> Items { get; set; }
 
         /// <summary>
+        /// Container dictionary for data about skills.
+        /// </summary>
+        public IDictionary<string, Skill> Skills { get; set; }
+
+        /// <summary>
         /// Container dictionary for data about tags.
         /// </summary>
         public IDictionary<string, Tag> Tags { get; set; }
@@ -76,9 +82,10 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             this.WorkbookID = config.Team.WorkbookID;
             this.ShowShopLink = (config.Shop != null);
 
+            this.Skills = Skill.BuildDictionary(config.System.Skills);
             this.Tags = Tag.BuildDictionary(config.System.Tags);
             this.Engravings = Engraving.BuildDictionary(config.System.Engravings);
-            this.Items = Item.BuildDictionary(config.System.Items, this.Tags, this.Engravings);
+            this.Items = Item.BuildDictionary(config.System.Items, this.Skills, this.Tags, this.Engravings);
             this.ConvoyItems = ConvoyItem.BuildList(config.Convoy, this.Items, this.Engravings);
 
             //Build page parameters
@@ -93,6 +100,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
 
             IDictionary<string, bool> filters = new Dictionary<string, bool>();
             filters.Add("AllowEngravings", config.Convoy.Engravings.Any() || config.System.Items.Engravings.Any());
+            filters.Add("AllowEquippedSkills", config.System.Items.EquippedSkills.Any());
 
             this.Parameters = new FilterParameters(sorts,
                 new List<string>() { "All" }.Union(this.ConvoyItems.Select(i => i.Owner).Where(o => !string.IsNullOrEmpty(o)).Distinct().OrderBy(o => o)),
@@ -110,6 +118,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         private void RemoveUnusedObjects()
         {
             CullDictionary(this.Items);
+            CullDictionary(this.Skills);
             CullDictionary(this.Tags);
             CullDictionary(this.Engravings);
         }

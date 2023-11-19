@@ -46,12 +46,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Initalizes a new skill from a unit and matches it to a <c>Skill</c> in <paramref name="skills"/>.
         /// </summary>
-        public UnitSkill(IEnumerable<string> data, UnitSkillConfig config, IDictionary<string, Skill> skills)
+        public UnitSkill(IEnumerable<string> data, UnitSkillConfig config, IDictionary<string, Skill> skills, bool skipMatchedStatusSet = false)
         {
             this.FullName = DataParser.String(data, config.Name, "Skill Name");
             this.AdditionalStats = DataParser.NamedStatDictionary_OptionalInt_Any(config.AdditionalStats, data, false, this.FullName + " {0}");
 
-            this.SkillObj = Skill.MatchName(skills, this.FullName.Trim());
+            this.SkillObj = Skill.MatchName(skills, this.FullName.Trim(), skipMatchedStatusSet);
         }
     }
 }

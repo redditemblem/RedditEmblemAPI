@@ -7,6 +7,7 @@ using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Configuration.Team;
 using RedditEmblemAPI.Models.Configuration.Units;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Configuration
 {
@@ -129,8 +130,14 @@ namespace RedditEmblemAPI.Models.Configuration
             };
 
             //Add optional queries
-            queries.AddQueryable(this.System.Engravings);
-            queries.AddQueryable(this.System.Tags);
+            if(this.System.Items.EquippedSkills.Any())
+                queries.AddQueryable(this.System.Skills);
+
+            if(this.System.Items.Engravings.Any())
+                queries.AddQueryable(this.System.Engravings);
+
+            if(this.System.Items.Tags.Any())
+                queries.AddQueryable(this.System.Tags);
 
             return queries;
         }
@@ -149,8 +156,14 @@ namespace RedditEmblemAPI.Models.Configuration
             };
 
             //Add optional queries
-            queries.AddQueryable(this.System.Engravings);
-            queries.AddQueryable(this.System.Tags);
+            if (this.System.Items.EquippedSkills.Any())
+                queries.AddQueryable(this.System.Skills);
+
+            if (this.System.Items.Engravings.Any())
+                queries.AddQueryable(this.System.Engravings);
+
+            if (this.System.Items.Tags.Any())
+                queries.AddQueryable(this.System.Tags);
 
             return queries;
         }

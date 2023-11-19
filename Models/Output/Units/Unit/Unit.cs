@@ -313,12 +313,17 @@ namespace RedditEmblemAPI.Models.Output.Units
         }
 
         /// <summary>
-        /// Returns complete list of skills on the unit, including skills from subitems like Emblems.
+        /// Returns complete list of skills on the unit, including skills from things like the equipped item or emblems.
         /// </summary>
         public IEnumerable<Skill> GetFullSkillsList()
         {
             IEnumerable<Skill> skills = this.Skills.Select(s => s.SkillObj);
 
+            //Union w/ equipped item skills
+            List<UnitInventoryItem> equipped = this.Inventory.GetAllEquippedItems();
+            foreach(UnitInventoryItem unitItem in equipped)
+                skills = skills.Union(unitItem.Item.EquippedSkills.Select(s => s.SkillObj));
+            
             //Union w/ emblem skills
             if(this.Emblem != null)
             {
