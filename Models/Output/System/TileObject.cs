@@ -20,7 +20,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Flag indicating whether or not this tile object was found on a tile. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The name of the tile object.
@@ -102,6 +102,14 @@ namespace RedditEmblemAPI.Models.Output.System
             return (TileObjectLayer)layerEnum;
         }
 
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>TileObject</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
+        }
+
         #region Static Functions
 
         /// <summary>
@@ -155,7 +163,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!tileObjects.TryGetValue(name, out match))
                 throw new UnmatchedTileObjectException(coord, name);
 
-            if (!skipMatchedStatusSet) match.Matched = true;
+            if (!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }

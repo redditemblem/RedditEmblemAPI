@@ -23,7 +23,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// Flag indicating whether or not this status was found on a unit. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The name of the status condition.
@@ -127,6 +127,14 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
             throw new UnmatchedStatusConditionEffectException(effectType);
         }
 
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>StatusCondition</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
+        }
+
         #region Static Functions
 
         /// <summary>
@@ -180,7 +188,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
             if (!statusConditions.TryGetValue(name, out match))
                 throw new UnmatchedStatusConditionException(name);
 
-            if (!skipMatchedStatusSet) match.Matched = true;
+            if (!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }

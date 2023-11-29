@@ -19,7 +19,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Flag indicating whether or not this combat art was found on a unit. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The combat art's name. 
@@ -101,6 +101,15 @@ namespace RedditEmblemAPI.Models.Output.System
             this.TagsList = Tag.MatchNames(tags, tagList, true);
         }
 
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>CombatArt</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
+            this.TagsList.ForEach(t => t.FlagAsMatched());
+        }
+
         #region Static Functions
 
         /// <summary>
@@ -154,12 +163,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!combatArts.TryGetValue(name, out match))
                 throw new UnmatchedCombatArtException(name);
 
-            if (!skipMatchedStatusSet)
-            {
-                match.Matched = true;
-                foreach (Tag tag in match.TagsList)
-                    tag.Matched = true;
-            }
+            if (!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }

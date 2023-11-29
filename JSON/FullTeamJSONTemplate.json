@@ -375,6 +375,7 @@
           "Value": 0
         }
       ],
+      "Tags": [ 0 ], //Optional
       "TextFields": [ 0 ] //Optional
     },
     "Emblems": { //Optional

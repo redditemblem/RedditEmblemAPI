@@ -53,6 +53,12 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         public bool IsNew { get; set; }
 
         /// <summary>
+        /// List of the item's tags.
+        /// </summary>
+        [JsonIgnore]
+        public List<Tag> TagsList { get; set; }
+
+        /// <summary>
         /// List of engravings applied to the item.
         /// </summary>
         [JsonIgnore]
@@ -65,6 +71,12 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// </summary>
         [JsonProperty]
         private string Name { get { return this.Item.Name; } }
+
+        /// <summary>
+        /// For JSON serialization only. Names of the item's tags.
+        /// </summary>
+        [JsonProperty]
+        private IEnumerable<string> Tags { get { return this.TagsList.Select(t => t.Name); } }
 
         /// <summary>
         /// Only for JSON serialization. List of the engravings on the item.
@@ -85,10 +97,11 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             this.FullName = DataParser.String(data, config.Name, "Name");
             this.Item = Item.MatchName(items, this.FullName);
 
-            //Copy stats data from parent item
+            //Copy data from parent item
             this.Stats = new Dictionary<string, UnitInventoryItemStat>();
             foreach (KeyValuePair<string, decimal> stat in this.Item.Stats)
                 this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
+            this.TagsList = this.Item.Tags.ToList();
 
             this.Price = DataParser.Int_Positive(data, config.Price, "Price");
             this.SalePrice = DataParser.OptionalInt_Positive(data, config.SalePrice, "Sale Price", this.Price);
@@ -111,6 +124,9 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
                     UnitInventoryItemStat stat = MatchStatName(mod.Key);
                     stat.Modifiers.TryAdd(engraving.Name, mod.Value);
                 }
+
+                //Apply any tags
+                this.TagsList = this.TagsList.Union(engraving.Tags).ToList();
             }
         }
 

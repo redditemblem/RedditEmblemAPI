@@ -51,6 +51,12 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         public int Value { get; set; }
 
         /// <summary>
+        /// List of the item's tags.
+        /// </summary>
+        [JsonIgnore]
+        public List<Tag> TagsList { get; set; }
+
+        /// <summary>
         /// List of the engravings applied to the item.
         /// </summary>
         [JsonIgnore]
@@ -63,6 +69,12 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// </summary>
         [JsonProperty]
         private string Name { get { return this.Item.Name; } }
+
+        /// <summary>
+        /// For JSON serialization only. Names of the item's tags.
+        /// </summary>
+        [JsonProperty]
+        private IEnumerable<string> Tags { get { return this.TagsList.Select(t => t.Name); } }
 
         /// <summary>
         /// For JSON serialization only. Complete list of the item's engravings.
@@ -106,10 +118,11 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             name = name.Trim();
             this.Item = Item.MatchName(items, name);
 
-            //Copy stats data from parent item
+            //Copy data from parent item
             this.Stats = new Dictionary<string, UnitInventoryItemStat>();
             foreach (KeyValuePair<string, decimal> stat in this.Item.Stats)
                 this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
+            this.TagsList = this.Item.Tags.ToList();
 
             this.Owner = DataParser.OptionalString(data, config.Owner, "Owner");
             this.Value = DataParser.OptionalInt_Positive(data, config.Value, "Value", -1);
@@ -131,6 +144,9 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
                     UnitInventoryItemStat stat = MatchStatName(mod.Key);
                     stat.Modifiers.TryAdd(engraving.Name, mod.Value);
                 }
+
+                //Apply any tags
+                this.TagsList = this.TagsList.Union(engraving.Tags).ToList();
             }
         }
 

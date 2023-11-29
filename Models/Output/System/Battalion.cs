@@ -22,7 +22,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Flag indicating whether or not this battalion was found on a unit. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The battalion's name. 
@@ -103,6 +103,15 @@ namespace RedditEmblemAPI.Models.Output.System
             return value;
         }
 
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>Battalion</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
+            this.GambitObj.FlagAsMatched();
+        }
+
         #region Static Functions
 
         /// <summary>
@@ -156,11 +165,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!battalions.TryGetValue(name, out match))
                 throw new UnmatchedBattalionException(name);
 
-            if (!skipMatchedStatusSet)
-            {
-                match.Matched = true;
-                match.GambitObj.Matched = true;
-            }
+            if (!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }

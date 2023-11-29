@@ -392,7 +392,7 @@
     "Engravings": {
       "Query": {
         "Sheet": "Item Engravings",
-        "Selection": "B2:T",
+        "Selection": "B2:U",
         "Orientation": 1
       },
       "Name": 0,
@@ -457,7 +457,8 @@
           "Value": 16
         }
       ],
-      "TextFields": [ 17, 18 ]
+      "Tags": [ 17 ],
+      "TextFields": [ 18, 19 ]
     },
     "Emblems": {
       "Query": {

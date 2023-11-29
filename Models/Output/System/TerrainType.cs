@@ -23,7 +23,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Flag indicating whether or not this terrain type was found on a tile. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The name of the terrain type.
@@ -166,6 +166,14 @@ namespace RedditEmblemAPI.Models.Output.System
             return this.StatGroups.First(g => g.IsDefaultGroup);
         }
 
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>TerrainType</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
+        }
+
         #region Static Functions
 
         /// <summary>
@@ -219,7 +227,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!terrainTypes.TryGetValue(name, out match))
                 throw new UnmatchedTileTerrainTypeException(coord, name);
 
-            if (!skipMatchedStatusSet) match.Matched = true;
+            if (!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }
