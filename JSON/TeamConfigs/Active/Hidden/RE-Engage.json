@@ -441,25 +441,6 @@
         ]
       },
       {
-        "SourceName": "Crit",
-        "SelectsUsing": 0,
-        "Equations": [
-          {
-            "Equation": "{WeaponStat[Crit]} + ({UnitStat[Dex]} / 2)"
-          }
-        ],
-        "Modifiers": [
-          {
-            "SourceName": "Mods",
-            "Value": 43
-          },
-          {
-            "SourceName": "Long Mods",
-            "Value": 186
-          }
-        ]
-      },
-      {
         "SourceName": "Avo",
         "SelectsUsing": 0,
         "Equations": [
@@ -475,6 +456,25 @@
           {
             "SourceName": "Long Mods",
             "Value": 185
+          }
+        ]
+      },
+      {
+        "SourceName": "Crit",
+        "SelectsUsing": 0,
+        "Equations": [
+          {
+            "Equation": "{WeaponStat[Crit]} + ({UnitStat[Dex]} / 2)"
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Mods",
+            "Value": 43
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 186
           }
         ]
       },
@@ -682,7 +682,7 @@
       }
     ],
     "Inventory": {
-      "PrimaryEquippedItem": 171,
+      "PrimaryEquippedItem": 189,
       "Slots": [
         {
           "Name": 46,
