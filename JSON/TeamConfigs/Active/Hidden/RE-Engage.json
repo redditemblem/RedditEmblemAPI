@@ -55,12 +55,13 @@
     "Affiliations": {
       "Query": {
         "Sheet": "Affiliations",
-        "Selection": "A2:C",
+        "Selection": "A2:D",
         "Orientation": 1
       },
       "Name": 0,
       "Grouping": 1,
-      "TextFields": [ 2 ]
+      "TextFields": [ 2 ],
+      "FlipUnitSprites": 3
     },
     "Classes": {
       "Query": {
@@ -413,6 +414,10 @@
           {
             "SourceName": "Mods",
             "Value": 38
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 181
           }
         ]
       },
@@ -428,6 +433,10 @@
           {
             "SourceName": "Mods",
             "Value": 41
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 184
           }
         ]
       },
@@ -442,7 +451,11 @@
         "Modifiers": [
           {
             "SourceName": "Mods",
-            "Value": 42
+            "Value": 43
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 186
           }
         ]
       },
@@ -457,7 +470,11 @@
         "Modifiers": [
           {
             "SourceName": "Mods",
-            "Value": 43
+            "Value": 42
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 185
           }
         ]
       },
@@ -473,6 +490,10 @@
           {
             "SourceName": "Mods",
             "Value": 44
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 187
           }
         ]
       }
@@ -485,6 +506,10 @@
           {
             "SourceName": "Mods",
             "Value": 29
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 172
           }
         ]
       },
@@ -495,6 +520,10 @@
           {
             "SourceName": "Mods",
             "Value": 30
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 173
           }
         ]
       },
@@ -505,6 +534,10 @@
           {
             "SourceName": "Mods",
             "Value": 31
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 174
           }
         ]
       },
@@ -515,6 +548,11 @@
           {
             "SourceName": "Mods",
             "Value": 32
+          },
+
+          {
+            "SourceName": "Long Mods",
+            "Value": 175
           }
         ]
       },
@@ -525,6 +563,10 @@
           {
             "SourceName": "Mods",
             "Value": 33
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 176
           }
         ]
       },
@@ -535,6 +577,10 @@
           {
             "SourceName": "Mods",
             "Value": 34
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 177
           }
         ]
       },
@@ -545,6 +591,10 @@
           {
             "SourceName": "Mods",
             "Value": 35
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 178
           }
         ]
       },
@@ -555,6 +605,10 @@
           {
             "SourceName": "Mods",
             "Value": 36
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 179
           }
         ]
       },
@@ -565,6 +619,10 @@
           {
             "SourceName": "Mods",
             "Value": 37
+          },
+          {
+            "SourceName": "Long Mods",
+            "Value": 180
           }
         ]
       }
