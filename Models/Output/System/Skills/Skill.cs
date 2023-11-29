@@ -30,7 +30,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// Flag indicating whether or not this skill was found on a unit. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The name of the skill.
@@ -164,6 +164,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             throw new UnmatchedSkillEffectException(effectType);
         }
 
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>Skill</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
+        }
+
         #region Static Functions
 
         /// <summary>
@@ -217,7 +225,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             if (!skills.TryGetValue(name, out match))
                 throw new UnmatchedSkillException(name);
 
-            if (!skipMatchedStatusSet) match.Matched = true;
+            if (!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }

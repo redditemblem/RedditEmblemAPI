@@ -19,7 +19,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Flag indicating whether or not this emblem was found on a unit. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The emblem's name. 
@@ -57,6 +57,14 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Tagline = DataParser.OptionalString(data, config.Tagline, "Tagline");
             this.EngagedUnitAura = DataParser.OptionalString_HexCode(data, config.EngagedUnitAura, "Engaged Unit Aura");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
+        }
+
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>Emblem</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
         }
 
         #region Static Functions
@@ -112,7 +120,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!emblems.TryGetValue(name, out match))
                 throw new UnmatchedEmblemException(name);
 
-            if (!skipMatchedStatusSet) match.Matched = true;
+            if (!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }

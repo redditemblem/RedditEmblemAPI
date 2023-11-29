@@ -22,7 +22,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Flag indicating whether or not this gambit was found on a unit. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The gambit's name. 
@@ -72,6 +72,14 @@ namespace RedditEmblemAPI.Models.Output.System
 
             this.Range = new GambitRange(config.Range, data);
             this.Stats = DataParser.NamedStatDictionary_Int_Any(config.Stats, data, true);
+        }
+
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>Gambit</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
         }
 
         #region Static Functions
@@ -127,7 +135,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!gambits.TryGetValue(name, out match))
                 throw new UnmatchedGambitException(name);
             
-            if(!skipMatchedStatusSet) match.Matched = true;
+            if(!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }

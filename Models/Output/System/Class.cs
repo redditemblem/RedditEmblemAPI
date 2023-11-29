@@ -19,7 +19,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Flag indicating whether or not this class was found on a unit. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The class's name.
@@ -65,6 +65,17 @@ namespace RedditEmblemAPI.Models.Output.System
 
             this.Tags = DataParser.List_StringCSV(data, config.Tags).Distinct().ToList();
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
+        }
+
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>Class</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
+
+            if(this.BattleStyle != null)
+                this.BattleStyle.FlagAsMatched();
         }
 
         #region Static Functions
@@ -120,13 +131,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!classes.TryGetValue(name, out match))
                 throw new UnmatchedClassException(name);
 
-            if (!skipMatchedStatusSet)
-            {
-                match.Matched = true;
-
-                if(match.BattleStyle != null)
-                    match.BattleStyle.Matched = true;
-            }
+            if (!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }

@@ -188,7 +188,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Skills = Skill.BuildDictionary(config.Skills);
             this.StatusConditions = StatusCondition.BuildDictionary(config.StatusConditions);
             this.WeaponRankBonuses = WeaponRankBonus.BuildList(config.WeaponRankBonuses);
-            this.Engravings = Engraving.BuildDictionary(config.Engravings);
+            this.Engravings = Engraving.BuildDictionary(config.Engravings, this.Tags);
             this.Gambits = Gambit.BuildDictionary(config.Gambits);
             this.Emblems = Emblem.BuildDictionary(config.Emblems);
             this.EngageAttacks = EngageAttack.BuildDictionary(config.EngageAttacks);

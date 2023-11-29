@@ -19,7 +19,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Flag indicating whether or not this status was found on a unit. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The name of the tag.
@@ -54,6 +54,14 @@ namespace RedditEmblemAPI.Models.Output.System
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.ShowOnUnit = (DataParser.OptionalBoolean_YesNo(data, config.ShowOnUnit, "Show On Unit") && !string.IsNullOrEmpty(this.SpriteURL));
             this.UnitAura = DataParser.OptionalString_HexCode(data, config.UnitAura, "Unit Aura");
+        }
+
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>Tag</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
         }
 
         #region Static Functions
@@ -109,7 +117,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!tags.TryGetValue(name, out match))
                 throw new UnmatchedTagException(name);
 
-            if (!skipMatchedStatusSet) match.Matched = true;
+            if (!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }

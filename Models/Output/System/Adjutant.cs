@@ -19,7 +19,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Flag indicating whether or not this adjutant was found on a unit. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The name of the adjutant.
@@ -61,6 +61,14 @@ namespace RedditEmblemAPI.Models.Output.System
             this.CombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.CombatStatModifiers, data, false);
             this.StatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.StatModifiers, data, false);
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
+        }
+
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>Adjutant</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
         }
 
         #region Static Functions
@@ -116,7 +124,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!adjutants.TryGetValue(name, out match))
                 throw new UnmatchedAdjutantException(name);
 
-            if (!skipMatchedStatusSet) match.Matched = true;
+            if (!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }

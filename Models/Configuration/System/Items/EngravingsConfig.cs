@@ -50,6 +50,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         public List<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
 
         /// <summary>
+        /// Optional. List of cell indexes for an engraving's tag(s).
+        /// </summary>
+        public List<int> Tags { get; set; } = new List<int>();
+
+        /// <summary>
         /// Optional. List of cell indexes for an engraving's text fields.
         /// </summary>
         public List<int> TextFields { get; set; } = new List<int>();

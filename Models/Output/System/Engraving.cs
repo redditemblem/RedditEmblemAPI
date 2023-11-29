@@ -22,7 +22,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Flag indicating whether or not this engraving was found on an item. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The engraving's name. 
@@ -59,6 +59,12 @@ namespace RedditEmblemAPI.Models.Output.System
         public IDictionary<string, int> StatModifiers { get; set; }
 
         /// <summary>
+        /// The engraving's tags.
+        /// </summary>
+        [JsonIgnore]
+        public List<Tag> Tags { get; set; }
+
+        /// <summary>
         /// List of the engraving's text fields.
         /// </summary>
         public List<string> TextFields { get; set; }
@@ -68,17 +74,29 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Engraving(EngravingsConfig config, IEnumerable<string> data)
+        public Engraving(EngravingsConfig config, IEnumerable<string> data, IDictionary<string, Tag> tags)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
+            IEnumerable<string> engravingTags = DataParser.List_StringCSV(data, config.Tags).Distinct();
+            this.Tags = Tag.MatchNames(tags, engravingTags, true);
+
             this.ItemStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.ItemStatModifiers, data, false, "{0} Modifier");
             this.ItemRangeOverrides = new ItemRange(config.ItemRangeOverrides, data);
             this.CombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.CombatStatModifiers, data, false, "{0} Modifier");
             this.StatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.StatModifiers, data, false, "{0} Modifier");
+        }
+
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>Engraving</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
+            this.Tags.ForEach(t => t.FlagAsMatched());
         }
 
         #region Static Functions
@@ -87,7 +105,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Engraving</c> from each valid row.
         /// </summary>
         /// <exception cref="EngravingProcessingException"></exception>
-        public static IDictionary<string, Engraving> BuildDictionary(EngravingsConfig config)
+        public static IDictionary<string, Engraving> BuildDictionary(EngravingsConfig config, IDictionary<string, Tag> tags)
         {
             IDictionary<string, Engraving> engravings = new Dictionary<string, Engraving>();
             if (config == null || config.Query == null)
@@ -102,7 +120,7 @@ namespace RedditEmblemAPI.Models.Output.System
                     name = DataParser.OptionalString(engraving, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!engravings.TryAdd(name, new Engraving(config, engraving)))
+                    if (!engravings.TryAdd(name, new Engraving(config, engraving, tags)))
                         throw new NonUniqueObjectNameException("engraving");
                 }
                 catch (Exception ex)
@@ -134,7 +152,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!engravings.TryGetValue(name, out match))
                 throw new UnmatchedEngravingException(name);
 
-            if (!skipMatchedStatusSet) match.Matched = true;
+            if (!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }

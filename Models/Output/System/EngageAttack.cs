@@ -19,7 +19,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Flag indicating whether or not this engage attack was found on a unit. Used to minify the output JSON.
         /// </summary>
         [JsonIgnore]
-        public bool Matched { get; set; }
+        public bool Matched { get; private set; }
 
         /// <summary>
         /// The engage attack's name. 
@@ -44,6 +44,14 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
+        }
+
+        /// <summary>
+        /// Sets the <c>Matched</c> flag for this <c>EngageAttack</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
+        /// </summary>
+        public void FlagAsMatched()
+        {
+            this.Matched = true;
         }
 
         #region Static Functions
@@ -99,7 +107,7 @@ namespace RedditEmblemAPI.Models.Output.System
             if (!engageAttacks.TryGetValue(name, out match))
                 throw new UnmatchedEngageAttackException(name);
 
-            if (!skipMatchedStatusSet) match.Matched = true;
+            if (!skipMatchedStatusSet) match.FlagAsMatched();
 
             return match;
         }

@@ -95,6 +95,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         public bool AllowMeleeRange { get; set; }
 
         /// <summary>
+        /// List of the item's tags.
+        /// </summary>
+        [JsonIgnore]
+        public List<Tag> TagsList { get; set; }
+
+        /// <summary>
         /// List of the item's engravings.
         /// </summary>
         [JsonIgnore]
@@ -127,6 +133,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         [JsonProperty]
         private string Name { get { return this.Item.Name; } }
 
+        /// <summary>
+        /// For JSON serialization only. List of the item's tags.
+        /// </summary>
+        [JsonProperty]
+        private IEnumerable<string> Tags { get { return this.TagsList.Select(t => t.Name); } }
 
         /// <summary>
         /// For JSON Serialization ONLY. Complete list of the item's engravings.
@@ -196,6 +207,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.MaxUses = this.Item.MaxUses;
             this.MinRange = new UnitInventoryItemStat(this.Item.Range.Minimum);
             this.MaxRange = new UnitInventoryItemStat(this.Item.Range.Maximum);
+            this.TagsList = this.Item.Tags.ToList();
 
             foreach (KeyValuePair<string, decimal> stat in this.Item.Stats)
                 this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
@@ -229,6 +241,8 @@ namespace RedditEmblemAPI.Models.Output.Units
                     if (engraving.ItemRangeOverrides.Maximum != 0)
                         this.MaxRange.BaseValue = engraving.ItemRangeOverrides.Maximum;
                 }
+
+                this.TagsList = this.TagsList.Union(engraving.Tags).ToList();
             }
         }
 

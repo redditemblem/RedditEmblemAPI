@@ -84,7 +84,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
 
             this.Skills = Skill.BuildDictionary(config.System.Skills);
             this.Tags = Tag.BuildDictionary(config.System.Tags);
-            this.Engravings = Engraving.BuildDictionary(config.System.Engravings);
+            this.Engravings = Engraving.BuildDictionary(config.System.Engravings, this.Tags);
             this.Items = Item.BuildDictionary(config.System.Items, this.Skills, this.Tags, this.Engravings);
             this.ShopItems = ShopItem.BuildList(config.Shop, this.Items, this.Engravings);
 

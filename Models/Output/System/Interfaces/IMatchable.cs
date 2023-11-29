@@ -6,5 +6,7 @@
     public interface IMatchable
     {
         bool Matched { get; }
+
+        void FlagAsMatched();
     }
 }
