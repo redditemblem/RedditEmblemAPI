@@ -99,7 +99,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
 
             //Copy data from parent item
             this.Stats = new Dictionary<string, UnitInventoryItemStat>();
-            foreach (KeyValuePair<string, decimal> stat in this.Item.Stats)
+            foreach (KeyValuePair<string, NamedStatValue> stat in this.Item.Stats)
                 this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
             this.TagsList = this.Item.Tags.ToList();
 

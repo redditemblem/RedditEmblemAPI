@@ -61,7 +61,7 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// Required. List of a unit's base stats.
         /// </summary>
         [JsonRequired]
-        public List<ModifiedNamedStatConfig> Stats { get; set; }
+        public List<ModifiedNamedStatConfig_Displayed> Stats { get; set; }
 
         /// <summary>
         /// Required. List of a unit's weapon ranks.
@@ -142,7 +142,7 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// <summary>
         /// Optional. List of a unit's system stats.
         /// </summary>
-        public List<ModifiedNamedStatConfig> SystemStats { get; set; } = new List<ModifiedNamedStatConfig>();
+        public List<ModifiedNamedStatConfig_Displayed> SystemStats { get; set; } = new List<ModifiedNamedStatConfig_Displayed>();
 
         /// <summary>
         /// Optional. List of container objects for a unit's status conditions.

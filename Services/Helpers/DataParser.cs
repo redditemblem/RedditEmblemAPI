@@ -1,5 +1,6 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -629,20 +630,20 @@ namespace RedditEmblemAPI.Services.Helpers
         }
 
         /// <summary>
-        /// Iterates the <c>NamedStatConfig</c>s in <paramref name="configs"/> and parses them into a dictionary. All values are included.
+        /// Iterates the <c>NamedStatConfig_Displayed</c> items in <paramref name="configs"/> and parses them into a dictionary of <c>NamedStatValues</c>.
         /// </summary>
         /// <param name="errorFieldNameFormat">Passed into <c>string.Format</c> to create the field name thrown with any parsing errors. The <c>NamedStatConfig</c>'s source name is always {0}.</param>
         ///<param name="errorFieldNameArgs">Any additional values that will be formatted with <paramref name="errorFieldNameFormat"/>.</param>
-        public static IDictionary<string, decimal> NamedStatDictionary_OptionalDecimal_Any(IEnumerable<NamedStatConfig> configs, IEnumerable<string> data, bool includeZeroValues = false, string errorFieldNameFormat = "{0}", params string[] errorFieldNameArgs)
+        public static IDictionary<string, NamedStatValue> NamedStatValueDictionary_OptionalDecimal_Any(IEnumerable<NamedStatConfig_Displayed> configs, IEnumerable<string> data, bool includeZeroValues = false, string errorFieldNameFormat = "{0}", params string[] errorFieldNameArgs)
         {
-            IDictionary<string, decimal> stats = new Dictionary<string, decimal>();
+            IDictionary<string, NamedStatValue> stats = new Dictionary<string, NamedStatValue>();
 
-            foreach (NamedStatConfig stat in configs)
+            foreach (NamedStatConfig_Displayed stat in configs)
             {
                 decimal val = DataParser.OptionalDecimal_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
                 if (val == 0 && !includeZeroValues) continue;
 
-                stats.Add(stat.SourceName, val);
+                stats.Add(stat.SourceName, new NamedStatValue(val, stat.InvertModifiedDisplayColors));
             }
 
             return stats;

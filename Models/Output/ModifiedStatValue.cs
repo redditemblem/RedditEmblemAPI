@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output
@@ -20,34 +21,41 @@ namespace RedditEmblemAPI.Models.Output
         /// </summary>
         public int FinalValue { get { return this.BaseValue + this.Modifiers.Sum(m => m.Value); } }
 
-
         /// <summary>
         /// Collection of all values that modify this stat. (ex. "Debuff",-2)
         /// </summary>
         public IDictionary<string, int> Modifiers { get; set; }
 
-        #endregion
+        /// <summary>
+        /// For the UI. Flag indicating if the normal positive/negative modified colors should be inverted.
+        /// </summary>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public bool InvertModifiedDisplayColors { get; private set; }
+
+        #endregion Attributes
 
         #region Constructors
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ModifiedStatValue()
+        public ModifiedStatValue(bool invertModifiedDisplayColors)
         {
             this.Modifiers = new Dictionary<string, int>();
+            this.InvertModifiedDisplayColors = invertModifiedDisplayColors;
         }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="baseValue"></param>
-        public ModifiedStatValue(int baseValue)
+        public ModifiedStatValue(int baseValue, bool invertModifiedDisplayColors)
         {
             this.BaseValue = baseValue;
             this.Modifiers = new Dictionary<string, int>();
+            this.InvertModifiedDisplayColors = invertModifiedDisplayColors;
         }
 
-        #endregion
+        #endregion Constructors
     }
 }
