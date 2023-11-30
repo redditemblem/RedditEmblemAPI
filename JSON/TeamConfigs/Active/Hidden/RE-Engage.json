@@ -101,7 +101,8 @@
         },
         {
           "SourceName": "Wgt",
-          "Value": 8
+          "Value": 8,
+          "InvertModifiedDisplayColors": true
         },
         {
           "SourceName": "Atk Scale",
@@ -173,13 +174,14 @@
     "StatusConditions": {
       "Query": {
         "Sheet": "Status Conditions",
-        "Selection": "A2:D",
+        "Selection": "A2:E",
         "Orientation": 1
       },
       "Name": 0,
       "Type": 2,
       "Turns": 1,
-      "TextFields": [ 3 ]
+      "TextFields": [ 3 ],
+      "SpriteURL": 4
     },
     "Tags": {
       "Query": {
