@@ -49,7 +49,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// Required. List of an item's stat configurations.
         /// </summary>
         [JsonRequired]
-        public List<NamedStatConfig> Stats { get; set; }
+        public List<NamedStatConfig_Displayed> Stats { get; set; }
 
         /// <summary>
         /// Required. Container object for an item's range configuration.

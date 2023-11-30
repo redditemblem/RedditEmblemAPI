@@ -21,6 +21,21 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         [JsonRequired]
         public int Value { get; set; }
 
-        #endregion
+        #endregion Required Fields
+    }
+
+    /// <summary>
+    /// Inherits <c>NamedStatConfig</c>. Contains extra config options for controlling how this stat is displayed in the UI.
+    /// </summary>
+    public class NamedStatConfig_Displayed : NamedStatConfig
+    {
+        #region Optional Fields
+
+        /// <summary>
+        /// Optional, defaults to false. Flag indicating if the normal positive/negative modified colors in the UI for this stat should be inverted.
+        /// </summary>
+        public bool InvertModifiedDisplayColors { get; set; } = false;
+
+        #endregion Optional Fields
     }
 }

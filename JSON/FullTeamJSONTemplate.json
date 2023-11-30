@@ -88,7 +88,8 @@
       "Stats": [ //Required
         {
           "SourceName": "Mt",
-          "Value": 0
+          "Value": 0,
+          "InvertModifiedDisplayColors": false //Optional, defaults to false
         }
       ],
       "EquippedCombatStatModifiers": [ //Optional
@@ -455,7 +456,8 @@
             "SourceName": "",
             "Value": 0
           }
-        ]
+        ],
+        "InvertModifiedDisplayColors": false //Optional, defaults to false
       }
     ],
     "Stats": [ //Required
@@ -467,7 +469,8 @@
             "SourceName": "",
             "Value": 0
           }
-        ]
+        ],
+        "InvertModifiedDisplayColors": false //Optional, defaults to false
       }
     ],
     "WeaponRanks": [ //Required
@@ -507,7 +510,8 @@
             "SourceName": "",
             "Value": 0
           }
-        ]
+        ],
+        "InvertModifiedDisplayColors": false //Optional, defaults to false
       }
     ],
     "Skills": [ //Optional

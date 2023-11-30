@@ -209,7 +209,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.MaxRange = new UnitInventoryItemStat(this.Item.Range.Maximum);
             this.TagsList = this.Item.Tags.ToList();
 
-            foreach (KeyValuePair<string, decimal> stat in this.Item.Stats)
+            foreach (KeyValuePair<string, NamedStatValue> stat in this.Item.Stats)
                 this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
 
             MatchEngravings(itemEngravings, engravings);   

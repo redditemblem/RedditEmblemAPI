@@ -34,7 +34,12 @@ namespace RedditEmblemAPI.Models.Configuration.Units.CalculatedStats
         /// </summary>
         public List<NamedStatConfig> Modifiers { get; set; } = new List<NamedStatConfig>();
 
-        #endregion
+        /// <summary>
+        /// Optional, defaults to false. Flag indicating if the normal positive/negative modified colors in the UI for this stat should be inverted.
+        /// </summary>
+        public bool InvertModifiedDisplayColors { get; set; } = false;
+
+        #endregion Optional Fields
     }
 
     public enum CalculatedStatEquationSelectorEnum

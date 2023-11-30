@@ -66,7 +66,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Collection of stat values for the item. (ex. Hit)
         /// </summary>
         [JsonIgnore]
-        public IDictionary<string, decimal> Stats { get; set; }
+        public IDictionary<string, NamedStatValue> Stats { get; set; }
 
         /// <summary>
         /// Collection of combat stat modifiers that will be applied to the owning unit when this item is equipped.
@@ -143,7 +143,7 @@ namespace RedditEmblemAPI.Models.Output.System
             IEnumerable<string> itemEngravings = DataParser.List_Strings(data, config.Engravings).Distinct();
             this.Engravings = Engraving.MatchNames(engravings, itemEngravings, true);
 
-            this.Stats = DataParser.NamedStatDictionary_OptionalDecimal_Any(config.Stats, data, true);
+            this.Stats = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(config.Stats, data, true);
             this.EquippedCombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.EquippedCombatStatModifiers, data, false, "{0} (Equipped)");
             this.EquippedStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.EquippedStatModifiers, data, false, "{0} (Equipped)");
             this.EquippedSkills = BuildEquippedSkills(data, config.EquippedSkills, skills);

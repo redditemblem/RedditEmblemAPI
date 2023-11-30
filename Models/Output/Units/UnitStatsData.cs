@@ -85,7 +85,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             foreach (CalculatedStatConfig stat in calculatedStats)
             {
-                ModifiedStatValue temp = new ModifiedStatValue();
+                ModifiedStatValue temp = new ModifiedStatValue(stat.InvertModifiedDisplayColors);
                 temp.Modifiers = DataParser.NamedStatDictionary_OptionalInt_Any(stat.Modifiers, data, false, "{1} {0}", stat.SourceName);
 
                 stats.Add(stat.SourceName, temp);
@@ -97,13 +97,13 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Iterates through the stats in <paramref name="config"/> and builds a dictionary of values.
         /// </summary>
-        private IDictionary<string, ModifiedStatValue> BuildModifiedStatDictionary(IEnumerable<string> data, List<ModifiedNamedStatConfig> config, bool requireBaseValue = true)
+        private IDictionary<string, ModifiedStatValue> BuildModifiedStatDictionary(IEnumerable<string> data, List<ModifiedNamedStatConfig_Displayed> config, bool requireBaseValue = true)
         {
             IDictionary<string, ModifiedStatValue> stats = new Dictionary<string, ModifiedStatValue>();
 
-            foreach (ModifiedNamedStatConfig stat in config)
+            foreach (ModifiedNamedStatConfig_Displayed stat in config)
             {
-                ModifiedStatValue temp = new ModifiedStatValue();
+                ModifiedStatValue temp = new ModifiedStatValue(stat.InvertModifiedDisplayColors);
                 
                 if(requireBaseValue) temp.BaseValue = DataParser.Int_Any(data, stat.BaseValue, stat.SourceName);
                 else temp.BaseValue = DataParser.OptionalInt_Any(data, stat.BaseValue, stat.SourceName);

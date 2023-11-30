@@ -30,6 +30,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         [JsonIgnore]
         public int ForcedModifier { get; set; }
 
+        /// <summary>
+        /// For the UI. Flag indicating if the normal positive/negative modified colors should be inverted.
+        /// </summary>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private bool InvertModifiedDisplayColors { get; set; }
+
         #endregion Attributes
 
         /// <summary>
@@ -46,6 +52,27 @@ namespace RedditEmblemAPI.Models.Output.Units
         public UnitInventoryItemStat(decimal baseValue)
         {
             this.BaseValue = baseValue;
+            this.InvertModifiedDisplayColors = false;
+            this.Modifiers = new Dictionary<string, int>();
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public UnitInventoryItemStat(decimal baseValue, bool invertModifiedDisplayColors)
+        {
+            this.BaseValue = baseValue;
+            this.InvertModifiedDisplayColors = invertModifiedDisplayColors;
+            this.Modifiers = new Dictionary<string, int>();
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public UnitInventoryItemStat(NamedStatValue stat)
+        {
+            this.BaseValue = stat.Value;
+            this.InvertModifiedDisplayColors = stat.InvertModifiedDisplayColors;
             this.Modifiers = new Dictionary<string, int>();
         }
 
