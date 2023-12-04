@@ -1,7 +1,8 @@
 {
   "Team": { //Required
     "Name": "Team X", //Required. String is formatted for UI display, JSON file name must match this value sans spaces
-    "WorkbookID": "" //Required
+    "WorkbookID": "", //Required
+    "AlternativeWorkbookID": "" //Optional, only to be used if team has separate GM and player sheets
   },
   "Map": { //Required
     "Constants": { //Required

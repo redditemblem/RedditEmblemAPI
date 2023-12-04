@@ -79,7 +79,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             this.Currency = config.System.Constants.Currency;
             this.InterfaceLabels = config.System.InterfaceLabels;
 
-            this.WorkbookID = config.Team.WorkbookID;
+            this.WorkbookID = (config.Team.AlternativeWorkbookID.Length > 0 ? config.Team.AlternativeWorkbookID : config.Team.WorkbookID);
             this.ShowShopLink = (config.Shop != null);
 
             this.Skills = Skill.BuildDictionary(config.System.Skills);
