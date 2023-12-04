@@ -21,6 +21,15 @@ namespace RedditEmblemAPI.Models.Configuration.Team
         [JsonRequired]
         public string WorkbookID { get; set; }
 
-        #endregion
+        #endregion Required Fields
+
+        #region Optional Fields
+
+        /// <summary>
+        /// Optional. If provided, the "Google Sheets" link in the UI will redirect to this workbook ID instead of the main workbook ID. Intended for teams that use separate GM and player sheets.
+        /// </summary>
+        public string AlternativeWorkbookID { get; set; } = string.Empty;
+
+        #endregion Optional Fields
     }
 }

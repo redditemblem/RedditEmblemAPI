@@ -33,6 +33,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         public ItemMinRangeModifierEffect(List<string> parameters)
             : base(parameters)
         {
+            //This needs to be executed last due to items w/ calculated ranges
+            this.ExecutionOrder = SkillEffectExecutionOrder.AfterFinalStatCalculations;
+
             this.Categories = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);
             this.Value = DataParser.Int_Negative(parameters, INDEX_PARAM_2, NAME_PARAM_2);
 
@@ -52,11 +55,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
                     continue;
 
                 //Items with a minimum range of 0 are not affected
-                if (item.MinRange.BaseValue == 0 && !item.Item.Range.MinimumRequiresCalculation)
+                if (item.MinRange.BaseValue == 0)
                     continue;
 
-                //If this modifier is less than the one we're currently using, apply it
-                if (this.Value < item.MinRange.ForcedModifier)
+                //If this modifier is less than the one we're currently using, apply it, but don't reduce the min range below 1.
+                if (this.Value < item.MinRange.ForcedModifier && this.Value + item.MinRange.BaseValue > 0)
                     item.MinRange.ForcedModifier = this.Value;
             }
         }

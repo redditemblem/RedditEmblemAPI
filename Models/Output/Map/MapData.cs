@@ -43,7 +43,7 @@ namespace RedditEmblemAPI.Models.Output.Map
 
         public MapData(JSONConfiguration config)
         {
-            this.WorkbookID = config.Team.WorkbookID;
+            this.WorkbookID = (config.Team.AlternativeWorkbookID.Length > 0 ? config.Team.AlternativeWorkbookID : config.Team.WorkbookID);
             this.ShowConvoyLink = (config.Convoy != null);
             this.ShowShopLink = (config.Shop != null);
 
