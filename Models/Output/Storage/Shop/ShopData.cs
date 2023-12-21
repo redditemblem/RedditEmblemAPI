@@ -107,6 +107,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
                 new List<string>(), //shop items don't have owners
                 this.ShopItems.Select(i => i.Item.Category).Distinct().OrderBy(c => c),
                 this.ShopItems.SelectMany(i => i.Item.UtilizedStats).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(c => c),
+                this.ShopItems.SelectMany(i => i.Item.TargetedStats).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(c => c),
                 filters);
 
             //Always do this last.

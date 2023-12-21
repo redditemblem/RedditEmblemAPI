@@ -57,112 +57,113 @@
       "Category": 2,
       "WeaponRank": 3,
       "UtilizedStats": [ 4 ],
-      "DealsDamage": 5,
-      "Uses": 6,
+      "TargetedStats": [ 5 ],
+      "DealsDamage": 6,
+      "Uses": 7,
       "Stats": [
         {
           "SourceName": "Mt",
-          "Value": 7
-        },
-        {
-          "SourceName": "Hit",
           "Value": 8
         },
         {
-          "SourceName": "Crit",
+          "SourceName": "Hit",
           "Value": 9
         },
         {
-          "SourceName": "Avo",
+          "SourceName": "Crit",
           "Value": 10
         },
         {
-          "SourceName": "CEva",
+          "SourceName": "Avo",
           "Value": 11
+        },
+        {
+          "SourceName": "CEva",
+          "Value": 12
         }
       ],
       "EquippedStatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 16
-        },
-        {
-          "SourceName": "Mag",
           "Value": 17
         },
         {
-          "SourceName": "Skl",
+          "SourceName": "Mag",
           "Value": 18
         },
         {
-          "SourceName": "Spd",
+          "SourceName": "Skl",
           "Value": 19
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Spd",
           "Value": 20
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Lck",
           "Value": 21
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Def",
           "Value": 22
         },
         {
-          "SourceName": "Mov",
+          "SourceName": "Res",
           "Value": 23
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 24
         }
       ],
       "InventoryStatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 24
-        },
-        {
-          "SourceName": "Mag",
           "Value": 25
         },
         {
-          "SourceName": "Skl",
+          "SourceName": "Mag",
           "Value": 26
         },
         {
-          "SourceName": "Spd",
+          "SourceName": "Skl",
           "Value": 27
         },
         {
-          "SourceName": "Lck",
+          "SourceName": "Spd",
           "Value": 28
         },
         {
-          "SourceName": "Def",
+          "SourceName": "Lck",
           "Value": 29
         },
         {
-          "SourceName": "Res",
+          "SourceName": "Def",
           "Value": 30
         },
         {
-          "SourceName": "Mov",
+          "SourceName": "Res",
           "Value": 31
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 32
         }
       ],
       "Range": {
-        "Minimum": 12,
-        "Maximum": 13,
-        "Shape": 14,
-        "CanOnlyUseBeforeMovement": 15
+        "Minimum": 13,
+        "Maximum": 14,
+        "Shape": 15,
+        "CanOnlyUseBeforeMovement": 16
       },
-      "Tags": [ 32 ],
-      "Engravings": [ 33 ],
+      "Tags": [ 33 ],
+      "Engravings": [ 34 ],
       "EquippedSkills": [
         {
-          "Name": 34
+          "Name": 35
         }
       ],
-      "TextFields": [ 35, 36 ]
+      "TextFields": [ 36, 37 ]
     },
     "WeaponRankBonuses": {
       "Query": {

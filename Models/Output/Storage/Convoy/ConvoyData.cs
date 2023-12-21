@@ -106,6 +106,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
                 new List<string>() { "All" }.Union(this.ConvoyItems.Select(i => i.Owner).Where(o => !string.IsNullOrEmpty(o)).Distinct().OrderBy(o => o)),
                 this.ConvoyItems.Select(i => i.Item.Category).Distinct().OrderBy(c => c),
                 this.ConvoyItems.SelectMany(i => i.Item.UtilizedStats).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(c => c),
+                this.ConvoyItems.SelectMany(i => i.Item.TargetedStats).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(c => c),
                 filters);
 
             //Always do this last
