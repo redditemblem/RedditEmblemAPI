@@ -53,6 +53,11 @@ namespace RedditEmblemAPI.Models.Output.System
         public List<string> UtilizedStats { get; set; }
 
         /// <summary>
+        /// The unit stats that the item targets in calculations, if applicable.
+        /// </summary>
+        public List<string> TargetedStats { get; set; }
+
+        /// <summary>
         /// Flag indicating whether or not this item is capable of attacking.
         /// </summary>
         public bool DealsDamage { get; set; }
@@ -132,6 +137,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Category = DataParser.String(data, config.Category, "Category");
             this.WeaponRank = DataParser.OptionalString(data, config.WeaponRank, "Weapon Rank");
             this.UtilizedStats = DataParser.List_StringCSV(data, config.UtilizedStats);
+            this.TargetedStats = DataParser.List_StringCSV(data, config.TargetedStats);
             this.DealsDamage = DataParser.OptionalBoolean_YesNo(data, config.DealsDamage, "Deals Damage");
             this.MaxUses = DataParser.OptionalInt_Positive(data, config.Uses, "Uses");
             this.Range = new ItemRange(config.Range, data);
