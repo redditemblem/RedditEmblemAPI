@@ -84,6 +84,7 @@
       "Category": 0, //Required
       "WeaponRank": 0, //Optional
       "UtilizedStats": [ 0 ], //Required
+      "TargetedStats": [ 0 ], //Optional
       "DealsDamage": 0, //Required
       "Uses": 0, //Required
       "Stats": [ //Required

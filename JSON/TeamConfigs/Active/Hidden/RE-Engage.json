@@ -84,6 +84,7 @@
       "Category": 1,
       "WeaponRank": 2,
       "UtilizedStats": [ 23, 24 ],
+      "TargetedStats": [ 26, 27 ],
       "DealsDamage": 29,
       "Uses": 4,
       "Stats": [
