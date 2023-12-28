@@ -37,6 +37,12 @@
         "Sheet": "",
         "Selection": "A1:ZZ",
         "Orientation": 1
+      },
+      "Name": 0, //Required
+      "Coordinate": 0, //Required
+      "HP": { //Optional
+        "Current": 0,
+        "Maximum": 0
       }
     }
   },

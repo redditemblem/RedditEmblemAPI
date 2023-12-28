@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Query;
@@ -116,9 +117,16 @@ namespace RedditEmblemAPI.Models.Output.Map
             BuildTiles(config.MapTiles, terrainTypes);
 
             //If we have tile objects configured, add those to the map
+            #warning Clean this up after old Tile Object config is no longer needed.
             this.TileObjectInstances = new Dictionary<int, TileObjectInstance>();
             if (config.MapObjects != null)
-                AddTileObjectsToTiles(config.MapObjects, tileObjects);
+            {
+                //If we're using the new config, use the new config path. Else, fall back on the old config path.
+                if(config.MapObjects.Name > -1)
+                    AddTileObjectsToTiles(config.MapObjects, tileObjects);
+                else
+                    AddTileObjectsToTiles_Old(config.MapObjects, tileObjects);
+            }
         }
 
         #endregion
@@ -258,9 +266,40 @@ namespace RedditEmblemAPI.Models.Output.Map
         }
 
         /// <summary>
-        /// Uses the data from <paramref name="config"/>'s query to apply <c>TileObjects</c>s to the map.
+        /// Uses the data from <paramref name="config"/> to build a dictionary of <c>TileObjectInstance</c>s and place them on the map.
         /// </summary>
         private void AddTileObjectsToTiles(MapObjectsConfig config, IDictionary<string, TileObject> tileObjects)
+        {
+            this.TileObjectInstances = TileObjectInstance.BuildDictionary(config, this.Constants, tileObjects);
+            foreach (TileObjectInstance tileObjInst in this.TileObjectInstances.Values)
+            {
+                Tile originTile;
+
+                try
+                {
+                    originTile = GetTileByCoord(tileObjInst.AnchorCoordinateObj);
+                }
+                catch (Exception ex)
+                {
+                    throw new TileObjectInstanceProcessingException(tileObjInst.TileObject.Name, ex);
+                }
+
+                try
+                {
+                    BindTileObjectToTiles(tileObjInst, originTile);
+                }
+                catch(Exception ex) 
+                {
+                    throw new MapProcessingException(ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Uses the data from <paramref name="config"/>'s query to apply <c>TileObjects</c>s to the map.
+        /// </summary>
+        [Obsolete("Leaving this function in until all teams using the old Tile Object placement method are finished.")]
+        private void AddTileObjectsToTiles_Old(MapObjectsConfig config, IDictionary<string, TileObject> tileObjects)
         {
             try
             {
@@ -295,36 +334,9 @@ namespace RedditEmblemAPI.Models.Output.Map
                             TileObject tileObj = TileObject.MatchName(tileObjects, value.Trim(), tiles[c].Coordinate);
                             TileObjectInstance tileObjInst = new TileObjectInstance(idIterator++, tileObj);
 
-                            //3-way bind
                             this.TileObjectInstances.Add(tileObjInst.ID, tileObjInst);
-                            tiles[c].TileObjects.Add(tileObjInst);
-                            tileObjInst.OriginTiles.Add(tiles[c]);
+                            BindTileObjectToTiles(tileObjInst, tiles[c]);
 
-                            //Set all tiles for multi-tile effects
-                            if (tileObj.Size > 1)
-                            {
-                                for (int r2 = r; r2 < r + tileObj.Size; r2++)
-                                {
-                                    for (int c2 = c; c2 < c + tileObj.Size; c2++)
-                                    {
-                                        //Skip the starting tile
-                                        if (r2 == r && c2 == c)
-                                            continue;
-
-                                        if (r2 >= this.Tiles.Count)
-                                            throw new TileOutOfBoundsException(new Coordinate(this.Constants.CoordinateFormat, r2, c2));
-
-                                        List<Tile> tiles2 = this.Tiles[r2];
-
-                                        if (c2 >= tiles2.Count)
-                                            throw new TileOutOfBoundsException(new Coordinate(this.Constants.CoordinateFormat, r2, c2));
-
-                                        //2-way bind
-                                        tiles2[c2].TileObjects.Add(tileObjInst);
-                                        tileObjInst.OriginTiles.Add(tiles2[c2]);
-                                    }
-                                }
-                            }
                         }
                     }
                 }
@@ -334,6 +346,42 @@ namespace RedditEmblemAPI.Models.Output.Map
                 throw new MapProcessingException(ex);
             }
         }
+
+        private void BindTileObjectToTiles(TileObjectInstance tileObjInst, Tile originTile)
+        {
+            //2-way bind the anchor tile
+            originTile.TileObjects.Add(tileObjInst);
+            tileObjInst.OriginTiles.Add(originTile);
+
+            //2-way bind all origin tiles for multi-tile effects
+            if (tileObjInst.TileObject.Size > 1)
+            {
+                int r = originTile.Coordinate.Y - 1; //row
+                int c = originTile.Coordinate.X - 1; //column
+                for (int r2 = r; r2 < r + tileObjInst.TileObject.Size; r2++)
+                {
+                    for (int c2 = c; c2 < c + tileObjInst.TileObject.Size; c2++)
+                    {
+                        //Skip the starting tile
+                        if (r2 == r && c2 == c)
+                            continue;
+
+                        if (r2 >= this.Tiles.Count)
+                            throw new TileOutOfBoundsException(new Coordinate(this.Constants.CoordinateFormat, r2, c2));
+
+                        List<Tile> tiles2 = this.Tiles[r2];
+
+                        if (c2 >= tiles2.Count)
+                            throw new TileOutOfBoundsException(new Coordinate(this.Constants.CoordinateFormat, r2, c2));
+
+                        //2-way bind
+                        tiles2[c2].TileObjects.Add(tileObjInst);
+                        tileObjInst.OriginTiles.Add(tiles2[c2]);
+                    }
+                }
+            }
+        }
+
 
         #region Tile Functions
 
