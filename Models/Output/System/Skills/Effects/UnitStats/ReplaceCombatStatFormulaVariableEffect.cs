@@ -28,6 +28,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// </summary>
         public List<string> VariablesToUse { get; private set; }
 
+        /// <summary>
+        /// <c>EquationParserOptions</c> settings to apply to any equations impacted by this effect.
+        /// </summary>
+        public EquationParserOptions ParserOptions { get; private set; }
+
         #endregion
 
         /// <summary>
@@ -42,7 +47,6 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
             this.VariablesToReplace = CustomCSVParse(parameters, INDEX_PARAM_2);
             this.VariablesToUse = CustomCSVParse(parameters, INDEX_PARAM_3);
 
-
             if (!this.Stats.Any())
                 throw new RequiredValueNotProvidedException(NAME_PARAM_1);
             if (!this.VariablesToReplace.Any())
@@ -52,6 +56,25 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
 
             if (this.VariablesToReplace.Count != this.VariablesToUse.Count)
                 throw new ParameterLengthsMismatchedException(NAME_PARAM_2, NAME_PARAM_3);
+
+            this.ParserOptions = GetEquationParserOptions();
+        }
+
+        /// <summary>
+        /// Determines which <c>EquationParserOptions</c> settings to flag based on <c>this.VariablesToUse</c> and returns an options object.
+        /// </summary>
+        private EquationParserOptions GetEquationParserOptions()
+        {
+            return new EquationParserOptions()
+            {
+                EvalUnitCombatStat = this.VariablesToUse.Any(v => v.Contains("UnitCombatStat")),
+                EvalUnitStat = this.VariablesToUse.Any(v => v.Contains("UnitStat")),
+                EvalUnitLevel = this.VariablesToUse.Any(v => v.Contains("UnitLevel")),
+                EvalWeaponUtilStat_Greatest = this.VariablesToUse.Any(v => v.Contains("WeaponUtilStat_Greatest")),
+                EvalWeaponUtilStat_Sum = this.VariablesToUse.Any(v => v.Contains("WeaponUtilStat_Sum")),
+                EvalWeaponStat = this.VariablesToUse.Any(v => v.Contains("WeaponStat")),
+                EvalBattalionStat = this.VariablesToUse.Any(v => v.Contains("BattalionStat"))
+            };
         }
 
         /// <summary>

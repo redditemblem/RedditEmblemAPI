@@ -339,7 +339,11 @@
         "SelectsUsing": 0,
         "Equations": [
           {
-            "Equation": "{WeaponUtilStat_Greatest} + {WeaponStat[Mt]}"
+            "Equation": "{WeaponUtilStat_Greatest} + {WeaponStat[Mt]}",
+            "ParserOptions": {
+              "EvalWeaponUtilStat_Greatest": true,
+              "EvalWeaponStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -366,7 +370,11 @@
         "SelectsUsing": 0,
         "Equations": [
           {
-            "Equation": "({UnitStat[Skl]} * 1.5) + ({UnitStat[Lck]} * 0.75) + {WeaponStat[Hit]}"
+            "Equation": "({UnitStat[Skl]} * 1.5) + ({UnitStat[Lck]} * 0.75) + {WeaponStat[Hit]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -393,7 +401,11 @@
         "SelectsUsing": 0,
         "Equations": [
           {
-            "Equation": "({UnitStat[Spd]} * 1.5) + ({UnitStat[Lck]} * 0.75) + {WeaponStat[Avo]}"
+            "Equation": "({UnitStat[Spd]} * 1.5) + ({UnitStat[Lck]} * 0.75) + {WeaponStat[Avo]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -420,7 +432,11 @@
         "SelectsUsing": 0,
         "Equations": [
           {
-            "Equation": "(({UnitStat[Skl]} - 4) * 0.5) + {WeaponStat[Crit]}"
+            "Equation": "(({UnitStat[Skl]} - 4) * 0.5) + {WeaponStat[Crit]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -447,7 +463,11 @@
         "SelectsUsing": 0,
         "Equations": [
           {
-            "Equation": "({UnitStat[Lck]} * 0.5) + {WeaponStat[CEva]}"
+            "Equation": "({UnitStat[Lck]} * 0.5) + {WeaponStat[CEva]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
           }
         ],
         "Modifiers": [

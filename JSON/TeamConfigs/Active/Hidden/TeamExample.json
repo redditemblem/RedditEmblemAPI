@@ -521,7 +521,11 @@
         "SourceName": "Atk",
         "Equations": [
           {
-            "Equation": "{WeaponUtilStat_Greatest}+{WeaponStat[Mt]}"
+            "Equation": "{WeaponUtilStat_Greatest}+{WeaponStat[Mt]}",
+            "ParserOptions": {
+              "EvalWeaponUtilStat_Greatest": true,
+              "EvalWeaponStat": true
+            }
           }
         ]
       },
@@ -529,7 +533,11 @@
         "SourceName": "Crit",
         "Equations": [
           {
-            "Equation": "{WeaponStat[Crit]}+({UnitStat[Skl]}/2)"
+            "Equation": "{WeaponStat[Crit]}+({UnitStat[Skl]}/2)",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
           }
         ]
       },
@@ -537,7 +545,11 @@
         "SourceName": "Hit",
         "Equations": [
           {
-            "Equation": "{WeaponStat[Hit]}+({UnitStat[Skl]}*2)+{UnitStat[Lck]}"
+            "Equation": "{WeaponStat[Hit]}+({UnitStat[Skl]}*2)+{UnitStat[Lck]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
           }
         ]
       },
@@ -545,7 +557,10 @@
         "SourceName": "Avo",
         "Equations": [
           {
-            "Equation": "({UnitStat[Spd]}*2)+{UnitStat[Lck]}"
+            "Equation": "({UnitStat[Spd]}*2)+{UnitStat[Lck]}",
+            "ParserOptions": {
+              "EvalUnitStat": true
+            }
           }
         ]
       }

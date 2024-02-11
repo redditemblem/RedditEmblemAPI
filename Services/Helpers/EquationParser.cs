@@ -254,5 +254,22 @@ namespace RedditEmblemAPI.Services.Helpers
         public bool EvalWeaponUtilStat_Sum;
         public bool EvalWeaponStat;
         public bool EvalBattalionStat;
+
+        /// <summary>
+        /// Returns a new <c>EquationParserOptions</c> that combines the enabled settings of <c>this</c> and <paramref name="other"/>.
+        /// </summary>
+        public EquationParserOptions Union(EquationParserOptions other)
+        {
+            return new EquationParserOptions
+            {
+                EvalUnitCombatStat = this.EvalUnitCombatStat || other.EvalUnitCombatStat,
+                EvalUnitStat = this.EvalUnitStat || other.EvalUnitStat,
+                EvalUnitLevel = this.EvalUnitLevel || other.EvalUnitLevel,
+                EvalWeaponUtilStat_Greatest = this.EvalWeaponUtilStat_Greatest || other.EvalWeaponUtilStat_Greatest,
+                EvalWeaponUtilStat_Sum = this.EvalWeaponUtilStat_Sum || other.EvalWeaponUtilStat_Sum,
+                EvalWeaponStat = this.EvalWeaponStat || other.EvalWeaponStat,
+                EvalBattalionStat = this.EvalBattalionStat || other.EvalBattalionStat
+            };
+        }
     }
 }

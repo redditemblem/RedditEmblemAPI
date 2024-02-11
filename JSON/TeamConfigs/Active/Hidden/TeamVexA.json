@@ -434,11 +434,21 @@
         "Equations": [
           {
             "SelectValue": "Str",
-            "Equation": "{WeaponStat[Mt]} + {WeaponUtilStat_Greatest} + {BattalionStat[Phys Atk]}"
+            "Equation": "{WeaponStat[Mt]} + {WeaponUtilStat_Greatest} + {BattalionStat[Phys Atk]}",
+            "ParserOptions": {
+              "EvalWeaponUtilStat_Greatest": true,
+              "EvalWeaponStat": true,
+              "EvalBattalionStat": true
+            }
           },
           {
             "SelectValue": "Mag",
-            "Equation": "{WeaponStat[Mt]} + {WeaponUtilStat_Greatest} + {BattalionStat[Mag Atk]}"
+            "Equation": "{WeaponStat[Mt]} + {WeaponUtilStat_Greatest} + {BattalionStat[Mag Atk]}",
+            "ParserOptions": {
+              "EvalWeaponUtilStat_Greatest": true,
+              "EvalWeaponStat": true,
+              "EvalBattalionStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -449,7 +459,10 @@
         "SourceName": "Wt",
         "Equations": [
           {
-            "Equation": "{WeaponStat[Wt]}"
+            "Equation": "{WeaponStat[Wt]}",
+            "ParserOptions": {
+              "EvalWeaponStat": true
+            }
           }
         ],
         "Modifiers": []
@@ -460,11 +473,21 @@
         "Equations": [
           {
             "SelectValue": "Str",
-            "Equation": "{WeaponStat[Hit]} + {BattalionStat[Hit]} + {UnitStat[Dex]}"
+            "Equation": "{WeaponStat[Hit]} + {BattalionStat[Hit]} + {UnitStat[Dex]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true,
+              "EvalBattalionStat": true
+            }
           },
           {
             "SelectValue": "Mag",
-            "Equation": "{WeaponStat[Hit]} + {BattalionStat[Hit]} + (({UnitStat[Dex]} + {UnitStat[Lck]}) / 2)"
+            "Equation": "{WeaponStat[Hit]} + {BattalionStat[Hit]} + (({UnitStat[Dex]} + {UnitStat[Lck]}) / 2)",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true,
+              "EvalBattalionStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -486,7 +509,11 @@
         "SourceName": "Prt",
         "Equations": [
           {
-            "Equation": "{UnitStat[Def]} + {BattalionStat[Prt]}"
+            "Equation": "{UnitStat[Def]} + {BattalionStat[Prt]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalBattalionStat": true
+            }
           }
         ],
         "Modifiers": []
@@ -497,11 +524,20 @@
         "Equations": [
           {
             "SelectValue": "Str",
-            "Equation": "{BattalionStat[Avo]} + {UnitStat[Spd]} - Max({UnitCombatStat[Wt]} - ({UnitStat[Str]} / 5),0)"
+            "Equation": "{BattalionStat[Avo]} + {UnitStat[Spd]} - Max({UnitCombatStat[Wt]} - ({UnitStat[Str]} / 5),0)",
+            "ParserOptions": {
+              "EvalUnitCombatStat": true,
+              "EvalUnitStat": true,
+              "EvalBattalionStat": true
+            }
           },
           {
             "SelectValue": "Mag",
-            "Equation": "{BattalionStat[Avo]} + (({UnitStat[Spd]} + {UnitStat[Lck]}) / 2)"
+            "Equation": "{BattalionStat[Avo]} + (({UnitStat[Spd]} + {UnitStat[Lck]}) / 2)",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalBattalionStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -523,7 +559,11 @@
         "SourceName": "Rsl",
         "Equations": [
           {
-            "Equation": "{UnitStat[Res]} + {BattalionStat[Rsl]}"
+            "Equation": "{UnitStat[Res]} + {BattalionStat[Rsl]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalBattalionStat": true
+            }
           }
         ],
         "Modifiers": []
@@ -532,7 +572,12 @@
         "SourceName": "Crit",
         "Equations": [
           {
-            "Equation": "{WeaponStat[Crit]} + {BattalionStat[Crit]} + (({UnitStat[Dex]} + {UnitStat[Lck]})/2)"
+            "Equation": "{WeaponStat[Crit]} + {BattalionStat[Crit]} + (({UnitStat[Dex]} + {UnitStat[Lck]})/2)",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true,
+              "EvalBattalionStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -554,7 +599,10 @@
         "SourceName": "Crit Avo",
         "Equations": [
           {
-            "Equation": "{UnitStat[Lck]}"
+            "Equation": "{UnitStat[Lck]}",
+            "ParserOptions": {
+              "EvalUnitStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -576,7 +624,11 @@
         "SourceName": "AS",
         "Equations": [
           {
-            "Equation": "{UnitStat[Spd]} - Max({UnitCombatStat[Wt]} - ({UnitStat[Str]} / 5), 0)"
+            "Equation": "{UnitStat[Spd]} - Max({UnitCombatStat[Wt]} - ({UnitStat[Str]} / 5), 0)",
+            "ParserOptions": {
+              "EvalUnitCombatStat": true,
+              "EvalUnitStat": true
+            }
           }
         ],
         "Modifiers": []

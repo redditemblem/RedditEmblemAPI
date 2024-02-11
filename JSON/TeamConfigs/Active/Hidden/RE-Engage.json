@@ -410,7 +410,11 @@
         "SelectsUsing": 0,
         "Equations": [
           {
-            "Equation": "{WeaponStat[Mt]} + ({WeaponUtilStat_Sum} * {WeaponStat[Atk Scale]})"
+            "Equation": "{WeaponStat[Mt]} + ({WeaponUtilStat_Sum} * {WeaponStat[Atk Scale]})",
+            "ParserOptions": {
+              "EvalWeaponUtilStat_Sum": true,
+              "EvalWeaponStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -429,7 +433,11 @@
         "SelectsUsing": 0,
         "Equations": [
           {
-            "Equation": "{WeaponStat[Hit]} + ({UnitStat[Dex]} * 2) + ({UnitStat[Lck]} / 2)"
+            "Equation": "{WeaponStat[Hit]} + ({UnitStat[Dex]} * 2) + ({UnitStat[Lck]} / 2)",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -448,7 +456,11 @@
         "SelectsUsing": 0,
         "Equations": [
           {
-            "Equation": "(({UnitStat[Spd]} - Max({WeaponStat[Wgt]} - {UnitStat[Bld]}, 0)) * 2) + ({UnitStat[Lck]} / 2)"
+            "Equation": "(({UnitStat[Spd]} - Max({WeaponStat[Wgt]} - {UnitStat[Bld]}, 0)) * 2) + ({UnitStat[Lck]} / 2)",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -467,7 +479,11 @@
         "SelectsUsing": 0,
         "Equations": [
           {
-            "Equation": "{WeaponStat[Crit]} + ({UnitStat[Dex]} / 2)"
+            "Equation": "{WeaponStat[Crit]} + ({UnitStat[Dex]} / 2)",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
           }
         ],
         "Modifiers": [
@@ -486,7 +502,10 @@
         "SelectsUsing": 0,
         "Equations": [
           {
-            "Equation": "{UnitStat[Lck]}"
+            "Equation": "{UnitStat[Lck]}",
+            "ParserOptions": {
+              "EvalUnitStat": true
+            }
           }
         ],
         "Modifiers": [

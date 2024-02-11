@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Services.Helpers;
 
 namespace RedditEmblemAPI.Models.Configuration.Units
 {
@@ -11,6 +12,12 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// </summary>
         [JsonRequired]
         public string Equation { get; set; }
+
+        /// <summary>
+        /// Options configuration that indicates which variables the <c>EquationParser</c> should evaluate for this equation.
+        /// </summary>
+        [JsonRequired]
+        public EquationParserOptions ParserOptions { get; set; }
 
         #endregion Required Fields
 

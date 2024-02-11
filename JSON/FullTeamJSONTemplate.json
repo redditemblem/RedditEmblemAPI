@@ -456,7 +456,16 @@
         "Equations": [
           {
             "SelectValue": "", //Optional, required if "SelectsUsing" is specified
-            "Equation": "0" //Required
+            "Equation": "0", //Required
+            "ParserOptions": { //Required, only need to include key/values set to true
+              "EvalUnitCombatStat": true,
+              "EvalUnitStat": true,
+              "EvalUnitLevel": true,
+              "EvalWeaponUtilStat_Greatest": true,
+              "EvalWeaponUtilStat_Sum": true,
+              "EvalWeaponStat": true,
+              "EvalBattalionStat": true
+            }
           }
         ],
         "Modifiers": [ //Optional

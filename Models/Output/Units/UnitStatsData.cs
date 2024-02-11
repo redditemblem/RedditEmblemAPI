@@ -128,33 +128,28 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             foreach (CalculatedStatConfig stat in stats)
             {
-                //Select the correct equation
-                string equation = stat.Equations.First().Equation;
+                //Default to the first equation in the list
+                CalculatedStatEquationConfig equationConfig = stat.Equations.First();
+
+                //If needed, execute on the SelectsUsing option
                 if (stat.SelectsUsing == CalculatedStatEquationSelectorEnum.EquippedWeaponUtilizedStat && !string.IsNullOrEmpty(equippedUtilStat))
                 {
-                    CalculatedStatEquationConfig equationConfig = stat.Equations.FirstOrDefault(e => e.SelectValue == equippedUtilStat);
-                    if (equationConfig != null)
-                        equation = equationConfig.Equation;
+                    CalculatedStatEquationConfig selectsUsingUtilStat = stat.Equations.FirstOrDefault(e => e.SelectValue == equippedUtilStat);
+                    if (selectsUsingUtilStat != null)
+                        equationConfig = selectsUsingUtilStat;
                 }
+
+                //Select equation and parser options to use
+                string equation = equationConfig.Equation;
+                EquationParserOptions options = equationConfig.ParserOptions;
 
                 //Check if skill effects replace any formula variables
                 foreach (ReplaceCombatStatFormulaVariableEffect effect in replacementEffects.Where(re => re.Stats.Contains(stat.SourceName)))
                 {
                     for (int i = 0; i < effect.VariablesToReplace.Count; i++)
                         equation = equation.Replace(effect.VariablesToReplace[i], effect.VariablesToUse[i]);
+                    options = options.Union(effect.ParserOptions);
                 }
-
-                //Evaluate and round the result
-                EquationParserOptions options = new EquationParserOptions()
-                {
-                    EvalUnitCombatStat = true,
-                    EvalUnitStat = true,
-                    EvalUnitLevel = true,
-                    EvalWeaponUtilStat_Greatest = true,
-                    EvalWeaponUtilStat_Sum = true,
-                    EvalWeaponStat = true,
-                    EvalBattalionStat = true
-                };
 
                 decimal equationResult = EquationParser.Evaluate(equation, unit, options);
                 this.Combat[stat.SourceName].BaseValue = Math.Max(0, Convert.ToInt32(Math.Floor(equationResult)));
