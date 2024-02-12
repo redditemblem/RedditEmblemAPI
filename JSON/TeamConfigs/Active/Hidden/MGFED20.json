@@ -103,6 +103,14 @@
         {
           "SourceName": "CEva",
           "Value": 13
+        },
+        {
+          "SourceName": "OSpd",
+          "Value": 14
+        },
+        {
+          "SourceName": "DSpd",
+          "Value": 15
         }
       ],
       "EquippedStatModifiers": [
@@ -466,6 +474,30 @@
           {
             "SourceName": "Guard Stance",
             "Value": 152
+          }
+        ]
+      },
+      {
+        "SourceName": "OSpd",
+        "Equations": [
+          {
+            "Equation": "{UnitStat[Spd]} + {WeaponStat[OSpd]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
+          }
+        ]
+      },
+      {
+        "SourceName": "DSpd",
+        "Equations": [
+          {
+            "Equation": "{UnitStat[Spd]} + {WeaponStat[DSpd]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
           }
         ]
       }
