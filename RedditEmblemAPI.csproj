@@ -5,9 +5,13 @@
     <AWSProjectType>Lambda</AWSProjectType>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="report\**" />
     <Compile Remove="UnitTests\**" />
+    <Content Remove="report\**" />
     <Content Remove="UnitTests\**" />
+    <EmbeddedResource Remove="report\**" />
     <EmbeddedResource Remove="UnitTests\**" />
+    <None Remove="report\**" />
     <None Remove="UnitTests\**" />
   </ItemGroup>
   <ItemGroup>

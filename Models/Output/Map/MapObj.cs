@@ -139,17 +139,30 @@ namespace RedditEmblemAPI.Models.Output.Map
             int tileHeight;
             int tileWidth;
 
-            Task<byte[]> imageData = new HttpClient().GetByteArrayAsync(this.MapImageURL);
-            imageData.Wait();
 
-            using (MemoryStream imgStream = new MemoryStream(imageData.Result))
-            using (SKManagedStream inputStream = new SKManagedStream(imgStream))
-            using (SKBitmap img = SKBitmap.Decode(inputStream))
+            try
             {
-                this.ImageHeight = img.Height;
-                this.ImageWidth = img.Width;
-            }
+                using (HttpClient httpClient = new HttpClient())
+                {
+                    Task<byte[]> imageData = httpClient.GetByteArrayAsync(this.MapImageURL);
+                    imageData.Wait();
 
+                    using (MemoryStream imgStream = new MemoryStream(imageData.Result))
+                    using (SKManagedStream inputStream = new SKManagedStream(imgStream))
+                    using (SKBitmap img = SKBitmap.Decode(inputStream))
+                    {
+                        this.ImageHeight = img.Height;
+                        this.ImageWidth = img.Width;
+                    }
+                }
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("404"))
+                    throw new MapImageLoadFailedException();
+                throw new MapImageLoadFailedException(ex.InnerException != null ? ex.InnerException.Message : ex.Message);
+            }
+           
             tileHeight = (int)Math.Floor((decimal)this.ImageHeight / (this.Constants.TileSize + this.Constants.TileSpacing));
             tileWidth = (int)Math.Floor((decimal)this.ImageWidth / (this.Constants.TileSize + this.Constants.TileSpacing));
 
