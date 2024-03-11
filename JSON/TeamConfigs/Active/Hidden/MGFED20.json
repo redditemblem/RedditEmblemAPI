@@ -157,19 +157,20 @@
     "Skills": {
       "Query": {
         "Sheet": "Skills",
-        "Selection": "A2:L",
+        "Selection": "A2:N",
         "Orientation": 1
       },
       "Name": 0,
       "TextFields": [ 2 ],
+      "SpriteURL": 4,
       "Effects": [
         {
-          "Type": 4,
-          "Parameters": [ 5, 6, 7 ]
+          "Type": 6,
+          "Parameters": [ 7, 8, 9 ]
         },
         {
-          "Type": 8,
-          "Parameters": [ 9, 10, 11 ]
+          "Type": 10,
+          "Parameters": [ 11, 12, 13 ]
         }
       ]
     },
