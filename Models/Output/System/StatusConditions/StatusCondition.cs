@@ -118,6 +118,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
                 case "DoesNotBlockEnemyAffiliations": return new DoesNotBlockEnemyAffiliationsEffect(parameters);
                 case "PreventAllItemUse": return new PreventAllItemUseEffect(parameters);
                 case "PreventUtilStatItemUse": return new PreventUtilStatItemUseEffect(parameters);
+                case "PreventCategoryItemUse": return new PreventCategoryItemUseEffect(parameters);
                 case "CombatStatModifier": return new CombatStatModifierEffect(parameters);
                 case "StatModifier": return new StatModifierEffect(parameters);
                 case "AddTag": return new AddTagEffect(parameters);
