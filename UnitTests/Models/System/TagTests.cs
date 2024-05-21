@@ -1,6 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Tags;
 using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
 
@@ -214,7 +215,37 @@ namespace UnitTests.Models.System
 
         #endregion OptionalField_UnitAura
 
+        #region FlagAsMatched
+
+        [TestMethod]
+        public void Tag_FlagAsMatched()
+        {
+            TagsConfig config = new TagsConfig()
+            {
+                Name = 0
+            };
+
+            List<string> data = new List<string>() { INPUT_NAME };
+
+            Tag tag = new Tag(config, data);
+
+            Assert.IsFalse(tag.Matched);
+            tag.FlagAsMatched();
+            Assert.IsTrue(tag.Matched);
+        }
+
+        #endregion FlagAsMatched
+
         #region BuildDictionary
+
+        [TestMethod]
+        public void Tag_BuildDictionary_WithQueryNull()
+        {
+            TagsConfig config = new TagsConfig();
+
+            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            Assert.AreEqual(0, dict.Count);
+        }
 
         [TestMethod]
         public void Tag_BuildDictionary_WithInput_Null()
@@ -274,5 +305,105 @@ namespace UnitTests.Models.System
         }
 
         #endregion BuildDictionary
+
+        #region MatchNames
+
+        [TestMethod]
+        public void Tag_MatchNames_UnmatchedName()
+        {
+            TagsConfig config = new TagsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Tag 1" },
+                        new List<object>(){ "Tag 2" }
+                    }
+                },
+                Name = 0
+            };
+
+            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Tag 3" };
+
+            Assert.ThrowsException<UnmatchedTagException>(() => Tag.MatchNames(dict, names));
+        }
+
+        [TestMethod]
+        public void Tag_MatchNames_SingleMatch()
+        {
+            TagsConfig config = new TagsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Tag 1" },
+                        new List<object>(){ "Tag 2" }
+                    }
+                },
+                Name = 0
+            };
+
+            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Tag 1" };
+
+            List<Tag> matches = Tag.MatchNames(dict, names);
+            Assert.AreEqual(1, matches.Count);
+            Assert.IsTrue(matches.First().Matched);
+        }
+
+        [TestMethod]
+        public void Tag_MatchNames_MultipleMatches()
+        {
+            TagsConfig config = new TagsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Tag 1" },
+                        new List<object>(){ "Tag 2" }
+                    }
+                },
+                Name = 0
+            };
+
+            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Tag 1", "Tag 2" };
+
+            List<Tag> matches = Tag.MatchNames(dict, names);
+            Assert.AreEqual(2, matches.Count);
+            Assert.IsTrue(matches[0].Matched);
+            Assert.IsTrue(matches[1].Matched);
+        }
+
+        [TestMethod]
+        public void Tag_MatchNames_MultipleMatches_SetMatchedStatus()
+        {
+            TagsConfig config = new TagsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Tag 1" },
+                        new List<object>(){ "Tag 2" }
+                    }
+                },
+                Name = 0
+            };
+
+            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Tag 1", "Tag 2" };
+
+            List<Tag> matches = Tag.MatchNames(dict, names, true);
+            Assert.AreEqual(2, matches.Count);
+            Assert.IsFalse(matches[0].Matched);
+            Assert.IsFalse(matches[1].Matched);
+        }
+
+        #endregion MatchNames
     }
 }

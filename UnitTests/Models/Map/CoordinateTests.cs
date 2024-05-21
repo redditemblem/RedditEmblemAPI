@@ -19,6 +19,19 @@ namespace UnitTests.Models.Map
         #region CoordinateConstructor_IntInput
 
         [TestMethod]
+        public void CoordinateConstructor_IntInput_XYFormat_0_0()
+        {
+            CoordinateFormat format = CoordinateFormat.XY;
+            int x = 0;
+            int y = 0;
+
+            Coordinate coord = new Coordinate(format, x, y);
+            Assert.AreEqual<int>(x, coord.X);
+            Assert.AreEqual<int>(y, coord.Y);
+            Assert.AreEqual<string>(string.Empty, coord.AsText);
+        }
+
+        [TestMethod]
         public void CoordinateConstructor_IntInput_XYFormat_1_1()
         {
             CoordinateFormat format = CoordinateFormat.XY;
@@ -29,6 +42,19 @@ namespace UnitTests.Models.Map
             Assert.AreEqual<int>(x, coord.X);
             Assert.AreEqual<int>(y, coord.Y);
             Assert.AreEqual<string>("1,1", coord.AsText);
+        }
+
+        [TestMethod]
+        public void CoordinateConstructor_IntInput_AlphanumericFormat_0_0()
+        {
+            CoordinateFormat format = CoordinateFormat.Alphanumerical;
+            int x = 0;
+            int y = 0;
+
+            Coordinate coord = new Coordinate(format, x, y);
+            Assert.AreEqual<int>(x, coord.X);
+            Assert.AreEqual<int>(y, coord.Y);
+            Assert.AreEqual<string>(string.Empty, coord.AsText);
         }
 
         [TestMethod]
@@ -312,5 +338,128 @@ namespace UnitTests.Models.Map
         }
 
         #endregion CoordinateConstructor_CoordinateInput
+
+        #region DistanceFrom
+
+        [TestMethod]
+        public void Coordinate_DistanceFrom_Self()
+        {
+            Coordinate coord = new Coordinate();
+
+            Assert.AreEqual<int>(0, coord.DistanceFrom(coord));
+        }
+
+        [TestMethod]
+        public void Coordinate_DistanceFrom_North()
+        {
+            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 2, 2);
+            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 2, 1);
+
+            Assert.AreEqual<int>(1, coord1.DistanceFrom(coord2));
+        }
+
+        [TestMethod]
+        public void Coordinate_DistanceFrom_East()
+        {
+            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 2, 2);
+            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 3, 2);
+
+            Assert.AreEqual<int>(1, coord1.DistanceFrom(coord2));
+        }
+
+        [TestMethod]
+        public void Coordinate_DistanceFrom_South()
+        {
+            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 2, 2);
+            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 2, 3);
+
+            Assert.AreEqual<int>(1, coord1.DistanceFrom(coord2));
+        }
+
+        [TestMethod]
+        public void Coordinate_DistanceFrom_West()
+        {
+            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 2, 2);
+            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 1, 2);
+
+            Assert.AreEqual<int>(1, coord1.DistanceFrom(coord2));
+        }
+
+        [TestMethod]
+        public void Coordinate_DistanceFrom_Northeast()
+        {
+            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 2, 2);
+            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 3, 1);
+
+            Assert.AreEqual<int>(2, coord1.DistanceFrom(coord2));
+        }
+
+        [TestMethod]
+        public void Coordinate_DistanceFrom_Northwest()
+        {
+            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 2, 2);
+            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 1, 1);
+
+            Assert.AreEqual<int>(2, coord1.DistanceFrom(coord2));
+        }
+
+        [TestMethod]
+        public void Coordinate_DistanceFrom_Southeast()
+        {
+            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 2, 2);
+            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 3, 3);
+
+            Assert.AreEqual<int>(2, coord1.DistanceFrom(coord2));
+        }
+
+        [TestMethod]
+        public void Coordinate_DistanceFrom_Southwest()
+        {
+            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 2, 2);
+            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 1, 3);
+
+            Assert.AreEqual<int>(2, coord1.DistanceFrom(coord2));
+        }
+
+        #endregion DistanceFrom
+
+        #region Equals
+
+        [TestMethod]
+        public void Coordinate_Equals_Self()
+        {
+            Coordinate coord = new Coordinate(CoordinateFormat.XY, 0, 0);
+
+            Assert.IsTrue(coord.Equals(coord));
+        }
+
+        [TestMethod]
+        public void Coordinate_Equals_SameX()
+        {
+            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 0, 0);
+            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 0, 1);
+
+            Assert.IsFalse(coord1.Equals(coord2));
+        }
+
+        [TestMethod]
+        public void Coordinate_Equals_SameY()
+        {
+            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 0, 0);
+            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 1, 0);
+
+            Assert.IsFalse(coord1.Equals(coord2));
+        }
+
+        [TestMethod]
+        public void Coordinate_Equals_Different()
+        {
+            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 0, 0);
+            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 1, 1);
+
+            Assert.IsFalse(coord1.Equals(coord2));
+        }
+
+        #endregion Equals
     }
 }

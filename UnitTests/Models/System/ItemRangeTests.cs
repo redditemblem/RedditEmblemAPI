@@ -31,7 +31,9 @@ namespace UnitTests.Models.System
 
             List<string> data = new List<string>() { };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new ItemRange(config, data));
+            ItemRange output = new ItemRange(config, data);
+            Assert.AreEqual<int>(0, output.Minimum);
+            Assert.AreEqual<int>(0, output.Maximum);
         }
 
         [TestMethod]
