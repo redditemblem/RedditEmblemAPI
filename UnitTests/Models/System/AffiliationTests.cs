@@ -1,6 +1,8 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Affiliations;
+using RedditEmblemAPI.Models.Configuration.System.Tags;
 using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
 
@@ -188,10 +190,57 @@ namespace UnitTests.Models.System
 
         #endregion OptionalField_TextFields
 
+        #region FlagAsMatched
+
+        [TestMethod]
+        public void Affiliation_FlagAsMatched()
+        {
+            AffiliationsConfig config = new AffiliationsConfig()
+            {
+                Name = 0,
+                Grouping = 1
+            };
+
+            List<string> data = new List<string>()
+            {
+                INPUT_NAME,
+                INPUT_GROUPING
+            };
+
+            Affiliation aff = new Affiliation(config, data);
+
+            Assert.IsFalse(aff.Matched);
+            aff.FlagAsMatched();
+            Assert.IsTrue(aff.Matched);
+        }
+
+        #endregion FlagAsMatched
+
         #region BuildDictionary
 
         [TestMethod]
         public void Affiliation_BuildDictionary_WithInput_Null()
+        {
+            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(null);
+            Assert.AreEqual(0, dict.Count);
+        }
+
+        [TestMethod]
+        public void Affiliation_BuildDictionary_WithInput_NullQuery()
+        {
+            AffiliationsConfig config = new AffiliationsConfig()
+            {
+                Query = null,
+                Name = 0,
+                Grouping = 1
+            };
+
+            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            Assert.AreEqual(0, dict.Count);
+        }
+
+        [TestMethod]
+        public void Affiliation_BuildDictionary_WithInput_EmptyQuery()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -269,6 +318,110 @@ namespace UnitTests.Models.System
             Assert.AreEqual<int>(1, dict.Count);
         }
 
-        # endregion BuildDictionary
+        #endregion BuildDictionary
+
+        #region MatchNames
+
+        [TestMethod]
+        public void Affiliation_MatchNames_UnmatchedName()
+        {
+            AffiliationsConfig config = new AffiliationsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Affiliation 1", "1" },
+                        new List<object>(){ "Affiliation 2", "1" }
+                    }
+                },
+                Name = 0,
+                Grouping = 1
+            };
+
+            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Affiliation 3" };
+
+            Assert.ThrowsException<UnmatchedAffiliationException>(() => Affiliation.MatchNames(dict, names));
+        }
+
+        [TestMethod]
+        public void Affiliation_MatchNames_SingleMatch()
+        {
+            AffiliationsConfig config = new AffiliationsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Affiliation 1", "1" },
+                        new List<object>(){ "Affiliation 2", "1" }
+                    }
+                },
+                Name = 0,
+                Grouping = 1
+            };
+
+            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Affiliation 1" };
+
+            List<Affiliation> matches = Affiliation.MatchNames(dict, names);
+            Assert.AreEqual(1, matches.Count);
+            Assert.IsTrue(matches.First().Matched);
+        }
+
+        [TestMethod]
+        public void Affiliation_MatchNames_MultipleMatches()
+        {
+            AffiliationsConfig config = new AffiliationsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Affiliation 1", "1" },
+                        new List<object>(){ "Affiliation 2", "1" }
+                    }
+                },
+                Name = 0,
+                Grouping = 1
+            };
+
+            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Affiliation 1", "Affiliation 2" };
+
+            List<Affiliation> matches = Affiliation.MatchNames(dict, names);
+            Assert.AreEqual(2, matches.Count);
+            Assert.IsTrue(matches[0].Matched);
+            Assert.IsTrue(matches[1].Matched);
+        }
+
+        [TestMethod]
+        public void Affiliation_MatchNames_MultipleMatches_SetMatchedStatus()
+        {
+            AffiliationsConfig config = new AffiliationsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Affiliation 1", "1" },
+                        new List<object>(){ "Affiliation 2", "1" }
+                    }
+                },
+                Name = 0,
+                Grouping = 1
+            };
+
+            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Affiliation 1", "Affiliation 2" };
+
+            List<Affiliation> matches = Affiliation.MatchNames(dict, names, true);
+            Assert.AreEqual(2, matches.Count);
+            Assert.IsFalse(matches[0].Matched);
+            Assert.IsFalse(matches[1].Matched);
+        }
+
+        #endregion MatchNames
     }
 }
