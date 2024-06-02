@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <AWSProjectType>Lambda</AWSProjectType>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="report\**" />
@@ -15,13 +16,13 @@
     <None Remove="UnitTests\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CoreCLR-NCalc" Version="2.2.113" />
-    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.60.0.2979" />
-    <PackageReference Include="AWSSDK.S3" Version="3.7.103.32" />
-    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.5" />
-    <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.14" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.3" />
+    <PackageReference Include="CoreCLR-NCalc" Version="3.1.251" />
+    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.68.0.3421" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.308.7" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.300" />
+    <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.6" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="JSON\TeamConfigs\Active\Hidden\TeamExample.json">
