@@ -4,7 +4,6 @@ using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Configuration.System.Emblems;
 
 namespace UnitTests.Models.System
 {

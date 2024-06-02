@@ -1,6 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Affiliations;
-using RedditEmblemAPI.Models.Configuration.System.Tags;
 
 namespace UnitTests.Models.Configuration.Common
 {
