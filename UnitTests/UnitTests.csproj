@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="dotnet-coverage collect -f xml -o coverage.xml dotnet test --no-build --verbosity normal&#xD;&#xA;reportgenerator -reports:coverage.xml -targetdir:.\report -assemblyfilters:+RedditEmblemAPI.dll&#xD;&#xA;start report\index.html" />
+    <Exec Command="if $(Configuration) == Debug (&#xD;&#xA;dotnet-coverage collect -f xml -o coverage.xml dotnet test --no-build --verbosity normal&#xD;&#xA;reportgenerator -reports:coverage.xml -targetdir:.\report -assemblyfilters:+RedditEmblemAPI.dll&#xD;&#xA;start report\index.html&#xD;&#xA;)" />
   </Target>
 
 </Project>
