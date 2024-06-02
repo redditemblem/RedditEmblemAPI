@@ -1,8 +1,10 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Battalions;
-using RedditEmblemAPI.Models.Exceptions.Processing;
-using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Configuration.System.Emblems;
 
 namespace UnitTests.Models.System
 {
@@ -440,10 +442,72 @@ namespace UnitTests.Models.System
 
         #endregion OptionalField_TextFields
 
+        #region FlagAsMatched
+
+        [TestMethod]
+        public void Gambit_FlagAsMatched()
+        {
+            GambitsConfig config = new GambitsConfig()
+            {
+                Name = 0,
+                MaxUses = 1,
+                Range = new GambitRangeConfig()
+                {
+                    Minimum = 2,
+                    Maximum = 3
+                },
+                Stats = new List<NamedStatConfig>()
+                {
+                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
+                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
+                }
+            };
+            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" };
+
+            Gambit gambit = new Gambit(config, data);
+
+            Assert.IsFalse(gambit.Matched);
+            gambit.FlagAsMatched();
+            Assert.IsTrue(gambit.Matched);
+        }
+
+        #endregion FlagAsMatched
+
         #region BuildDictionary
 
         [TestMethod]
         public void Gambit_BuildDictionary_WithInput_Null()
+        {
+            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(null);
+            Assert.AreEqual(0, dict.Count);
+        }
+
+        [TestMethod]
+        public void Gambit_BuildDictionary_WithInput_NullQuery()
+        {
+            GambitsConfig config = new GambitsConfig()
+            {
+                Query = null,
+                Name = 0,
+                MaxUses = 1,
+                Range = new GambitRangeConfig()
+                {
+                    Minimum = 2,
+                    Maximum = 3
+                },
+                Stats = new List<NamedStatConfig>()
+                {
+                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
+                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
+                }
+            };
+
+            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            Assert.AreEqual(0, dict.Count);
+        }
+
+        [TestMethod]
+        public void Gambit_BuildDictionary_WithInput_EmptyQuery()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -533,5 +597,149 @@ namespace UnitTests.Models.System
         }
 
         # endregion BuildDictionary
+
+        #region MatchNames
+
+        [TestMethod]
+        public void Gambit_MatchNames_UnmatchedName()
+        {
+            GambitsConfig config = new GambitsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
+                        new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                    }
+                },
+                Name = 0,
+                MaxUses = 1,
+                Range = new GambitRangeConfig()
+                {
+                    Minimum = 2,
+                    Maximum = 3
+                },
+                Stats = new List<NamedStatConfig>()
+                {
+                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
+                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
+                }
+            };
+
+            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Gambit 3" };
+
+            Assert.ThrowsException<UnmatchedGambitException>(() => Gambit.MatchNames(dict, names));
+        }
+
+        [TestMethod]
+        public void Gambit_MatchNames_SingleMatch()
+        {
+            GambitsConfig config = new GambitsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
+                        new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                    }
+                },
+                Name = 0,
+                MaxUses = 1,
+                Range = new GambitRangeConfig()
+                {
+                    Minimum = 2,
+                    Maximum = 3
+                },
+                Stats = new List<NamedStatConfig>()
+                {
+                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
+                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
+                }
+            };
+
+            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Gambit 1" };
+
+            List<Gambit> matches = Gambit.MatchNames(dict, names);
+            Assert.AreEqual(1, matches.Count);
+            Assert.IsTrue(matches.First().Matched);
+        }
+
+        [TestMethod]
+        public void Gambit_MatchNames_MultipleMatches()
+        {
+            GambitsConfig config = new GambitsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
+                        new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                    }
+                },
+                Name = 0,
+                MaxUses = 1,
+                Range = new GambitRangeConfig()
+                {
+                    Minimum = 2,
+                    Maximum = 3
+                },
+                Stats = new List<NamedStatConfig>()
+                {
+                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
+                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
+                }
+            };
+
+            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Gambit 1", "Gambit 2" };
+
+            List<Gambit> matches = Gambit.MatchNames(dict, names);
+            Assert.AreEqual(2, matches.Count);
+            Assert.IsTrue(matches[0].Matched);
+            Assert.IsTrue(matches[1].Matched);
+        }
+
+        [TestMethod]
+        public void Gambit_MatchNames_MultipleMatches_SetMatchedStatus()
+        {
+            GambitsConfig config = new GambitsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
+                        new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                    }
+                },
+                Name = 0,
+                MaxUses = 1,
+                Range = new GambitRangeConfig()
+                {
+                    Minimum = 2,
+                    Maximum = 3
+                },
+                Stats = new List<NamedStatConfig>()
+                {
+                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
+                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
+                }
+            };
+
+            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Gambit 1", "Gambit 2" };
+
+            List<Gambit> matches = Gambit.MatchNames(dict, names, true);
+            Assert.AreEqual(2, matches.Count);
+            Assert.IsFalse(matches[0].Matched);
+            Assert.IsFalse(matches[1].Matched);
+        }
+
+        #endregion MatchNames
     }
 }

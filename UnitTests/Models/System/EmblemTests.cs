@@ -1,6 +1,9 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Emblems;
+using RedditEmblemAPI.Models.Configuration.System.Emblems;
+using RedditEmblemAPI.Models.Configuration.System.Tags;
 using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
 
@@ -264,10 +267,51 @@ namespace UnitTests.Models.System
 
         #endregion OptionalField_TextFields
 
+        #region FlagAsMatched
+
+        [TestMethod]
+        public void Emblem_FlagAsMatched()
+        {
+            EmblemsConfig config = new EmblemsConfig()
+            {
+                Name = 0
+            };
+
+            List<string> data = new List<string>() { INPUT_NAME };
+
+            Emblem emblem = new Emblem(config, data);
+
+            Assert.IsFalse(emblem.Matched);
+            emblem.FlagAsMatched();
+            Assert.IsTrue(emblem.Matched);
+        }
+
+        #endregion FlagAsMatched
+
         #region BuildDictionary
 
         [TestMethod]
         public void Emblem_BuildDictionary_WithInput_Null()
+        {
+            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(null);
+            Assert.AreEqual(0, dict.Count);
+        }
+
+        [TestMethod]
+        public void Emblem_BuildDictionary_WithInput_NullQuery()
+        {
+            EmblemsConfig config = new EmblemsConfig()
+            {
+                Query = null,
+                Name = 0
+            };
+
+            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            Assert.AreEqual(0, dict.Count);
+        }
+
+        [TestMethod]
+        public void Emblem_BuildDictionary_WithInput_EmptyQuery()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -323,6 +367,106 @@ namespace UnitTests.Models.System
             Assert.AreEqual<int>(1, dict.Count);
         }
 
-        # endregion BuildDictionary
+        #endregion BuildDictionary
+
+        #region MatchNames
+
+        [TestMethod]
+        public void Emblem_MatchNames_UnmatchedName()
+        {
+            EmblemsConfig config = new EmblemsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Emblem 1" },
+                        new List<object>(){ "Emblem 2" }
+                    }
+                },
+                Name = 0
+            };
+
+            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Emblem 3" };
+
+            Assert.ThrowsException<UnmatchedEmblemException>(() => Emblem.MatchNames(dict, names));
+        }
+
+        [TestMethod]
+        public void Emblem_MatchNames_SingleMatch()
+        {
+            EmblemsConfig config = new EmblemsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Emblem 1" },
+                        new List<object>(){ "Emblem 2" }
+                    }
+                },
+                Name = 0
+            };
+
+            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Emblem 1" };
+
+            List<Emblem> matches = Emblem.MatchNames(dict, names);
+            Assert.AreEqual(1, matches.Count);
+            Assert.IsTrue(matches.First().Matched);
+        }
+
+        [TestMethod]
+        public void Emblem_MatchNames_MultipleMatches()
+        {
+            EmblemsConfig config = new EmblemsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Emblem 1" },
+                        new List<object>(){ "Emblem 2" }
+                    }
+                },
+                Name = 0
+            };
+
+            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Emblem 1", "Emblem 2" };
+
+            List<Emblem> matches = Emblem.MatchNames(dict, names);
+            Assert.AreEqual(2, matches.Count);
+            Assert.IsTrue(matches[0].Matched);
+            Assert.IsTrue(matches[1].Matched);
+        }
+
+        [TestMethod]
+        public void Emblem_MatchNames_MultipleMatches_SetMatchedStatus()
+        {
+            EmblemsConfig config = new EmblemsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Emblem 1" },
+                        new List<object>(){ "Emblem 2" }
+                    }
+                },
+                Name = 0
+            };
+
+            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            IEnumerable<string> names = new List<string>() { "Emblem 1", "Emblem 2" };
+
+            List<Emblem> matches = Emblem.MatchNames(dict, names, true);
+            Assert.AreEqual(2, matches.Count);
+            Assert.IsFalse(matches[0].Matched);
+            Assert.IsFalse(matches[1].Matched);
+        }
+
+        #endregion MatchNames
     }
 }

@@ -68,7 +68,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Minimum = RangeValueHandler_Minimum(data, config.Minimum);
             this.Maximum = RangeValueHandler_Maximum(data, config.Maximum);
 
-            if (this.Minimum == 0 && this.Maximum > 0 && !MinimumRequiresCalculation)
+            if (this.Minimum == 0 && this.Maximum > 0 && !this.MinimumRequiresCalculation)
                 throw new ItemRangeMinimumNotSetException("Minimum Range", "Maximum Range");
             if (this.Minimum > this.Maximum && !this.MaximumRequiresCalculation)
                 throw new MinimumGreaterThanMaximumException("Minimum Range", "Maximum Range");

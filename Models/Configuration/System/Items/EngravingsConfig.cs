@@ -37,7 +37,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// <summary>
         /// Optional. Container for item range override values.
         /// </summary>
-        public ItemRangeConfig ItemRangeOverrides { get; set; } = null;
+        public ItemRangeConfig ItemRangeOverrides { get; set; } = new ItemRangeConfig() { Minimum = -1, Maximum = -1 };
 
         /// <summary>
         /// Optional. List of combat stat modifiers to apply to units.

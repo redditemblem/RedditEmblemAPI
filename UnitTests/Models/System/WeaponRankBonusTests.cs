@@ -1,5 +1,6 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses;
+using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
 
@@ -201,5 +202,152 @@ namespace UnitTests.Models.System
         }
 
         #endregion OptionalField_StatModifiers
+
+        #region BuildList
+
+        [TestMethod]
+        public void WeaponRankBonus_BuildList_WithInput_Null()
+        {
+            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(null);
+            Assert.AreEqual(0, list.Count);
+        }
+
+        [TestMethod]
+        public void WeaponRankBonus_BuildList_WithInput_NullQuery()
+        {
+            WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
+            {
+                Query = null,
+                Category = 0
+            };
+
+            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            Assert.AreEqual(0, list.Count);
+        }
+
+        [TestMethod]
+        public void WeaponRankBonus_BuildList_WithInput_EmptyQuery()
+        {
+            WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ }
+                    }
+                },
+                Category = 0
+            };
+
+            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            Assert.AreEqual(0, list.Count);
+        }
+
+        [TestMethod]
+        public void WeaponRankBonus_BuildList_WithInput_CategoryOnly()
+        {
+            WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ INPUT_CATEGORY }
+                    }
+                },
+                Category = 0
+            };
+
+            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            Assert.AreEqual(1, list.Count);
+        }
+
+        [TestMethod]
+        public void WeaponRankBonus_BuildList_WithInput_SingleBonus()
+        {
+            WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ INPUT_CATEGORY, "A" }
+                    }
+                },
+                Category = 0,
+                Rank = 1
+            };
+
+            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            Assert.AreEqual(1, list.Count);
+        }
+
+        [TestMethod]
+        public void WeaponRankBonus_BuildList_WithInput_MultipleBonuses()
+        {
+            WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ INPUT_CATEGORY, "E" },
+                        new List<object>(){ INPUT_CATEGORY, "D" },
+                        new List<object>(){ INPUT_CATEGORY, "C" }
+                    }
+                },
+                Category = 0,
+                Rank = 1
+            };
+
+            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            Assert.AreEqual(3, list.Count);
+        }
+
+        [TestMethod]
+        public void WeaponRankBonus_BuildList_WithInput_DuplicateBonus()
+        {
+            WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ INPUT_CATEGORY, "A" },
+                        new List<object>(){ INPUT_CATEGORY, "A" }
+                    }
+                },
+                Category = 0,
+                Rank = 1
+            };
+
+            Assert.ThrowsException<WeaponRankBonusProcessingException>(() => WeaponRankBonus.BuildList(config));
+        }
+
+        [TestMethod]
+        public void WeaponRankBonus_BuildList_WithInput_Invalid()
+        {
+            WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ INPUT_CATEGORY, "A" },
+                        new List<object>(){ INPUT_CATEGORY, "A" }
+                    }
+                },
+                Category = 0,
+                CombatStatModifiers = new List<NamedStatConfig>
+                {
+                    new NamedStatConfig(){ SourceName = "Atk", Value = 1 }
+                }
+            };
+
+            Assert.ThrowsException<WeaponRankBonusProcessingException>(() => WeaponRankBonus.BuildList(config));
+        }
+
+        #endregion BuildList
     }
 }
