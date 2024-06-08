@@ -67,15 +67,13 @@ namespace RedditEmblemAPI.Models.Configuration
         public List<Query> GetMapBatchQueries()
         {
             //Essential queries
-            List<Query> queries = new List<Query>()
-            {
-                this.Map.MapControls.Query,
-                this.Map.MapTiles.Query,
-                this.System.TerrainTypes.Query,
-                this.Units.Query,
-                this.System.Affiliations.Query,
-                this.System.Items.Query
-            };
+            List<Query> queries = new List<Query>();
+            queries.AddQueryable(this.Map.MapControls);
+            queries.AddQueryable(this.Map.MapTiles);
+            queries.AddQueryable(this.System.TerrainTypes);
+            queries.AddQueryable(this.Units);
+            queries.AddQueryable(this.System.Affiliations);
+            queries.AddQueryable(this.System.Items);
 
             //Add optional queries
             queries.AddQueryable(this.Map.MapObjects);
@@ -101,17 +99,14 @@ namespace RedditEmblemAPI.Models.Configuration
         /// <summary>
         /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
         /// </summary>
-        /// <returns></returns>
         public List<Query> GetMapAnalysisBatchQueries()
         {
             //Essential queries
-            List<Query> queries = new List<Query>()
-            {
-                this.Map.MapControls.Query,
-                this.Map.MapTiles.Query,
-                this.System.TerrainTypes.Query,
-                this.System.Affiliations.Query
-            };
+            List<Query> queries = new List<Query>();
+            queries.AddQueryable(this.Map.MapControls);
+            queries.AddQueryable(this.Map.MapTiles);
+            queries.AddQueryable(this.System.TerrainTypes);
+            queries.AddQueryable(this.System.Affiliations);
 
             return queries;
         }
@@ -123,11 +118,9 @@ namespace RedditEmblemAPI.Models.Configuration
         public List<Query> GetConvoyBatchQueries()
         {
             //Essential queries
-            List<Query> queries = new List<Query>()
-            {
-                this.System.Items.Query,
-                this.Convoy.Query
-            };
+            List<Query> queries = new List<Query>();
+            queries.AddQueryable(this.System.Items);
+            queries.AddQueryable(this.Convoy);
 
             //Add optional queries
             if(this.System.Items.EquippedSkills.Any())
@@ -149,11 +142,9 @@ namespace RedditEmblemAPI.Models.Configuration
         public List<Query> GetShopBatchQueries()
         {
             //Essential queries
-            List<Query> queries = new List<Query>()
-            {
-                this.System.Items.Query,
-                this.Shop.Query
-            };
+            List<Query> queries = new List<Query>();
+            queries.AddQueryable(this.System.Items);
+            queries.AddQueryable(this.Shop);
 
             //Add optional queries
             if (this.System.Items.EquippedSkills.Any())

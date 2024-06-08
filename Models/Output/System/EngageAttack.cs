@@ -63,10 +63,10 @@ namespace RedditEmblemAPI.Models.Output.System
         public static IDictionary<string, EngageAttack> BuildDictionary(EngageAttacksConfig config)
         {
             IDictionary<string, EngageAttack> engageAttacks = new Dictionary<string, EngageAttack>();
-            if (config == null || config.Query == null)
+            if (config == null || config.Queries == null)
                 return engageAttacks;
 
-            foreach (List<object> row in config.Query.Data)
+            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try

@@ -252,11 +252,14 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ }
+                        }
                     }
                 },
                 Name = 0
@@ -271,12 +274,15 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME },
-                        new List<object>(){ INPUT_NAME }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME },
+                            new List<object>(){ INPUT_NAME }
+                        }
                     }
                 },
                 Name = 0
@@ -290,11 +296,14 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME }
+                        }
                     }
                 },
                 Name = 0
@@ -302,6 +311,37 @@ namespace UnitTests.Models.System
 
             IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
             Assert.AreEqual<int>(1, dict.Count);
+        }
+
+        [TestMethod]
+        public void Tag_BuildDictionary_MultiQuery()
+        {
+            TagsConfig config = new TagsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Tag 1" },
+                            new List<object>(){ "Tag 2" }
+                        }
+                    },
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Tag 3" },
+                            new List<object>(){ "Tag 4" }
+                        }
+                    }
+                },
+                Name = 0
+            };
+
+            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            Assert.AreEqual<int>(4, dict.Count);
         }
 
         #endregion BuildDictionary
@@ -313,12 +353,15 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Tag 1" },
-                        new List<object>(){ "Tag 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Tag 1" },
+                            new List<object>(){ "Tag 2" }
+                        }
                     }
                 },
                 Name = 0
@@ -335,12 +378,15 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Tag 1" },
-                        new List<object>(){ "Tag 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Tag 1" },
+                            new List<object>(){ "Tag 2" }
+                        }
                     }
                 },
                 Name = 0
@@ -359,12 +405,15 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Tag 1" },
-                        new List<object>(){ "Tag 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Tag 1" },
+                            new List<object>(){ "Tag 2" }
+                        }
                     }
                 },
                 Name = 0
@@ -384,12 +433,15 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Tag 1" },
-                        new List<object>(){ "Tag 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Tag 1" },
+                            new List<object>(){ "Tag 2" }
+                        }
                     }
                 },
                 Name = 0

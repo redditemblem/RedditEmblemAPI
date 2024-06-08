@@ -181,10 +181,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         public static IDictionary<string, Skill> BuildDictionary(SkillsConfig config)
         {
             IDictionary<string, Skill> skills = new Dictionary<string, Skill>();
-            if (config == null || config.Query == null)
+            if (config == null || config.Queries == null)
                 return skills;
 
-            foreach (List<object> row in config.Query.Data)
+            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try

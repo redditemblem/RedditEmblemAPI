@@ -27,11 +27,14 @@ namespace UnitTests.Models.System
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Battle Style 1" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Battle Style 1" }
+                        }
                     }
                 },
                 Name = 0
@@ -332,7 +335,7 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Query = null,
+                Queries = null,
                 Name = 0,
                 MovementType = 1
             };
@@ -346,11 +349,14 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ }
+                        }
                     }
                 },
                 Name = 0,
@@ -366,12 +372,15 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME, INPUT_MOVEMENT_TYPE },
-                        new List<object>(){ INPUT_NAME, INPUT_MOVEMENT_TYPE }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME, INPUT_MOVEMENT_TYPE },
+                            new List<object>(){ INPUT_NAME, INPUT_MOVEMENT_TYPE }
+                        }
                     }
                 },
                 Name = 0,
@@ -386,11 +395,14 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME, INPUT_MOVEMENT_TYPE }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME, INPUT_MOVEMENT_TYPE }
+                        }
                     }
                 },
                 Name = 0,
@@ -399,6 +411,38 @@ namespace UnitTests.Models.System
 
             IDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
             Assert.AreEqual<int>(1, dict.Count);
+        }
+
+        [TestMethod]
+        public void Class_BuildDictionary_MultiQuery()
+        {
+            ClassesConfig config = new ClassesConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
+                            new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE }
+                        }
+                    },
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Class 3", INPUT_MOVEMENT_TYPE },
+                            new List<object>(){ "Class 4", INPUT_MOVEMENT_TYPE }
+                        }
+                    }
+                },
+                Name = 0,
+                MovementType = 1
+            };
+
+            IDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            Assert.AreEqual<int>(4, dict.Count);
         }
 
         #endregion BuildDictionary
@@ -410,12 +454,15 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
-                        new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE },
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
+                            new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE },
+                        }
                     }
                 },
                 Name = 0,
@@ -433,12 +480,15 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
-                        new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE },
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
+                            new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE },
+                        }
                     }
                 },
                 Name = 0,
@@ -458,12 +508,15 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
-                        new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE },
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
+                            new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE },
+                        }
                     }
                 },
                 Name = 0,
@@ -484,12 +537,15 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
-                        new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE },
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
+                            new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE },
+                        }
                     }
                 },
                 Name = 0,

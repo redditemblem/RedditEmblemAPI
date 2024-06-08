@@ -229,7 +229,7 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Query = null,
+                Queries = null,
                 Name = 0,
                 Grouping = 1
             };
@@ -243,11 +243,14 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ }
+                        }
                     }
                 },
                 Name = 0,
@@ -263,12 +266,15 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME, INPUT_GROUPING },
-                        new List<object>(){ INPUT_NAME, INPUT_GROUPING }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME, INPUT_GROUPING },
+                            new List<object>(){ INPUT_NAME, INPUT_GROUPING }
+                        }
                     }
                 },
                 Name = 0,
@@ -283,11 +289,14 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME, "0" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME, "0" }
+                        }
                     }
                 },
                 Name = 0,
@@ -302,11 +311,14 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME, "1" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME, "1" }
+                        }
                     }
                 },
                 Name = 0,
@@ -315,6 +327,38 @@ namespace UnitTests.Models.System
 
             IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
             Assert.AreEqual<int>(1, dict.Count);
+        }
+
+        [TestMethod]
+        public void Affiliation_BuildDictionary_MultiQuery()
+        {
+            AffiliationsConfig config = new AffiliationsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Affiliation 1", "1" },
+                            new List<object>(){ "Affiliation 2", "1" }
+                        }
+                    },
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Affiliation 3", "1" },
+                            new List<object>(){ "Affiliation 4", "1" }
+                        }
+                    }
+                },
+                Name = 0,
+                Grouping = 1
+            };
+
+            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            Assert.AreEqual<int>(4, dict.Count);
         }
 
         #endregion BuildDictionary
@@ -326,12 +370,15 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Affiliation 1", "1" },
-                        new List<object>(){ "Affiliation 2", "1" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Affiliation 1", "1" },
+                            new List<object>(){ "Affiliation 2", "1" }
+                        }
                     }
                 },
                 Name = 0,
@@ -349,12 +396,15 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Affiliation 1", "1" },
-                        new List<object>(){ "Affiliation 2", "1" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Affiliation 1", "1" },
+                            new List<object>(){ "Affiliation 2", "1" }
+                        }
                     }
                 },
                 Name = 0,
@@ -374,12 +424,15 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Affiliation 1", "1" },
-                        new List<object>(){ "Affiliation 2", "1" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Affiliation 1", "1" },
+                            new List<object>(){ "Affiliation 2", "1" }
+                        }
                     }
                 },
                 Name = 0,
@@ -400,12 +453,15 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Affiliation 1", "1" },
-                        new List<object>(){ "Affiliation 2", "1" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Affiliation 1", "1" },
+                            new List<object>(){ "Affiliation 2", "1" }
+                        }
                     }
                 },
                 Name = 0,

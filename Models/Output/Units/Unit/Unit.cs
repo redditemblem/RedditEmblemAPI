@@ -344,11 +344,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         public static List<Unit> BuildList(UnitsConfig config, SystemInfo system)
         {
             List<Unit> units = new List<Unit>();
-            if (config == null || config.Query == null)
+            if (config == null || config.Queries == null)
                 return units;
 
             //Create units
-            foreach (List<object> row in config.Query.Data)
+            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try

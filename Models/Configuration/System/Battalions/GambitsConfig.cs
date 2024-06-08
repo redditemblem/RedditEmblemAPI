@@ -7,12 +7,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.Battalions
     /// <summary>
     /// Container class for deserialized JSON <c>"Gambits"</c> object data.
     /// </summary>
-    public class GambitsConfig : IQueryable
+    public class GambitsConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index of a gambit's name value.

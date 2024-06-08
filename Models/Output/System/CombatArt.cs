@@ -119,10 +119,10 @@ namespace RedditEmblemAPI.Models.Output.System
         public static IDictionary<string, CombatArt> BuildDictionary(CombatArtsConfig config, IDictionary<string, Tag> tags)
         {
             IDictionary<string, CombatArt> combatArts = new Dictionary<string, CombatArt>();
-            if (config == null || config.Query == null)
+            if (config == null || config.Queries == null)
                 return combatArts;
 
-            foreach (List<object> row in config.Query.Data)
+            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try

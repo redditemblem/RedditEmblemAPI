@@ -7,12 +7,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.Adjutants
     /// <summary>
     /// Container class for deserialized JSON <c>"Adjutants"</c> object data.
     /// </summary>
-    public class AdjutantsConfig : IQueryable
+    public class AdjutantsConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index of an adjutant's name value.

@@ -1,14 +1,15 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
+using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Tags
 {
-    public class TagsConfig : IQueryable
+    public class TagsConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index for a tag's name value.

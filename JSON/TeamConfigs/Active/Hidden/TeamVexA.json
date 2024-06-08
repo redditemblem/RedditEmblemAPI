@@ -40,31 +40,37 @@
       "WeaponRanks": [ "E", "E+", "D", "D+", "C", "C+", "B", "B+", "A", "A+", "S", "S+" ]
     },
     "Affiliations": {
-      "Query": {
-        "Sheet": "Affiliations",
-        "Selection": "A2:C",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Affiliations",
+          "Selection": "A2:C",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "Grouping": 1,
       "TextFields": [ 2 ]
     },
     "Classes": {
-      "Query": {
-        "Sheet": "Class Information",
-        "Selection": "B3:K",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Class Information",
+          "Selection": "B3:K",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "MovementType": 8,
       "Tags": [ 9 ]
     },
     "Items": {
-      "Query": {
-        "Sheet": "Items",
-        "Selection": "A4:BD",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Items",
+          "Selection": "A4:BD",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "Category": 27,
       "WeaponRank": 34,
@@ -149,11 +155,13 @@
       "TextFields": [ 33 ]
     },
     "Skills": {
-      "Query": {
-        "Sheet": "Abilities",
-        "Selection": "A5:P",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Abilities",
+          "Selection": "A5:P",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "TextFields": [ 3 ],
       "Effects": [
@@ -164,11 +172,13 @@
       ]
     },
     "StatusConditions": {
-      "Query": {
-        "Sheet": "Conditions",
-        "Selection": "A3:I",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Conditions",
+          "Selection": "A3:I",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "Type": 4,
       "TextFields": [ 1 ],
@@ -180,22 +190,26 @@
       ]
     },
     "Tags": {
-      "Query": {
-        "Sheet": "Tags",
-        "Selection": "B2:E",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Tags",
+          "Selection": "B2:E",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "SpriteURL": 1,
       "ShowOnUnit": 2,
       "UnitAura": 3
     },
     "TerrainTypes": {
-      "Query": {
-        "Sheet": "Terrain",
-        "Selection": "A2:N",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Terrain",
+          "Selection": "A2:N",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "StatGroups": [
         {
@@ -233,11 +247,13 @@
       "TextFields": [ 11 ]
     },
     "CombatArts": {
-      "Query": {
-        "Sheet": "Combat Arts",
-        "Selection": "A2:Q",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Combat Arts",
+          "Selection": "A2:Q",
+          "Orientation": 1
+        }
+      ],
       "Name": 1,
       "WeaponRank": 3,
       "Category": 0,
@@ -269,11 +285,13 @@
       "TextFields": [ 12 ]
     },
     "Battalions": {
-      "Query": {
-        "Sheet": "Battalions",
-        "Selection": "A4:O",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Battalions",
+          "Selection": "A4:O",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "Gambit": 3,
       "MaxEndurance": 6,
@@ -316,11 +334,13 @@
       ]
     },
     "Gambits": {
-      "Query": {
-        "Sheet": "Gambits",
-        "Selection": "A4:M",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Gambits",
+          "Selection": "A4:M",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "MaxUses": 6,
       "UtilizedStats": 7,
@@ -341,11 +361,13 @@
       "TextFields": [ 8 ]
     },
     "Adjutants": {
-      "Query": {
-        "Sheet": "Adjutants",
-        "Selection": "A2:P",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Adjutants",
+          "Selection": "A2:P",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "CombatStatModifiers": [
         {
@@ -412,11 +434,13 @@
     }
   },
   "Units": {
-    "Query": {
-      "Sheet": "Combined Units",
-      "Selection": "A4:FO",
-      "Orientation": 1
-    },
+    "Queries": [
+      {
+        "Sheet": "Combined Units",
+        "Selection": "A4:FO",
+        "Orientation": 1
+      }
+    ],
     "Name": 0,
     "SpriteURL": 3,
     "Level": 10,

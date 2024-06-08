@@ -48,31 +48,37 @@
       }
     },
     "Affiliations": {
-      "Query": {
-        "Sheet": "Affiliations",
-        "Selection": "A2:C",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Affiliations",
+          "Selection": "A2:C",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "Grouping": 1,
       "TextFields": [ 2 ]
     },
     "Classes": {
-      "Query": {
-        "Sheet": "Class Stats",
-        "Selection": "A2:AO",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Class Stats",
+          "Selection": "A2:AO",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "MovementType": 26,
       "Tags": [ 25 ]
     },
     "Items": {
-      "Query": {
-        "Sheet": "Weapon Index",
-        "Selection": "B3:AR",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Weapon Index",
+          "Selection": "B3:AR",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "SpriteURL": 39,
       "Category": 1,
@@ -127,11 +133,13 @@
       ]
     },
     "Skills": {
-      "Query": {
-        "Sheet": "Skills & Astrology",
-        "Selection": "A2:F",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Skills & Astrology",
+          "Selection": "A2:F",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "TextFields": [ 1 ],
       "Effects": [
@@ -142,11 +150,13 @@
       ]
     },
     "StatusConditions": {
-      "Query": {
-        "Sheet": "Status Conditions",
-        "Selection": "B2:I",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Status Conditions",
+          "Selection": "B2:I",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "SpriteURL": 1,
       "Type": 2,
@@ -160,22 +170,26 @@
       ]
     },
     "Tags": {
-      "Query": {
-        "Sheet": "tags",
-        "Selection": "B2:E",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "tags",
+          "Selection": "B2:E",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "SpriteURL": 1,
       "ShowOnUnit": 2,
       "UnitAura": 3
     },
     "TerrainTypes": {
-      "Query": {
-        "Sheet": "Terrain Chart",
-        "Selection": "A3:R",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Terrain Chart",
+          "Selection": "A3:R",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "StatGroups": [
         {
@@ -227,11 +241,13 @@
       "TextFields": [ 15, 17 ]
     },
     "TileObjects": {
-      "Query": {
-        "Sheet": "Tile Objects",
-        "Selection": "B2:Q",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Tile Objects",
+          "Selection": "B2:Q",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "SpriteURL": 1,
       "Size": 2,
@@ -275,11 +291,13 @@
     }
   },
   "Units": {
-    "Query": {
-      "Sheet": "RE Maps Tracker",
-      "Selection": "B1:ZZ",
-      "Orientation": 2
-    },
+    "Queries": [
+      {
+        "Sheet": "RE Maps Tracker",
+        "Selection": "B1:ZZ",
+        "Orientation": 2
+      }
+    ],
     "Name": 0,
     "SpriteURL": 3,
     "Level": 79,

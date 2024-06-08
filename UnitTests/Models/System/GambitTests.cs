@@ -486,7 +486,7 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Query = null,
+                Queries = null,
                 Name = 0,
                 MaxUses = 1,
                 Range = new GambitRangeConfig()
@@ -510,11 +510,14 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ }
+                        }
                     }
                 },
                 Name = 0,
@@ -540,12 +543,15 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" },
-                        new List<object>(){ INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" },
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" },
+                            new List<object>(){ INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" },
+                        }
                     }
                 },
                 Name = 0,
@@ -570,11 +576,14 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" }
+                        }
                     }
                 },
                 Name = 0,
@@ -595,6 +604,48 @@ namespace UnitTests.Models.System
             Assert.AreEqual<int>(1, dict.Count);
         }
 
+        [TestMethod]
+        public void Gambit_BuildDictionary_MultiQuery()
+        {
+            GambitsConfig config = new GambitsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" },
+                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" }
+                        }
+                    },
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Gambit 3", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" },
+                            new List<object>(){ "Gambit 4", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" }
+                        }
+                    }
+                },
+                Name = 0,
+                MaxUses = 1,
+                Range = new GambitRangeConfig()
+                {
+                    Minimum = 2,
+                    Maximum = 3
+                },
+                Stats = new List<NamedStatConfig>()
+                {
+                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
+                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
+                }
+            };
+
+            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            Assert.AreEqual<int>(4, dict.Count);
+        }
+
         # endregion BuildDictionary
 
         #region MatchNames
@@ -604,12 +655,15 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
-                        new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
+                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                        }
                     }
                 },
                 Name = 0,
@@ -637,12 +691,15 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
-                        new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
+                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                        }
                     }
                 },
                 Name = 0,
@@ -672,12 +729,15 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
-                        new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
+                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                        }
                     }
                 },
                 Name = 0,
@@ -708,12 +768,15 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
-                        new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
+                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                        }
                     }
                 },
                 Name = 0,

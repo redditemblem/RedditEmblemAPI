@@ -7,12 +7,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.Affiliations
     /// <summary>
     /// Container class for deserialized JSON <c>"Affiliations"</c> object data.
     /// </summary>
-    public class AffiliationsConfig : IQueryable
+    public class AffiliationsConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index of an affiliation's name value.
