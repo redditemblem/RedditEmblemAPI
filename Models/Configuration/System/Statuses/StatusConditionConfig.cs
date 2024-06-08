@@ -7,12 +7,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
     /// <summary>
     /// Container class for deserialized JSON <c>"StatusConditions"</c> object data.
     /// </summary>
-    public class StatusConditionConfig : IQueryable
+    public class StatusConditionConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index for a status condition's name value.

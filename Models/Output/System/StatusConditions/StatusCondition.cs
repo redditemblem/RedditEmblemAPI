@@ -145,10 +145,10 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         public static IDictionary<string, StatusCondition> BuildDictionary(StatusConditionConfig config)
         {
             IDictionary<string, StatusCondition> statusConditions = new Dictionary<string, StatusCondition>();
-            if (config == null || config.Query == null)
+            if (config == null || config.Queries == null)
                 return statusConditions;
 
-            foreach (List<object> row in config.Query.Data)
+            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try

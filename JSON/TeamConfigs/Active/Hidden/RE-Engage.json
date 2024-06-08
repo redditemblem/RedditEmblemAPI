@@ -53,33 +53,39 @@
       "Emblem": "Regalia"
     },
     "Affiliations": {
-      "Query": {
-        "Sheet": "Affiliations",
-        "Selection": "A2:D",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Affiliations",
+          "Selection": "A2:D",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "Grouping": 1,
       "TextFields": [ 2 ],
       "FlipUnitSprites": 3
     },
     "Classes": {
-      "Query": {
-        "Sheet": "Classes",
-        "Selection": "A2:H",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Classes",
+          "Selection": "A2:H",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "MovementType": 7,
       "BattleStyle": 4,
       "Tags": [ 5, 6 ]
     },
     "Items": {
-      "Query": {
-        "Sheet": "Items",
-        "Selection": "A2:AD",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Items",
+          "Selection": "A2:AD",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "Category": 1,
       "WeaponRank": 2,
@@ -158,11 +164,13 @@
       "TextFields": [ 20 ]
     },
     "Skills": {
-      "Query": {
-        "Sheet": "Skills",
-        "Selection": "A2:J",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Skills",
+          "Selection": "A2:J",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "TextFields": [ 4 ],
       "Effects": [
@@ -173,11 +181,13 @@
       ]
     },
     "StatusConditions": {
-      "Query": {
-        "Sheet": "Status Conditions",
-        "Selection": "A2:E",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Status Conditions",
+          "Selection": "A2:E",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "Type": 2,
       "Turns": 1,
@@ -185,22 +195,26 @@
       "SpriteURL": 4
     },
     "Tags": {
-      "Query": {
-        "Sheet": "Weaknesses",
-        "Selection": "B2:E",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Weaknesses",
+          "Selection": "B2:E",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "SpriteURL": 1,
       "ShowOnUnit": 2,
       "UnitAura": 3
     },
     "TerrainTypes": {
-      "Query": {
-        "Sheet": "Terrain Types",
-        "Selection": "A2:P",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Terrain Types",
+          "Selection": "A2:P",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "StatGroups": [
         {
@@ -254,11 +268,13 @@
       "TextFields": [ 4 ]
     },
     "TileObjects": {
-      "Query": {
-        "Sheet": "Tile Objects",
-        "Selection": "A2:L",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Tile Objects",
+          "Selection": "A2:L",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "SpriteURL": 2,
       "Size": 4,
@@ -287,21 +303,25 @@
       "TextFields": [ 11 ]
     },
     "BattleStyles": {
-      "Query": {
-        "Sheet": "Fighting Styles",
-        "Selection": "B2:F",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Fighting Styles",
+          "Selection": "B2:F",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "SpriteURL": 1,
       "TextFields": [ 4 ]
     },
     "Engravings": {
-      "Query": {
-        "Sheet": "Engravings",
-        "Selection": "A2:U",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Engravings",
+          "Selection": "A2:U",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "ItemStatModifiers": [
         {
@@ -368,32 +388,38 @@
       "TextFields": [ 20 ]
     },
     "Emblems": {
-      "Query": {
-        "Sheet": "Regalia",
-        "Selection": "B1:ZZ",
-        "Orientation": 2
-      },
+      "Queries": [
+        {
+          "Sheet": "Regalia",
+          "Selection": "B1:ZZ",
+          "Orientation": 2
+        }
+      ],
       "Name": 0,
       "SpriteURL": 102,
       "EngagedUnitAura": 4,
       "TextFields": [ 2 ]
     },
     "EngageAttacks": {
-      "Query": {
-        "Sheet": "Engage Attacks",
-        "Selection": "A2:B",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Engage Attacks",
+          "Selection": "A2:B",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "TextFields": [ 1 ]
     }
   },
   "Units": {
-    "Query": {
-      "Sheet": "Tracker",
-      "Selection": "B1:ZZ",
-      "Orientation": 2
-    },
+    "Queries": [
+      {
+        "Sheet": "Tracker",
+        "Selection": "B1:ZZ",
+        "Orientation": 2
+      }
+    ],
     "Name": 0,
     "SpriteURL": 86,
     "Level": 79,

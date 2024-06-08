@@ -174,7 +174,7 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Query = null,
+                Queries = null,
                 Name = 0
             };
 
@@ -187,11 +187,14 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ }
+                        }
                     }
                 },
                 Name = 0
@@ -206,12 +209,15 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME },
-                        new List<object>(){ INPUT_NAME }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME },
+                            new List<object>(){ INPUT_NAME }
+                        }
                     }
                 },
                 Name = 0
@@ -225,11 +231,14 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME, "NotURL" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME, "NotURL" }
+                        }
                     }
                 },
                 Name = 0,
@@ -244,11 +253,14 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME }
+                        }
                     }
                 },
                 Name = 0
@@ -256,6 +268,37 @@ namespace UnitTests.Models.System
 
             IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
             Assert.AreEqual<int>(1, dict.Count);
+        }
+
+        [TestMethod]
+        public void EngageAttack_BuildDictionary_MultiQuery()
+        {
+            EngageAttacksConfig config = new EngageAttacksConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engage Attack 1" },
+                            new List<object>(){ "Engage Attack 2" }
+                        }
+                    },
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engage Attack 3" },
+                            new List<object>(){ "Engage Attack 4" }
+                        }
+                    }
+                },
+                Name = 0
+            };
+
+            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            Assert.AreEqual<int>(4, dict.Count);
         }
 
         #endregion BuildDictionary
@@ -267,12 +310,15 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Engage Attack 1" },
-                        new List<object>(){ "Engage Attack 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engage Attack 1" },
+                            new List<object>(){ "Engage Attack 2" }
+                        }
                     }
                 },
                 Name = 0
@@ -289,12 +335,15 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Engage Attack 1" },
-                        new List<object>(){ "Engage Attack 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engage Attack 1" },
+                            new List<object>(){ "Engage Attack 2" }
+                        }
                     }
                 },
                 Name = 0
@@ -313,12 +362,15 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Engage Attack 1" },
-                        new List<object>(){ "Engage Attack 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engage Attack 1" },
+                            new List<object>(){ "Engage Attack 2" }
+                        }
                     }
                 },
                 Name = 0
@@ -338,12 +390,15 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Engage Attack 1" },
-                        new List<object>(){ "Engage Attack 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engage Attack 1" },
+                            new List<object>(){ "Engage Attack 2" }
+                        }
                     }
                 },
                 Name = 0

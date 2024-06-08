@@ -7,12 +7,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.Classes
     /// <summary>
     /// Container class for deserialized JSON <c>"Classes"</c> object data.
     /// </summary>
-    public class ClassesConfig : IQueryable
+    public class ClassesConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index of a class's name value.

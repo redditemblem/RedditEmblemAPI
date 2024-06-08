@@ -7,12 +7,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
     /// <summary>
     /// Container class for deserialized JSON <c>"Engravings"</c> object data.
     /// </summary>
-    public class EngravingsConfig : IQueryable
+    public class EngravingsConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index of an engraving's name value.

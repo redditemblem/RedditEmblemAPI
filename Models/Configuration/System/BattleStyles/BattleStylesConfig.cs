@@ -7,12 +7,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.BattleStyles
     /// <summary>
     /// Container class for deserialized JSON <c>"BattleStyles"</c> object data.
     /// </summary>
-    public class BattleStylesConfig : IQueryable
+    public class BattleStylesConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index of a battle style's name value.

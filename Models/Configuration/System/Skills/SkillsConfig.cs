@@ -7,12 +7,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.Skills
     /// <summary>
     /// Container class for deserialized JSON <c>"Skills"</c> object data.
     /// </summary>
-    public class SkillsConfig : IQueryable
+    public class SkillsConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index of a skill's name value.

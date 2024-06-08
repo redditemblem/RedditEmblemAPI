@@ -200,10 +200,10 @@ namespace RedditEmblemAPI.Models.Output.System
         public static IDictionary<string, Item> BuildDictionary(ItemsConfig config, IDictionary<string, Skill> skills, IDictionary<string, Tag> tags, IDictionary<string, Engraving> engravings)
         {
             IDictionary<string, Item> items = new Dictionary<string, Item>();
-            if (config == null || config.Query == null)
+            if (config == null || config.Queries == null)
                 return items;
 
-            foreach (List<object> row in config.Query.Data)
+            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try

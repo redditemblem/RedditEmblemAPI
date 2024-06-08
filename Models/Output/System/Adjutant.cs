@@ -80,10 +80,10 @@ namespace RedditEmblemAPI.Models.Output.System
         public static IDictionary<string, Adjutant> BuildDictionary(AdjutantsConfig config)
         {
             IDictionary<string, Adjutant> adjutants = new Dictionary<string, Adjutant>();
-            if (config == null || config.Query == null)
+            if (config == null || config.Queries == null)
                 return adjutants;
 
-            foreach (List<object> row in config.Query.Data)
+            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try

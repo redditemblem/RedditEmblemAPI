@@ -26,12 +26,15 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Tag 1" },
-                        new List<object>(){ "Tag 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Tag 1" },
+                            new List<object>(){ "Tag 2" }
+                        }
                     }
                 },
                 Name = 0
@@ -608,7 +611,7 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Query = null,
+                Queries = null,
                 Name = 0
             };
 
@@ -621,11 +624,14 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ }
+                        }
                     }
                 },
                 Name = 0
@@ -640,12 +646,15 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME },
-                        new List<object>(){ INPUT_NAME }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME },
+                            new List<object>(){ INPUT_NAME }
+                        }
                     }
                 },
                 Name = 0
@@ -659,11 +668,14 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ INPUT_NAME }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ INPUT_NAME }
+                        }
                     }
                 },
                 Name = 0
@@ -671,6 +683,37 @@ namespace UnitTests.Models.System
 
             IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
             Assert.AreEqual<int>(1, dict.Count);
+        }
+
+        [TestMethod]
+        public void Engraving_BuildDictionary_MultiQuery()
+        {
+            EngravingsConfig config = new EngravingsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engraving 1" },
+                            new List<object>(){ "Engraving 2" }
+                        }
+                    },
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engraving 3" },
+                            new List<object>(){ "Engraving 4" }
+                        }
+                    }
+                },
+                Name = 0
+            };
+
+            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            Assert.AreEqual<int>(4, dict.Count);
         }
 
         #endregion BuildDictionary
@@ -682,12 +725,15 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Engraving 1" },
-                        new List<object>(){ "Engraving 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engraving 1" },
+                            new List<object>(){ "Engraving 2" }
+                        }
                     }
                 },
                 Name = 0
@@ -704,12 +750,15 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Engraving 1" },
-                        new List<object>(){ "Engraving 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engraving 1" },
+                            new List<object>(){ "Engraving 2" }
+                        }
                     }
                 },
                 Name = 0
@@ -728,12 +777,15 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Engraving 1" },
-                        new List<object>(){ "Engraving 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engraving 1" },
+                            new List<object>(){ "Engraving 2" }
+                        }
                     }
                 },
                 Name = 0
@@ -753,12 +805,15 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Query = new Query()
+                Queries = new List<Query>()
                 {
-                    Data = new List<IList<object>>()
+                    new Query()
                     {
-                        new List<object>(){ "Engraving 1" },
-                        new List<object>(){ "Engraving 2" }
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engraving 1" },
+                            new List<object>(){ "Engraving 2" }
+                        }
                     }
                 },
                 Name = 0

@@ -7,12 +7,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.Emblems
     /// <summary>
     /// Container class for deserialized JSON <c>"EngageAttacks"</c> object data.
     /// </summary>
-    public class EngageAttacksConfig : IQueryable
+    public class EngageAttacksConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index of an engage attack's name value.

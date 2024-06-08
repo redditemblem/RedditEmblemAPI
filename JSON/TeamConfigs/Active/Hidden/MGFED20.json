@@ -51,31 +51,37 @@
       "AllowNonInventoryEquippedItems": false
     },
     "Affiliations": {
-      "Query": {
-        "Sheet": "Unit Affiliations",
-        "Selection": "A2:C",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Unit Affiliations",
+          "Selection": "A2:C",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "Grouping": 1,
       "TextFields": [ 2 ]
     },
     "Classes": {
-      "Query": {
-        "Sheet": "Classes",
-        "Selection": "A2:G",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Classes",
+          "Selection": "A2:G",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "MovementType": 6,
       "Tags": [ 5 ]
     },
     "Items": {
-      "Query": {
-        "Sheet": "Items",
-        "Selection": "A2:AM",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Items",
+          "Selection": "A2:AM",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "SpriteURL": 38,
       "Category": 1,
@@ -155,11 +161,13 @@
       "TextFields": [ 25 ]
     },
     "Skills": {
-      "Query": {
-        "Sheet": "Skills",
-        "Selection": "A2:N",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Skills",
+          "Selection": "A2:N",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "TextFields": [ 2 ],
       "SpriteURL": 4,
@@ -175,11 +183,13 @@
       ]
     },
     "StatusConditions": {
-      "Query": {
-        "Sheet": "Status Conditions",
-        "Selection": "B2:I",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Status Conditions",
+          "Selection": "B2:I",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "SpriteURL": 1,
       "Type": 2,
@@ -193,22 +203,26 @@
       ]
     },
     "Tags": {
-      "Query": {
-        "Sheet": "Tags",
-        "Selection": "B2:E",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Tags",
+          "Selection": "B2:E",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "SpriteURL": 1,
       "ShowOnUnit": 2,
       "UnitAura": 3
     },
     "TerrainTypes": {
-      "Query": {
-        "Sheet": "Terrain Types",
-        "Selection": "A2:O",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Terrain Types",
+          "Selection": "A2:O",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "StatGroups": [
         {
@@ -260,11 +274,13 @@
       "TextFields": [ 14 ]
     },
     "TileObjects": {
-      "Query": {
-        "Sheet": "Tile Objects",
-        "Selection": "B2:Q",
-        "Orientation": 1
-      },
+      "Queries": [
+        {
+          "Sheet": "Tile Objects",
+          "Selection": "B2:Q",
+          "Orientation": 1
+        }
+      ],
       "Name": 0,
       "SpriteURL": 1,
       "Size": 2,
@@ -308,11 +324,13 @@
     }
   },
   "Units": {
-    "Query": {
-      "Sheet": "Units",
-      "Selection": "B1:ZZ",
-      "Orientation": 2
-    },
+    "Queries": [
+      {
+        "Sheet": "Units",
+        "Selection": "B1:ZZ",
+        "Orientation": 2
+      }
+    ],
     "Name": 0,
     "SpriteURL": 3,
     "Level": 7,

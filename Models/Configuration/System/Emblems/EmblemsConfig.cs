@@ -7,12 +7,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.Emblems
     /// <summary>
     /// Container class for deserialized JSON <c>"Emblems"</c> object data.
     /// </summary>
-    public class EmblemsConfig : IQueryable
+    public class EmblemsConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index of an emblem's name value.

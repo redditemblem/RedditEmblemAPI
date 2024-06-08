@@ -7,12 +7,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.TileObjects
     /// <summary>
     /// Container class for deserialized JSON <c>"TileObjects"</c> object data.
     /// </summary>
-    public class TileObjectsConfig : IQueryable
+    public class TileObjectsConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index for a tile object's name value.

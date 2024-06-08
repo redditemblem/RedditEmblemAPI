@@ -7,12 +7,12 @@ namespace RedditEmblemAPI.Models.Configuration.System.Battalions
     /// <summary>
     /// Container class for deserialized JSON <c>"Battalions"</c> object data.
     /// </summary>
-    public class BattalionsConfig : IQueryable
+    public class BattalionsConfig : IMultiQueryable
     {
         #region Required Fields
 
         [JsonRequired]
-        public Query Query { get; set; }
+        public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
         /// Required. Cell index of a battalion's name value.
