@@ -54,9 +54,12 @@ namespace RedditEmblemAPI.Models.Output.Map
             this.Units = UnitsHelper.Process(config.Units, this.System, this.Map);
 
             //Calculate map ranges
-            RangeHelper rangeHelper = new RangeHelper(this.Units, this.Map);
-            rangeHelper.CalculateTileObjectRanges();
-            rangeHelper.CalculateUnitRanges();
+            if (config.Map.Constants.CalculateRanges)
+            {
+                RangeHelper rangeHelper = new RangeHelper(this.Units, this.Map);
+                rangeHelper.CalculateTileObjectRanges();
+                rangeHelper.CalculateUnitRanges();
+            }
 
             //Clean up
             this.System.RemoveUnusedObjects();

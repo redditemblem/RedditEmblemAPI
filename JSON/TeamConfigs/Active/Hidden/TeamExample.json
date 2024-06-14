@@ -171,7 +171,8 @@
           "Name": 35
         }
       ],
-      "TextFields": [ 36, 37 ]
+      "TextFields": [ 36, 37 ],
+      "GraphicURL" : 39
     },
     "WeaponRankBonuses": {
       "Query": {

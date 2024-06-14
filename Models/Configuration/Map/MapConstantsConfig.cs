@@ -51,6 +51,11 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         public CoordinateFormat CoordinateFormat { get; set; } = CoordinateFormat.XY;
 
         /// <summary>
+        /// Optional. Flag indicating whether any ranges (unit or tile object) should be calculated at all. Defaults to true.
+        /// </summary>
+        public bool CalculateRanges { get; set; } = true;
+
+        /// <summary>
         /// Optional. Flag signifying whether units in the back of pair-ups should have their ranges calculated. Defaults to true.
         /// </summary>
         public bool CalculatePairedUnitRanges { get; set; } = true;

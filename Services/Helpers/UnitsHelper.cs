@@ -176,7 +176,8 @@ namespace RedditEmblemAPI.Services.Helpers
                         throw new UnitTileOverlapException(unit, tile.UnitData.Unit, tile.Coordinate);
 
                     unit.Location.OriginTiles.Add(tile);
-                    unit.Ranges.Movement.Add(tile.Coordinate);
+                    if(map.Constants.CalculateRanges)
+                        unit.Ranges.Movement.Add(tile.Coordinate);
 
                     if (applyTileBinding)
                     {
