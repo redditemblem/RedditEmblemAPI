@@ -116,6 +116,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         /// </summary>
         public List<int> TextFields { get; set; } = new List<int>();
 
+        /// <summary>
+        /// Optional. Cell index of an item's graphic image URL.
+        /// </summary>
+        public int GraphicURL { get; set; } = -1;
+
         #endregion
     }
 }

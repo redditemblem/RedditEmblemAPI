@@ -10,6 +10,7 @@ using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
@@ -124,6 +125,13 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public List<string> TextFields { get; set; }
 
+        /// <summary>
+        /// The graphic image URL for the item.
+        /// </summary>
+        [DefaultValue("")]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string GraphicURL { get; set; }
+
         #endregion Attributes
 
         /// <summary>
@@ -142,6 +150,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.MaxUses = DataParser.OptionalInt_Positive(data, config.Uses, "Uses");
             this.Range = new ItemRange(config.Range, data);
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
+            this.GraphicURL = DataParser.OptionalString_URL(data, config.GraphicURL, "Graphic URL");
 
             IEnumerable<string> itemTags = DataParser.List_StringCSV(data, config.Tags).Distinct();
             this.Tags = Tag.MatchNames(tags, itemTags, true);

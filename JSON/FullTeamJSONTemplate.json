@@ -10,6 +10,7 @@
       "TileSpacing": 0, //Required
       "HasHeaderTopLeft": false, //Optional, defaults to false
       "HasHeaderBottomRight": false, //Optional, defaults to false
+      "CalculateRanges": true, //Optional, defaults to true
       "CalculatePairedUnitRanges": true, //Optional, defaults to true
       "ItemMaxRangeAllowedForCalculation": 15, //Optional, defaults to 15
       "UnitMovementStatName": "Mov", //Optional, defaults to "Mov"
@@ -57,22 +58,26 @@
       "AllowNonInventoryEquippedItems": false //Optional, defaults to false
     },
     "Affiliations": { //Required
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "Grouping": 0, //Required
       "FlipUnitSprites": 0, //Optional
       "TextFields": [ 0 ] //Optional
     },
     "Classes": { //Optional
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "MovementType": 0, //Required
       "Tags": [ 0 ], //Optional
@@ -80,11 +85,13 @@
       "TextFields": [ 0 ] //Optional
     },
     "Items": { //Required
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "Category": 0, //Required
@@ -136,7 +143,8 @@
         "CanOnlyUseBeforeMovement": 0 //Optional
       },
       "Tags": [ 0 ], //Optional, only use if Tags sheet is provided
-      "TextFields": [] //Optional
+      "TextFields": [], //Optional
+      "GraphicURL": 0 //Optional
     },
     "WeaponRankBonuses": { //Optional, defaults to null
       "Query": {
@@ -160,11 +168,13 @@
       ]
     },
     "Skills": { //Optional, defaults to null
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "TextFields": [], //Optional
@@ -176,11 +186,13 @@
       ]
     },
     "StatusConditions": { //Optional
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "Type": 0, //Required
@@ -194,22 +206,26 @@
       ]
     },
     "Tags": { //Optional
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "ShowOnUnit": 0, //Optional
       "UnitAura": 0 //Optional
     },
     "TerrainTypes": { //Required
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "StatGroups": [ //Required
         {
@@ -244,11 +260,13 @@
       "TextFields": [ 0 ] //Optional
     },
     "TileObjects": { //Optional
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Required
       "Size": 0, //Optional
@@ -273,11 +291,13 @@
       "TextFields": [ 0 ] //Optional
     },
     "CombatArts": { //Optional
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "WeaponRank": 0, //Optional
@@ -298,11 +318,13 @@
       "TextFields": [ 0 ] //Optional
     },
     "Battalions": { //Optional
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "Gambit": 0, //Required
@@ -323,11 +345,13 @@
       "TextFields": [ 0 ] //Optional
     },
     "Gambits": { //Optional
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "MaxUses": 0, //Required
@@ -345,21 +369,25 @@
       "TextFields": [ 0 ] //Optional
     },
     "BattleStyles": { //Optional
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "TextFields": [ 0 ] //Optional
     },
     "Engravings": { //Optional
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "ItemStatModifiers": [ //Optional
@@ -388,11 +416,13 @@
       "TextFields": [ 0 ] //Optional
     },
     "Emblems": { //Optional
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "Tagline": 0, //Optional
@@ -400,21 +430,25 @@
       "TextFields": [ 0 ] //Optional
     },
     "EngageAttacks": { //Optional
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "TextFields": [ 0 ] //Optional
     },
     "Adjutants": {
-      "Query": {
-        "Sheet": "",
-        "Selection": "",
-        "Orientation": 0
-      },
+      "Queries": [
+        {
+          "Sheet": "",
+          "Selection": "",
+          "Orientation": 0
+        }
+      ],
       "Name": 0, //Required
       "SpriteURL": 0, //Optional
       "CombatStatModifiers": [ //Optional
@@ -433,11 +467,13 @@
     }
   },
   "Units": { //Required
-    "Query": {
-      "Sheet": "",
-      "Selection": "",
-      "Orientation": 0
-    },
+    "Queries": [
+      {
+        "Sheet": "",
+        "Selection": "",
+        "Orientation": 0
+      }
+    ],
     "Name": 0, //Required
     "SpriteURL": 0, //Required
     "Level": 0, //Required
