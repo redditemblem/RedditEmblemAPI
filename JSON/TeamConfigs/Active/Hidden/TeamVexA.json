@@ -871,60 +871,64 @@
     "Inventory": {
       "PrimaryEquippedItem": 39,
       "SecondaryEquippedItems": [ 110 ],
-      "Slots": [
+      "Subsections": [
         {
-          "Name": 40
-        },
-        {
-          "Name": 41
-        },
-        {
-          "Name": 42
-        },
-        {
-          "Name": 43
-        },
-        {
-          "Name": 44
-        },
-        {
-          "Name": 45
-        },
-        {
-          "Name": 46
-        },
-        {
-          "Name": 47
-        },
-        {
-          "Name": 48
-        },
-        {
-          "Name": 49
-        },
-        {
-          "Name": 50
-        },
-        {
-          "Name": 51
-        },
-        {
-          "Name": 52
-        },
-        {
-          "Name": 53
-        },
-        {
-          "Name": 54
-        },
-        {
-          "Name": 55
-        },
-        {
-          "Name": 56
-        },
-        {
-          "Name": 57
+          "Slots": [
+            {
+              "Name": 40
+            },
+            {
+              "Name": 41
+            },
+            {
+              "Name": 42
+            },
+            {
+              "Name": 43
+            },
+            {
+              "Name": 44
+            },
+            {
+              "Name": 45
+            },
+            {
+              "Name": 46
+            },
+            {
+              "Name": 47
+            },
+            {
+              "Name": 48
+            },
+            {
+              "Name": 49
+            },
+            {
+              "Name": 50
+            },
+            {
+              "Name": 51
+            },
+            {
+              "Name": 52
+            },
+            {
+              "Name": 53
+            },
+            {
+              "Name": 54
+            },
+            {
+              "Name": 55
+            },
+            {
+              "Name": 56
+            },
+            {
+              "Name": 57
+            }
+          ]
         }
       ]
     },
@@ -936,33 +940,37 @@
     "HeldCurrency": 11,
     "Tags": [ 13 ],
     "Behavior": 14,
-    "Skills": [
+    "SkillSubsections": [
       {
-        "Name": 58
-      },
-      {
-        "Name": 59
-      },
-      {
-        "Name": 60
-      },
-      {
-        "Name": 61
-      },
-      {
-        "Name": 62
-      },
-      {
-        "Name": 63
-      },
-      {
-        "Name": 64
-      },
-      {
-        "Name": 65
-      },
-      {
-        "Name": 66
+        "Skills": [
+          {
+            "Name": 58
+          },
+          {
+            "Name": 59
+          },
+          {
+            "Name": 60
+          },
+          {
+            "Name": 61
+          },
+          {
+            "Name": 62
+          },
+          {
+            "Name": 63
+          },
+          {
+            "Name": 64
+          },
+          {
+            "Name": 65
+          },
+          {
+            "Name": 66
+          }
+        ]
       }
     ],
     "StatusConditions": [

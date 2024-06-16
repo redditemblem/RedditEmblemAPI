@@ -399,7 +399,7 @@ namespace RedditEmblemAPI.Services.Helpers
             List<Coordinate> utilRange = new List<Coordinate>();
 
             //Transpose item data into the struct we're using for recursion
-            List<UnitItemRange> itemRanges = SelectInventoryItemsIntoRangeStruct(unit.Inventory.Items);
+            List<UnitItemRange> itemRanges = SelectInventoryItemsIntoRangeStruct(unit.Inventory.GetAllItems());
 
             //If unit is engaged with an emblem, include its items in the range as well
             if (unit.Emblem != null && unit.Emblem.IsEngaged)

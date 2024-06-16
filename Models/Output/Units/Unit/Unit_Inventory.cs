@@ -91,7 +91,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         {
             UnitInventory inventory = new UnitInventory(config, system, data, this.Emblem);
 
-            foreach (UnitInventoryItem item in inventory.Items)
+            foreach (UnitInventoryItem item in inventory.GetAllItems())
             {
                 //Check if the item can be equipped
                 string unitRank;

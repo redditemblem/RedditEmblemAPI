@@ -1,4 +1,6 @@
-﻿namespace RedditEmblemAPI.Models.Configuration.System
+﻿using System.Collections.Generic;
+
+namespace RedditEmblemAPI.Models.Configuration.System
 {
     /// <summary>
     /// Container class for deserialized JSON <c>"InterfaceLabels"</c> object data.
@@ -13,7 +15,9 @@
         public string Emblem { get; set; } = "Emblem";
         public string Gambit { get; set; } = "Gambit";
         public string Inventory { get; set; } = "Inventory";
+        public IEnumerable<string> InventorySubsections { get; set; } = new List<string>();
         public string Skills { get; set; } = "Skills";
+        public IEnumerable<string> SkillSubsections { get; set; } = new List<string>();
         public string StatusConditions { get; set; } = "Status Conditions";
         public string WeaponRanks { get; set; } = "Weapon Ranks";
     }

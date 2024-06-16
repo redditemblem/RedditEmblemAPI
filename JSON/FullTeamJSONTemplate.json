@@ -57,6 +57,21 @@
       "WeaponRanks": [ "E", "D", "C", "B", "A", "S" ], //Optional, defaults to an empty list
       "AllowNonInventoryEquippedItems": false //Optional, defaults to false
     },
+    "InterfaceLabels": { //Optional
+      "Adjutants": "Adjutants",
+      "Battalion": "Battalion",
+      "BattleStyle": "Battle Style",
+      "Class": "Class",
+      "CombatArts": "Combat Arts",
+      "Emblem": "Emblem",
+      "Gambit": "Gambit",
+      "Inventory": "Inventory",
+      "InventorySubsections": [ "" ],
+      "Skills": "Skills",
+      "SkillSubsections": [ "" ],
+      "StatusConditions": "Status Conditions",
+      "WeaponRanks": "Weapon Ranks"
+    },
     "Affiliations": { //Required
       "Queries": [
         {
@@ -536,11 +551,15 @@
     "Inventory": { //Required
       "PrimaryEquippedItem": 0, //Required
       "SecondaryEquippedItems": [ 0 ], //Optional
-      "Slots": [ //Required
+      "Subsections": [ //Required
         {
-          "Name": 0, //Required
-          "Uses": 0, //Optional, only if Uses has its own separate cell,
-          "Engravings": [ 0 ] //Optional
+          "Slots": [
+            {
+              "Name": 0, //Required
+              "Uses": 0, //Optional, only if Uses has its own separate cell,
+              "Engravings": [ 0 ] //Optional
+            }
+          ]
         }
       ]
     },
@@ -567,13 +586,17 @@
         "InvertModifiedDisplayColors": false //Optional, defaults to false
       }
     ],
-    "Skills": [ //Optional
+    "SkillSubsections": [ //Optional
       {
-        "Name": 0, //Required
-        "AdditionalStats": [ //Optional
+        "Skills": [
           {
-            "SourceName": "cooldown",
-            "Value": 0
+            "Name": 0, //Required
+            "AdditionalStats": [ //Optional
+              {
+                "SourceName": "cooldown",
+                "Value": 0
+              }
+            ]
           }
         ]
       }

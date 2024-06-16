@@ -12,14 +12,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         #region Attributes
 
         /// <summary>
-        /// List of the items the unit is carrying.
+        /// List of unit's inventory subsections.
         /// </summary>
-        public List<UnitInventoryItem> Items { get; set; }
-
-        /// <summary>
-        /// Counter indicating the number of empty slots in the inventory.
-        /// </summary>
-        public int EmptySlotCount { get; set; }
+        public List<UnitInventorySubsection> Subsections { get; set; }
 
         #endregion Attributes
 
@@ -29,28 +24,23 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <exception cref="UnmatchedEquippedItemException"></exception>
         public UnitInventory(InventoryConfig config, SystemInfo system, IEnumerable<string> data, UnitEmblem emblem)
         {
-            this.Items = new List<UnitInventoryItem>();
-            this.EmptySlotCount = 0;
-
-            foreach (UnitInventoryItemConfig item in config.Slots)
+            this.Subsections = new List<UnitInventorySubsection>();
+            foreach(InventorySubsectionConfig subsectionConfig in config.Subsections)
             {
-                string name = DataParser.OptionalString(data, item.Name, "Item Name");
-                if (string.IsNullOrEmpty(name))
-                {
-                    EmptySlotCount++;
-                    continue;
-                }
+                UnitInventorySubsection subsection = new UnitInventorySubsection();
+                this.Subsections.Add(subsection);
 
-                int uses = DataParser.OptionalInt_Positive(data, item.Uses, "Item Uses");
-                IEnumerable<string> itemEngravings = DataParser.List_Strings(data, item.Engravings).Distinct();
-                this.Items.Add(new UnitInventoryItem(name, uses, itemEngravings, system.Items, system.Engravings));
+                foreach (UnitInventoryItemConfig item in subsectionConfig.Slots)
+                    subsection.AddUnitInventoryItem(item, data, system.Items, system.Engravings);
             }
+
+            List<UnitInventoryItem> items = GetAllItems();
 
             //Find the all equipped items and flag them
             string equippedItemName = DataParser.OptionalString(data, config.PrimaryEquippedItem, "Equipped Item");
             if (!string.IsNullOrEmpty(equippedItemName))
             {
-                UnitInventoryItem equipped = this.Items.FirstOrDefault(i => i.FullName == equippedItemName);
+                UnitInventoryItem equipped = items.FirstOrDefault(i => i.FullName == equippedItemName);
                 if (equipped == null)
                 {
                     //Attempt to pick the equipped item off of an emblem, if one exists
@@ -63,7 +53,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                         //If we're allowing non-inventory equipped items, add this missing item to the top of the unit's inventory
                         equipped = new UnitInventoryItem(equippedItemName, 0, new List<string>(), system.Items, system.Engravings);
                         equipped.IsNotInInventory = true;
-                        this.Items.Insert(0, equipped);
+                        this.Subsections.First().InsertUnitInventoryItem(equipped);
                     }
                 }
                 equipped.IsPrimaryEquipped = true;
@@ -75,7 +65,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 if (string.IsNullOrEmpty(secondaryEquippedItemName))
                     continue;
 
-                UnitInventoryItem equipped = this.Items.FirstOrDefault(i => i.FullName == secondaryEquippedItemName);
+                UnitInventoryItem equipped = items.FirstOrDefault(i => i.FullName == secondaryEquippedItemName);
                 if (equipped == null)
                     throw new UnmatchedEquippedItemException(secondaryEquippedItemName);
                 equipped.IsSecondaryEquipped = true;
@@ -83,11 +73,19 @@ namespace RedditEmblemAPI.Models.Output.Units
         }
 
         /// <summary>
+        /// Returns a flat list of all <c>UnitInventoryItems</c>, ignoring which <c>this.Subsections</c> they belong to.
+        /// </summary>
+        public List<UnitInventoryItem> GetAllItems()
+        {
+            return this.Subsections.SelectMany(s => s.Items).ToList();
+        }
+
+        /// <summary>
         /// Returns the item flagged as the primary equipped item, if any.
         /// </summary>
         public UnitInventoryItem GetPrimaryEquippedItem()
         {
-            return this.Items.SingleOrDefault(i => i.IsPrimaryEquipped);
+            return GetAllItems().SingleOrDefault(i => i.IsPrimaryEquipped);
         }
 
         /// <summary>
@@ -95,7 +93,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public List<UnitInventoryItem> GetSecondaryEquippedItems()
         {
-            return this.Items.Where(i => i.IsSecondaryEquipped).ToList();
+            return GetAllItems().Where(i => i.IsSecondaryEquipped).ToList();
         }
 
         /// <summary>
@@ -104,16 +102,15 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <returns></returns>
         public List<UnitInventoryItem> GetAllEquippedItems()
         {
-            return this.Items.Where(i => i.IsPrimaryEquipped || i.IsSecondaryEquipped).ToList();
+            return GetAllItems().Where(i => i.IsPrimaryEquipped || i.IsSecondaryEquipped).ToList();
         }
 
         /// <summary>
         /// Returns a list of all items that are NOT flagged as either primary or secondary equipped.
         /// </summary>
-        /// <returns></returns>
         public List<UnitInventoryItem> GetAllUnequippedItems()
         {
-            return this.Items.Where(i => !i.IsPrimaryEquipped && !i.IsSecondaryEquipped).ToList();
+            return GetAllItems().Where(i => !i.IsPrimaryEquipped && !i.IsSecondaryEquipped).ToList();
         }
     }
 }

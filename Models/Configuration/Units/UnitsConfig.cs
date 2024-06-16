@@ -150,9 +150,9 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public List<UnitStatusConditionConfig> StatusConditions { get; set; } = new List<UnitStatusConditionConfig>();
 
         /// <summary>
-        /// Optional. List of container objects for a unit's skills.
+        /// Optional. List of container objects for a unit's skill subsection configs.
         /// </summary>
-        public List<UnitSkillConfig> Skills { get; set; } = new List<UnitSkillConfig>();
+        public List<UnitSkillSubsectionConfig> SkillSubsections { get; set; } = new List<UnitSkillSubsectionConfig>();
 
         /// <summary>
         /// Optional. List of cell indexes of a unit's combat art(s).

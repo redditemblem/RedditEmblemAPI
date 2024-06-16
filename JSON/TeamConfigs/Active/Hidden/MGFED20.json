@@ -747,21 +747,25 @@
     ],
     "Inventory": {
       "PrimaryEquippedItem": 29,
-      "Slots": [
+      "Subsections": [
         {
-          "Name": 30
-        },
-        {
-          "Name": 31
-        },
-        {
-          "Name": 32
-        },
-        {
-          "Name": 33
-        },
-        {
-          "Name": 34
+          "Slots": [
+            {
+              "Name": 30
+            },
+            {
+              "Name": 31
+            },
+            {
+              "Name": 32
+            },
+            {
+              "Name": 33
+            },
+            {
+              "Name": 34
+            }
+          ]
         }
       ]
     },
@@ -787,36 +791,40 @@
         "BaseValue": 18
       }
     ],
-    "Skills": [
+    "SkillSubsections": [
       {
-        "Name": 154
-      },
-      {
-        "Name": 155
-      },
-      {
-        "Name": 156
-      },
-      {
-        "Name": 157
-      },
-      {
-        "Name": 158
-      },
-      {
-        "Name": 159
-      },
-      {
-        "Name": 160
-      },
-      {
-        "Name": 161
-      },
-      {
-        "Name": 162
-      },
-      {
-        "Name": 163
+        "Skills": [
+          {
+            "Name": 154
+          },
+          {
+            "Name": 155
+          },
+          {
+            "Name": 156
+          },
+          {
+            "Name": 157
+          },
+          {
+            "Name": 158
+          },
+          {
+            "Name": 159
+          },
+          {
+            "Name": 160
+          },
+          {
+            "Name": 161
+          },
+          {
+            "Name": 162
+          },
+          {
+            "Name": 163
+          }
+        ]
       }
     ],
     "StatusConditions": [
