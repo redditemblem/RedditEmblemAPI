@@ -738,21 +738,25 @@
     ],
     "Inventory": {
       "PrimaryEquippedItem": 27,
-      "Slots": [
+      "Subsections": [
         {
-          "Name": 28
-        },
-        {
-          "Name": 29
-        },
-        {
-          "Name": 30
-        },
-        {
-          "Name": 31
-        },
-        {
-          "Name": 32
+          "Slots": [
+            {
+              "Name": 28
+            },
+            {
+              "Name": 29
+            },
+            {
+              "Name": 30
+            },
+            {
+              "Name": 31
+            },
+            {
+              "Name": 32
+            }
+          ]
         }
       ]
     },
@@ -777,112 +781,116 @@
         "Modifiers": []
       }
     ],
-    "Skills": [
+    "SkillSubsections": [
       {
-        "Name": 152,
-        "AdditionalStats": [
+        "Skills": [
           {
-            "SourceName": "turn(s) on cooldown",
-            "Value": 153
-          }
-        ]
-      },
-      {
-        "Name": 154,
-        "AdditionalStats": [
+            "Name": 152,
+            "AdditionalStats": [
+              {
+                "SourceName": "turn(s) on cooldown",
+                "Value": 153
+              }
+            ]
+          },
           {
-            "SourceName": "turn(s) on cooldown",
-            "Value": 155
-          }
-        ]
-      },
-      {
-        "Name": 156,
-        "AdditionalStats": [
+            "Name": 154,
+            "AdditionalStats": [
+              {
+                "SourceName": "turn(s) on cooldown",
+                "Value": 155
+              }
+            ]
+          },
           {
-            "SourceName": "turn(s) on cooldown",
-            "Value": 157
-          }
-        ]
-      },
-      {
-        "Name": 158,
-        "AdditionalStats": [
+            "Name": 156,
+            "AdditionalStats": [
+              {
+                "SourceName": "turn(s) on cooldown",
+                "Value": 157
+              }
+            ]
+          },
           {
-            "SourceName": "turn(s) on cooldown",
-            "Value": 159
-          }
-        ]
-      },
-      {
-        "Name": 160,
-        "AdditionalStats": [
+            "Name": 158,
+            "AdditionalStats": [
+              {
+                "SourceName": "turn(s) on cooldown",
+                "Value": 159
+              }
+            ]
+          },
           {
-            "SourceName": "turn(s) on cooldown",
-            "Value": 161
-          }
-        ]
-      },
-      {
-        "Name": 162,
-        "AdditionalStats": [
+            "Name": 160,
+            "AdditionalStats": [
+              {
+                "SourceName": "turn(s) on cooldown",
+                "Value": 161
+              }
+            ]
+          },
           {
-            "SourceName": "turn(s) on cooldown",
-            "Value": 163
-          }
-        ]
-      },
-      {
-        "Name": 164,
-        "AdditionalStats": [
+            "Name": 162,
+            "AdditionalStats": [
+              {
+                "SourceName": "turn(s) on cooldown",
+                "Value": 163
+              }
+            ]
+          },
           {
-            "SourceName": "turn(s) on cooldown",
-            "Value": 165
-          }
-        ]
-      },
-      {
-        "Name": 166,
-        "AdditionalStats": [
+            "Name": 164,
+            "AdditionalStats": [
+              {
+                "SourceName": "turn(s) on cooldown",
+                "Value": 165
+              }
+            ]
+          },
           {
-            "SourceName": "turn(s) on cooldown",
-            "Value": 167
-          }
-        ]
-      },
-      {
-        "Name": 169,
-        "AdditionalStats": [
+            "Name": 166,
+            "AdditionalStats": [
+              {
+                "SourceName": "turn(s) on cooldown",
+                "Value": 167
+              }
+            ]
+          },
           {
-            "SourceName": "turn(s) on cooldown",
-            "Value": 170
-          }
-        ]
-      },
-      {
-        "Name": 171,
-        "AdditionalStats": [
+            "Name": 169,
+            "AdditionalStats": [
+              {
+                "SourceName": "turn(s) on cooldown",
+                "Value": 170
+              }
+            ]
+          },
           {
-            "SourceName": "turn(s) on cooldown",
-            "Value": 172
-          }
-        ]
-      },
-      {
-        "Name": 173,
-        "AdditionalStats": [
+            "Name": 171,
+            "AdditionalStats": [
+              {
+                "SourceName": "turn(s) on cooldown",
+                "Value": 172
+              }
+            ]
+          },
           {
-            "SourceName": "turn(s) on cooldown",
-            "Value": 174
-          }
-        ]
-      },
-      {
-        "Name": 175,
-        "AdditionalStats": [
+            "Name": 173,
+            "AdditionalStats": [
+              {
+                "SourceName": "turn(s) on cooldown",
+                "Value": 174
+              }
+            ]
+          },
           {
-            "SourceName": "turn(s) on cooldown",
-            "Value": 176
+            "Name": 175,
+            "AdditionalStats": [
+              {
+                "SourceName": "turn(s) on cooldown",
+                "Value": 176
+              }
+            ]
           }
         ]
       }

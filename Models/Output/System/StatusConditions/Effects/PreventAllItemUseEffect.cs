@@ -22,7 +22,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         public override void Apply(Unit unit, StatusCondition status, IDictionary<string, Tag> tags)
         {
             //Mark use as prevented for all items in unit's inventory
-            foreach (UnitInventoryItem item in unit.Inventory.Items)
+            foreach (UnitInventoryItem item in unit.Inventory.GetAllItems())
                 item.IsUsePrevented = true;
         }
     }

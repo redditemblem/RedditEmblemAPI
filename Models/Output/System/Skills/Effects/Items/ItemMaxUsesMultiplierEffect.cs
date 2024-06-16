@@ -46,7 +46,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// </summary>
         public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
         {
-            foreach (UnitInventoryItem item in unit.Inventory.Items)
+            foreach (UnitInventoryItem item in unit.Inventory.GetAllItems())
             {
                 //The item must have a listed category
                 if (!this.Categories.Contains(item.Item.Category))

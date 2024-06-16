@@ -118,7 +118,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 }
 
                 //Item ranges
-                List<UnitInventoryItem> inventoryItems = unit.Inventory.Items;
+                List<UnitInventoryItem> inventoryItems = unit.Inventory.GetAllItems();
                 if (unit.Emblem != null && unit.Emblem.IsEngaged)
                     inventoryItems = inventoryItems.Union(unit.Emblem.EngageWeapons).ToList();
 

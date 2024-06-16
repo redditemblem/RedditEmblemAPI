@@ -97,9 +97,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         public List<UnitStatus> StatusConditions { get; set; }
 
         /// <summary>
-        /// List of the skills the unit possesses.
+        /// List of the skill subsections the unit possesses.
         /// </summary>
-        public List<UnitSkill> Skills { get; set; }
+        public List<UnitSkillSubsection> SkillSubsections { get; set; }
 
         /// <summary>
         /// Container for information about a unit's movement/item ranges.
@@ -131,6 +131,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         [JsonProperty]
         private string Affiliation { get { return AffiliationObj.Name; } }
+
+        /// <summary>
+        /// Only for JSON serialization. True if the unit has any skill in any subsection. Used to control whether or not the skill section displays.
+        /// </summary>
+        [JsonProperty]
+        private bool HasSkills { get { return this.SkillSubsections.Any(s => s.Skills.Any()); } }
 
 
         #endregion JSON Serialization Only
@@ -174,7 +180,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 this.UnitMovementType = DataParser.String(data, config.MovementType, "Movement Type");
             MatchTags(system.Tags);
 
-            this.Skills =  BuildUnitSkills(data, config.Skills, system.Skills);
+            this.SkillSubsections =  UnitSkillSubsection.BuildList(data, config.SkillSubsections, system.Skills);
             this.StatusConditions = BuildUnitStatusConditions(data, config.StatusConditions, system.StatusConditions);
 
             Constructor_Unit_3H(config, data, system);
@@ -183,23 +189,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         }
 
         #region Build Functions
-
-        /// <summary>
-        /// Builds and returns a list of the unit's skills.
-        /// </summary>
-        private List<UnitSkill> BuildUnitSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, Skill> skills)
-        {
-            List<UnitSkill> unitSkills = new List<UnitSkill>();
-            foreach (UnitSkillConfig config in configs)
-            {
-                string name = DataParser.OptionalString(data, config.Name, "Skill Name");
-                if (string.IsNullOrEmpty(name)) continue;
-
-                unitSkills.Add(new UnitSkill(data, config, skills));
-            }
-
-            return unitSkills;
-        }
 
         /// <summary>
         /// Builds and returns a list of the unit's status conditions.
@@ -313,11 +302,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         }
 
         /// <summary>
-        /// Returns complete list of skills on the unit, including skills from things like the equipped item or emblems.
+        /// Returns complete list of skills on the unit, including skills from things like the equipped item or emblems, ignoring subsection organization.
         /// </summary>
         public IEnumerable<Skill> GetFullSkillsList()
         {
-            IEnumerable<Skill> skills = this.Skills.Select(s => s.SkillObj);
+            IEnumerable<Skill> skills = this.SkillSubsections.SelectMany(s => s.Skills.Select(s => s.SkillObj));
 
             //Union w/ equipped item skills
             List<UnitInventoryItem> equipped = this.Inventory.GetAllEquippedItems();
