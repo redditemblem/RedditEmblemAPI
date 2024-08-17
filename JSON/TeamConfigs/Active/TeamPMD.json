@@ -1,0 +1,414 @@
+{
+  "Team": {
+    "Name": "Team PMD",
+    "WorkbookID": "1WKdA0ntt5B3KzeNLXFhmD457T3iVQRmUvw-JJZkkkks"
+  },
+  "Map": {
+    "Constants": {
+      "TileSize": 48,
+      "TileSpacing": 0,
+      "HasHeaderTopLeft": true,
+      "HasHeaderBottomRight": true,
+      "CalculateRanges": true,
+      "CalculatePairedUnitRanges": false,
+      "UnitMovementStatName": "Movement",
+      "CoordinateFormat": 1
+    },
+    "MapControls": {
+      "Query": {
+        "Sheet": "Maps Control",
+        "Selection": "B1:3",
+        "Orientation": 2
+      },
+      "MapSwitch": 0,
+      "MapImageURL": 2,
+      "ChapterPostURL": 1
+    },
+    "MapTiles": {
+      "Query": {
+        "Sheet": "Map Tiles",
+        "Selection": "A1:ZZ",
+        "Orientation": 1
+      }
+    },
+    "MapObjects": {
+      "Query": {
+        "Sheet": "Map Objects",
+        "Selection": "A1:ZZ",
+        "Orientation": 1
+      }
+    }
+  },
+  "System": {
+    "Constants": {
+      "Currency": {
+        "CurrencySymbol": "P",
+        "IsSymbolLeftAligned": false,
+        "IncludeSpace": true
+      }
+    },
+    "InterfaceLabels": {
+      "Inventory": "Inventory",
+      "InventorySubsections": [ "Moves", "Backpack" ],
+      "Skills": "Skills",
+      "SkillSubsections": [ "Abilities", "IQ Skills" ],
+      "WeaponRanks": "Category"
+    },
+    "Affiliations": {
+      "Queries": [
+        {
+          "Sheet": "Affiliations",
+          "Selection": "A2:D",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "Grouping": 1,
+      "FlipUnitSprites": 3,
+      "TextFields": [ 2 ]
+    },
+    "Classes": { 
+      "Queries": [
+        {
+          "Sheet": "Pokedex",
+          "Selection": "B2:B",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0
+    },
+    "Items": {
+      "Queries": [
+        {
+          "Sheet": "Itemdex",
+          "Selection": "A2:R",
+          "Orientation": 1
+        },
+        {
+          "Sheet": "Movedex",
+          "Selection": "A2:R",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 17,
+      "Category": 2,
+      "UtilizedStats": [ 16 ],
+      "DealsDamage": 15,
+      "Uses": 6,
+      "Stats": [
+        {
+          "SourceName": "Power",
+          "Value": 3
+        },
+        {
+          "SourceName": "Stagger",
+          "Value": 4
+        }
+      ],
+      "Range": {
+        "Minimum": 13,
+        "Maximum": 14,
+        "Shape": 12
+      },
+      "TextFields": [ 5, 7 ]
+    },
+    "Skills": {
+      "Queries": [
+        {
+          "Sheet": "Abilitydex",
+          "Selection": "A2:C",
+          "Orientation": 1
+        },
+        {
+          "Sheet": "IQ Skills",
+          "Selection": "A2:C",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "TextFields": [ 2 ]
+    },
+    "StatusConditions": {
+      "Queries": [
+        {
+          "Sheet": "Status Conditions",
+          "Selection": "A2:F",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 2,
+      "Turns": 4,
+      "TextFields": [ 5 ]
+    },
+    "Tags": {
+      "Queries": [
+        {
+          "Sheet": "Types",
+          "Selection": "A2:C",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 2
+    },
+    "TerrainTypes": {
+      "Queries": [
+        {
+          "Sheet": "Terrain Types",
+          "Selection": "A2:M",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "StatGroups": [
+        {
+          "MovementCosts": [
+            {
+              "SourceName": "Walking",
+              "Value": 2
+            },
+            {
+              "SourceName": "Floating",
+              "Value": 3
+            },
+            {
+              "SourceName": "Swimming",
+              "Value": 4
+            },
+            {
+              "SourceName": "Lavawalking",
+              "Value": 5
+            },
+            {
+              "SourceName": "All-terrain",
+              "Value": 6
+            }
+          ]
+        }
+      ],
+      "WarpType": 7,
+      "WarpCost": 8,
+      "CannotStopOn": 9,
+      "BlocksItems": 10,
+      "RestrictAffiliations": 11,
+      "Groupings": 12,
+      "TextFields": [ 1 ]
+    },
+    "TileObjects": {
+      "Queries": [
+        {
+          "Sheet": "Tile Objects",
+          "Selection": "A2:L",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 2,
+      "Size": 4,
+      "Layer": 3,
+      "Range": {
+        "Minimum": 9,
+        "Maximum": 10
+      },
+      "HPModifier": 7,
+      "TextFields": [ 11 ]
+    }
+  },
+  "Units": {
+    "Queries": [
+      {
+        "Sheet": "Characters",
+        "Selection": "B1:ZZ",
+        "Orientation": 2
+      }
+    ],
+    "Name": 0,
+    "SpriteURL": 107,
+    "Level": 5,
+    "Classes": [ 2 ],
+    "MovementType": 88,
+    "Affiliation": 87,
+    "Coordinate": 7,
+    "HP": {
+      "Current": 11,
+      "Maximum": 12
+    },
+    "CombatStats": [],
+    "SystemStats": [
+      {
+        "SourceName": "Resilience",
+        "BaseValue": 13
+      }
+    ],
+    "Stats": [
+      {
+        "SourceName": "Attack",
+        "BaseValue": 24
+      },
+      {
+        "SourceName": "Defense",
+        "BaseValue": 25
+      },
+      {
+        "SourceName": "Sp. Attack",
+        "BaseValue": 26
+      },
+      {
+        "SourceName": "Sp. Defense",
+        "BaseValue": 27
+      },
+      {
+        "SourceName": "Movement",
+        "BaseValue": 28
+      }
+    ],
+    "WeaponRanks": [
+      {
+        "SourceName": "Physical"
+      },
+      {
+        "SourceName": "Special"
+      },
+      {
+        "SourceName": "Status"
+      }
+    ],
+    "Inventory": {
+      "PrimaryEquippedItem": 37,
+      "Subsections": [
+        {
+          "Slots": [
+            {
+              "Name": 38,
+              "Uses": 42
+            },
+            {
+              "Name": 39,
+              "Uses": 43
+            },
+            {
+              "Name": 40,
+              "Uses": 44
+            },
+            {
+              "Name": 41,
+              "Uses": 45
+            }
+          ]
+        },
+        {
+          "Slots": [
+            {
+              "Name": 51
+            },
+            {
+              "Name": 52
+            },
+            {
+              "Name": 53
+            },
+            {
+              "Name": 54
+            },
+            {
+              "Name": 55
+            },
+            {
+              "Name": 56
+            },
+            {
+              "Name": 57
+            },
+            {
+              "Name": 58
+            },
+            {
+              "Name": 59
+            },
+            {
+              "Name": 60
+            },
+            {
+              "Name": 61
+            },
+            {
+              "Name": 62
+            }
+          ]
+        }
+      ]
+    },
+    "Player": 1,
+    "UnitSize": 108,
+    "HeldCurrency": 50,
+    "Tags": [ 8, 9, 10 ],
+    "SkillSubsections": [
+      {
+        "Skills": [
+          {
+            "Name": 29
+          },
+          {
+            "Name": 30
+          },
+          {
+            "Name": 31
+          },
+          {
+            "Name": 32
+          }
+        ]
+      },
+      {
+        "Skills": [
+          {
+            "Name": 33
+          },
+          {
+            "Name": 34
+          },
+          {
+            "Name": 35
+          },
+          {
+            "Name": 36
+          }
+        ]
+      }
+    ],
+    "StatusConditions": [
+      {
+        "Name": 14,
+        "RemainingTurns": 15
+      },
+      {
+        "Name": 16,
+        "RemainingTurns": 17
+      },
+      {
+        "Name": 18,
+        "RemainingTurns": 19
+      },
+      {
+        "Name": 20,
+        "RemainingTurns": 21
+      },
+      {
+        "Name": 22,
+        "RemainingTurns": 23
+      }
+    ]
+  },
+  "Shop": {
+    "Query": {
+      "Sheet": "Shop",
+      "Selection": "A3:D",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "Stock": 1,
+    "Price": 3
+  }
+}
