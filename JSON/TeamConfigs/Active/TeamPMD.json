@@ -7,8 +7,8 @@
     "Constants": {
       "TileSize": 48,
       "TileSpacing": 0,
-      "HasHeaderTopLeft": true,
-      "HasHeaderBottomRight": true,
+      "HasHeaderTopLeft": false,
+      "HasHeaderBottomRight": false,
       "CalculateRanges": true,
       "CalculatePairedUnitRanges": false,
       "UnitMovementStatName": "Movement",
