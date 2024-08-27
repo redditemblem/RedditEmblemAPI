@@ -5,7 +5,7 @@
   },
   "Map": {
     "Constants": {
-      "TileSize": 48,
+      "TileSize": 24,
       "TileSpacing": 0,
       "HasHeaderTopLeft": false,
       "HasHeaderBottomRight": false,
