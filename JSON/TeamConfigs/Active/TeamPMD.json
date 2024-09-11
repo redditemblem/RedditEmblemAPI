@@ -5,7 +5,7 @@
   },
   "Map": {
     "Constants": {
-      "TileSize": 24,
+      "TileSize": 48,
       "TileSpacing": 0,
       "HasHeaderTopLeft": false,
       "HasHeaderBottomRight": false,
@@ -225,7 +225,8 @@
       }
     ],
     "Name": 0,
-    "SpriteURL": 107,
+    "SpriteURL": 106,
+    "PortraitURL": 107,
     "Level": 5,
     "Classes": [ 2 ],
     "MovementType": 88,
