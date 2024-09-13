@@ -225,44 +225,45 @@
       }
     ],
     "Name": 0,
-    "SpriteURL": 106,
-    "PortraitURL": 107,
+    "SpriteURL": 107,
+    "PortraitURL": 108,
     "Level": 5,
     "Classes": [ 2 ],
-    "MovementType": 88,
-    "Affiliation": 87,
+    "MovementType": 89,
+    "Affiliation": 88,
     "Coordinate": 7,
+    "HasMoved": 8,
     "HP": {
-      "Current": 11,
-      "Maximum": 12
+      "Current": 12,
+      "Maximum": 13
     },
     "CombatStats": [],
     "SystemStats": [
       {
         "SourceName": "Resilience",
-        "BaseValue": 13
+        "BaseValue": 14
       }
     ],
     "Stats": [
       {
         "SourceName": "Attack",
-        "BaseValue": 24
-      },
-      {
-        "SourceName": "Defense",
         "BaseValue": 25
       },
       {
-        "SourceName": "Sp. Attack",
+        "SourceName": "Defense",
         "BaseValue": 26
       },
       {
-        "SourceName": "Sp. Defense",
+        "SourceName": "Sp. Attack",
         "BaseValue": 27
       },
       {
-        "SourceName": "Movement",
+        "SourceName": "Sp. Defense",
         "BaseValue": 28
+      },
+      {
+        "SourceName": "Movement",
+        "BaseValue": 29
       }
     ],
     "WeaponRanks": [
@@ -277,14 +278,10 @@
       }
     ],
     "Inventory": {
-      "PrimaryEquippedItem": 37,
+      "PrimaryEquippedItem": 38,
       "Subsections": [
         {
           "Slots": [
-            {
-              "Name": 38,
-              "Uses": 42
-            },
             {
               "Name": 39,
               "Uses": 43
@@ -296,14 +293,15 @@
             {
               "Name": 41,
               "Uses": 45
+            },
+            {
+              "Name": 42,
+              "Uses": 46
             }
           ]
         },
         {
           "Slots": [
-            {
-              "Name": 51
-            },
             {
               "Name": 52
             },
@@ -336,21 +334,21 @@
             },
             {
               "Name": 62
+            },
+            {
+              "Name": 63
             }
           ]
         }
       ]
     },
     "Player": 1,
-    "UnitSize": 108,
-    "HeldCurrency": 50,
-    "Tags": [ 8, 9, 10 ],
+    "UnitSize": 109,
+    "HeldCurrency": 51,
+    "Tags": [ 9, 10, 11 ],
     "SkillSubsections": [
       {
         "Skills": [
-          {
-            "Name": 29
-          },
           {
             "Name": 30
           },
@@ -359,14 +357,14 @@
           },
           {
             "Name": 32
+          },
+          {
+            "Name": 33
           }
         ]
       },
       {
         "Skills": [
-          {
-            "Name": 33
-          },
           {
             "Name": 34
           },
@@ -375,30 +373,33 @@
           },
           {
             "Name": 36
+          },
+          {
+            "Name": 37
           }
         ]
       }
     ],
     "StatusConditions": [
       {
-        "Name": 14,
-        "RemainingTurns": 15
+        "Name": 15,
+        "RemainingTurns": 16
       },
       {
-        "Name": 16,
-        "RemainingTurns": 17
+        "Name": 17,
+        "RemainingTurns": 18
       },
       {
-        "Name": 18,
-        "RemainingTurns": 19
+        "Name": 19,
+        "RemainingTurns": 20
       },
       {
-        "Name": 20,
-        "RemainingTurns": 21
+        "Name": 21,
+        "RemainingTurns": 22
       },
       {
-        "Name": 22,
-        "RemainingTurns": 23
+        "Name": 23,
+        "RemainingTurns": 24
       }
     ]
   },
