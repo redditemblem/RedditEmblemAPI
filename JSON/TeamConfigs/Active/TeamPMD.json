@@ -228,6 +228,7 @@
     "SpriteURL": 107,
     "PortraitURL": 108,
     "Level": 5,
+    "Experience": 6,
     "Classes": [ 2 ],
     "MovementType": 89,
     "Affiliation": 88,
