@@ -81,17 +81,18 @@
       "Queries": [
         {
           "Sheet": "Itemdex",
-          "Selection": "A2:R",
+          "Selection": "A2:S",
           "Orientation": 1
         },
         {
           "Sheet": "Movedex",
-          "Selection": "A2:R",
+          "Selection": "A2:S",
           "Orientation": 1
         }
       ],
       "Name": 0,
       "SpriteURL": 17,
+      "GraphicURL": 18,
       "Category": 2,
       "UtilizedStats": [ 16 ],
       "DealsDamage": 15,
