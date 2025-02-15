@@ -161,7 +161,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         /// <exception cref="UnmatchedItemException"></exception>
         /// <exception cref="UnmatchedEngravingException"></exception>
-        public UnitInventoryItem(string itemFullName, int itemUses, IEnumerable<string> itemEngravings, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        public UnitInventoryItem(string itemFullName, int itemUses, IEnumerable<string> itemEngravings, IReadOnlyDictionary<string, Item> items, IReadOnlyDictionary<string, Engraving> engravings)
         {
             this.FullName = itemFullName;
             this.CanEquip = false;
@@ -215,7 +215,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             MatchEngravings(itemEngravings, engravings);   
         }
 
-        private void MatchEngravings(IEnumerable<string> itemEngravings, IDictionary<string, Engraving> engravings)
+        private void MatchEngravings(IEnumerable<string> itemEngravings, IReadOnlyDictionary<string, Engraving> engravings)
         {
             this.EngravingsList = Engraving.MatchNames(engravings, itemEngravings);
             this.EngravingsList = this.EngravingsList.Union(this.Item.Engravings).DistinctBy(e => e.Name).ToList();

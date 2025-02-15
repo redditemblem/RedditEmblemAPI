@@ -52,7 +52,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Searches for a <c>StatusCondition</c> in <paramref name="statusConditions"/> that matches <paramref name="fullStatusName"/>.
         /// </summary>
         /// <exception cref="UnmatchedStatusConditionException"></exception>
-        public UnitStatus(IEnumerable<string> data, UnitStatusConditionConfig config, IDictionary<string, StatusCondition> statusConditions)
+        public UnitStatus(IEnumerable<string> data, UnitStatusConditionConfig config, IReadOnlyDictionary<string, StatusCondition> statusConditions)
         {
             this.FullName = DataParser.String(data, config.Name, "Status Condition Name");
             this.RemainingTurns = 0;

@@ -243,7 +243,7 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig();
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IReadOnlyDictionary<string, Tag> dict = Tag.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -265,7 +265,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IReadOnlyDictionary<string, Tag> dict = Tag.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -309,7 +309,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IReadOnlyDictionary<string, Tag> dict = Tag.BuildDictionary(config);
             Assert.AreEqual<int>(1, dict.Count);
         }
 
@@ -340,7 +340,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IReadOnlyDictionary<string, Tag> dict = Tag.BuildDictionary(config);
             Assert.AreEqual<int>(4, dict.Count);
         }
 
@@ -367,7 +367,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IReadOnlyDictionary<string, Tag> dict = Tag.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Tag 3" };
 
             Assert.ThrowsException<UnmatchedTagException>(() => Tag.MatchNames(dict, names));
@@ -392,7 +392,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IReadOnlyDictionary<string, Tag> dict = Tag.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Tag 1" };
 
             List<Tag> matches = Tag.MatchNames(dict, names);
@@ -419,7 +419,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IReadOnlyDictionary<string, Tag> dict = Tag.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Tag 1", "Tag 2" };
 
             List<Tag> matches = Tag.MatchNames(dict, names);
@@ -447,7 +447,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IReadOnlyDictionary<string, Tag> dict = Tag.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Tag 1", "Tag 2" };
 
             List<Tag> matches = Tag.MatchNames(dict, names, true);

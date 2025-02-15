@@ -6,8 +6,11 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -60,38 +63,45 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>EngageAttack</c> from each valid row.
         /// </summary>
         /// <exception cref="EngageAttackProcessingException"></exception>
-        public static IDictionary<string, EngageAttack> BuildDictionary(EngageAttacksConfig config)
+        public static IReadOnlyDictionary<string, EngageAttack> BuildDictionary(EngageAttacksConfig config)
         {
-            IDictionary<string, EngageAttack> engageAttacks = new Dictionary<string, EngageAttack>();
+            ConcurrentDictionary<string, EngageAttack> engageAttacks = new ConcurrentDictionary<string, EngageAttack>();
             if (config == null || config.Queries == null)
-                return engageAttacks;
+                return engageAttacks.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> attack = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(attack, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> attack = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(attack, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!engageAttacks.TryAdd(name, new EngageAttack(config, attack)))
-                        throw new NonUniqueObjectNameException("engage attack");
-                }
-                catch (Exception ex)
-                {
-                    throw new EngageAttackProcessingException(name, ex);
-                }
+                        if (!engageAttacks.TryAdd(name, new EngageAttack(config, attack)))
+                            throw new NonUniqueObjectNameException("engage attack");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new EngageAttackProcessingException(name, ex);
+                    }
+                });
+            }
+            catch (AggregateException ex)
+            {
+                throw ex.InnerException;
             }
 
-            return engageAttacks;
+            return engageAttacks.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to an <c>EngageAttack</c> in <paramref name="engageAttacks"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<EngageAttack> MatchNames(IDictionary<string, EngageAttack> engageAttacks, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        public static List<EngageAttack> MatchNames(IReadOnlyDictionary<string, EngageAttack> engageAttacks, IEnumerable<string> names, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(engageAttacks, n, skipMatchedStatusSet)).ToList();
         }
@@ -101,7 +111,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedEngageAttackException"></exception>
-        public static EngageAttack MatchName(IDictionary<string, EngageAttack> engageAttacks, string name, bool skipMatchedStatusSet = false)
+        public static EngageAttack MatchName(IReadOnlyDictionary<string, EngageAttack> engageAttacks, string name, bool skipMatchedStatusSet = false)
         {
             EngageAttack match;
             if (!engageAttacks.TryGetValue(name, out match))

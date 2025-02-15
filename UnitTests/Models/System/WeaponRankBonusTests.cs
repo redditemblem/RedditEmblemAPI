@@ -208,7 +208,7 @@ namespace UnitTests.Models.System
         [TestMethod]
         public void WeaponRankBonus_BuildList_WithInput_Null()
         {
-            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(null);
+            IReadOnlyCollection<WeaponRankBonus> list = WeaponRankBonus.BuildList(null);
             Assert.AreEqual(0, list.Count);
         }
 
@@ -221,7 +221,7 @@ namespace UnitTests.Models.System
                 Category = 0
             };
 
-            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            IReadOnlyCollection<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
             Assert.AreEqual(0, list.Count);
         }
 
@@ -240,7 +240,7 @@ namespace UnitTests.Models.System
                 Category = 0
             };
 
-            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            IReadOnlyCollection<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
             Assert.AreEqual(0, list.Count);
         }
 
@@ -259,7 +259,7 @@ namespace UnitTests.Models.System
                 Category = 0
             };
 
-            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            IReadOnlyCollection<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
             Assert.AreEqual(1, list.Count);
         }
 
@@ -279,7 +279,7 @@ namespace UnitTests.Models.System
                 Rank = 1
             };
 
-            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            IReadOnlyCollection<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
             Assert.AreEqual(1, list.Count);
         }
 
@@ -301,7 +301,7 @@ namespace UnitTests.Models.System
                 Rank = 1
             };
 
-            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            IReadOnlyCollection<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
             Assert.AreEqual(3, list.Count);
         }
 

@@ -9,9 +9,12 @@ using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -137,7 +140,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Item(ItemsConfig config, IEnumerable<string> data, IDictionary<string, Skill> skills, IDictionary<string, Tag> tags, IDictionary<string, Engraving> engravings)
+        public Item(ItemsConfig config, IEnumerable<string> data, IReadOnlyDictionary<string, Skill> skills, IReadOnlyDictionary<string, Tag> tags, IReadOnlyDictionary<string, Engraving> engravings)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -172,7 +175,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Builds and returns a list of the item's equipped skills.
         /// </summary>
-        private List<UnitSkill> BuildEquippedSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, Skill> skills)
+        private List<UnitSkill> BuildEquippedSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IReadOnlyDictionary<string, Skill> skills)
         {
             //Note: I'm using UnitSkill here because that's what input structure the skill display is expecting
             List<UnitSkill> equippedSkills = new List<UnitSkill>();
@@ -206,38 +209,45 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Item</c> from each valid row.
         /// </summary>
         /// <exception cref="ItemProcessingException"></exception>
-        public static IDictionary<string, Item> BuildDictionary(ItemsConfig config, IDictionary<string, Skill> skills, IDictionary<string, Tag> tags, IDictionary<string, Engraving> engravings)
+        public static IReadOnlyDictionary<string, Item> BuildDictionary(ItemsConfig config, IReadOnlyDictionary<string, Skill> skills, IReadOnlyDictionary<string, Tag> tags, IReadOnlyDictionary<string, Engraving> engravings)
         {
-            IDictionary<string, Item> items = new Dictionary<string, Item>();
+            ConcurrentDictionary<string, Item> items = new ConcurrentDictionary<string, Item>();
             if (config == null || config.Queries == null)
-                return items;
+                return items.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> item = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(item, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> item = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(item, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!items.TryAdd(name, new Item(config, item, skills, tags, engravings)))
-                        throw new NonUniqueObjectNameException("item");
-                }
-                catch (Exception ex)
-                {
-                    throw new ItemProcessingException(name, ex);
-                }
+                        if (!items.TryAdd(name, new Item(config, item, skills, tags, engravings)))
+                            throw new NonUniqueObjectNameException("item");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ItemProcessingException(name, ex);
+                    }
+                });
             }
-
-            return items;
+            catch(AggregateException ex)
+            {
+                throw ex.InnerException;
+            }
+            
+            return items.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to a <c>Item</c> in <paramref name="items"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Item> MatchNames(IDictionary<string, Item> items, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        public static List<Item> MatchNames(IReadOnlyDictionary<string, Item> items, IEnumerable<string> names, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(items, n, skipMatchedStatusSet)).ToList();
         }
@@ -247,7 +257,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedItemException"></exception>
-        public static Item MatchName(IDictionary<string, Item> items, string name, bool skipMatchedStatusSet = false)
+        public static Item MatchName(IReadOnlyDictionary<string, Item> items, string name, bool skipMatchedStatusSet = false)
         {
             Item match;
             if (!items.TryGetValue(name, out match))

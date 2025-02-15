@@ -19,7 +19,7 @@ namespace UnitTests.Models.System
 
         #region Setup
 
-        private IDictionary<string, Tag> DICTIONARY_TAGS = new Dictionary<string, Tag>();
+        private IReadOnlyDictionary<string, Tag> DICTIONARY_TAGS = new Dictionary<string, Tag>();
 
         [TestInitialize]
         public void Setup()
@@ -602,7 +602,7 @@ namespace UnitTests.Models.System
         [TestMethod]
         public void Engraving_BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(null, DICTIONARY_TAGS);
+            IReadOnlyDictionary<string, Engraving> dict = Engraving.BuildDictionary(null, DICTIONARY_TAGS);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -615,7 +615,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            IReadOnlyDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -637,7 +637,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            IReadOnlyDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -681,7 +681,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            IReadOnlyDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
             Assert.AreEqual<int>(1, dict.Count);
         }
 
@@ -712,7 +712,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            IReadOnlyDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
             Assert.AreEqual<int>(4, dict.Count);
         }
 
@@ -739,7 +739,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            IReadOnlyDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
             IEnumerable<string> names = new List<string>() { "Engraving 3" };
 
             Assert.ThrowsException<UnmatchedEngravingException>(() => Engraving.MatchNames(dict, names));
@@ -764,7 +764,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            IReadOnlyDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
             IEnumerable<string> names = new List<string>() { "Engraving 1" };
 
             List<Engraving> matches = Engraving.MatchNames(dict, names);
@@ -791,7 +791,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            IReadOnlyDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
             IEnumerable<string> names = new List<string>() { "Engraving 1", "Engraving 2" };
 
             List<Engraving> matches = Engraving.MatchNames(dict, names);
@@ -819,7 +819,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            IReadOnlyDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
             IEnumerable<string> names = new List<string>() { "Engraving 1", "Engraving 2" };
 
             List<Engraving> matches = Engraving.MatchNames(dict, names, true);

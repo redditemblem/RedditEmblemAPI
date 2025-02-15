@@ -60,10 +60,6 @@ namespace RedditEmblemAPI.Models.Output.Map
                 rangeHelper.CalculateTileObjectRanges();
                 rangeHelper.CalculateUnitRanges();
             }
-
-            //Clean up
-            this.System.RemoveUnusedObjects();
         }
-
     }
 }

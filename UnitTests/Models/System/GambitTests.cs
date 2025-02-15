@@ -477,7 +477,7 @@ namespace UnitTests.Models.System
         [TestMethod]
         public void Gambit_BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(null);
+            IReadOnlyDictionary<string, Gambit> dict = Gambit.BuildDictionary(null);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -501,7 +501,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IReadOnlyDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -534,7 +534,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IReadOnlyDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -600,7 +600,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IReadOnlyDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
             Assert.AreEqual<int>(1, dict.Count);
         }
 
@@ -642,7 +642,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IReadOnlyDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
             Assert.AreEqual<int>(4, dict.Count);
         }
 
@@ -680,7 +680,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IReadOnlyDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Gambit 3" };
 
             Assert.ThrowsException<UnmatchedGambitException>(() => Gambit.MatchNames(dict, names));
@@ -716,7 +716,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IReadOnlyDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Gambit 1" };
 
             List<Gambit> matches = Gambit.MatchNames(dict, names);
@@ -754,7 +754,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IReadOnlyDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Gambit 1", "Gambit 2" };
 
             List<Gambit> matches = Gambit.MatchNames(dict, names);
@@ -793,7 +793,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IReadOnlyDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Gambit 1", "Gambit 2" };
 
             List<Gambit> matches = Gambit.MatchNames(dict, names, true);

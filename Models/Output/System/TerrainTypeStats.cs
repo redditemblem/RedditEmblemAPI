@@ -55,7 +55,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion Attributes
 
-        public TerrainTypeStats(TerrainTypeStatsConfig config, IEnumerable<string> data, IDictionary<string, Affiliation> affiliations) 
+        public TerrainTypeStats(TerrainTypeStatsConfig config, IEnumerable<string> data, IReadOnlyDictionary<string, Affiliation> affiliations) 
         {
             this.AffiliationGroupings = DataParser.List_IntCSV(data, config.AffiliationGroupings, "Affiliation Groupings", true);
             this.AffiliationNames = GetAffiliationGroupingNames(affiliations);
@@ -66,7 +66,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.MovementCosts = DataParser.NamedStatDictionary_Int_NonZeroPositive(config.MovementCosts, data, "{0} Movement Cost");
         }
 
-        private List<string> GetAffiliationGroupingNames(IDictionary<string, Affiliation> affiliations)
+        private List<string> GetAffiliationGroupingNames(IReadOnlyDictionary<string, Affiliation> affiliations)
         {
             List<string> names = new List<string>();
             foreach(int grouping in this.AffiliationGroupings)

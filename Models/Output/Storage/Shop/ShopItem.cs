@@ -92,7 +92,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// Constructor. Builds the <c>ShopItem</c> and matches it to an <c>Item</c> definition from <paramref name="items"/>.
         /// </summary>
         /// <exception cref="UnmatchedItemException"></exception>
-        public ShopItem(ShopConfig config, IEnumerable<string> data, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        public ShopItem(ShopConfig config, IEnumerable<string> data, IReadOnlyDictionary<string, Item> items, IReadOnlyDictionary<string, Engraving> engravings)
         {
             this.FullName = DataParser.String(data, config.Name, "Name");
             this.Item = Item.MatchName(items, this.FullName);
@@ -145,7 +145,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>ShopItem</c> from each valid row.
         /// </summary>
         /// <exception cref="ShopItemProcessingException"></exception>
-        public static List<ShopItem> BuildList(ShopConfig config, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        public static List<ShopItem> BuildList(ShopConfig config, IReadOnlyDictionary<string, Item> items, IReadOnlyDictionary<string, Engraving> engravings)
         {
             List<ShopItem> shopItems = new List<ShopItem>();
             if (config == null || config.Query == null)

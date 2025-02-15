@@ -289,7 +289,7 @@ namespace UnitTests.Models.System
         [TestMethod]
         public void Adjutant_BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(null);
+            IReadOnlyDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(null);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -302,7 +302,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
+            IReadOnlyDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -324,7 +324,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
+            IReadOnlyDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -390,7 +390,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
+            IReadOnlyDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
             Assert.AreEqual<int>(1, dict.Count);
         }
 
@@ -421,7 +421,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
+            IReadOnlyDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
             Assert.AreEqual<int>(4, dict.Count);
         }
 
@@ -448,7 +448,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
+            IReadOnlyDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Adjutant 3" };
 
             Assert.ThrowsException<UnmatchedAdjutantException>(() => Adjutant.MatchNames(dict, names));
@@ -473,7 +473,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
+            IReadOnlyDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Adjutant 1" };
 
             List<Adjutant> matches = Adjutant.MatchNames(dict, names);
@@ -500,7 +500,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
+            IReadOnlyDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Adjutant 1", "Adjutant 2" };
 
             List<Adjutant> matches = Adjutant.MatchNames(dict, names);
@@ -528,7 +528,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
+            IReadOnlyDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Adjutant 1", "Adjutant 2" };
 
             List<Adjutant> matches = Adjutant.MatchNames(dict, names, true);

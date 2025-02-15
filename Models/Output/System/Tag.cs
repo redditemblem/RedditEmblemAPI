@@ -6,8 +6,11 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -70,38 +73,45 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Tag</c> from each valid row.
         /// </summary>
         /// <exception cref="TagProcessingException"></exception>
-        public static IDictionary<string, Tag> BuildDictionary(TagsConfig config)
+        public static IReadOnlyDictionary<string, Tag> BuildDictionary(TagsConfig config)
         {
-            IDictionary<string, Tag> tags = new Dictionary<string, Tag>();
+            ConcurrentDictionary<string, Tag> tags = new ConcurrentDictionary<string, Tag>();
             if (config == null || config.Queries == null)
-                return tags;
+                return tags.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> tag = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(tag, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> tag = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(tag, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!tags.TryAdd(name, new Tag(config, tag)))
-                        throw new NonUniqueObjectNameException("tag");
-                }
-                catch (Exception ex)
-                {
-                    throw new TagProcessingException(name, ex);
-                }
+                        if (!tags.TryAdd(name, new Tag(config, tag)))
+                            throw new NonUniqueObjectNameException("tag");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TagProcessingException(name, ex);
+                    }
+                });
             }
-
-            return tags;
+            catch(AggregateException ex)
+            {
+                throw ex.InnerException;
+            }
+            
+            return tags.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to a <c>Tag</c> in <paramref name="tags"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Tag> MatchNames(IDictionary<string, Tag> tags, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        public static List<Tag> MatchNames(IReadOnlyDictionary<string, Tag> tags, IEnumerable<string> names, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(tags, n, skipMatchedStatusSet)).ToList();
         }
@@ -111,7 +121,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedTagException"></exception>
-        public static Tag MatchName(IDictionary<string, Tag> tags, string name, bool skipMatchedStatusSet = false)
+        public static Tag MatchName(IReadOnlyDictionary<string, Tag> tags, string name, bool skipMatchedStatusSet = false)
         {
             Tag match;
             if (!tags.TryGetValue(name, out match))

@@ -291,7 +291,7 @@ namespace UnitTests.Models.System
         [TestMethod]
         public void Emblem_BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(null);
+            IReadOnlyDictionary<string, Emblem> dict = Emblem.BuildDictionary(null);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -304,7 +304,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            IReadOnlyDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -326,7 +326,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            IReadOnlyDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -370,7 +370,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            IReadOnlyDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
             Assert.AreEqual<int>(1, dict.Count);
         }
 
@@ -401,7 +401,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            IReadOnlyDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
             Assert.AreEqual<int>(4, dict.Count);
         }
 
@@ -428,7 +428,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            IReadOnlyDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Emblem 3" };
 
             Assert.ThrowsException<UnmatchedEmblemException>(() => Emblem.MatchNames(dict, names));
@@ -453,7 +453,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            IReadOnlyDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Emblem 1" };
 
             List<Emblem> matches = Emblem.MatchNames(dict, names);
@@ -480,7 +480,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            IReadOnlyDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Emblem 1", "Emblem 2" };
 
             List<Emblem> matches = Emblem.MatchNames(dict, names);
@@ -508,7 +508,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
+            IReadOnlyDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Emblem 1", "Emblem 2" };
 
             List<Emblem> matches = Emblem.MatchNames(dict, names, true);

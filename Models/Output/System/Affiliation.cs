@@ -6,8 +6,11 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -70,38 +73,45 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Affiliation</c> from each valid row.
         /// </summary>
         /// <exception cref="AffiliationProcessingException"></exception>
-        public static IDictionary<string, Affiliation> BuildDictionary(AffiliationsConfig config)
+        public static IReadOnlyDictionary<string, Affiliation> BuildDictionary(AffiliationsConfig config)
         {
-            IDictionary<string, Affiliation> affiliations = new Dictionary<string, Affiliation>();
+            ConcurrentDictionary<string, Affiliation> affiliations = new ConcurrentDictionary<string, Affiliation>();
             if (config == null || config.Queries == null)
-                return affiliations;
+                return affiliations.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> aff = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(aff, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> aff = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(aff, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!affiliations.TryAdd(name, new Affiliation(config, aff)))
-                        throw new NonUniqueObjectNameException("affiliation");
-                }
-                catch (Exception ex)
-                {
-                    throw new AffiliationProcessingException(name, ex);
-                }
+                        if (!affiliations.TryAdd(name, new Affiliation(config, aff)))
+                            throw new NonUniqueObjectNameException("affiliation");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new AffiliationProcessingException(name, ex);
+                    }
+                });
+            }
+            catch (AggregateException ex)
+            {
+                throw ex.InnerException;
             }
 
-            return affiliations;
+            return affiliations.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to an <c>Affiliation</c> in <paramref name="affiliations"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Affiliation> MatchNames(IDictionary<string, Affiliation> affiliations, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        public static List<Affiliation> MatchNames(IReadOnlyDictionary<string, Affiliation> affiliations, IEnumerable<string> names, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(affiliations, n, skipMatchedStatusSet)).ToList();
         }
@@ -111,7 +121,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedAffiliationException"></exception>
-        public static Affiliation MatchName(IDictionary<string, Affiliation> affiliations, string name, bool skipMatchedStatusSet = false)
+        public static Affiliation MatchName(IReadOnlyDictionary<string, Affiliation> affiliations, string name, bool skipMatchedStatusSet = false)
         {
             Affiliation match;
             if (!affiliations.TryGetValue(name, out match))

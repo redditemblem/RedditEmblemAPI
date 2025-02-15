@@ -14,8 +14,11 @@ using RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills
 {
@@ -178,38 +181,45 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Skill</c> from each valid row.
         /// </summary>
         /// <exception cref="SkillProcessingException"></exception>
-        public static IDictionary<string, Skill> BuildDictionary(SkillsConfig config)
+        public static IReadOnlyDictionary<string, Skill> BuildDictionary(SkillsConfig config)
         {
-            IDictionary<string, Skill> skills = new Dictionary<string, Skill>();
+            ConcurrentDictionary<string, Skill> skills = new ConcurrentDictionary<string, Skill>();
             if (config == null || config.Queries == null)
-                return skills;
+                return skills.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> skill = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(skill, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> skill = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(skill, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!skills.TryAdd(name, new Skill(config, skill)))
-                        throw new NonUniqueObjectNameException("skill");
-                }
-                catch (Exception ex)
-                {
-                    throw new SkillProcessingException(name, ex);
-                }
+                        if (!skills.TryAdd(name, new Skill(config, skill)))
+                            throw new NonUniqueObjectNameException("skill");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new SkillProcessingException(name, ex);
+                    }
+                });
+            }
+            catch(AggregateException ex)
+            {
+                throw ex.InnerException;
             }
 
-            return skills;
+            return skills.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to a <c>Skill</c> in <paramref name="skills"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Skill> MatchNames(IDictionary<string, Skill> skills, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        public static List<Skill> MatchNames(IReadOnlyDictionary<string, Skill> skills, IEnumerable<string> names, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(skills, n, skipMatchedStatusSet)).ToList();
         }
@@ -219,7 +229,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedSkillException"></exception>
-        public static Skill MatchName(IDictionary<string, Skill> skills, string name, bool skipMatchedStatusSet = false)
+        public static Skill MatchName(IReadOnlyDictionary<string, Skill> skills, string name, bool skipMatchedStatusSet = false)
         {
             Skill match;
             if (!skills.TryGetValue(name, out match))

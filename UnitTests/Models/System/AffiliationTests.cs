@@ -220,7 +220,7 @@ namespace UnitTests.Models.System
         [TestMethod]
         public void Affiliation_BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(null);
+            IReadOnlyDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(null);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -234,7 +234,7 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IReadOnlyDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -257,7 +257,7 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IReadOnlyDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -325,7 +325,7 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IReadOnlyDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
             Assert.AreEqual<int>(1, dict.Count);
         }
 
@@ -357,7 +357,7 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IReadOnlyDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
             Assert.AreEqual<int>(4, dict.Count);
         }
 
@@ -385,7 +385,7 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IReadOnlyDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Affiliation 3" };
 
             Assert.ThrowsException<UnmatchedAffiliationException>(() => Affiliation.MatchNames(dict, names));
@@ -411,7 +411,7 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IReadOnlyDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Affiliation 1" };
 
             List<Affiliation> matches = Affiliation.MatchNames(dict, names);
@@ -439,7 +439,7 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IReadOnlyDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Affiliation 1", "Affiliation 2" };
 
             List<Affiliation> matches = Affiliation.MatchNames(dict, names);
@@ -468,7 +468,7 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IReadOnlyDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Affiliation 1", "Affiliation 2" };
 
             List<Affiliation> matches = Affiliation.MatchNames(dict, names, true);

@@ -165,7 +165,7 @@ namespace UnitTests.Models.System
         [TestMethod]
         public void EngageAttack_BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(null);
+            IReadOnlyDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(null);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -178,7 +178,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            IReadOnlyDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -200,7 +200,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            IReadOnlyDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -266,7 +266,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            IReadOnlyDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
             Assert.AreEqual<int>(1, dict.Count);
         }
 
@@ -297,7 +297,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            IReadOnlyDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
             Assert.AreEqual<int>(4, dict.Count);
         }
 
@@ -324,7 +324,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            IReadOnlyDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Engage Attack 3" };
 
             Assert.ThrowsException<UnmatchedEngageAttackException>(() => EngageAttack.MatchNames(dict, names));
@@ -349,7 +349,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            IReadOnlyDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Engage Attack 1" };
 
             List<EngageAttack> matches = EngageAttack.MatchNames(dict, names);
@@ -376,7 +376,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            IReadOnlyDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Engage Attack 1", "Engage Attack 2" };
 
             List<EngageAttack> matches = EngageAttack.MatchNames(dict, names);
@@ -404,7 +404,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            IReadOnlyDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Engage Attack 1", "Engage Attack 2" };
 
             List<EngageAttack> matches = EngageAttack.MatchNames(dict, names, true);

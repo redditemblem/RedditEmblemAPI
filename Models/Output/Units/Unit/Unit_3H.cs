@@ -72,7 +72,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>CombatArt</c> from <paramref name="combatArts"/>.
         /// </summary>
-        private List<CombatArt> BuildCombatArts(IEnumerable<string> data, List<int> indexes, IDictionary<string, CombatArt> combatArts)
+        private List<CombatArt> BuildCombatArts(IEnumerable<string> data, List<int> indexes, IReadOnlyDictionary<string, CombatArt> combatArts)
         {
             List<string> names = DataParser.List_Strings(data, indexes);
             return CombatArt.MatchNames(combatArts, names);
@@ -87,7 +87,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <item>Stats</item>
         /// </list>
         /// </remarks>
-        private UnitBattalion BuildBattalion(IEnumerable<string> data, UnitBattalionConfig config, IDictionary<string, Battalion> battalions)
+        private UnitBattalion BuildBattalion(IEnumerable<string> data, UnitBattalionConfig config, IReadOnlyDictionary<string, Battalion> battalions)
         {
             if (config == null) return null;
 
@@ -106,7 +106,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <remarks>
         /// Dependent on Stats.
         /// </remarks>
-        private List<Adjutant> BuildAdjutants(IEnumerable<string> data, List<int> indexes, IDictionary<string, Adjutant> adjutants)
+        private List<Adjutant> BuildAdjutants(IEnumerable<string> data, List<int> indexes, IReadOnlyDictionary<string, Adjutant> adjutants)
         {
             List<string> names = DataParser.List_Strings(data, indexes);
             List<Adjutant> matches = Adjutant.MatchNames(adjutants, names);

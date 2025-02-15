@@ -6,8 +6,11 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -63,38 +66,45 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>BattleStyle</c> from each valid row.
         /// </summary>
         /// <exception cref="BattleStyleProcessingException"></exception>
-        public static IDictionary<string, BattleStyle> BuildDictionary(BattleStylesConfig config)
+        public static IReadOnlyDictionary<string, BattleStyle> BuildDictionary(BattleStylesConfig config)
         {
-            IDictionary<string, BattleStyle> battleStyles = new Dictionary<string, BattleStyle>();
+            ConcurrentDictionary<string, BattleStyle> battleStyles = new ConcurrentDictionary<string, BattleStyle>();
             if (config == null || config.Queries == null)
-                return battleStyles;
+                return battleStyles.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> battleStyle = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(battleStyle, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> battleStyle = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(battleStyle, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!battleStyles.TryAdd(name, new BattleStyle(config, battleStyle)))
-                        throw new NonUniqueObjectNameException("battle style");
-                }
-                catch (Exception ex)
-                {
-                    throw new BattleStyleProcessingException(name, ex);
-                }
+                        if (!battleStyles.TryAdd(name, new BattleStyle(config, battleStyle)))
+                            throw new NonUniqueObjectNameException("battle style");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new BattleStyleProcessingException(name, ex);
+                    }
+                });
             }
-
-            return battleStyles;
+            catch (AggregateException ex)
+            {
+                throw ex.InnerException;
+            }
+            
+            return battleStyles.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to a <c>BattleStyle</c> in <paramref name="battleStyles"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<BattleStyle> MatchNames(IDictionary<string, BattleStyle> battleStyles, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        public static List<BattleStyle> MatchNames(IReadOnlyDictionary<string, BattleStyle> battleStyles, IEnumerable<string> names, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(battleStyles, n, skipMatchedStatusSet)).ToList();
         }
@@ -104,7 +114,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedBattleStyleException"></exception>
-        public static BattleStyle MatchName(IDictionary<string, BattleStyle> battleStyles, string name, bool skipMatchedStatusSet = false)
+        public static BattleStyle MatchName(IReadOnlyDictionary<string, BattleStyle> battleStyles, string name, bool skipMatchedStatusSet = false)
         {
             BattleStyle match;
             if (!battleStyles.TryGetValue(name, out match))

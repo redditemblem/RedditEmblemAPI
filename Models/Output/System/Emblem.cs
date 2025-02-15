@@ -6,8 +6,11 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -73,38 +76,45 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Emblem</c> from each valid row.
         /// </summary>
         /// <exception cref="EmblemProcessingException"></exception>
-        public static IDictionary<string, Emblem> BuildDictionary(EmblemsConfig config)
+        public static IReadOnlyDictionary<string, Emblem> BuildDictionary(EmblemsConfig config)
         {
-            IDictionary<string, Emblem> emblems = new Dictionary<string, Emblem>();
+            ConcurrentDictionary<string, Emblem> emblems = new ConcurrentDictionary<string, Emblem>();
             if (config == null || config.Queries == null)
-                return emblems;
+                return emblems.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> emblem = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(emblem, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> emblem = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(emblem, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!emblems.TryAdd(name, new Emblem(config, emblem)))
-                        throw new NonUniqueObjectNameException("emblem");
-                }
-                catch (Exception ex)
-                {
-                    throw new EmblemProcessingException(name, ex);
-                }
+                        if (!emblems.TryAdd(name, new Emblem(config, emblem)))
+                            throw new NonUniqueObjectNameException("emblem");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new EmblemProcessingException(name, ex);
+                    }
+                });
+            }
+            catch (AggregateException ex)
+            {
+                throw ex.InnerException;
             }
 
-            return emblems;
+            return emblems.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to an <c>Emblem</c> in <paramref name="emblems"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Emblem> MatchNames(IDictionary<string, Emblem> emblems, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        public static List<Emblem> MatchNames(IReadOnlyDictionary<string, Emblem> emblems, IEnumerable<string> names, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(emblems, n, skipMatchedStatusSet)).ToList();
         }
@@ -114,7 +124,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedEmblemException"></exception>
-        public static Emblem MatchName(IDictionary<string, Emblem> emblems, string name, bool skipMatchedStatusSet = false)
+        public static Emblem MatchName(IReadOnlyDictionary<string, Emblem> emblems, string name, bool skipMatchedStatusSet = false)
         {
             Emblem match;
             if (!emblems.TryGetValue(name, out match))

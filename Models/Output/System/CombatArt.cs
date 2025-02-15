@@ -8,6 +8,9 @@ using System;
 using RedditEmblemAPI.Models.Configuration.System.CombatArts;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
+using System.Collections.Frozen;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -84,7 +87,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion Attributes
 
-        public CombatArt(CombatArtsConfig config, IEnumerable<string> data, IDictionary<string, Tag> tags)
+        public CombatArt(CombatArtsConfig config, IEnumerable<string> data, IReadOnlyDictionary<string, Tag> tags)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -116,38 +119,45 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>CombatArt</c> from each valid row.
         /// </summary>
         /// <exception cref="CombatArtProcessingException"></exception>
-        public static IDictionary<string, CombatArt> BuildDictionary(CombatArtsConfig config, IDictionary<string, Tag> tags)
+        public static IReadOnlyDictionary<string, CombatArt> BuildDictionary(CombatArtsConfig config, IReadOnlyDictionary<string, Tag> tags)
         {
-            IDictionary<string, CombatArt> combatArts = new Dictionary<string, CombatArt>();
+            ConcurrentDictionary<string, CombatArt> combatArts = new ConcurrentDictionary<string, CombatArt>();
             if (config == null || config.Queries == null)
-                return combatArts;
+                return combatArts.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> combatArt = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(combatArt, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> combatArt = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(combatArt, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!combatArts.TryAdd(name, new CombatArt(config, combatArt, tags)))
-                        throw new NonUniqueObjectNameException("combat art");
-                }
-                catch (Exception ex)
-                {
-                    throw new CombatArtProcessingException(name, ex);
-                }
+                        if (!combatArts.TryAdd(name, new CombatArt(config, combatArt, tags)))
+                            throw new NonUniqueObjectNameException("combat art");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new CombatArtProcessingException(name, ex);
+                    }
+                });
+            }
+            catch(AggregateException ex)
+            {
+                throw ex.InnerException;
             }
 
-            return combatArts;
+            return combatArts.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to a <c>CombatArt</c> in <paramref name="combatArts"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<CombatArt> MatchNames(IDictionary<string, CombatArt> combatArts, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        public static List<CombatArt> MatchNames(IReadOnlyDictionary<string, CombatArt> combatArts, IEnumerable<string> names, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(combatArts, n, skipMatchedStatusSet)).ToList();
         }
@@ -157,7 +167,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedCombatArtException"></exception>
-        public static CombatArt MatchName(IDictionary<string, CombatArt> combatArts, string name, bool skipMatchedStatusSet = false)
+        public static CombatArt MatchName(IReadOnlyDictionary<string, CombatArt> combatArts, string name, bool skipMatchedStatusSet = false)
         {
             CombatArt match;
             if (!combatArts.TryGetValue(name, out match))

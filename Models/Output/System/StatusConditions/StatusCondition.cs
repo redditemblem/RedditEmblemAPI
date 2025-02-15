@@ -7,8 +7,11 @@ using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 {
@@ -142,38 +145,45 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>StatusCondition</c> from each valid row.
         /// </summary>
         /// <exception cref="StatusConditionProcessingException"></exception>
-        public static IDictionary<string, StatusCondition> BuildDictionary(StatusConditionConfig config)
+        public static IReadOnlyDictionary<string, StatusCondition> BuildDictionary(StatusConditionConfig config)
         {
-            IDictionary<string, StatusCondition> statusConditions = new Dictionary<string, StatusCondition>();
+            ConcurrentDictionary<string, StatusCondition> statusConditions = new ConcurrentDictionary<string, StatusCondition>();
             if (config == null || config.Queries == null)
-                return statusConditions;
+                return statusConditions.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> stat = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(stat, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> stat = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(stat, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!statusConditions.TryAdd(name, new StatusCondition(config, stat)))
-                        throw new NonUniqueObjectNameException("status condition");
-                }
-                catch (Exception ex)
-                {
-                    throw new StatusConditionProcessingException(name, ex);
-                }
+                        if (!statusConditions.TryAdd(name, new StatusCondition(config, stat)))
+                            throw new NonUniqueObjectNameException("status condition");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new StatusConditionProcessingException(name, ex);
+                    }
+                });
+            }
+            catch(AggregateException ex)
+            {
+                throw ex.InnerException;
             }
 
-            return statusConditions;
+            return statusConditions.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to a <c>StatusCondition</c> in <paramref name="statusConditions"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<StatusCondition> MatchNames(IDictionary<string, StatusCondition> statusConditions, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        public static List<StatusCondition> MatchNames(IReadOnlyDictionary<string, StatusCondition> statusConditions, IEnumerable<string> names, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(statusConditions, n, skipMatchedStatusSet)).ToList();
         }
@@ -183,7 +193,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedStatusConditionException"></exception>
-        public static StatusCondition MatchName(IDictionary<string, StatusCondition> statusConditions, string name, bool skipMatchedStatusSet = false)
+        public static StatusCondition MatchName(IReadOnlyDictionary<string, StatusCondition> statusConditions, string name, bool skipMatchedStatusSet = false)
         {
             StatusCondition match;
             if (!statusConditions.TryGetValue(name, out match))

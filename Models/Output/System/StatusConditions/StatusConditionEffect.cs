@@ -36,7 +36,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
                 throw new StatusConditionEffectMissingParameterException(this.Name, this.ParameterCount, parameters.Count);
         }
 
-        public virtual void Apply(Unit unit, StatusCondition status, IDictionary<string, Tag> tags)
+        public virtual void Apply(Unit unit, StatusCondition status, IReadOnlyDictionary<string, Tag> tags)
         {
             //By default, the effect applies nothing
         }

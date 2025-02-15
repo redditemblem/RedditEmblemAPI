@@ -41,7 +41,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #endregion Attributes
 
-        public UnitBattalion(UnitBattalionConfig config, IEnumerable<string> data, IDictionary<string, Battalion> battalions)
+        public UnitBattalion(UnitBattalionConfig config, IEnumerable<string> data, IReadOnlyDictionary<string, Battalion> battalions)
         {
             string name = DataParser.String(data, config.Battalion, "Battalion");
             this.BattalionObj = Battalion.MatchName(battalions, name);

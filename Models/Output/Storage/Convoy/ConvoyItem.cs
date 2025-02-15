@@ -91,7 +91,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// <summary>
         /// Constructor. Builds the <c>ConvoyItem</c> and matches it to an <c>Item</c> definition from <paramref name="items"/>.
         /// </summary>
-        public ConvoyItem(ConvoyConfig config, IEnumerable<string> data, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        public ConvoyItem(ConvoyConfig config, IEnumerable<string> data, IReadOnlyDictionary<string, Item> items, IReadOnlyDictionary<string, Engraving> engravings)
         {
             this.FullName = DataParser.String(data, config.Name, "Name");
             this.Uses = 0;
@@ -165,7 +165,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>ConvoyItem</c> from each valid row.
         /// </summary>
         /// <exception cref="ConvoyItemProcessingException"></exception>
-        public static List<ConvoyItem> BuildList(ConvoyConfig config, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        public static List<ConvoyItem> BuildList(ConvoyConfig config, IReadOnlyDictionary<string, Item> items, IReadOnlyDictionary<string, Engraving> engravings)
         {
             List<ConvoyItem> convoyItems = new List<ConvoyItem>();
             if (config == null || config.Query == null)

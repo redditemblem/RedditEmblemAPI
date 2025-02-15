@@ -6,8 +6,11 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -74,7 +77,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Engraving(EngravingsConfig config, IEnumerable<string> data, IDictionary<string, Tag> tags)
+        public Engraving(EngravingsConfig config, IEnumerable<string> data, IReadOnlyDictionary<string, Tag> tags)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -105,38 +108,45 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Engraving</c> from each valid row.
         /// </summary>
         /// <exception cref="EngravingProcessingException"></exception>
-        public static IDictionary<string, Engraving> BuildDictionary(EngravingsConfig config, IDictionary<string, Tag> tags)
+        public static IReadOnlyDictionary<string, Engraving> BuildDictionary(EngravingsConfig config, IReadOnlyDictionary<string, Tag> tags)
         {
-            IDictionary<string, Engraving> engravings = new Dictionary<string, Engraving>();
+            ConcurrentDictionary<string, Engraving> engravings = new ConcurrentDictionary<string, Engraving>();
             if (config == null || config.Queries == null)
-                return engravings;
+                return engravings.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> engraving = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(engraving, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> engraving = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(engraving, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!engravings.TryAdd(name, new Engraving(config, engraving, tags)))
-                        throw new NonUniqueObjectNameException("engraving");
-                }
-                catch (Exception ex)
-                {
-                    throw new EngravingProcessingException(name, ex);
-                }
+                        if (!engravings.TryAdd(name, new Engraving(config, engraving, tags)))
+                            throw new NonUniqueObjectNameException("engraving");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new EngravingProcessingException(name, ex);
+                    }
+                });
+            }
+            catch (AggregateException ex)
+            {
+                throw ex.InnerException;
             }
 
-            return engravings;
+            return engravings.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to an <c>Engraving</c> in <paramref name="engravings"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Engraving> MatchNames(IDictionary<string, Engraving> engravings, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        public static List<Engraving> MatchNames(IReadOnlyDictionary<string, Engraving> engravings, IEnumerable<string> names, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(engravings, n, skipMatchedStatusSet)).ToList();
         }
@@ -146,7 +156,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedEngravingException"></exception>
-        public static Engraving MatchName(IDictionary<string, Engraving> engravings, string name, bool skipMatchedStatusSet = false)
+        public static Engraving MatchName(IReadOnlyDictionary<string, Engraving> engravings, string name, bool skipMatchedStatusSet = false)
         {
             Engraving match;
             if (!engravings.TryGetValue(name, out match))

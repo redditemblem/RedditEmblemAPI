@@ -95,7 +95,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Builds and returns a list of the unit's skills.
         /// </summary>
-        private List<UnitSkill> BuildUnitSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, Skill> skills)
+        private List<UnitSkill> BuildUnitSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IReadOnlyDictionary<string, Skill> skills)
         {
             List<UnitSkill> unitSkills = new List<UnitSkill>();
             foreach (UnitSkillConfig config in configs)
@@ -109,7 +109,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             return unitSkills;
         }
 
-        private void BuildItems(IEnumerable<string> data, UnitEmblemConfig config, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        private void BuildItems(IEnumerable<string> data, UnitEmblemConfig config, IReadOnlyDictionary<string, Item> items, IReadOnlyDictionary<string, Engraving> engravings)
         {
             this.EngageWeapons = new List<UnitInventoryItem>();
             IEnumerable<string> weapons = DataParser.List_Strings(data, config.EngageWeapons);

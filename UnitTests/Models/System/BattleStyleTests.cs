@@ -165,7 +165,7 @@ namespace UnitTests.Models.System
         [TestMethod]
         public void BattleStyle_BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(null);
+            IReadOnlyDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(null);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -178,7 +178,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
+            IReadOnlyDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -200,7 +200,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
+            IReadOnlyDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -266,7 +266,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
+            IReadOnlyDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
             Assert.AreEqual<int>(1, dict.Count);
         }
 
@@ -297,7 +297,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
+            IReadOnlyDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
             Assert.AreEqual<int>(4, dict.Count);
         }
 
@@ -324,7 +324,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
+            IReadOnlyDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Battle Style 3" };
 
             Assert.ThrowsException<UnmatchedBattleStyleException>(() => BattleStyle.MatchNames(dict, names));
@@ -349,7 +349,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
+            IReadOnlyDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Battle Style 1" };
 
             List<BattleStyle> matches = BattleStyle.MatchNames(dict, names);
@@ -376,7 +376,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
+            IReadOnlyDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Battle Style 1", "Battle Style 2" };
 
             List<BattleStyle> matches = BattleStyle.MatchNames(dict, names);
@@ -404,7 +404,7 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
+            IReadOnlyDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Battle Style 1", "Battle Style 2" };
 
             List<BattleStyle> matches = BattleStyle.MatchNames(dict, names, true);

@@ -3,6 +3,7 @@ using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -52,11 +53,11 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>WeaponRankBonus</c> from each valid row.
         /// </summary>
         /// <exception cref="WeaponRankBonusProcessingException"></exception>
-        public static List<WeaponRankBonus> BuildList(WeaponRankBonusesConfig config)
+        public static IReadOnlyCollection<WeaponRankBonus> BuildList(WeaponRankBonusesConfig config)
         {
             List<WeaponRankBonus> weaponRankBonuses = new List<WeaponRankBonus>();
             if (config == null || config.Query == null)
-                return weaponRankBonuses;
+                return weaponRankBonuses.ToFrozenSet();
 
             foreach (List<object> row in config.Query.Data)
             {
@@ -81,7 +82,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 }
             }
 
-            return weaponRankBonuses;
+            return weaponRankBonuses.ToFrozenSet();
         }
 
         #endregion

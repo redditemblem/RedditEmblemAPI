@@ -193,7 +193,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Builds and returns a list of the unit's status conditions.
         /// </summary>
-        private List<UnitStatus> BuildUnitStatusConditions(IEnumerable<string> data, List<UnitStatusConditionConfig> configs, IDictionary<string, StatusCondition> statuses)
+        private List<UnitStatus> BuildUnitStatusConditions(IEnumerable<string> data, List<UnitStatusConditionConfig> configs, IReadOnlyDictionary<string, StatusCondition> statuses)
         {
             List<UnitStatus> statusConditions = new List<UnitStatus>();
             foreach (UnitStatusConditionConfig config in configs)
@@ -217,7 +217,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </list>
         /// </remarks>
         /// <exception cref="UnmatchedClassException"></exception>
-        private List<Class> BuildClasses(IEnumerable<string> data, List<int> indexes, IDictionary<string, Class> classes)
+        private List<Class> BuildClasses(IEnumerable<string> data, List<int> indexes, IReadOnlyDictionary<string, Class> classes)
         {
             List<Class> unitClasses = new List<Class>();
 
@@ -248,7 +248,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Dependent on <c>this.Tags</c> already being built. Iterates through the values in <c>this.Tags</c> and attempts to match them a <c>Tag</c> from <paramref name="tags"/>.
         /// </summary>
-        private void MatchTags(IDictionary<string, Tag> tags)
+        private void MatchTags(IReadOnlyDictionary<string, Tag> tags)
         {
             if (!tags.Any()) return;
 

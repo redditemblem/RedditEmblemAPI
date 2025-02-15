@@ -7,8 +7,11 @@ using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -116,38 +119,45 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>TileObject</c> from each valid row.
         /// </summary>
         /// <exception cref="TileObjectProcessingException"></exception>
-        public static IDictionary<string, TileObject> BuildDictionary(TileObjectsConfig config)
+        public static IReadOnlyDictionary<string, TileObject> BuildDictionary(TileObjectsConfig config)
         {
-            IDictionary<string, TileObject> tileObjects = new Dictionary<string, TileObject>();
+            ConcurrentDictionary<string, TileObject> tileObjects = new ConcurrentDictionary<string, TileObject>();
             if (config == null || config.Queries == null)
-                return tileObjects;
+                return tileObjects.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> tileObj = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(tileObj, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> tileObj = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(tileObj, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!tileObjects.TryAdd(name, new TileObject(config, tileObj)))
-                        throw new NonUniqueObjectNameException("tile object");
-                }
-                catch (Exception ex)
-                {
-                    throw new TileObjectProcessingException(name, ex);
-                }
+                        if (!tileObjects.TryAdd(name, new TileObject(config, tileObj)))
+                            throw new NonUniqueObjectNameException("tile object");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TileObjectProcessingException(name, ex);
+                    }
+                });
             }
-
-            return tileObjects;
+            catch (AggregateException ex)
+            {
+                throw ex.InnerException;
+            }
+            
+            return tileObjects.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to a <c>TileObject</c> in <paramref name="tileObjects"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<TileObject> MatchNames(IDictionary<string, TileObject> tileObjects, IEnumerable<string> names, Coordinate coord, bool skipMatchedStatusSet = false)
+        public static List<TileObject> MatchNames(IReadOnlyDictionary<string, TileObject> tileObjects, IEnumerable<string> names, Coordinate coord, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(tileObjects, n, coord, skipMatchedStatusSet)).ToList();
         }
@@ -157,7 +167,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedTileObjectException"></exception>
-        public static TileObject MatchName(IDictionary<string, TileObject> tileObjects, string name, Coordinate coord, bool skipMatchedStatusSet = false)
+        public static TileObject MatchName(IReadOnlyDictionary<string, TileObject> tileObjects, string name, Coordinate coord, bool skipMatchedStatusSet = false)
         {
             TileObject match;
             if (!tileObjects.TryGetValue(name, out match))

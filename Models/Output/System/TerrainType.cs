@@ -7,8 +7,11 @@ using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -87,7 +90,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public TerrainType(TerrainTypesConfig config, IEnumerable<string> data, IDictionary<string, Affiliation> affiliations)
+        public TerrainType(TerrainTypesConfig config, IEnumerable<string> data, IReadOnlyDictionary<string, Affiliation> affiliations)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -110,7 +113,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through <paramref name="configs"/> and builds a list of <c>TerrainTypeStats</c>.
         /// </summary>
         /// <exception cref="DuplicateTerrainTypeStatsException"></exception>
-        private List<TerrainTypeStats> BuildTerrainTypeStats(IEnumerable<string> data, List<TerrainTypeStatsConfig> configs, IDictionary<string, Affiliation> affiliations)
+        private List<TerrainTypeStats> BuildTerrainTypeStats(IEnumerable<string> data, List<TerrainTypeStatsConfig> configs, IReadOnlyDictionary<string, Affiliation> affiliations)
         {
             List<TerrainTypeStats> groups = new List<TerrainTypeStats>();
             foreach (TerrainTypeStatsConfig config in configs)
@@ -180,38 +183,45 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>TerrainType</c> from each valid row.
         /// </summary>
         /// <exception cref="TerrainTypeProcessingException"></exception>
-        public static IDictionary<string, TerrainType> BuildDictionary(TerrainTypesConfig config, IDictionary<string, Affiliation> affiliations)
+        public static IReadOnlyDictionary<string, TerrainType> BuildDictionary(TerrainTypesConfig config, IReadOnlyDictionary<string, Affiliation> affiliations)
         {
-            IDictionary<string, TerrainType> terrainTypes = new Dictionary<string, TerrainType>();
+            ConcurrentDictionary<string, TerrainType> terrainTypes = new ConcurrentDictionary<string, TerrainType>();
             if (config == null || config.Queries == null)
-                return terrainTypes;
+                return terrainTypes.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> type = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(type, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> type = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(type, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!terrainTypes.TryAdd(name, new TerrainType(config, type, affiliations)))
-                        throw new NonUniqueObjectNameException("terrain type");
-                }
-                catch (Exception ex)
-                {
-                    throw new TerrainTypeProcessingException(name, ex);
-                }
+                        if (!terrainTypes.TryAdd(name, new TerrainType(config, type, affiliations)))
+                            throw new NonUniqueObjectNameException("terrain type");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TerrainTypeProcessingException(name, ex);
+                    }
+                });
+            }
+            catch(AggregateException ex)
+            {
+                throw ex.InnerException;
             }
 
-            return terrainTypes;
+            return terrainTypes.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to a <c>TerrainType</c> in <paramref name="terrainTypes"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<TerrainType> MatchNames(IDictionary<string, TerrainType> terrainTypes, IEnumerable<string> names, Coordinate coord, bool skipMatchedStatusSet = false)
+        public static List<TerrainType> MatchNames(IReadOnlyDictionary<string, TerrainType> terrainTypes, IEnumerable<string> names, Coordinate coord, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(terrainTypes, n, coord, skipMatchedStatusSet)).ToList();
         }
@@ -221,7 +231,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedTileTerrainTypeException"></exception>
-        public static TerrainType MatchName(IDictionary<string, TerrainType> terrainTypes, string name, Coordinate coord, bool skipMatchedStatusSet = false)
+        public static TerrainType MatchName(IReadOnlyDictionary<string, TerrainType> terrainTypes, string name, Coordinate coord, bool skipMatchedStatusSet = false)
         {
             TerrainType match;
             if (!terrainTypes.TryGetValue(name, out match))

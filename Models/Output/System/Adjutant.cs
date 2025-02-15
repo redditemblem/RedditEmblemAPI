@@ -8,6 +8,9 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System.Adjutants;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -77,38 +80,45 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Adjutant</c> from each valid row.
         /// </summary>
         /// <exception cref="AdjutantProcessingException"></exception>
-        public static IDictionary<string, Adjutant> BuildDictionary(AdjutantsConfig config)
+        public static IReadOnlyDictionary<string, Adjutant> BuildDictionary(AdjutantsConfig config)
         {
-            IDictionary<string, Adjutant> adjutants = new Dictionary<string, Adjutant>();
+            ConcurrentDictionary<string, Adjutant> adjutants = new ConcurrentDictionary<string, Adjutant>();
             if (config == null || config.Queries == null)
-                return adjutants;
+                return adjutants.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> adjutant = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(adjutant, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> adjutant = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(adjutant, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!adjutants.TryAdd(name, new Adjutant(config, adjutant)))
-                        throw new NonUniqueObjectNameException("adjutant");
-                }
-                catch (Exception ex)
-                {
-                    throw new AdjutantProcessingException(name, ex);
-                }
+                        if (!adjutants.TryAdd(name, new Adjutant(config, adjutant)))
+                            throw new NonUniqueObjectNameException("adjutant");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new AdjutantProcessingException(name, ex);
+                    }
+                });
+            }
+            catch (AggregateException ex)
+            {
+                throw ex.InnerException;
             }
 
-            return adjutants;
+            return adjutants.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to an <c>Adjutant</c> in <paramref name="adjutants"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Adjutant> MatchNames(IDictionary<string, Adjutant> adjutants, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        public static List<Adjutant> MatchNames(IReadOnlyDictionary<string, Adjutant> adjutants, IEnumerable<string> names, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(adjutants, n, skipMatchedStatusSet)).ToList();
         }
@@ -118,7 +128,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedAdjutantException"></exception>
-        public static Adjutant MatchName(IDictionary<string, Adjutant> adjutants, string name, bool skipMatchedStatusSet = false)
+        public static Adjutant MatchName(IReadOnlyDictionary<string, Adjutant> adjutants, string name, bool skipMatchedStatusSet = false)
         {
             Adjutant match;
             if (!adjutants.TryGetValue(name, out match))

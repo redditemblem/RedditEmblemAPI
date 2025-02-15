@@ -20,7 +20,7 @@ namespace UnitTests.Models.System
 
         #region Setup
 
-        private IDictionary<string, BattleStyle> DICTIONARY_BATTLE_STYLES = new Dictionary<string, BattleStyle>();
+        private IReadOnlyDictionary<string, BattleStyle> DICTIONARY_BATTLE_STYLES = new Dictionary<string, BattleStyle>();
 
         [TestInitialize]
         public void Setup()
@@ -326,7 +326,7 @@ namespace UnitTests.Models.System
         [TestMethod]
         public void Class_BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, Class> dict = Class.BuildDictionary(null, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(null, DICTIONARY_BATTLE_STYLES);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -340,7 +340,7 @@ namespace UnitTests.Models.System
                 MovementType = 1
             };
 
-            IDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -363,7 +363,7 @@ namespace UnitTests.Models.System
                 MovementType = 1
             };
 
-            IDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -409,7 +409,7 @@ namespace UnitTests.Models.System
                 MovementType = 1
             };
 
-            IDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
             Assert.AreEqual<int>(1, dict.Count);
         }
 
@@ -441,7 +441,7 @@ namespace UnitTests.Models.System
                 MovementType = 1
             };
 
-            IDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
             Assert.AreEqual<int>(4, dict.Count);
         }
 
@@ -469,7 +469,7 @@ namespace UnitTests.Models.System
                 MovementType = 1
             };
 
-            IDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
             IEnumerable<string> names = new List<string>() { "Class 3" };
 
             Assert.ThrowsException<UnmatchedClassException>(() => Class.MatchNames(dict, names));
@@ -495,7 +495,7 @@ namespace UnitTests.Models.System
                 MovementType = 1
             };
 
-            IDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
             IEnumerable<string> names = new List<string>() { "Class 1" };
 
             List<Class> matches = Class.MatchNames(dict, names);
@@ -523,7 +523,7 @@ namespace UnitTests.Models.System
                 MovementType = 1
             };
 
-            IDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
             IEnumerable<string> names = new List<string>() { "Class 1", "Class 2" };
 
             List<Class> matches = Class.MatchNames(dict, names);
@@ -552,7 +552,7 @@ namespace UnitTests.Models.System
                 MovementType = 1
             };
 
-            IDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
             IEnumerable<string> names = new List<string>() { "Class 1", "Class 2" };
 
             List<Class> matches = Class.MatchNames(dict, names, true);

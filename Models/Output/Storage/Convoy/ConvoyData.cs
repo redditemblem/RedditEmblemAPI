@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration;
+﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
@@ -52,22 +53,26 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// <summary>
         /// List of <c>Item</c>s linked by the values in <c>ConvoyItems</c>.
         /// </summary>
-        public IDictionary<string, Item> Items { get; set; }
+        [JsonConverter(typeof(OmitUnmatchedObjectsFromIMatchableDictionaryConverter))]
+        public IReadOnlyDictionary<string, Item> Items { get; set; }
 
         /// <summary>
         /// Container dictionary for data about skills.
         /// </summary>
-        public IDictionary<string, Skill> Skills { get; set; }
+        [JsonConverter(typeof(OmitUnmatchedObjectsFromIMatchableDictionaryConverter))]
+        public IReadOnlyDictionary<string, Skill> Skills { get; set; }
 
         /// <summary>
         /// Container dictionary for data about tags.
         /// </summary>
-        public IDictionary<string, Tag> Tags { get; set; }
+        [JsonConverter(typeof(OmitUnmatchedObjectsFromIMatchableDictionaryConverter))]
+        public IReadOnlyDictionary<string, Tag> Tags { get; set; }
 
         /// <summary>
         /// Container dictionary for data about engravings.
         /// </summary>
-        public IDictionary<string, Engraving> Engravings { get; set; }
+        [JsonConverter(typeof(OmitUnmatchedObjectsFromIMatchableDictionaryConverter))]
+        public IReadOnlyDictionary<string, Engraving> Engravings { get; set; }
 
         #endregion
 
@@ -108,27 +113,6 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
                 this.ConvoyItems.SelectMany(i => i.Item.UtilizedStats).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(c => c),
                 this.ConvoyItems.SelectMany(i => i.Item.TargetedStats).Where(s => !string.IsNullOrEmpty(s)).Distinct().OrderBy(c => c),
                 filters);
-
-            //Always do this last
-            RemoveUnusedObjects();
-        }
-
-        /// <summary>
-        /// Cull unneeded objects for JSON minification.
-        /// </summary>
-        private void RemoveUnusedObjects()
-        {
-            CullDictionary(this.Items);
-            CullDictionary(this.Skills);
-            CullDictionary(this.Tags);
-            CullDictionary(this.Engravings);
-        }
-
-        private void CullDictionary<T>(IDictionary<string, T> dictionary) where T : IMatchable
-        {
-            foreach (string key in dictionary.Keys)
-                if (!dictionary[key].Matched)
-                    dictionary.Remove(key);
         }
     }
 }

@@ -78,7 +78,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// Constructor.
         /// </summary>
         /// <param name="tileObjectID">ID for identifying this particular tile object instance. Should be unique.</param>
-        public TileObjectInstance(MapObjectsConfig config, MapConstantsConfig mapConstants, int tileObjectID, IEnumerable<string> data, IDictionary<string, TileObject> tileObjects)
+        public TileObjectInstance(MapObjectsConfig config, MapConstantsConfig mapConstants, int tileObjectID, IEnumerable<string> data, IReadOnlyDictionary<string, TileObject> tileObjects)
         {
             this.ID = tileObjectID;
             this.OriginTiles = new List<Tile>();
@@ -106,7 +106,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// </summary>
         /// <remarks>The returned dictionary's key is a unique ID for each tile object instance.</remarks>
         /// <exception cref="TileObjectInstanceProcessingException"></exception>
-        public static Dictionary<int, TileObjectInstance> BuildDictionary(MapObjectsConfig config, MapConstantsConfig mapConstantsConfig, IDictionary<string, TileObject> tileObjects)
+        public static Dictionary<int, TileObjectInstance> BuildDictionary(MapObjectsConfig config, MapConstantsConfig mapConstantsConfig, IReadOnlyDictionary<string, TileObject> tileObjects)
         {
             Dictionary<int, TileObjectInstance> tileObjectInsts = new Dictionary<int, TileObjectInstance>();
             if (config == null || config.Query == null)

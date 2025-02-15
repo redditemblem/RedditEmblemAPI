@@ -28,19 +28,23 @@ namespace UnitTests.Models.System
 
         #region Setup
 
-        private IDictionary<string, Skill> DICTIONARY_SKILL = new Dictionary<string, Skill>();
-        private IDictionary<string, Tag> DICTIONARY_TAGS = new Dictionary<string, Tag>();
-        private IDictionary<string, Engraving> DICTIONARY_ENGRAVINGS = new Dictionary<string, Engraving>();
+        #pragma warning disable CS8618 // Suppress warning about values needing to be set in the constructor.
+
+        private IReadOnlyDictionary<string, Skill> DICTIONARY_SKILL;
+        private IReadOnlyDictionary<string, Tag> DICTIONARY_TAGS;
+        private IReadOnlyDictionary<string, Engraving> DICTIONARY_ENGRAVINGS;
+
+        #pragma warning restore CS8618
 
         [TestInitialize]
         public void Setup()
         {
-            Setup_Skills();
-            Setup_Tags();
-            Setup_Engravings(); //dependent on Tags
+            this.DICTIONARY_SKILL = Setup_Skills();
+            this.DICTIONARY_TAGS = Setup_Tags();
+            this.DICTIONARY_ENGRAVINGS = Setup_Engravings(); //dependent on Tags
         }
 
-        private void Setup_Skills()
+        private IReadOnlyDictionary<string, Skill> Setup_Skills()
         {
             SkillsConfig config = new SkillsConfig()
             {
@@ -58,10 +62,10 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            this.DICTIONARY_SKILL = Skill.BuildDictionary(config);
+            return Skill.BuildDictionary(config);
         }
 
-        private void Setup_Tags()
+        private IReadOnlyDictionary<string, Tag> Setup_Tags()
         {
             TagsConfig config = new TagsConfig()
             {
@@ -79,10 +83,10 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            this.DICTIONARY_TAGS = Tag.BuildDictionary(config);
+            return Tag.BuildDictionary(config);
         }
 
-        private void Setup_Engravings()
+        private IReadOnlyDictionary<string, Engraving> Setup_Engravings()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -101,7 +105,7 @@ namespace UnitTests.Models.System
                 Tags = new List<int> { 1 }
             };
 
-            this.DICTIONARY_ENGRAVINGS = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            return Engraving.BuildDictionary(config, DICTIONARY_TAGS);
         }
 
         #endregion Setup
@@ -738,7 +742,7 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig();
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IReadOnlyDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -777,7 +781,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IReadOnlyDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -855,7 +859,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IReadOnlyDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
             Assert.AreEqual<int>(1, dict.Count);
         }
 
@@ -903,7 +907,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IReadOnlyDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
             Assert.AreEqual<int>(4, dict.Count);
         }
 
@@ -947,7 +951,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IReadOnlyDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
             IEnumerable<string> names = new List<string>() { "Item 3" };
 
             Assert.ThrowsException<UnmatchedItemException>(() => Item.MatchNames(dict, names));
@@ -989,7 +993,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IReadOnlyDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
             IEnumerable<string> names = new List<string>() { "Item 1" };
 
             List<Item> matches = Item.MatchNames(dict, names);
@@ -1033,7 +1037,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IReadOnlyDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
             IEnumerable<string> names = new List<string>() { "Item 1", "Item 2" };
 
             List<Item> matches = Item.MatchNames(dict, names);
@@ -1078,7 +1082,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IReadOnlyDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
             IEnumerable<string> names = new List<string>() { "Item 1", "Item 2" };
 
             List<Item> matches = Item.MatchNames(dict, names, true);

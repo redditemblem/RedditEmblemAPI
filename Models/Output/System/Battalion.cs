@@ -6,8 +6,11 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Interfaces;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -77,7 +80,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion
 
-        public Battalion(BattalionsConfig config, IEnumerable<string> data, IDictionary<string, Gambit> gambits)
+        public Battalion(BattalionsConfig config, IEnumerable<string> data, IReadOnlyDictionary<string, Gambit> gambits)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -118,38 +121,45 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Battalion</c> from each valid row.
         /// </summary>
         /// <exception cref="BattalionProcessingException"></exception>
-        public static IDictionary<string, Battalion> BuildDictionary(BattalionsConfig config, IDictionary<string, Gambit> gambits)
+        public static IReadOnlyDictionary<string, Battalion> BuildDictionary(BattalionsConfig config, IReadOnlyDictionary<string, Gambit> gambits)
         {
-            IDictionary<string, Battalion> battalions = new Dictionary<string, Battalion>();
+            ConcurrentDictionary<string, Battalion> battalions = new ConcurrentDictionary<string, Battalion>();
             if (config == null || config.Queries == null)
-                return battalions;
+                return battalions.ToFrozenDictionary();
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    IEnumerable<string> battalion = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(battalion, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> battalion = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(battalion, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (!battalions.TryAdd(name, new Battalion(config, battalion, gambits)))
-                        throw new NonUniqueObjectNameException("battalion");
-                }
-                catch (Exception ex)
-                {
-                    throw new BattalionProcessingException(name, ex);
-                }
+                        if (!battalions.TryAdd(name, new Battalion(config, battalion, gambits)))
+                            throw new NonUniqueObjectNameException("battalion");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new BattalionProcessingException(name, ex);
+                    }
+                });
             }
-
-            return battalions;
+            catch (AggregateException ex)
+            {
+                throw ex.InnerException;
+            }
+            
+            return battalions.ToFrozenDictionary();
         }
 
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to a <c>Battalion</c> in <paramref name="battalions"/> and returns the matches as a list.
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Battalion> MatchNames(IDictionary<string, Battalion> battalions, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        public static List<Battalion> MatchNames(IReadOnlyDictionary<string, Battalion> battalions, IEnumerable<string> names, bool skipMatchedStatusSet = false)
         {
             return names.Select(n => MatchName(battalions, n, skipMatchedStatusSet)).ToList();
         }
@@ -159,7 +169,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
         /// <exception cref="UnmatchedBattalionException"></exception>
-        public static Battalion MatchName(IDictionary<string, Battalion> battalions, string name, bool skipMatchedStatusSet = false)
+        public static Battalion MatchName(IReadOnlyDictionary<string, Battalion> battalions, string name, bool skipMatchedStatusSet = false)
         {
             Battalion match;
             if (!battalions.TryGetValue(name, out match))

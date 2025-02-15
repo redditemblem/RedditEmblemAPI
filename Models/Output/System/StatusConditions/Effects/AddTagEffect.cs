@@ -29,7 +29,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// <summary>
         /// Adds the tags in <c>Tags</c> to <paramref name="unit"/>, if they don't already exist.
         /// </summary>
-        public override void Apply(Unit unit, StatusCondition status, IDictionary<string, Tag> tags)
+        public override void Apply(Unit unit, StatusCondition status, IReadOnlyDictionary<string, Tag> tags)
         {
             foreach (string tag in this.Tags)
             {
