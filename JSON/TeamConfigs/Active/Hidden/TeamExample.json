@@ -236,10 +236,11 @@
           "Orientation": 1
         }
       ],
-      "Name": 0,
-      "Grouping": 1,
-      "FlipUnitSprites": 2,
-      "TextFields": [ 3 ]
+      "Name": 1,
+      "Grouping": 2,
+      "SpriteURL": 3,
+      "FlipUnitSprites": 4,
+      "TextFields": [ 5 ]
     },
     "StatusConditions": {
       "Queries": [

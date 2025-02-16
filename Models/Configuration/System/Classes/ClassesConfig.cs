@@ -20,15 +20,14 @@ namespace RedditEmblemAPI.Models.Configuration.System.Classes
         [JsonRequired]
         public int Name { get; set; }
 
-        /// <summary>
-        /// Required. Cell index of a class's movement type value.
-        /// </summary>
-        [JsonRequired]
-        public int MovementType { get; set; }
-
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
+
+        /// <summary>
+        /// Optional. Cell index of a class's movement type value.
+        /// </summary>
+        public int MovementType { get; set; } = -1;
 
         /// <summary>
         /// Optional. Cell index of a class's battle style.
@@ -45,6 +44,6 @@ namespace RedditEmblemAPI.Models.Configuration.System.Classes
         /// </summary>
         public List<int> TextFields { get; set; } = new List<int>();
 
-        #endregion
+        #endregion Optional Fields
     }
 }
