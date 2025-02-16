@@ -138,7 +138,6 @@ namespace RedditEmblemAPI.Models.Output.Map
             int tileHeight;
             int tileWidth;
 
-
             try
             {
                 using (HttpClient httpClient = new HttpClient())
@@ -146,13 +145,12 @@ namespace RedditEmblemAPI.Models.Output.Map
                     Task<byte[]> imageData = httpClient.GetByteArrayAsync(this.MapImageURL);
                     imageData.Wait();
 
-                    using (MemoryStream imgStream = new MemoryStream(imageData.Result))
-                    using (SKManagedStream inputStream = new SKManagedStream(imgStream))
-                    using (SKBitmap img = SKBitmap.Decode(inputStream))
-                    {
-                        this.ImageHeight = img.Height;
-                        this.ImageWidth = img.Width;
-                    }
+                    SKImageInfo imgInfo = SKBitmap.DecodeBounds(imageData.Result);
+                    if (imgInfo.IsEmpty)
+                        throw new MapImageLoadFailedException();
+
+                    this.ImageHeight = imgInfo.Height;
+                    this.ImageWidth = imgInfo.Width;
                 }
             }
             catch (AggregateException ex)
