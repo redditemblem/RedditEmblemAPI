@@ -174,10 +174,12 @@ namespace RedditEmblemAPI.Models.Output.Units
             string affiliation = DataParser.String(data, config.Affiliation, "Affiliation");
             this.AffiliationObj = System.Affiliation.MatchName(system.Affiliations, affiliation);
 
-            //Classes handling. If the system does not use classes, fall back on the MovementType field
+            //Classes and movement types
+            //The unit movement type field itself is optional, but if it is present it must be populated
             this.ClassList = BuildClasses(data, config.Classes, system.Classes);
-            if (!this.ClassList.Any())
-                this.UnitMovementType = DataParser.String(data, config.MovementType, "Movement Type");
+            if (config.MovementType > -1) this.UnitMovementType = DataParser.String(data, config.MovementType, "Movement Type");
+            else this.UnitMovementType = string.Empty;
+
             MatchTags(system.Tags);
 
             this.SkillSubsections =  UnitSkillSubsection.BuildList(data, config.SkillSubsections, system.Skills);
@@ -295,10 +297,12 @@ namespace RedditEmblemAPI.Models.Output.Units
             if(skillOverride != null)
                 return skillOverride.MovementType;
 
-            if (this.ClassList.Count > 0)
-                return this.ClassList.First().MovementType;
-            
-            return this.UnitMovementType;
+            // Try to retrieve the first class's movement type first.
+            // If there is none, then we fall back on trying to grab from the unit's movement type field instead.
+            string movementType = this.ClassList.FirstOrDefault()?.MovementType;
+            if (string.IsNullOrEmpty(movementType)) movementType = this.UnitMovementType;
+
+            return movementType;
         }
 
         /// <summary>
