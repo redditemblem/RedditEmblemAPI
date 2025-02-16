@@ -34,7 +34,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
             this.MovementCost = DataParser.Int_Positive(parameters, INDEX_PARAM_2, NAME_PARAM_2);
         }
 
-        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
+        public override void Apply(Unit unit, Skill skill, MapObj map, IReadOnlyCollection<Unit> units)
         {
             //Ignore units not on map
             if (!unit.Location.IsOnMap())

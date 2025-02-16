@@ -20,9 +20,9 @@ namespace RedditEmblemAPI.Services.Helpers
         /// Parses Google Sheets data matrix to return a list of Unit output objects.
         /// </summary>
         /// <param name="config">Parsed JSON configuration mapping Values to output</param>
-        public static List<Unit> Process(UnitsConfig config, SystemInfo system, MapObj map)
+        public static IReadOnlyCollection<Unit> Process(UnitsConfig config, SystemInfo system, MapObj map)
         {
-            List<Unit> units = Unit.BuildList(config, system);
+            IReadOnlyCollection<Unit> units = Unit.BuildList(config, system);
 
             //Add units to the map
             foreach (Unit unit in units)

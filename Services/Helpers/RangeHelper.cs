@@ -18,10 +18,10 @@ namespace RedditEmblemAPI.Services.Helpers
     {
         private readonly ItemRangeDirection[] RANGE_DIRECTIONS = new ItemRangeDirection[] { ItemRangeDirection.Northeast, ItemRangeDirection.Southeast, ItemRangeDirection.Northwest, ItemRangeDirection.Southwest };
 
-        private List<Unit> Units;
+        private IReadOnlyCollection<Unit> Units;
         private MapObj Map;
 
-        public RangeHelper(List<Unit> units, MapObj map)
+        public RangeHelper(IReadOnlyCollection<Unit> units, MapObj map)
         {
             this.Units = units;
             this.Map = map;

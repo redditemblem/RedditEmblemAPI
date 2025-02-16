@@ -24,7 +24,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Container list for data about units.
         /// </summary>
-        public List<Unit> Units { get; set; }
+        public IReadOnlyCollection<Unit> Units { get; set; }
 
         /// <summary>
         /// Workbook ID number from the Google Sheets URL.

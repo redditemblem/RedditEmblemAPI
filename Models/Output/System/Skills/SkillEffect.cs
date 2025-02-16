@@ -46,7 +46,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
             this.ExecutionOrder = SkillEffectExecutionOrder.Standard;
         }
 
-        public virtual void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
+        public virtual void Apply(Unit unit, Skill skill, MapObj map, IReadOnlyCollection<Unit> units)
         {
             //By default, the effect applies nothing
         }

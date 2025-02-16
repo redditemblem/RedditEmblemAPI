@@ -10,10 +10,14 @@ using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
 using RedditEmblemAPI.Services.Helpers;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
@@ -330,35 +334,38 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Unit</c> from each valid row.
         /// </summary>
         /// <exception cref="UnitProcessingException"></exception>
-        public static List<Unit> BuildList(UnitsConfig config, SystemInfo system)
+        public static IReadOnlyCollection<Unit> BuildList(UnitsConfig config, SystemInfo system)
         {
-            List<Unit> units = new List<Unit>();
+            ConcurrentDictionary<string, Unit> units = new ConcurrentDictionary<string, Unit>();
             if (config == null || config.Queries == null)
-                return units;
+                return units.Values.ToFrozenSet();
 
-            //Create units
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            try
             {
-                string name = string.Empty;
-                try
+                Parallel.ForEach(config.Queries.SelectMany(q => q.Data), row =>
                 {
-                    //Convert objects to strings
-                    IEnumerable<string> unit = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(unit, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<string> unit = row.Select(r => r.ToString());
+                        name = DataParser.OptionalString(unit, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) return;
 
-                    if (units.Any(u => u.Name == name))
-                        throw new NonUniqueObjectNameException("unit");
-
-                    units.Add(new Unit(config, unit, system));
-                }
-                catch (Exception ex)
-                {
-                    throw new UnitProcessingException(name, ex);
-                }
+                        if (!units.TryAdd(name, new Unit(config, unit, system)))
+                            throw new NonUniqueObjectNameException("unit");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new UnitProcessingException(name, ex);
+                    }
+                });
             }
-
-            return units;
+            catch (AggregateException ex)
+            {
+                throw ex.InnerException;
+            }
+           
+            return units.Values.ToFrozenSet();
         }
 
         #endregion Static Functions
