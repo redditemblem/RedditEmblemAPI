@@ -136,13 +136,13 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public SystemInfo(SystemConfig config)
+        public SystemInfo(SystemConfig config, bool isUnitMovementTypeConfigured)
         {
             //Copy over constants from config
             this.Constants = config.Constants;
             this.InterfaceLabels = config.InterfaceLabels;
 
-            ParseOptionalData(config);
+            ParseOptionalData(config, isUnitMovementTypeConfigured);
             ParseRequiredData(config); //some required data reliant on optional data
         }
 
@@ -162,7 +162,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Helper function for the constructor. Parses data into dictionaries.
         /// </summary>
-        private void ParseOptionalData(SystemConfig config)
+        private void ParseOptionalData(SystemConfig config, bool isUnitMovementTypeConfigured)
         {
             //Non-dependent objects
             this.TileObjects = TileObject.BuildDictionary(config.TileObjects);
@@ -178,7 +178,7 @@ namespace RedditEmblemAPI.Models.Output.System
             //Dependent objects
             this.Tags = Tag.BuildDictionary(config.Tags); //Lots of things are dependent on tags, so do it first
 
-            this.Classes = Class.BuildDictionary(config.Classes, this.BattleStyles);
+            this.Classes = Class.BuildDictionary(config.Classes, isUnitMovementTypeConfigured, this.BattleStyles);
             this.CombatArts = CombatArt.BuildDictionary(config.CombatArts, this.Tags);
             this.Battalions = Battalion.BuildDictionary(config.Battalions, this.Gambits);
             this.Engravings = Engraving.BuildDictionary(config.Engravings, this.Tags);

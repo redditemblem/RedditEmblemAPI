@@ -56,11 +56,15 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Class(ClassesConfig config, IEnumerable<string> data, IReadOnlyDictionary<string, BattleStyle> battleStyles)
+        public Class(ClassesConfig config, IEnumerable<string> data, bool isUnitMovementTypeConfigured, IReadOnlyDictionary<string, BattleStyle> battleStyles)
         {
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
-            this.MovementType = DataParser.String(data, config.MovementType, "Movement Type");
+            
+            //The movement type field value on the Units sheet is required if the field is configured
+            //If we can depend on falling back onto the unit's value, the class value can be optional
+            if(isUnitMovementTypeConfigured) this.MovementType = DataParser.OptionalString(data, config.MovementType, "Movement Type");
+            else this.MovementType = DataParser.String(data, config.MovementType, "Movement Type");
 
             string battleStyle = DataParser.OptionalString(data, config.BattleStyle, "Battle Style");
             if(!string.IsNullOrEmpty(battleStyle))
@@ -87,7 +91,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Class</c> from each valid row.
         /// </summary>
         /// <exception cref="ClassProcessingException"></exception>
-        public static IReadOnlyDictionary<string, Class> BuildDictionary(ClassesConfig config, IReadOnlyDictionary<string, BattleStyle> battleStyles)
+        public static IReadOnlyDictionary<string, Class> BuildDictionary(ClassesConfig config, bool isUnitMovementTypeConfigured, IReadOnlyDictionary<string, BattleStyle> battleStyles)
         {
             ConcurrentDictionary<string, Class> classes = new ConcurrentDictionary<string, Class>();
             if (config == null || config.Queries == null)
@@ -104,7 +108,7 @@ namespace RedditEmblemAPI.Models.Output.System
                         name = DataParser.OptionalString(cls, config.Name, "Name");
                         if (string.IsNullOrEmpty(name)) return;
 
-                        if (!classes.TryAdd(name, new Class(config, cls, battleStyles)))
+                        if (!classes.TryAdd(name, new Class(config, cls, isUnitMovementTypeConfigured, battleStyles)))
                             throw new NonUniqueObjectNameException("class");
                     }
                     catch (Exception ex)

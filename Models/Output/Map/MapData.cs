@@ -48,7 +48,7 @@ namespace RedditEmblemAPI.Models.Output.Map
             this.ShowShopLink = (config.Shop != null);
 
             //Process data, order is important on these
-            this.System = new SystemInfo(config.System);
+            this.System = new SystemInfo(config.System, config.Units.MovementType > -1);
             this.Map = new MapObj(config.Map, this.System.TerrainTypes, this.System.TileObjects);
 
             this.Units = UnitsHelper.Process(config.Units, this.System, this.Map);

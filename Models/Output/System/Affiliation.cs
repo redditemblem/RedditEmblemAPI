@@ -36,6 +36,11 @@ namespace RedditEmblemAPI.Models.Output.System
         public int Grouping { get; set; }
 
         /// <summary>
+        /// The sprite image URL for the affiliation.
+        /// </summary>
+        public string SpriteURL { get; set; }
+
+        /// <summary>
         /// Flag indicating whether or not all units belonging to this affiliation should have their sprites flipped.
         /// </summary>
         public bool FlipUnitSprites { get; set; }
@@ -55,6 +60,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.Grouping = DataParser.Int_NonZeroPositive(data, config.Grouping, "Grouping");
+            this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.FlipUnitSprites = DataParser.OptionalBoolean_YesNo(data, config.FlipUnitSprites, "Flip Unit Sprites");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
         }

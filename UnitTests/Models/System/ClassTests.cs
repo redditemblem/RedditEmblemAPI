@@ -50,17 +50,36 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0,
-                MovementType = 1
+                Name = 0
             };
 
             List<string> data = new List<string>() { };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new Class(config, data, DICTIONARY_BATTLE_STYLES));
+            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new Class(config, data, true, DICTIONARY_BATTLE_STYLES));
         }
 
         [TestMethod]
-        public void ClassConstructor_RequiredFields_WithInput_InvalidMovementType()
+        public void ClassConstructor_RequiredFields()
+        {
+            ClassesConfig config = new ClassesConfig()
+            {
+                Name = 0
+            };
+
+            List<string> data = new List<string>()
+            {
+                INPUT_NAME
+            };
+
+            Class cls = new Class(config, data, true, DICTIONARY_BATTLE_STYLES);
+
+            Assert.AreEqual<string>(INPUT_NAME, cls.Name);
+        }
+
+        #region OptionalField_MovementType
+
+        [TestMethod]
+        public void ClassConstructor_OptionalField_MovementType_EmptyString()
         {
             ClassesConfig config = new ClassesConfig()
             {
@@ -74,11 +93,16 @@ namespace UnitTests.Models.System
                 string.Empty
             };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new Class(config, data, DICTIONARY_BATTLE_STYLES));
+            //Movement type is conditionally required depending on whether or not the unit movement type field is in play
+            Class cls = new Class(config, data, true, DICTIONARY_BATTLE_STYLES);
+            Assert.AreEqual<string>(INPUT_NAME, cls.Name);
+            Assert.AreEqual<string>(string.Empty, cls.MovementType);
+
+            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new Class(config, data, false, DICTIONARY_BATTLE_STYLES));
         }
 
         [TestMethod]
-        public void ClassConstructor_RequiredFields()
+        public void ClassConstructor_OptionalField_MovementType()
         {
             ClassesConfig config = new ClassesConfig()
             {
@@ -89,14 +113,20 @@ namespace UnitTests.Models.System
             List<string> data = new List<string>()
             {
                 INPUT_NAME,
-                INPUT_MOVEMENT_TYPE
+                "Movement Type"
             };
 
-            Class cls = new Class(config, data, DICTIONARY_BATTLE_STYLES);
+            //Movement type is conditionally required depending on whether or not the unit movement type field is in play
+            Class cls1 = new Class(config, data, true, DICTIONARY_BATTLE_STYLES);
+            Assert.AreEqual<string>(INPUT_NAME, cls1.Name);
+            Assert.AreEqual<string>("Movement Type", cls1.MovementType);
 
-            Assert.AreEqual<string>(INPUT_NAME, cls.Name);
-            Assert.AreEqual<string>(INPUT_MOVEMENT_TYPE, cls.MovementType);
+            Class cls2 = new Class(config, data, false, DICTIONARY_BATTLE_STYLES);
+            Assert.AreEqual<string>(INPUT_NAME, cls2.Name);
+            Assert.AreEqual<string>("Movement Type", cls2.MovementType);
         }
+
+        #endregion OptionalField_MovementType
 
         #region OptionalField_BattleStyle
 
@@ -106,18 +136,16 @@ namespace UnitTests.Models.System
             ClassesConfig config = new ClassesConfig()
             {
                 Name = 0,
-                MovementType = 1,
-                BattleStyle = 2
+                BattleStyle = 1
             };
 
             List<string> data = new List<string>()
             {
                 INPUT_NAME,
-                INPUT_MOVEMENT_TYPE,
                 string.Empty
             };
 
-            Class cls = new Class(config, data, DICTIONARY_BATTLE_STYLES);
+            Class cls = new Class(config, data, true, DICTIONARY_BATTLE_STYLES);
 
             Assert.IsNull(cls.BattleStyle);
         }
@@ -128,18 +156,16 @@ namespace UnitTests.Models.System
             ClassesConfig config = new ClassesConfig()
             {
                 Name = 0,
-                MovementType = 1,
-                BattleStyle = 2
+                BattleStyle = 1
             };
 
             List<string> data = new List<string>()
             {
                 INPUT_NAME,
-                INPUT_MOVEMENT_TYPE,
                 "Battle Style 2"
             };
 
-            Assert.ThrowsException<UnmatchedBattleStyleException>(() => new Class(config, data, DICTIONARY_BATTLE_STYLES));
+            Assert.ThrowsException<UnmatchedBattleStyleException>(() => new Class(config, data, true, DICTIONARY_BATTLE_STYLES));
         }
 
         [TestMethod]
@@ -148,19 +174,17 @@ namespace UnitTests.Models.System
             ClassesConfig config = new ClassesConfig()
             {
                 Name = 0,
-                MovementType = 1,
-                BattleStyle = 2
+                BattleStyle = 1
             };
 
             string battleStyle = "Battle Style 1";
             List<string> data = new List<string>()
             {
                 INPUT_NAME,
-                INPUT_MOVEMENT_TYPE,
                 battleStyle
             };
 
-            Class cls = new Class(config, data, DICTIONARY_BATTLE_STYLES);
+            Class cls = new Class(config, data, true, DICTIONARY_BATTLE_STYLES);
 
             Assert.IsNotNull(cls.BattleStyle);
             Assert.AreEqual<string>(battleStyle, cls.BattleStyle.Name);
@@ -177,19 +201,17 @@ namespace UnitTests.Models.System
             ClassesConfig config = new ClassesConfig()
             {
                 Name = 0,
-                MovementType = 1,
-                Tags = new List<int> { 2, 3 }
+                Tags = new List<int> { 1, 2 }
             };
 
             List<string> data = new List<string>()
             {
                 INPUT_NAME,
-                INPUT_MOVEMENT_TYPE,
                 string.Empty,
                 string.Empty
             };
 
-            Class cls = new Class(config, data, DICTIONARY_BATTLE_STYLES);
+            Class cls = new Class(config, data, true, DICTIONARY_BATTLE_STYLES);
 
             CollectionAssert.AreEqual(new List<string>() { }, cls.Tags);
         }
@@ -200,19 +222,17 @@ namespace UnitTests.Models.System
             ClassesConfig config = new ClassesConfig()
             {
                 Name = 0,
-                MovementType = 1,
-                Tags = new List<int> { 2, 3 }
+                Tags = new List<int> { 1, 2 }
             };
 
             List<string> data = new List<string>()
             {
                 INPUT_NAME,
-                INPUT_MOVEMENT_TYPE,
                 "Tag 1,Tag 2",
                 "Tag 3"
             };
 
-            Class cls = new Class(config, data, DICTIONARY_BATTLE_STYLES);
+            Class cls = new Class(config, data, true, DICTIONARY_BATTLE_STYLES);
 
             CollectionAssert.AreEqual(new List<string>() { "Tag 1", "Tag 2", "Tag 3"}, cls.Tags);
         }
@@ -227,19 +247,17 @@ namespace UnitTests.Models.System
             ClassesConfig config = new ClassesConfig()
             {
                 Name = 0,
-                MovementType = 1,
-                TextFields = new List<int> { 2, 3 }
+                TextFields = new List<int> { 1, 2 }
             };
 
             List<string> data = new List<string>()
             {
                 INPUT_NAME,
-                INPUT_MOVEMENT_TYPE,
                 string.Empty,
                 string.Empty
             };
 
-            Class cls = new Class(config, data, DICTIONARY_BATTLE_STYLES);
+            Class cls = new Class(config, data, true, DICTIONARY_BATTLE_STYLES);
 
             CollectionAssert.AreEqual(new List<string>() { }, cls.TextFields);
         }
@@ -250,19 +268,17 @@ namespace UnitTests.Models.System
             ClassesConfig config = new ClassesConfig()
             {
                 Name = 0,
-                MovementType = 1,
-                TextFields = new List<int> { 2, 3 }
+                TextFields = new List<int> { 1, 2 }
             };
 
             List<string> data = new List<string>()
             {
                 INPUT_NAME,
-                INPUT_MOVEMENT_TYPE,
                 "Text Field 1",
                 "Text Field 2"
             };
 
-            Class cls = new Class(config, data, DICTIONARY_BATTLE_STYLES);
+            Class cls = new Class(config, data, true, DICTIONARY_BATTLE_STYLES);
 
             CollectionAssert.AreEqual(new List<string>() { "Text Field 1", "Text Field 2" }, cls.TextFields);
         }
@@ -276,17 +292,15 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0,
-                MovementType = 1
+                Name = 0
             };
 
             List<string> data = new List<string>()
             {
-                INPUT_NAME,
-                INPUT_MOVEMENT_TYPE
+                INPUT_NAME
             };
 
-            Class cls = new Class(config, data, DICTIONARY_BATTLE_STYLES);
+            Class cls = new Class(config, data, true, DICTIONARY_BATTLE_STYLES);
 
             Assert.IsFalse(cls.Matched);
             cls.FlagAsMatched();
@@ -299,18 +313,16 @@ namespace UnitTests.Models.System
             ClassesConfig config = new ClassesConfig()
             {
                 Name = 0,
-                MovementType = 1,
-                BattleStyle = 2
+                BattleStyle = 1
             };
 
             List<string> data = new List<string>()
             {
                 INPUT_NAME,
-                INPUT_MOVEMENT_TYPE,
                 "Battle Style 1"
             };
 
-            Class cls = new Class(config, data, DICTIONARY_BATTLE_STYLES);
+            Class cls = new Class(config, data, true, DICTIONARY_BATTLE_STYLES);
 
             Assert.IsFalse(cls.Matched);
             Assert.IsFalse(cls.BattleStyle.Matched);
@@ -326,7 +338,7 @@ namespace UnitTests.Models.System
         [TestMethod]
         public void Class_BuildDictionary_WithInput_Null()
         {
-            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(null, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(null, true, DICTIONARY_BATTLE_STYLES);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -336,11 +348,10 @@ namespace UnitTests.Models.System
             ClassesConfig config = new ClassesConfig()
             {
                 Queries = null,
-                Name = 0,
-                MovementType = 1
+                Name = 0
             };
 
-            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, true, DICTIONARY_BATTLE_STYLES);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -359,11 +370,10 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                MovementType = 1
+                Name = 0
             };
 
-            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, true, DICTIONARY_BATTLE_STYLES);
             Assert.AreEqual(0, dict.Count);
         }
 
@@ -378,16 +388,15 @@ namespace UnitTests.Models.System
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ INPUT_NAME, INPUT_MOVEMENT_TYPE },
-                            new List<object>(){ INPUT_NAME, INPUT_MOVEMENT_TYPE }
+                            new List<object>(){ INPUT_NAME },
+                            new List<object>(){ INPUT_NAME }
                         }
                     }
                 },
-                Name = 0,
-                MovementType = 1
+                Name = 0
             };
 
-            Assert.ThrowsException<ClassProcessingException>(() => Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES));
+            Assert.ThrowsException<ClassProcessingException>(() => Class.BuildDictionary(config, true, DICTIONARY_BATTLE_STYLES));
         }
 
         [TestMethod]
@@ -401,15 +410,14 @@ namespace UnitTests.Models.System
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ INPUT_NAME, INPUT_MOVEMENT_TYPE }
+                            new List<object>(){ INPUT_NAME }
                         }
                     }
                 },
-                Name = 0,
-                MovementType = 1
+                Name = 0
             };
 
-            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, true, DICTIONARY_BATTLE_STYLES);
             Assert.AreEqual<int>(1, dict.Count);
         }
 
@@ -424,24 +432,23 @@ namespace UnitTests.Models.System
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
-                            new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE }
+                            new List<object>(){ "Class 1" },
+                            new List<object>(){ "Class 2" }
                         }
                     },
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Class 3", INPUT_MOVEMENT_TYPE },
-                            new List<object>(){ "Class 4", INPUT_MOVEMENT_TYPE }
+                            new List<object>(){ "Class 3" },
+                            new List<object>(){ "Class 4" }
                         }
                     }
                 },
-                Name = 0,
-                MovementType = 1
+                Name = 0
             };
 
-            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, true, DICTIONARY_BATTLE_STYLES);
             Assert.AreEqual<int>(4, dict.Count);
         }
 
@@ -460,16 +467,15 @@ namespace UnitTests.Models.System
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
-                            new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE },
+                            new List<object>(){ "Class 1" },
+                            new List<object>(){ "Class 2" },
                         }
                     }
                 },
-                Name = 0,
-                MovementType = 1
+                Name = 0
             };
 
-            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, true, DICTIONARY_BATTLE_STYLES);
             IEnumerable<string> names = new List<string>() { "Class 3" };
 
             Assert.ThrowsException<UnmatchedClassException>(() => Class.MatchNames(dict, names));
@@ -486,16 +492,15 @@ namespace UnitTests.Models.System
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
-                            new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE },
+                            new List<object>(){ "Class 1" },
+                            new List<object>(){ "Class 2" },
                         }
                     }
                 },
-                Name = 0,
-                MovementType = 1
+                Name = 0
             };
 
-            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, true, DICTIONARY_BATTLE_STYLES);
             IEnumerable<string> names = new List<string>() { "Class 1" };
 
             List<Class> matches = Class.MatchNames(dict, names);
@@ -514,16 +519,15 @@ namespace UnitTests.Models.System
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
-                            new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE },
+                            new List<object>(){ "Class 1" },
+                            new List<object>(){ "Class 2" },
                         }
                     }
                 },
-                Name = 0,
-                MovementType = 1
+                Name = 0
             };
 
-            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, true, DICTIONARY_BATTLE_STYLES);
             IEnumerable<string> names = new List<string>() { "Class 1", "Class 2" };
 
             List<Class> matches = Class.MatchNames(dict, names);
@@ -543,16 +547,15 @@ namespace UnitTests.Models.System
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Class 1", INPUT_MOVEMENT_TYPE },
-                            new List<object>(){ "Class 2", INPUT_MOVEMENT_TYPE },
+                            new List<object>(){ "Class 1" },
+                            new List<object>(){ "Class 2" },
                         }
                     }
                 },
-                Name = 0,
-                MovementType = 1
+                Name = 0
             };
 
-            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, DICTIONARY_BATTLE_STYLES);
+            IReadOnlyDictionary<string, Class> dict = Class.BuildDictionary(config, true, DICTIONARY_BATTLE_STYLES);
             IEnumerable<string> names = new List<string>() { "Class 1", "Class 2" };
 
             List<Class> matches = Class.MatchNames(dict, names, true);

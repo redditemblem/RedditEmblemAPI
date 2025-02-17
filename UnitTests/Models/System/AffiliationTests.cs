@@ -70,6 +70,74 @@ namespace UnitTests.Models.System
             Assert.AreEqual<int>(1, aff.Grouping);
         }
 
+        #region OptionalField_SpriteURL
+
+        [TestMethod]
+        public void AffiliationConstructor_OptionalField_SpriteURL_EmptyString()
+        {
+            AffiliationsConfig config = new AffiliationsConfig()
+            {
+                Name = 0,
+                Grouping = 1,
+                SpriteURL = 2
+            };
+
+            List<string> data = new List<string>()
+            {
+                INPUT_NAME,
+                INPUT_GROUPING,
+                string.Empty
+            };
+
+            Affiliation aff = new Affiliation(config, data);
+
+            Assert.AreEqual<string>(string.Empty, aff.SpriteURL);
+        }
+
+        [TestMethod]
+        public void AffiliationConstructor_OptionalField_SpriteURL_InvalidURL()
+        {
+            AffiliationsConfig config = new AffiliationsConfig()
+            {
+                Name = 0,
+                Grouping = 1,
+                SpriteURL = 2
+            };
+
+            List<string> data = new List<string>()
+            {
+                INPUT_NAME,
+                INPUT_GROUPING,
+                "NotAURL"
+            };
+
+            Assert.ThrowsException<URLException>(() => new Affiliation(config, data));
+        }
+
+        [TestMethod]
+        public void AffiliationConstructor_OptionalField_SpriteURL()
+        {
+            AffiliationsConfig config = new AffiliationsConfig()
+            {
+                Name = 0,
+                Grouping = 1,
+                SpriteURL = 2
+            };
+
+            List<string> data = new List<string>()
+            {
+                INPUT_NAME,
+                INPUT_GROUPING,
+                UnitTestConsts.IMAGE_URL
+            };
+
+            Affiliation aff = new Affiliation(config, data);
+
+            Assert.AreEqual<string>(UnitTestConsts.IMAGE_URL, aff.SpriteURL);
+        }
+
+        #endregion OptionalField_SpriteURL
+
         #region OptionalField_FlipUnitSprites
 
         public void AffiliationConstructor_OptionalField_FlipUnitSprites_EmptyString()
