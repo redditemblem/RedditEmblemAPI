@@ -54,13 +54,14 @@
       "Queries": [
         {
           "Sheet": "Unit Affiliations",
-          "Selection": "A2:C",
+          "Selection": "A2:D",
           "Orientation": 1
         }
       ],
       "Name": 0,
       "Grouping": 1,
-      "TextFields": [ 2 ]
+      "SpriteURL": 2,
+      "TextFields": [ 3 ]
     },
     "Classes": {
       "Queries": [
