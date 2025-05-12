@@ -1,0 +1,745 @@
+{
+  "Team": {
+    "Name": "Colossus Emblem",
+    "WorkbookID": "1yafWHLWhlWY5VDzWJjEecz_werr9Zcvk1b0vnl4jKG8"
+  },
+  "Map": { 
+    "Constants": {
+      "TileSize": 32,
+      "TileSpacing": 0,
+      "HasHeaderTopLeft": true,
+      "UnitMovementStatName": "Mov",
+      "CoordinateFormat": 1
+    },
+    "MapControls": {
+      "Query": {
+        "Sheet": "System",
+        "Selection": "B1:3",
+        "Orientation": 2
+      },
+      "MapSwitch": 0,
+      "ChapterPostURL": 1,
+      "MapImageURL": 2
+    },
+    "MapTiles": {
+      "Query": {
+        "Sheet": "Map Tiles",
+        "Selection": "A1:ZZ",
+        "Orientation": 1
+      }
+    },
+    "MapObjects": {
+      "Query": {
+        "Sheet": "Map Objects",
+        "Selection": "A2:D",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Coordinate": 1,
+      "HP": {
+        "Current": 2,
+        "Maximum": 3
+      }
+    }
+  },
+  "System": {
+    "Constants": {
+      "Currency": {
+        "CurrencySymbol": "SG",
+        "IsSymbolLeftAligned": false,
+        "IncludeSpace": false
+      },
+      "WeaponRanks": [ "P", "E", "D", "C", "B", "A", "S" ]
+    },
+    "InterfaceLabels": {
+      "Adjutants": "God"
+    },
+    "Affiliations": {
+      "Queries": [
+        {
+          "Sheet": "Unit Affiliations",
+          "Selection": "A2:C",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "Grouping": 1,
+      "TextFields": [ 2 ]
+    },
+    "Classes": {
+      "Queries": [
+        {
+          "Sheet": "Classes",
+          "Selection": "B2:Q",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "MovementType": 15,
+      "Tags": [ 14 ]
+    },
+    "Items": {
+      "Queries": [
+        {
+          "Sheet": "Items",
+          "Selection": "A2:AP",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "Category": 3,
+      "WeaponRank": 5,
+      "UtilizedStats": [ 8 ],
+      "TargetedStats": [ 9 ],
+      "DealsDamage": 41,
+      "Uses": 6,
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 12
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 13
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 14
+        },
+        {
+          "SourceName": "CRate",
+          "Value": 15
+        },
+        {
+          "SourceName": "CDmg",
+          "Value": 16
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 17
+        },
+        {
+          "SourceName": "Ddg",
+          "Value": 18
+        },
+        {
+          "SourceName": "Mana",
+          "Value": 7
+        }
+      ],
+      "EquippedStatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 23
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 24
+        },
+        {
+          "SourceName": "Dex",
+          "Value": 25
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 26
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 27
+        },
+        {
+          "SourceName": "Def",
+          "Value": 28
+        },
+        {
+          "SourceName": "Res",
+          "Value": 29
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 30
+        }
+      ],
+      "Range": {
+        "Minimum": 10,
+        "Maximum": 11
+      },
+      "Tags": [ 38, 39 ],
+      "TextFields": [ 1, 2 ]
+    },
+    "Skills": {
+      "Queries": [
+        {
+          "Sheet": "Skills",
+          "Selection": "A2:N",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "TextFields": [ 4 ],
+      "Effects": [
+        {
+          "Type": 10,
+          "Parameters": [ 11, 12, 13 ]
+        }
+      ]
+    },
+    "StatusConditions": {
+      "Queries": [
+        {
+          "Sheet": "Statuses",
+          "Selection": "B2:K",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 1,
+      "Type": 2,
+      "Turns": 4,
+      "TextFields": [ 5 ],
+      "Effects": [
+        {
+          "Type": 6,
+          "Parameters": [ 7, 8, 9 ]
+        }
+      ]
+    },
+    "Tags": {
+      "Queries": [
+        {
+          "Sheet": "Tags",
+          "Selection": "B2:E",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 1,
+      "ShowOnUnit": 2,
+      "UnitAura": 3
+    },
+    "TerrainTypes": {
+      "Queries": [
+        {
+          "Sheet": "Terrains",
+          "Selection": "A2:W",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "StatGroups": [
+        {
+          "HPModifier": 4,
+          "CombatStatModifiers": [
+            {
+              "SourceName": "Avo",
+              "Value": 1
+            }
+          ],
+          "StatModifiers": [
+            {
+              "SourceName": "Def",
+              "Value": 3
+            },
+            {
+              "SourceName": "Res",
+              "Value": 3
+            }
+          ],
+          "MovementCosts": [
+            {
+              "SourceName": "Infantry",
+              "Value": 12
+            },
+            {
+              "SourceName": "Fast",
+              "Value": 13
+            },
+            {
+              "SourceName": "Mage",
+              "Value": 14
+            },
+            {
+              "SourceName": "Rider",
+              "Value": 15
+            },
+            {
+              "SourceName": "Armor",
+              "Value": 16
+            },
+            {
+              "SourceName": "Flier",
+              "Value": 17
+            }
+          ]
+        },
+        {
+          "AffiliationGroupings": 5,
+          "HPModifier": 4,
+          "CombatStatModifiers": [
+            {
+              "SourceName": "Avo",
+              "Value": 1
+            }
+          ],
+          "StatModifiers": [
+            {
+              "SourceName": "Def",
+              "Value": 3
+            },
+            {
+              "SourceName": "Res",
+              "Value": 3
+            }
+          ],
+          "MovementCosts": [
+            {
+              "SourceName": "Infantry",
+              "Value": 6
+            },
+            {
+              "SourceName": "Fast",
+              "Value": 7
+            },
+            {
+              "SourceName": "Mage",
+              "Value": 8
+            },
+            {
+              "SourceName": "Rider",
+              "Value": 9
+            },
+            {
+              "SourceName": "Armor",
+              "Value": 10
+            },
+            {
+              "SourceName": "Flier",
+              "Value": 11
+            }
+          ]
+        }
+      ],
+      "WarpType": 20,
+      "WarpCost": 21,
+      "BlocksItems": 19,
+      "Groupings": 18,
+      "TextFields": [ 22 ]
+    },
+    "TileObjects": {
+      "Queries": [
+        {
+          "Sheet": "Tile Objects",
+          "Selection": "B2:L",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 1,
+      "Size": 2,
+      "Layer": 3,
+      "Range": {
+        "Minimum": 4,
+        "Maximum": 5
+      },
+      "HPModifier": 6,
+      "CombatStatModifiers": [
+        {
+          "SourceName": "Avo",
+          "Value": 7
+        }
+      ],
+      "StatModifiers": [
+        {
+          "SourceName": "Def",
+          "Value": 8
+        },
+        {
+          "SourceName": "Res",
+          "Value": 9
+        }
+      ],
+      "TextFields": [ 10 ]
+    }
+  },
+  "Units": {
+    "Queries": [
+      {
+        "Sheet": "Tracker",
+        "Selection": "B1:ZZZ",
+        "Orientation": 2
+      }
+    ],
+    "Name": 0,
+    "SpriteURL": 163,
+    "Level": 56,
+    "Classes": [ 5 ],
+    "Affiliation": 4,
+    "Coordinate": 6,
+    "HP": {
+      "Current": 27,
+      "Maximum": 28
+    },
+    "CombatStats": [
+      {
+        "SourceName": "Atk",
+        "Equations": [
+          {
+            "Equation": "{WeaponUtilStat_Greatest} + {WeaponStat[Mt]}",
+            "ParserOptions": {
+              "EvalWeaponUtilStat_Greatest": true,
+              "EvalWeaponStat": true
+            }
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 51
+          }
+        ]
+      },
+      {
+        "SourceName": "Hit",
+        "Equations": [
+          {
+            "Equation": "({UnitStat[Dex]}*1.5) + ({UnitStat[Lck]}*0.75) + {WeaponStat[Hit]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 52
+          }
+        ]
+      },
+      {
+        "SourceName": "Crit",
+        "Equations": [
+          {
+            "Equation": "((({UnitStat[Dex]} - 4)*0.5) + {WeaponStat[Crit]}) * {WeaponStat[CRate]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 53
+          }
+        ]
+      },
+      {
+        "SourceName": "Avo",
+        "Equations": [
+          {
+            "Equation": "({UnitStat[Spd]}*1.4) + ({UnitStat[Lck]}*0.75) + {WeaponStat[Avo]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 54
+          }
+        ]
+      },
+      {
+        "SourceName": "Ddg",
+        "Equations": [
+          {
+            "Equation": "({UnitStat[Lck]}*0.5) + {WeaponStat[Ddg]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 55
+          }
+        ]
+      }
+    ],
+    "Stats": [
+      {
+        "SourceName": "Str",
+        "BaseValue": 131,
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 43
+          }
+        ]
+      },
+      {
+        "SourceName": "Mag",
+        "BaseValue": 132,
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 44
+          }
+        ]
+      },
+      {
+        "SourceName": "Dex",
+        "BaseValue": 133,
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 45
+          }
+        ]
+      },
+      {
+        "SourceName": "Spd",
+        "BaseValue": 134,
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 46
+          }
+        ]
+      },
+      {
+        "SourceName": "Lck",
+        "BaseValue": 135,
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 47
+          }
+        ]
+      },
+      {
+        "SourceName": "Def",
+        "BaseValue": 136,
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 48
+          }
+        ]
+      },
+      {
+        "SourceName": "Res",
+        "BaseValue": 137,
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 49
+          }
+        ]
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 138,
+        "Modifiers": [
+          {
+            "SourceName": "Mod",
+            "Value": 50
+          }
+        ]
+      }
+    ],
+    "WeaponRanks": [
+      {
+        "Type": 90,
+        "Rank": 91
+      },
+      {
+        "Type": 92,
+        "Rank": 93
+      },
+      {
+        "Type": 94,
+        "Rank": 95
+      },
+      {
+        "Type": 96,
+        "Rank": 97
+      },
+      {
+        "Type": 98,
+        "Rank": 99
+      },
+      {
+        "Type": 100,
+        "Rank": 101
+      }
+    ],
+    "Inventory": {
+      "PrimaryEquippedItem": 11,
+      "SecondaryEquippedItems": [ 12 ],
+      "Subsections": [
+        {
+          "Slots": [
+            {
+              "Name": 13,
+              "Uses": 14
+            },
+            {
+              "Name": 15,
+              "Uses": 16
+            },
+            {
+              "Name": 17,
+              "Uses": 18
+            },
+            {
+              "Name": 19,
+              "Uses": 20
+            },
+            {
+              "Name": 21,
+              "Uses": 22
+            },
+            {
+              "Name": 23,
+              "Uses": 24
+            }
+          ]
+        }
+      ]
+    },
+    "Player": 1,
+    "PortraitURL": 164,
+    "TextFields": [ 165 ],
+    "UnitSize": 59,
+    "HasMoved": 8,
+    "HeldCurrency": 62,
+    "Tags": [ 60, 61 ],
+    "Behavior": 10,
+    "SystemStats": [
+      {
+        "SourceName": "Mana",
+        "BaseValue": 25,
+        "Modifiers": [ ]
+      }
+    ],
+    "SkillSubsections": [
+      {
+        "Skills": [
+          {
+            "Name": 78
+          },
+          {
+            "Name": 79
+          },
+          {
+            "Name": 80
+          },
+          {
+            "Name": 81
+          },
+          {
+            "Name": 82
+          },
+          {
+            "Name": 83
+          },
+          {
+            "Name": 84
+          },
+          {
+            "Name": 85
+          },
+          {
+            "Name": 86
+          },
+          {
+            "Name": 87
+          },
+          {
+            "Name": 88
+          },
+          {
+            "Name": 89
+          }
+        ]
+      }
+    ],
+    "StatusConditions": [
+      {
+        "Name": 63
+      },
+      {
+        "Name": 64
+      },
+      {
+        "Name": 65
+      },
+      {
+        "Name": 66
+      },
+      {
+        "Name": 67
+      },
+      {
+        "Name": 68
+      },
+      {
+        "Name": 69
+      },
+      {
+        "Name": 70
+      },
+      {
+        "Name": 71
+      },
+      {
+        "Name": 72
+      },
+      {
+        "Name": 73
+      },
+      {
+        "Name": 74
+      },
+      {
+        "Name": 75
+      },
+      {
+        "Name": 76
+      },
+      {
+        "Name": 77
+      }
+    ]
+  },
+  "Convoy": {
+    "Query": {
+      "Sheet": "Convoy",
+      "Selection": "A2:D",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "Owner": 2,
+    "Quantity": 3,
+    "Uses": 1
+  },
+  "Shop": {
+    "Query": {
+      "Sheet": "Shop",
+      "Selection": "A2:E",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "Stock": 1,
+    "Price": 4,
+    "SalePrice": 2, 
+    "IsNew": 3
+  }
+}
