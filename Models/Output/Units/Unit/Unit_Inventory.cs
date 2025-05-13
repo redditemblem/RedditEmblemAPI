@@ -95,7 +95,11 @@ namespace RedditEmblemAPI.Models.Output.Units
             {
                 //Check if the item can be equipped
                 string unitRank;
-                if (this.WeaponRanks.TryGetValue(item.Item.Category, out unitRank))
+                if (item.Item.IsAlwaysUsable)
+                {
+                    item.CanEquip = true;
+                }
+                else if (this.WeaponRanks.TryGetValue(item.Item.Category, out unitRank))
                 {
                     if (string.IsNullOrEmpty(unitRank)
                      || string.IsNullOrEmpty(item.Item.WeaponRank)

@@ -21,6 +21,15 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         [JsonRequired]
         public int Maximum { get; set; }
 
-        #endregion
+        #endregion Required Fields
+
+        #region Optional Fields
+
+        /// <summary>
+        /// Optional. Cell index for the unit's remaining number of hit point bars.
+        /// </summary>
+        public int RemainingBars { get; set; } = -1;
+
+        #endregion Optional Fields
     }
 }

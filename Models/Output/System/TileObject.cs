@@ -82,8 +82,8 @@ namespace RedditEmblemAPI.Models.Output.System
             else this.Range = new TileObjectRange();
 
             this.HPModifier = DataParser.OptionalInt_Any(data, config.HPModifier, "HP Modifier");
-            this.CombatStatModifiers = DataParser.NamedStatDictionary_Int_Any(config.CombatStatModifiers, data, false, "{0} Modifier");
-            this.StatModifiers = DataParser.NamedStatDictionary_Int_Any(config.StatModifiers, data, false, "{0} Modifier");
+            this.CombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.CombatStatModifiers, data, false, "{0} Modifier");
+            this.StatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.StatModifiers, data, false, "{0} Modifier");
         }
 
         /// <summary>

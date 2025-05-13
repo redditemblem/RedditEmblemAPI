@@ -32,6 +32,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         [JsonIgnore]
         public int Difference { get { return Math.Max(0, this.Maximum - this.Current); } }
 
+        /// <summary>
+        /// The number of remaining bonus hit point bars the unit possesses.
+        /// </summary>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public int RemainingBars { get; set; }
+
         #region Constructors
 
         /// <summary>
@@ -41,6 +47,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         {
             this.Current = DataParser.Int_Positive(data, config.Current, "Current HP");
             this.Maximum = DataParser.Int_NonZeroPositive(data, config.Maximum, "Maximum HP");
+            this.RemainingBars = DataParser.OptionalInt_Positive(data, config.RemainingBars, "Remaining HP Bars");
         }
 
         #endregion

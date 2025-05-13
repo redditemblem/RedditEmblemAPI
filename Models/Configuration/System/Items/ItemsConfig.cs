@@ -72,6 +72,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         public int WeaponRank { get; set; } = -1;
 
         /// <summary>
+        /// Optional. Cell index of an item's is always usable flag.
+        /// </summary>
+        public int IsAlwaysUsable { get; set; } = -1;
+
+        /// <summary>
         /// Optional. Cell index of an item's targeted stats value.
         /// </summary>
         public List<int> TargetedStats { get; set; } = new List<int>();
