@@ -82,13 +82,14 @@
       "Queries": [
         {
           "Sheet": "Items",
-          "Selection": "A2:AP",
+          "Selection": "A2:AQ",
           "Orientation": 1
         }
       ],
       "Name": 0,
       "Category": 3,
       "WeaponRank": 5,
+      "IsAlwaysUsable": 42,
       "UtilizedStats": [ 8 ],
       "TargetedStats": [ 9 ],
       "DealsDamage": 41,
@@ -371,14 +372,15 @@
       }
     ],
     "Name": 0,
-    "SpriteURL": 163,
+    "SpriteURL": 178,
     "Level": 56,
     "Classes": [ 5 ],
     "Affiliation": 4,
     "Coordinate": 6,
     "HP": {
       "Current": 27,
-      "Maximum": 28
+      "Maximum": 28,
+      "RemainingBars": 26
     },
     "CombatStats": [
       {
@@ -475,7 +477,7 @@
     "Stats": [
       {
         "SourceName": "Str",
-        "BaseValue": 131,
+        "BaseValue": 146,
         "Modifiers": [
           {
             "SourceName": "Mod",
@@ -485,7 +487,7 @@
       },
       {
         "SourceName": "Mag",
-        "BaseValue": 132,
+        "BaseValue": 147,
         "Modifiers": [
           {
             "SourceName": "Mod",
@@ -495,7 +497,7 @@
       },
       {
         "SourceName": "Dex",
-        "BaseValue": 133,
+        "BaseValue": 148,
         "Modifiers": [
           {
             "SourceName": "Mod",
@@ -505,7 +507,7 @@
       },
       {
         "SourceName": "Spd",
-        "BaseValue": 134,
+        "BaseValue": 149,
         "Modifiers": [
           {
             "SourceName": "Mod",
@@ -515,7 +517,7 @@
       },
       {
         "SourceName": "Lck",
-        "BaseValue": 135,
+        "BaseValue": 150,
         "Modifiers": [
           {
             "SourceName": "Mod",
@@ -525,7 +527,7 @@
       },
       {
         "SourceName": "Def",
-        "BaseValue": 136,
+        "BaseValue": 151,
         "Modifiers": [
           {
             "SourceName": "Mod",
@@ -535,7 +537,7 @@
       },
       {
         "SourceName": "Res",
-        "BaseValue": 137,
+        "BaseValue": 152,
         "Modifiers": [
           {
             "SourceName": "Mod",
@@ -545,7 +547,7 @@
       },
       {
         "SourceName": "Mov",
-        "BaseValue": 138,
+        "BaseValue": 153,
         "Modifiers": [
           {
             "SourceName": "Mod",
@@ -556,28 +558,28 @@
     ],
     "WeaponRanks": [
       {
-        "Type": 90,
-        "Rank": 91
+        "Type": 105,
+        "Rank": 106
       },
       {
-        "Type": 92,
-        "Rank": 93
+        "Type": 107,
+        "Rank": 108
       },
       {
-        "Type": 94,
-        "Rank": 95
+        "Type": 109,
+        "Rank": 110
       },
       {
-        "Type": 96,
-        "Rank": 97
+        "Type": 111,
+        "Rank": 112
       },
       {
-        "Type": 98,
-        "Rank": 99
+        "Type": 113,
+        "Rank": 114
       },
       {
-        "Type": 100,
-        "Rank": 101
+        "Type": 115,
+        "Rank": 116
       }
     ],
     "Inventory": {
@@ -615,8 +617,8 @@
       ]
     },
     "Player": 1,
-    "PortraitURL": 164,
-    "TextFields": [ 165 ],
+    "PortraitURL": 179,
+    "TextFields": [ 180 ],
     "UnitSize": 59,
     "HasMoved": 8,
     "HeldCurrency": 62,
@@ -633,89 +635,179 @@
       {
         "Skills": [
           {
-            "Name": 78
+            "Name": 93
           },
           {
-            "Name": 79
+            "Name": 94
           },
           {
-            "Name": 80
+            "Name": 95
           },
           {
-            "Name": 81
+            "Name": 96
           },
           {
-            "Name": 82
+            "Name": 97
           },
           {
-            "Name": 83
+            "Name": 98
           },
           {
-            "Name": 84
+            "Name": 99
           },
           {
-            "Name": 85
+            "Name": 100
           },
           {
-            "Name": 86
+            "Name": 101
           },
           {
-            "Name": 87
+            "Name": 102
           },
           {
-            "Name": 88
+            "Name": 103
           },
           {
-            "Name": 89
+            "Name": 104
           }
         ]
       }
     ],
     "StatusConditions": [
       {
-        "Name": 63
+        "Name": 63,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 64
+          }
+        ]
       },
       {
-        "Name": 64
+        "Name": 65,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 66
+          }
+        ]
       },
       {
-        "Name": 65
+        "Name": 67,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 68
+          }
+        ]
       },
       {
-        "Name": 66
+        "Name": 69,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 70
+          }
+        ]
       },
       {
-        "Name": 67
+        "Name": 71,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 72
+          }
+        ]
       },
       {
-        "Name": 68
+        "Name": 73,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 74
+          }
+        ]
       },
       {
-        "Name": 69
+        "Name": 75,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 76
+          }
+        ]
       },
       {
-        "Name": 70
+        "Name": 77,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 78
+          }
+        ]
       },
       {
-        "Name": 71
+        "Name": 79,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 80
+          }
+        ]
       },
       {
-        "Name": 72
+        "Name": 81,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 82
+          }
+        ]
       },
       {
-        "Name": 73
+        "Name": 83,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 84
+          }
+        ]
       },
       {
-        "Name": 74
+        "Name": 85,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 86
+          }
+        ]
       },
       {
-        "Name": 75
+        "Name": 87,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 88
+          }
+        ]
       },
       {
-        "Name": 76
+        "Name": 89,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 90
+          }
+        ]
       },
       {
-        "Name": 77
+        "Name": 91,
+        "AdditionalStats": [
+          {
+            "SourceName": "stack(s)",
+            "Value": 92
+          }
+        ]
       }
     ]
   },
