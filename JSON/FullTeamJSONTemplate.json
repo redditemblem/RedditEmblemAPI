@@ -43,7 +43,8 @@
       "Coordinate": 0, //Required
       "HP": { //Optional
         "Current": 0,
-        "Maximum": 0
+        "Maximum": 0,
+        "RemainingBars": 0 //Optional
       }
     }
   },
@@ -112,6 +113,7 @@
       "SpriteURL": 0, //Optional
       "Category": 0, //Required
       "WeaponRank": 0, //Optional
+      "IsAlwaysUsable": 0, //Optional
       "UtilizedStats": [ 0 ], //Required
       "TargetedStats": [ 0 ], //Optional
       "DealsDamage": 0, //Required
@@ -499,7 +501,8 @@
     "Coordinate": 0, //Required
     "HP": { //Required
       "Current": 0,
-      "Maximum": 0
+      "Maximum": 0,
+      "RemainingBars": 0 //Optional
     },
     "CombatStats": [ //Required
       {

@@ -49,6 +49,11 @@ namespace RedditEmblemAPI.Models.Output.System
         public string WeaponRank { get; set; }
 
         /// <summary>
+        /// Flag indicating whether or not this item should always be marked as usable, even if a unit does not have the requisite weapon ranks.
+        /// </summary>
+        public bool IsAlwaysUsable { get; set; }
+
+        /// <summary>
         /// The unit stats that the item uses in calculations, if applicable.
         /// </summary>
         public List<string> UtilizedStats { get; set; }
@@ -144,6 +149,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.Category = DataParser.String(data, config.Category, "Category");
             this.WeaponRank = DataParser.OptionalString(data, config.WeaponRank, "Weapon Rank");
+            this.IsAlwaysUsable = DataParser.OptionalBoolean_YesNo(data, config.IsAlwaysUsable, "Is Always Usable?");
             this.UtilizedStats = DataParser.List_StringCSV(data, config.UtilizedStats);
             this.TargetedStats = DataParser.List_StringCSV(data, config.TargetedStats);
             this.DealsDamage = DataParser.OptionalBoolean_YesNo(data, config.DealsDamage, "Deals Damage");

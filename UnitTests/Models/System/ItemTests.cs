@@ -168,6 +168,109 @@ namespace UnitTests.Models.System
             Assert.AreEqual<string>(INPUT_NAME, item.Name);
         }
 
+        #region OptionalField_IsAlwaysUsable
+
+        [TestMethod]
+        public void ItemConstructor_OptionalField_IsAlwaysUsable_EmptyString()
+        {
+            ItemsConfig config = new ItemsConfig()
+            {
+                Name = 0,
+                Category = 1,
+                UtilizedStats = new List<int> { 2 },
+                DealsDamage = 3,
+                Uses = 4,
+                Stats = new List<NamedStatConfig_Displayed>
+                {
+                    new NamedStatConfig_Displayed()
+                    {
+                        SourceName = "Mt",
+                        Value = 5
+                    }
+                },
+                Range = new ItemRangeConfig()
+                {
+                    Minimum = 6,
+                    Maximum = 7
+                },
+                IsAlwaysUsable = 8
+            };
+
+            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty };
+
+            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+
+            Assert.IsFalse(item.IsAlwaysUsable);
+        }
+
+        [TestMethod]
+        public void ItemConstructor_OptionalField_IsAlwaysUsable_No()
+        {
+            ItemsConfig config = new ItemsConfig()
+            {
+                Name = 0,
+                Category = 1,
+                UtilizedStats = new List<int> { 2 },
+                DealsDamage = 3,
+                Uses = 4,
+                Stats = new List<NamedStatConfig_Displayed>
+                {
+                    new NamedStatConfig_Displayed()
+                    {
+                        SourceName = "Mt",
+                        Value = 5
+                    }
+                },
+                Range = new ItemRangeConfig()
+                {
+                    Minimum = 6,
+                    Maximum = 7
+                },
+                IsAlwaysUsable = 8
+            };
+
+            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "No" };
+
+            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+
+            Assert.IsFalse(item.IsAlwaysUsable);
+        }
+
+        [TestMethod]
+        public void ItemConstructor_OptionalField_IsAlwaysUsable_Yes()
+        {
+            ItemsConfig config = new ItemsConfig()
+            {
+                Name = 0,
+                Category = 1,
+                UtilizedStats = new List<int> { 2 },
+                DealsDamage = 3,
+                Uses = 4,
+                Stats = new List<NamedStatConfig_Displayed>
+                {
+                    new NamedStatConfig_Displayed()
+                    {
+                        SourceName = "Mt",
+                        Value = 5
+                    }
+                },
+                Range = new ItemRangeConfig()
+                {
+                    Minimum = 6,
+                    Maximum = 7
+                },
+                IsAlwaysUsable = 8
+            };
+
+            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Yes" };
+
+            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+
+            Assert.IsTrue(item.IsAlwaysUsable);
+        }
+
+        #endregion OptionalField_IsAlwaysUsable
+
         #region OptionalField_SpriteURL
 
         [TestMethod]

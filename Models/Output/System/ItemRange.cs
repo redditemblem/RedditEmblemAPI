@@ -84,7 +84,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 this.MinimumRaw = data.ElementAtOrDefault<string>(index) ?? string.Empty;
                 return DataParser.OptionalInt_Positive(data, index, "Minimum Range");
             }
-            catch (PositiveIntegerException ex)
+            catch (PositiveIntegerException)
             {
                 //Check if this value needs to be calculated. If yes, return 0. If no, throw the error again.
                 if (this.MinimumRaw.Contains("{") || this.MinimumRaw.Contains("}"))
@@ -93,7 +93,7 @@ namespace RedditEmblemAPI.Models.Output.System
                     return 0;
                 }
 
-                throw ex;
+                throw;
             }
         }
 
@@ -104,7 +104,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 this.MaximumRaw = data.ElementAtOrDefault<string>(index) ?? string.Empty;
                 return DataParser.OptionalInt_Positive(data, index, "Maximum Range");
             }
-            catch (PositiveIntegerException ex)
+            catch (PositiveIntegerException)
             {
                 //Check if this value needs to be calculated. If yes, return 0. If no, throw the error again.
                 if (this.MaximumRaw.Contains("{") || this.MaximumRaw.Contains("}"))
@@ -113,7 +113,7 @@ namespace RedditEmblemAPI.Models.Output.System
                     return 0;
                 }
 
-                throw ex;
+                throw;
             }
         }
 
