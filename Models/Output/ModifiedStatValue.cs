@@ -32,6 +32,12 @@ namespace RedditEmblemAPI.Models.Output
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool InvertModifiedDisplayColors { get; private set; }
 
+        /// <summary>
+        /// For the UI. Flag indicating that this stat should be shown as prioritized in the UI.
+        /// </summary>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public bool UsePrioritizedDisplay { get; private set; }
+
         #endregion Attributes
 
         #region Constructors
@@ -39,21 +45,11 @@ namespace RedditEmblemAPI.Models.Output
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ModifiedStatValue(bool invertModifiedDisplayColors)
+        public ModifiedStatValue(bool invertModifiedDisplayColors, bool usePrioritizedDisplay)
         {
             this.Modifiers = new Dictionary<string, int>();
             this.InvertModifiedDisplayColors = invertModifiedDisplayColors;
-        }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="baseValue"></param>
-        public ModifiedStatValue(int baseValue, bool invertModifiedDisplayColors)
-        {
-            this.BaseValue = baseValue;
-            this.Modifiers = new Dictionary<string, int>();
-            this.InvertModifiedDisplayColors = invertModifiedDisplayColors;
+            this.UsePrioritizedDisplay = usePrioritizedDisplay;
         }
 
         #endregion Constructors
