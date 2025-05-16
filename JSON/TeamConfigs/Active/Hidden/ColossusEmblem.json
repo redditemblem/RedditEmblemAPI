@@ -405,7 +405,7 @@
         "SourceName": "Hit",
         "Equations": [
           {
-            "Equation": "({UnitStat[Dex]}*1.5) + ({UnitStat[Lck]}*0.75) + {WeaponStat[Hit]}",
+            "Equation": "({UnitStat[Dex]}*1.5) + ({UnitStat[Lck]}*0.5) + {WeaponStat[Hit]}",
             "ParserOptions": {
               "EvalUnitStat": true,
               "EvalWeaponStat": true
@@ -441,7 +441,7 @@
         "SourceName": "Avo",
         "Equations": [
           {
-            "Equation": "({UnitStat[Spd]}*1.4) + ({UnitStat[Lck]}*0.75) + {WeaponStat[Avo]}",
+            "Equation": "({UnitStat[Spd]}*1.5) + ({UnitStat[Lck]}*0.5) + {WeaponStat[Avo]}",
             "ParserOptions": {
               "EvalUnitStat": true,
               "EvalWeaponStat": true
@@ -628,7 +628,7 @@
       {
         "SourceName": "Mana",
         "BaseValue": 25,
-        "Modifiers": [ ]
+        "UsePrioritizedDisplay": true
       }
     ],
     "SkillSubsections": [
