@@ -587,7 +587,8 @@
             "Value": 0
           }
         ],
-        "InvertModifiedDisplayColors": false //Optional, defaults to false
+        "InvertModifiedDisplayColors": false, //Optional, defaults to false
+        "UsePrioritizedDisplay": false //Optional, defaults to false (true puts stat up next to HP bar)
       }
     ],
     "SkillSubsections": [ //Optional

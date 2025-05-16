@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -45,12 +46,37 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Collection of the unit's system stats.
         /// </summary>
+        [JsonIgnore]
         public IDictionary<string, ModifiedStatValue> System { get; set; }
 
         /// <summary>
         /// Collection of the unit's stat values. (ex. Str/Mag)
         /// </summary>
         public IDictionary<string, ModifiedStatValue> General { get; set; }
+
+        #region JSON Serialization ONLY
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        private IDictionary<string, ModifiedStatValue> System_Prioritized 
+        { 
+            get
+            {
+                var prioritized = this.System.Where(s => s.Value.UsePrioritizedDisplay);
+                return prioritized.Count() == 0 ? null : prioritized.ToDictionary(); 
+            } 
+        }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        private IDictionary<string, ModifiedStatValue> System_NonPrioritized
+        {
+            get
+            {
+                var nonPrioritized = this.System.Where(s => !s.Value.UsePrioritizedDisplay);
+                return nonPrioritized.Count() == 0 ? null : nonPrioritized.ToDictionary();
+            }
+        }
+
+        #endregion JSON Serialization ONLY
 
         #endregion Attributes
 
@@ -85,7 +111,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             foreach (CalculatedStatConfig stat in calculatedStats)
             {
-                ModifiedStatValue temp = new ModifiedStatValue(stat.InvertModifiedDisplayColors);
+                ModifiedStatValue temp = new ModifiedStatValue(stat.InvertModifiedDisplayColors, false);
                 temp.Modifiers = DataParser.NamedStatDictionary_OptionalInt_Any(stat.Modifiers, data, false, "{1} {0}", stat.SourceName);
 
                 stats.Add(stat.SourceName, temp);
@@ -103,7 +129,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             foreach (ModifiedNamedStatConfig_Displayed stat in config)
             {
-                ModifiedStatValue temp = new ModifiedStatValue(stat.InvertModifiedDisplayColors);
+                ModifiedStatValue temp = new ModifiedStatValue(stat.InvertModifiedDisplayColors, stat.UsePrioritizedDisplay);
                 
                 if(requireBaseValue) temp.BaseValue = DataParser.Int_Any(data, stat.BaseValue, stat.SourceName);
                 else temp.BaseValue = DataParser.OptionalInt_Any(data, stat.BaseValue, stat.SourceName);

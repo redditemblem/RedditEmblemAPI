@@ -46,6 +46,11 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         /// </summary>
         public bool InvertModifiedDisplayColors { get; set; } = false;
 
+        /// <summary>
+        /// Optional, defaults to false. Flag indicating that this stat should be shown as prioritized in the UI.
+        /// </summary>
+        public bool UsePrioritizedDisplay { get; set; } = false;
+
         #endregion Optional Attributes
     }
 }
