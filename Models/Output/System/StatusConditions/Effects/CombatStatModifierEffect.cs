@@ -27,9 +27,9 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// <summary>
         /// Applies <c>Modifiers</c> to <paramref name="unit"/>.
         /// </summary>
-        public override void Apply(Unit unit, StatusCondition status, IDictionary<string, Tag> tags)
+        public override void Apply(Unit unit, UnitStatus status, IDictionary<string, Tag> tags)
         {
-            unit.Stats.ApplyCombatStatModifiers(this.Modifiers, status.Name, true);
+            unit.Stats.ApplyCombatStatModifiers(this.Modifiers, status.StatusObj.Name, true);
         }
     }
 }

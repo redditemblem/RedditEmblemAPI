@@ -120,7 +120,9 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
                 case "PreventUtilStatItemUse": return new PreventUtilStatItemUseEffect(parameters);
                 case "PreventCategoryItemUse": return new PreventCategoryItemUseEffect(parameters);
                 case "CombatStatModifier": return new CombatStatModifierEffect(parameters);
+                case "CombatStatModifierWithAdditionalStatMultiplier": return new CombatStatModifierWithAdditionalStatMultiplierEffect(parameters);
                 case "StatModifier": return new StatModifierEffect(parameters);
+                case "StatModifierWithAdditionalStatMultiplier": return new StatModifierWithAdditionalStatMultiplierEffect(parameters);
                 case "AddTag": return new AddTagEffect(parameters);
                 case "RemoveTag": return new RemoveTagEffect(parameters);
             }

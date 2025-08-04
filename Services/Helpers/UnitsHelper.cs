@@ -94,7 +94,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     try
                     {
                         foreach (StatusConditionEffect effect in status.StatusObj.Effects)
-                            effect.Apply(unit, status.StatusObj, system.Tags);
+                            effect.Apply(unit, status, system.Tags);
                     }
                     catch (Exception ex)
                     {
