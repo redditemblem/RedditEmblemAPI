@@ -29,7 +29,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// <summary>
         /// Removes the tags in <c>Tags</c> from <paramref name="unit"/>.
         /// </summary>
-        public override void Apply(Unit unit, StatusCondition status, IDictionary<string, Tag> tags)
+        public override void Apply(Unit unit, UnitStatus status, IDictionary<string, Tag> tags)
         {
             foreach (string tag in this.Tags)
                 unit.Tags.Remove(tag);
