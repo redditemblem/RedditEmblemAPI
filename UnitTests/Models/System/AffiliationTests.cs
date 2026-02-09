@@ -7,7 +7,6 @@ using RedditEmblemAPI.Models.Output.System;
 
 namespace UnitTests.Models.System
 {
-    [TestClass]
     public class AffiliationTests
     {
         #region Constants
@@ -17,8 +16,8 @@ namespace UnitTests.Models.System
 
         #endregion Constants
 
-        [TestMethod]
-        public void AffiliationConstructor_RequiredFields_WithInputNull()
+        [Test]
+        public void Constructor_RequiredFields_WithInputNull()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -26,13 +25,13 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new Affiliation(config, data));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new Affiliation(config, data));
         }
 
-        [TestMethod]
-        public void AffiliationConstructor_RequiredFields_WithInput_InvalidGrouping()
+        [Test]
+        public void Constructor_RequiredFields_WithInput_InvalidGrouping()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -40,17 +39,17 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "0"
             };
 
-            Assert.ThrowsException<NonZeroPositiveIntegerException>(() => new Affiliation(config, data));
+            Assert.Throws<NonZeroPositiveIntegerException>(() => new Affiliation(config, data));
         }
 
-        [TestMethod]
-        public void AffiliationConstructor_RequiredFields()
+        [Test]
+        public void Constructor_RequiredFields()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -58,22 +57,22 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 INPUT_GROUPING
             };
 
-            Affiliation aff = new Affiliation(config, data);
+            IAffiliation aff = new Affiliation(config, data);
 
-            Assert.AreEqual<string>(INPUT_NAME, aff.Name);
-            Assert.AreEqual<int>(1, aff.Grouping);
+            Assert.That(aff.Name, Is.EqualTo(INPUT_NAME));
+            Assert.That(aff.Grouping, Is.EqualTo(1));
         }
 
         #region OptionalField_SpriteURL
 
-        [TestMethod]
-        public void AffiliationConstructor_OptionalField_SpriteURL_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_EmptyString()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -82,20 +81,20 @@ namespace UnitTests.Models.System
                 SpriteURL = 2
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 INPUT_GROUPING,
                 string.Empty
             };
 
-            Affiliation aff = new Affiliation(config, data);
+            IAffiliation aff = new Affiliation(config, data);
 
-            Assert.AreEqual<string>(string.Empty, aff.SpriteURL);
+            Assert.That(aff.SpriteURL, Is.Empty);
         }
 
-        [TestMethod]
-        public void AffiliationConstructor_OptionalField_SpriteURL_InvalidURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_InvalidURL()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -104,18 +103,18 @@ namespace UnitTests.Models.System
                 SpriteURL = 2
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 INPUT_GROUPING,
                 "NotAURL"
             };
 
-            Assert.ThrowsException<URLException>(() => new Affiliation(config, data));
+            Assert.Throws<URLException>(() => new Affiliation(config, data));
         }
 
-        [TestMethod]
-        public void AffiliationConstructor_OptionalField_SpriteURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -124,23 +123,24 @@ namespace UnitTests.Models.System
                 SpriteURL = 2
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 INPUT_GROUPING,
                 UnitTestConsts.IMAGE_URL
             };
 
-            Affiliation aff = new Affiliation(config, data);
+            IAffiliation aff = new Affiliation(config, data);
 
-            Assert.AreEqual<string>(UnitTestConsts.IMAGE_URL, aff.SpriteURL);
+            Assert.That(aff.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
         }
 
         #endregion OptionalField_SpriteURL
 
         #region OptionalField_FlipUnitSprites
 
-        public void AffiliationConstructor_OptionalField_FlipUnitSprites_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_FlipUnitSprites_EmptyString()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -149,20 +149,20 @@ namespace UnitTests.Models.System
                 FlipUnitSprites = 2
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 INPUT_GROUPING,
                 string.Empty
             };
 
-            Affiliation aff = new Affiliation(config, data);
+            IAffiliation aff = new Affiliation(config, data);
 
-            Assert.IsFalse(aff.FlipUnitSprites);
+            Assert.That(aff.FlipUnitSprites, Is.False);
         }
 
-        [TestMethod]
-        public void AffiliationConstructor_OptionalField_FlipUnitSprites_No()
+        [Test]
+        public void Constructor_OptionalField_FlipUnitSprites_No()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -171,20 +171,20 @@ namespace UnitTests.Models.System
                 FlipUnitSprites = 2
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 INPUT_GROUPING,
                 "No"
             };
 
-            Affiliation aff = new Affiliation(config, data);
+            IAffiliation aff = new Affiliation(config, data);
 
-            Assert.IsFalse(aff.FlipUnitSprites);
+            Assert.That(aff.FlipUnitSprites, Is.False);
         }
 
-        [TestMethod]
-        public void AffiliationConstructor_OptionalField_FlipUnitSprites_Yes()
+        [Test]
+        public void Constructor_OptionalField_FlipUnitSprites_Yes()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -193,24 +193,24 @@ namespace UnitTests.Models.System
                 FlipUnitSprites = 2
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 INPUT_GROUPING,
                 "Yes"
             };
 
-            Affiliation aff = new Affiliation(config, data);
+            IAffiliation aff = new Affiliation(config, data);
 
-            Assert.IsTrue(aff.FlipUnitSprites);
+            Assert.That(aff.FlipUnitSprites, Is.True);
         }
 
         #endregion OptionalField_FlipUnitSprites
 
         #region OptionalField_TextFields
 
-        [TestMethod]
-        public void AffiliationConstructor_OptionalField_TextFields_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_TextFields_EmptyString()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -219,7 +219,7 @@ namespace UnitTests.Models.System
                 TextFields = new List<int>() { 2, 3 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 INPUT_GROUPING,
@@ -227,14 +227,18 @@ namespace UnitTests.Models.System
                 string.Empty
             };
 
-            Affiliation aff = new Affiliation(config, data);
+            IAffiliation aff = new Affiliation(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { }, aff.TextFields);
+            List<string> expected = new List<string>();
+            Assert.That(aff.TextFields, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void AffiliationConstructor_OptionalField_TextFields()
+        [Test]
+        public void Constructor_OptionalField_TextFields()
         {
+            string textField1 = "Text Field 1";
+            string textField2 = "Text Field 2";
+
             AffiliationsConfig config = new AffiliationsConfig()
             {
                 Name = 0,
@@ -242,25 +246,26 @@ namespace UnitTests.Models.System
                 TextFields = new List<int>() { 2, 3 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 INPUT_GROUPING,
-                "Text Field 1",
-                "Text Field 2"
+                textField1,
+                textField2
             };
 
-            Affiliation aff = new Affiliation(config, data);
+            IAffiliation aff = new Affiliation(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { "Text Field 1", "Text Field 2" }, aff.TextFields);
+            List<string> expected = new List<string>() { textField1, textField2 };
+            Assert.That(aff.TextFields, Is.EqualTo(expected));
         }
 
         #endregion OptionalField_TextFields
 
         #region FlagAsMatched
 
-        [TestMethod]
-        public void Affiliation_FlagAsMatched()
+        [Test]
+        public void FlagAsMatched()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -268,32 +273,34 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 INPUT_GROUPING
             };
 
-            Affiliation aff = new Affiliation(config, data);
+            IAffiliation aff = new Affiliation(config, data);
 
-            Assert.IsFalse(aff.Matched);
+            Assert.That(aff.Matched, Is.False);
+
             aff.FlagAsMatched();
-            Assert.IsTrue(aff.Matched);
+
+            Assert.That(aff.Matched, Is.True);
         }
 
         #endregion FlagAsMatched
 
         #region BuildDictionary
 
-        [TestMethod]
-        public void Affiliation_BuildDictionary_WithInput_Null()
+        [Test]
+        public void BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(null);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(null);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Affiliation_BuildDictionary_WithInput_NullQuery()
+        [Test]
+        public void BuildDictionary_WithInput_NullQuery()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -302,16 +309,16 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Affiliation_BuildDictionary_WithInput_EmptyQuery()
+        [Test]
+        public void BuildDictionary_WithInput_EmptyQuery()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -325,16 +332,16 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Affiliation_BuildDictionary_WithInput_DuplicateName()
+        [Test]
+        public void BuildDictionary_WithInput_DuplicateName()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -349,15 +356,15 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            Assert.ThrowsException<AffiliationProcessingException>(() => Affiliation.BuildDictionary(config));
+            Assert.Throws<AffiliationProcessingException>(() => Affiliation.BuildDictionary(config));
         }
 
-        [TestMethod]
-        public void Affiliation_BuildDictionary_WithInput_Invalid()
+        [Test]
+        public void BuildDictionary_WithInput_Invalid()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -371,15 +378,15 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            Assert.ThrowsException<AffiliationProcessingException>(() => Affiliation.BuildDictionary(config));
+            Assert.Throws<AffiliationProcessingException>(() => Affiliation.BuildDictionary(config));
         }
 
-        [TestMethod]
-        public void Affiliation_BuildDictionary()
+        [Test]
+        public void BuildDictionary()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -393,16 +400,16 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
-            Assert.AreEqual<int>(1, dict.Count);
+            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
+            Assert.That(dict.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void Affiliation_BuildDictionary_MultiQuery()
+        [Test]
+        public void BuildDictionary_MultiQuery()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -425,20 +432,20 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
-            Assert.AreEqual<int>(4, dict.Count);
+            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
+            Assert.That(dict.Count, Is.EqualTo(4));
         }
 
         #endregion BuildDictionary
 
         #region MatchNames
 
-        [TestMethod]
-        public void Affiliation_MatchNames_UnmatchedName()
+        [Test]
+        public void MatchNames_UnmatchedName()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -453,18 +460,18 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Affiliation 3" };
 
-            Assert.ThrowsException<UnmatchedAffiliationException>(() => Affiliation.MatchNames(dict, names));
+            Assert.Throws<UnmatchedAffiliationException>(() => Affiliation.MatchNames(dict, names));
         }
 
-        [TestMethod]
-        public void Affiliation_MatchNames_SingleMatch()
+        [Test]
+        public void MatchNames_SingleMatch()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -479,20 +486,20 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Affiliation 1" };
 
-            List<Affiliation> matches = Affiliation.MatchNames(dict, names);
-            Assert.AreEqual(1, matches.Count);
-            Assert.IsTrue(matches.First().Matched);
+            List<IAffiliation> matches = Affiliation.MatchNames(dict, names);
+            Assert.That(matches.Count, Is.EqualTo(1));
+            Assert.That(matches.First().Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Affiliation_MatchNames_MultipleMatches()
+        [Test]
+        public void MatchNames_MultipleMatches()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -507,21 +514,21 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Affiliation 1", "Affiliation 2" };
 
-            List<Affiliation> matches = Affiliation.MatchNames(dict, names);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsTrue(matches[0].Matched);
-            Assert.IsTrue(matches[1].Matched);
+            List<IAffiliation> matches = Affiliation.MatchNames(dict, names);
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.True);
+            Assert.That(matches[1].Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Affiliation_MatchNames_MultipleMatches_SetMatchedStatus()
+        [Test]
+        public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -536,13 +543,13 @@ namespace UnitTests.Models.System
                 Grouping = 1
             };
 
-            IDictionary<string, Affiliation> dict = Affiliation.BuildDictionary(config);
+            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Affiliation 1", "Affiliation 2" };
 
-            List<Affiliation> matches = Affiliation.MatchNames(dict, names, true);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsFalse(matches[0].Matched);
-            Assert.IsFalse(matches[1].Matched);
+            List<IAffiliation> matches = Affiliation.MatchNames(dict, names, false);
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.False);
+            Assert.That(matches[1].Matched, Is.False);
         }
 
         #endregion MatchNames

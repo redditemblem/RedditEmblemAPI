@@ -7,7 +7,6 @@ using RedditEmblemAPI.Models.Output.System;
 
 namespace UnitTests.Models.System
 {
-    [TestClass]
     public class AdjutantTests
     {
         #region Constants
@@ -16,40 +15,41 @@ namespace UnitTests.Models.System
 
         #endregion Constants
 
-        [TestMethod]
-        public void AdjutantConstructor_RequiredFields_WithInputNull()
+        [Test]
+        public void Constructor_RequiredFields_WithInputNull()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>() { };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new Adjutant(config, data));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new Adjutant(config, data));
         }
 
-        [TestMethod]
-        public void AdjutantConstructor_RequiredFields()
+        [Test]
+        public void Constructor_RequiredFields()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME
             };
 
-            Adjutant adj = new Adjutant(config, data);
+            IAdjutant adj = new Adjutant(config, data);
 
-            Assert.AreEqual<string>(INPUT_NAME, adj.Name);
+            Assert.That(adj.Name, Is.EqualTo(INPUT_NAME));
         }
 
         #region OptionalField_SpriteURL
 
-        public void AdjutantConstructor_OptionalField_SpriteURL_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_EmptyString()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
@@ -57,19 +57,19 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty
             };
 
-            Adjutant adj = new Adjutant(config, data);
+            IAdjutant adj = new Adjutant(config, data);
 
-            Assert.AreEqual<string>(string.Empty, adj.SpriteURL);
+            Assert.That(adj.SpriteURL, Is.Empty);
         }
 
-        [TestMethod]
-        public void AdjutantConstructor_OptionalField_SpriteURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
@@ -77,23 +77,23 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 UnitTestConsts.IMAGE_URL
             };
 
-            Adjutant adj = new Adjutant(config, data);
+            IAdjutant adj = new Adjutant(config, data);
 
-            Assert.AreEqual<string>(UnitTestConsts.IMAGE_URL, adj.SpriteURL);
+            Assert.That(adj.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
         }
 
         #endregion OptionalField_SpriteURL
 
         #region OptionalField_CombatStatModifiers
 
-        [TestMethod]
-        public void AdjutantConstructor_OptionalField_CombatStatModifiers_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_CombatStatModifiers_EmptyString()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -108,20 +108,21 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty,
                 string.Empty
             };
 
-            Adjutant adj = new Adjutant(config, data);
+            IAdjutant adj = new Adjutant(config, data);
 
-            Assert.AreEqual<int>(0, adj.CombatStatModifiers.Count);
+            IDictionary<string, int> expected = new Dictionary<string, int>();
+            Assert.That(adj.CombatStatModifiers, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void AdjutantConstructor_OptionalField_CombatStatModifiers()
+        [Test]
+        public void Constructor_OptionalField_CombatStatModifiers()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -136,26 +137,29 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "1",
                 "-1"
             };
 
-            Adjutant adj = new Adjutant(config, data);
+            IAdjutant adj = new Adjutant(config, data);
 
-            Assert.AreEqual<int>(2, adj.CombatStatModifiers.Count);
-            Assert.AreEqual<int>(1, adj.CombatStatModifiers[stat1]);
-            Assert.AreEqual<int>(-1, adj.CombatStatModifiers[stat2]);
+            IDictionary<string, int> expected = new Dictionary<string, int>()
+            {
+                { stat1, 1 },
+                { stat2, -1 }
+            };
+            Assert.That(adj.CombatStatModifiers, Is.EqualTo(expected));
         }
 
         #endregion OptionalField_CombatStatModifiers
 
         #region OptionalField_StatModifiers
 
-        [TestMethod]
-        public void AdjutantConstructor_OptionalField_StatModifiers_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_StatModifiers_EmptyString()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -170,20 +174,21 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty,
                 string.Empty
             };
 
-            Adjutant adj = new Adjutant(config, data);
+            IAdjutant adj = new Adjutant(config, data);
 
-            Assert.AreEqual<int>(0, adj.StatModifiers.Count);
+            IDictionary<string, int> expected = new Dictionary<string, int>();
+            Assert.That(adj.StatModifiers, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void AdjutantConstructor_OptionalField_StatModifiers()
+        [Test]
+        public void Constructor_OptionalField_StatModifiers()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -198,26 +203,29 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "1",
                 "-1"
             };
 
-            Adjutant adj = new Adjutant(config, data);
+            IAdjutant adj = new Adjutant(config, data);
 
-            Assert.AreEqual<int>(2, adj.StatModifiers.Count);
-            Assert.AreEqual<int>(1, adj.StatModifiers[stat1]);
-            Assert.AreEqual<int>(-1, adj.StatModifiers[stat2]);
+            IDictionary<string, int> expected = new Dictionary<string, int>()
+            {
+                { stat1, 1 },
+                { stat2, -1 }
+            };
+            Assert.That(adj.StatModifiers, Is.EqualTo(expected));
         }
 
         #endregion OptionalField_StatModifiers
 
         #region OptionalField_TextFields
 
-        [TestMethod]
-        public void AdjutantConstructor_OptionalField_TextFields_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_TextFields_EmptyString()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
@@ -225,76 +233,84 @@ namespace UnitTests.Models.System
                 TextFields = new List<int>() { 1, 2 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty,
                 string.Empty
             };
 
-            Adjutant adj = new Adjutant(config, data);
+            IAdjutant adj = new Adjutant(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { }, adj.TextFields);
+            List<string> expected = new List<string>();
+            Assert.That(adj.TextFields, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void AdjutantConstructor_OptionalField_TextFields()
+        [Test]
+        public void Constructor_OptionalField_TextFields()
         {
+            string textField1 = "Text Field 1";
+            string textField2 = "Text Field 2";
+
             AdjutantsConfig config = new AdjutantsConfig()
             {
                 Name = 0,
                 TextFields = new List<int>() { 1, 2 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
-                "Text Field 1",
-                "Text Field 2"
+                textField1,
+                textField2
             };
 
-            Adjutant adj = new Adjutant(config, data);
+            IAdjutant adj = new Adjutant(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { "Text Field 1", "Text Field 2" }, adj.TextFields);
+            List<string> expected = new List<string>() { textField1, textField2 };
+            Assert.That(adj.TextFields, Is.EqualTo(expected));
         }
 
         #endregion OptionalField_TextFields
 
         #region FlagAsMatched
 
-        [TestMethod]
-        public void Adjutant_FlagAsMatched()
+        [Test]
+        public void FlagAsMatched()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME
             };
 
-            Adjutant adj = new Adjutant(config, data);
+            IAdjutant adj = new Adjutant(config, data);
 
-            Assert.IsFalse(adj.Matched);
+            Assert.That(adj.Matched, Is.False);
+
             adj.FlagAsMatched();
-            Assert.IsTrue(adj.Matched);
+
+            Assert.That(adj.Matched, Is.True);
         }
 
         #endregion FlagAsMatched
 
         #region BuildDictionary
 
-        [TestMethod]
-        public void Adjutant_BuildDictionary_WithInput_Null()
+        [Test]
+        public void BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(null);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(null);
+
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Adjutant_BuildDictionary_WithInput_NullQuery()
+        [Test]
+        public void BuildDictionary_WithInput_NullQuery()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
@@ -302,16 +318,17 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
+
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Adjutant_BuildDictionary_WithInput_EmptyQuery()
+        [Test]
+        public void BuildDictionary_WithInput_EmptyQuery()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -324,16 +341,17 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
+
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Adjutant_BuildDictionary_WithInput_DuplicateName()
+        [Test]
+        public void BuildDictionary_WithInput_DuplicateName()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -347,15 +365,15 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            Assert.ThrowsException<AdjutantProcessingException>(() => Adjutant.BuildDictionary(config));
+            Assert.Throws<AdjutantProcessingException>(() => Adjutant.BuildDictionary(config));
         }
 
-        [TestMethod]
-        public void Adjutant_BuildDictionary_WithInput_Invalid()
+        [Test]
+        public void BuildDictionary_WithInput_Invalid()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -369,15 +387,15 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            Assert.ThrowsException<AdjutantProcessingException>(() => Adjutant.BuildDictionary(config));
+            Assert.Throws<AdjutantProcessingException>(() => Adjutant.BuildDictionary(config));
         }
 
-        [TestMethod]
-        public void Adjutant_BuildDictionary()
+        [Test]
+        public void BuildDictionary()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -390,16 +408,17 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
-            Assert.AreEqual<int>(1, dict.Count);
+            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
+
+            Assert.That(dict.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void Adjutant_BuildDictionary_MultiQuery()
+        [Test]
+        public void BuildDictionary_MultiQuery()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -421,20 +440,21 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
-            Assert.AreEqual<int>(4, dict.Count);
+            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
+
+            Assert.That(dict.Count, Is.EqualTo(4));
         }
 
         #endregion BuildDictionary
 
         #region MatchNames
 
-        [TestMethod]
-        public void Adjutant_MatchNames_UnmatchedName()
+        [Test]
+        public void MatchNames_UnmatchedName()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -448,18 +468,18 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
+            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Adjutant 3" };
 
-            Assert.ThrowsException<UnmatchedAdjutantException>(() => Adjutant.MatchNames(dict, names));
+            Assert.Throws<UnmatchedAdjutantException>(() => Adjutant.MatchNames(dict, names));
         }
 
-        [TestMethod]
-        public void Adjutant_MatchNames_SingleMatch()
+        [Test]
+        public void MatchNames_SingleMatch()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -473,20 +493,20 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
+            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Adjutant 1" };
 
-            List<Adjutant> matches = Adjutant.MatchNames(dict, names);
-            Assert.AreEqual(1, matches.Count);
-            Assert.IsTrue(matches.First().Matched);
+            List<IAdjutant> matches = Adjutant.MatchNames(dict, names);
+            Assert.That(matches.Count, Is.EqualTo(1));
+            Assert.That(matches.First().Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Adjutant_MatchNames_MultipleMatches()
+        [Test]
+        public void MatchNames_MultipleMatches()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -500,21 +520,21 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
+            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Adjutant 1", "Adjutant 2" };
 
-            List<Adjutant> matches = Adjutant.MatchNames(dict, names);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsTrue(matches[0].Matched);
-            Assert.IsTrue(matches[1].Matched);
+            List<IAdjutant> matches = Adjutant.MatchNames(dict, names);
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.True);
+            Assert.That(matches[1].Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Adjutant_MatchNames_MultipleMatches_SetMatchedStatus()
+        [Test]
+        public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -528,13 +548,13 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Adjutant> dict = Adjutant.BuildDictionary(config);
+            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Adjutant 1", "Adjutant 2" };
 
-            List<Adjutant> matches = Adjutant.MatchNames(dict, names, true);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsFalse(matches[0].Matched);
-            Assert.IsFalse(matches[1].Matched);
+            List<IAdjutant> matches = Adjutant.MatchNames(dict, names, false);
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.False);
+            Assert.That(matches[1].Matched, Is.False);
         }
 
         #endregion MatchNames

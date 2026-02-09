@@ -1,7 +1,7 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Items;
-using RedditEmblemAPI.Models.Configuration.System.Skills;
-using RedditEmblemAPI.Models.Configuration.System.Tags;
+using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
@@ -10,7 +10,6 @@ using RedditEmblemAPI.Models.Output.System.Skills;
 
 namespace UnitTests.Models.System
 {
-    [TestClass]
     public class ItemTests
     {
         #region Constants
@@ -28,11 +27,11 @@ namespace UnitTests.Models.System
 
         #region Setup
 
-        private IDictionary<string, Skill> DICTIONARY_SKILL = new Dictionary<string, Skill>();
-        private IDictionary<string, Tag> DICTIONARY_TAGS = new Dictionary<string, Tag>();
-        private IDictionary<string, Engraving> DICTIONARY_ENGRAVINGS = new Dictionary<string, Engraving>();
+        private IDictionary<string, ISkill> SKILLS;
+        private IDictionary<string, ITag> TAGS;
+        private IDictionary<string, IEngraving> ENGRAVINGS;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             Setup_Skills();
@@ -42,72 +41,44 @@ namespace UnitTests.Models.System
 
         private void Setup_Skills()
         {
-            SkillsConfig config = new SkillsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Skill 1" },
-                            new List<object>(){ "Skill 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string skill1Name = "Skill 1";
+            ISkill skill1 = Substitute.For<ISkill>();
+            skill1.Name.Returns(skill1Name);
 
-            this.DICTIONARY_SKILL = Skill.BuildDictionary(config);
+            this.SKILLS = new Dictionary<string, ISkill>();
+            this.SKILLS.Add(skill1Name, skill1);
         }
 
         private void Setup_Tags()
         {
-            TagsConfig config = new TagsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Tag 1" },
-                            new List<object>(){ "Tag 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string tag1Name = "Tag 1";
+            ITag tag1 = Substitute.For<ITag>();
+            tag1.Name.Returns(tag1Name);
 
-            this.DICTIONARY_TAGS = Tag.BuildDictionary(config);
+            string tag2Name = "Tag 2";
+            ITag tag2 = Substitute.For<ITag>();
+            tag2.Name.Returns(tag2Name);
+
+            this.TAGS = new Dictionary<string, ITag>();
+            this.TAGS.Add(tag1Name, tag1);
+            this.TAGS.Add(tag2Name, tag2);
         }
 
         private void Setup_Engravings()
         {
-            EngravingsConfig config = new EngravingsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Engraving 1", "Tag 1" },
-                            new List<object>(){ "Engraving 2", "Tag 1" }
-                        }
-                    }
-                },
-                Name = 0,
-                Tags = new List<int> { 1 }
-            };
+            string engraving1Name = "Engraving 1";
+            IEngraving engraving1 = Substitute.For<IEngraving>();
+            engraving1.Name.Returns(engraving1Name);
+            engraving1.Tags = new List<ITag>() { this.TAGS["Tag 1"] };
 
-            this.DICTIONARY_ENGRAVINGS = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            this.ENGRAVINGS = new Dictionary<string, IEngraving>();
+            this.ENGRAVINGS.Add(engraving1Name, engraving1);
         }
 
         #endregion Setup
 
-        [TestMethod]
-        public void ItemConstructor_RequiredFields_WithInputNull()
+        [Test]
+        public void Constructor_RequiredFields_WithInputNull()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -116,14 +87,7 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
                     Minimum = 6,
@@ -131,13 +95,13 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>() { };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new Item(config, data, SKILLS, TAGS, ENGRAVINGS));
         }
 
-        [TestMethod]
-        public void ItemConstructor_RequiredFields()
+        [Test]
+        public void Constructor_RequiredFields()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -161,17 +125,27 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.AreEqual<string>(INPUT_NAME, item.Name);
+            IEnumerable<string> expectedUtilizedStats = new List<string>() { INPUT_UTILIZED_STATS };
+
+            Assert.That(item.Name, Is.EqualTo(INPUT_NAME));
+            Assert.That(item.Category, Is.EqualTo(INPUT_CATEGORY));
+            Assert.That(item.UtilizedStats, Is.EqualTo(expectedUtilizedStats));
+            Assert.That(item.DealsDamage, Is.True);
+            Assert.That(item.MaxUses, Is.EqualTo(0));
+            Assert.That(item.Stats.Count, Is.EqualTo(1));
+            Assert.That(item.Stats["Mt"].Value, Is.EqualTo(5));
+            Assert.That(item.Range.Minimum, Is.EqualTo(1));
+            Assert.That(item.Range.Maximum, Is.EqualTo(2));
         }
 
         #region OptionalField_IsAlwaysUsable
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_IsAlwaysUsable_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_IsAlwaysUsable_EmptyString()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -180,31 +154,24 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                IsAlwaysUsable = 8
+                IsAlwaysUsable = 7
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.IsFalse(item.IsAlwaysUsable);
+            Assert.That(item.IsAlwaysUsable, Is.False);
         }
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_IsAlwaysUsable_No()
+        [Test]
+        public void Constructor_OptionalField_IsAlwaysUsable_No()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -213,31 +180,24 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                IsAlwaysUsable = 8
+                IsAlwaysUsable = 7
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "No" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "No" };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.IsFalse(item.IsAlwaysUsable);
+            Assert.That(item.IsAlwaysUsable, Is.False);
         }
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_IsAlwaysUsable_Yes()
+        [Test]
+        public void Constructor_OptionalField_IsAlwaysUsable_Yes()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -246,35 +206,28 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                IsAlwaysUsable = 8
+                IsAlwaysUsable = 7
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Yes" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Yes" };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.IsTrue(item.IsAlwaysUsable);
+            Assert.That(item.IsAlwaysUsable, Is.True);
         }
 
         #endregion OptionalField_IsAlwaysUsable
 
         #region OptionalField_SpriteURL
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_SpriteURL_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_EmptyString()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -283,31 +236,24 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                SpriteURL = 8
+                SpriteURL = 7
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.AreEqual<string>(string.Empty, item.SpriteURL);
+            Assert.That(item.SpriteURL, Is.Empty);
         }
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_SpriteURL_InvalidURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_InvalidURL()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -316,29 +262,22 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                SpriteURL = 8
+                SpriteURL = 7
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "NotAURL" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "NotAURL" };
 
-            Assert.ThrowsException<URLException>(() => new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS));
+            Assert.Throws<URLException>(() => new Item(config, data, SKILLS, TAGS, ENGRAVINGS));
         }
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_SpriteURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -347,35 +286,28 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                SpriteURL = 8
+                SpriteURL = 7
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, UnitTestConsts.IMAGE_URL };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, UnitTestConsts.IMAGE_URL };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.AreEqual<string>(UnitTestConsts.IMAGE_URL, item.SpriteURL);
+            Assert.That(item.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
         }
 
         #endregion OptionalField_SpriteURL
 
         #region OptionalField_Tags
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_Tags_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_Tags_EmptyString()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -384,31 +316,24 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                Tags = new List<int> { 8, 9 }
+                Tags = new List<int> { 7, 8 }
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty, string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty, string.Empty };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.AreEqual<int>(0, item.Tags.Count);
+            Assert.That(item.Tags, Is.Empty);
         }
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_Tags_UnmatchedTag()
+        [Test]
+        public void Constructor_OptionalField_Tags_UnmatchedTag()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -417,29 +342,22 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                Tags = new List<int> { 8, 9 }
+                Tags = new List<int> { 7, 8 }
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 3", string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 3", string.Empty };
 
-            Assert.ThrowsException<UnmatchedTagException>(() => new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS));
+            Assert.Throws<UnmatchedTagException>(() => new Item(config, data, SKILLS, TAGS, ENGRAVINGS));
         }
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_Tags_DuplicateTags()
+        [Test]
+        public void Constructor_OptionalField_Tags_DuplicateTags()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -448,31 +366,25 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                Tags = new List<int> { 8, 9 }
+                Tags = new List<int> { 7, 8 }
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 1", "Tag 1" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 1", "Tag 1" };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.AreEqual<int>(1, item.Tags.Count);
+            Assert.That(item.Tags.Count, Is.EqualTo(1));
+            item.Tags.First().DidNotReceive().FlagAsMatched();
         }
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_Tags_MultipleSameField()
+        [Test]
+        public void Constructor_OptionalField_Tags_MultipleSameField()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -481,31 +393,25 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                Tags = new List<int> { 8, 9 }
+                Tags = new List<int> { 7, 8 }
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 1,Tag 2", string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 1,Tag 2", string.Empty };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.AreEqual<int>(2, item.Tags.Count);
+            Assert.That(item.Tags.Count, Is.EqualTo(2));
+            item.Tags.ForEach(t => t.DidNotReceive().FlagAsMatched());
         }
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_Tags_MultipleSeparateFields()
+        [Test]
+        public void Constructor_OptionalField_Tags_MultipleSeparateFields()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -514,35 +420,29 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                Tags = new List<int> { 8, 9 }
+                Tags = new List<int> { 7, 8 }
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 1", "Tag 2" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 1", "Tag 2" };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.AreEqual<int>(2, item.Tags.Count);
+            Assert.That(item.Tags.Count, Is.EqualTo(2));
+            item.Tags.ForEach(t => t.DidNotReceive().FlagAsMatched());
         }
 
         #endregion OptionalField_Tags
 
         #region OptionalField_TextFields
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_TextFields_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_TextFields_EmptyString()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -551,31 +451,24 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                TextFields = new List<int> { 8, 9 }
+                TextFields = new List<int> { 7, 8 }
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty, string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty, string.Empty };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            CollectionAssert.AreEqual(new List<string>() { }, item.TextFields);
+            Assert.That(item.TextFields, Is.Empty);
         }
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_TextFields()
+        [Test]
+        public void Constructor_OptionalField_TextFields()
         {
             string field1 = "Text Field 1";
             string field2 = "Text Field 2";
@@ -587,35 +480,29 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                TextFields = new List<int> { 8, 9 }
+                TextFields = new List<int> { 7, 8 }
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, field1, field2 };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, field1, field2 };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            CollectionAssert.AreEqual(new List<string>() { field1, field2 }, item.TextFields);
+            IEnumerable<string> expected = new List<string>() { field1, field2 };
+            Assert.That(item.TextFields, Is.EqualTo(expected));
         }
 
         #endregion OptionalField_TextFields
 
         #region OptionalField_GraphicURL
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_GraphicURL_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_GraphicURL_EmptyString()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -624,31 +511,24 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                GraphicURL = 8
+                GraphicURL = 7
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.AreEqual<string>(string.Empty, item.GraphicURL);
+            Assert.That(item.GraphicURL, Is.Empty);
         }
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_GraphicURL_InvalidURL()
+        [Test]
+        public void Constructor_OptionalField_GraphicURL_InvalidURL()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -657,29 +537,22 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                GraphicURL = 8
+                GraphicURL = 7
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "NotAURL" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "NotAURL" };
 
-            Assert.ThrowsException<URLException>(() => new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS));
+            Assert.Throws<URLException>(() => new Item(config, data, SKILLS, TAGS, ENGRAVINGS));
         }
 
-        [TestMethod]
-        public void ItemConstructor_OptionalField_GraphicURL()
+        [Test]
+        public void Constructor_OptionalField_GraphicURL()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -688,35 +561,28 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                GraphicURL = 8
+                GraphicURL = 7
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, UnitTestConsts.IMAGE_URL };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, UnitTestConsts.IMAGE_URL };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.AreEqual<string>(UnitTestConsts.IMAGE_URL, item.GraphicURL);
+            Assert.That(item.GraphicURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
         }
 
         #endregion OptionalField_GraphicURL
 
         #region FlagAsMatched
 
-        [TestMethod]
-        public void Item_FlagAsMatched()
+        [Test]
+        public void FlagAsMatched()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -725,32 +591,27 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 }
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.IsFalse(item.Matched);
+            Assert.That(item.Matched, Is.False);
+
             item.FlagAsMatched();
-            Assert.IsTrue(item.Matched);
+
+            Assert.That(item.Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Item_FlagAsMatched_WithTags()
+        [Test]
+        public void FlagAsMatched_WithSkills()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -759,39 +620,34 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 },
-                Tags = new List<int> { 8 }
+                EquippedSkills = new List<UnitSkillConfig>()
+                { 
+                    new UnitSkillConfig(){ Name = 7 }
+                }
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 1, Tag 2" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Skill 1" };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.IsFalse(item.Matched);
-            Assert.AreEqual<int>(2, item.Tags.Count);
-            Assert.IsFalse(item.Tags[0].Matched);
-            Assert.IsFalse(item.Tags[1].Matched);
+            Assert.That(item.Matched, Is.False);
+            Assert.That(item.EquippedSkills.Count, Is.EqualTo(1));
+            item.EquippedSkills.ForEach(s => s.SkillObj.DidNotReceive().FlagAsMatched());
 
             item.FlagAsMatched();
 
-            Assert.IsTrue(item.Matched);
-            Assert.IsTrue(item.Tags[0].Matched);
-            Assert.IsTrue(item.Tags[1].Matched);
+            Assert.That(item.Matched, Is.True);
+            item.EquippedSkills.ForEach(s => s.SkillObj.Received().FlagAsMatched());
         }
 
-        public void Item_FlagAsMatched_WithEngravings()
+        [Test]
+        public void FlagAsMatched_WithTags()
         {
             ItemsConfig config = new ItemsConfig()
             {
@@ -800,14 +656,39 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
+                Stats = new List<NamedStatConfig_Displayed>(),
+                Range = new ItemRangeConfig()
                 {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
+                    Minimum = 5,
+                    Maximum = 6
                 },
+                Tags = new List<int> { 7 }
+            };
+
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 1, Tag 2" };
+
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
+
+            Assert.That(item.Matched, Is.False);
+            Assert.That(item.Tags.Count, Is.EqualTo(2));
+            item.Tags.ForEach(t => t.DidNotReceive().FlagAsMatched());
+
+            item.FlagAsMatched();
+
+            Assert.That(item.Matched, Is.True);
+            item.Tags.ForEach(t => t.Received().FlagAsMatched());
+        }
+
+        public void FlagAsMatched_WithEngravings()
+        {
+            ItemsConfig config = new ItemsConfig()
+            {
+                Name = 0,
+                Category = 1,
+                UtilizedStats = new List<int> { 2 },
+                DealsDamage = 3,
+                Uses = 4,
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
                     Minimum = 6,
@@ -816,41 +697,50 @@ namespace UnitTests.Models.System
                 Engravings = new List<int> { 8 }
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Engraving 1, Engraving 2" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Engraving 1, Engraving 2" };
 
-            Item item = new Item(config, data, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
-            Assert.IsFalse(item.Matched);
-            Assert.AreEqual<int>(2, item.Engravings.Count);
-            Assert.IsFalse(item.Engravings[0].Matched);
-            Assert.IsFalse(item.Engravings[1].Matched);
+            Assert.That(item.Matched, Is.False);
+            Assert.That(item.Engravings.Count, Is.EqualTo(2));
+            item.Engravings.ForEach(e => e.DidNotReceive().FlagAsMatched());
 
             item.FlagAsMatched();
 
-            Assert.IsTrue(item.Matched);
-            Assert.IsTrue(item.Engravings[0].Matched);
-            Assert.IsTrue(item.Engravings[1].Matched);
+            Assert.That(item.Matched, Is.True);
+            item.Engravings.ForEach(e => e.Received().FlagAsMatched());
         }
 
         #endregion FlagAsMatched
 
         #region BuildDictionary
 
-        [TestMethod]
-        public void Item_BuildDictionary_WithQueryNull()
-        {
-            ItemsConfig config = new ItemsConfig();
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
-            Assert.AreEqual(0, dict.Count);
+        [Test]
+        public void BuildDictionary_WithInput_Null()
+        {
+            IDictionary<string, IItem> dict = Item.BuildDictionary(null, SKILLS, TAGS, ENGRAVINGS);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Item_BuildDictionary_WithInput_Null()
+        [Test]
+        public void BuildDictionary_WithInput_NullQuery()
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Queries = new List<Query>()
+                Queries = null
+            };
+
+            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
+            Assert.That(dict, Is.Empty);
+        }
+
+        [Test]
+        public void BuildDictionary_WithInput_EmptyQuery()
+        {
+            ItemsConfig config = new ItemsConfig()
+            {
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -865,38 +755,31 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Item_BuildDictionary_WithInput_DuplicateName()
+        [Test]
+        public void BuildDictionary_WithInput_DuplicateName()
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
-                            new List<object>(){ INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
+                            new List<object>(){ INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
+                            new List<object>(){ INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
                         }
                     }
                 },
@@ -905,36 +788,29 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 }
             };
 
-            Assert.ThrowsException<ItemProcessingException>(() => Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS));
+            Assert.Throws<ItemProcessingException>(() => Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS));
         }
 
-        [TestMethod]
-        public void Item_BuildDictionary()
+        [Test]
+        public void BuildDictionary()
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
+                            new List<object>(){ INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
                         }
                     }
                 },
@@ -943,46 +819,39 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
-            Assert.AreEqual<int>(1, dict.Count);
+            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
+            Assert.That(dict.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void Item_BuildDictionary_MultiQuery()
+        [Test]
+        public void BuildDictionary_MultiQuery()
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
-                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
+                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
+                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
                         }
                     },
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Item 3", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
-                            new List<object>(){ "Item 4", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
+                            new List<object>(){ "Item 3", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
+                            new List<object>(){ "Item 4", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
                         }
                     }
                 },
@@ -991,42 +860,35 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
-            Assert.AreEqual<int>(4, dict.Count);
+            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
+            Assert.That(dict.Count, Is.EqualTo(4));
         }
 
         #endregion BuildDictionary
 
         #region MatchNames
 
-        [TestMethod]
-        public void Item_MatchNames_UnmatchedName()
+        [Test]
+        public void MatchNames_UnmatchedName()
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
-                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
+                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
+                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
                         }
                     }
                 },
@@ -1035,40 +897,33 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
             IEnumerable<string> names = new List<string>() { "Item 3" };
 
-            Assert.ThrowsException<UnmatchedItemException>(() => Item.MatchNames(dict, names));
+            Assert.Throws<UnmatchedItemException>(() => Item.MatchNames(dict, names));
         }
 
-        [TestMethod]
-        public void Item_MatchNames_SingleMatch()
+        [Test]
+        public void MatchNames_SingleMatch()
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
-                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
+                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
+                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
                         }
                     }
                 },
@@ -1077,42 +932,36 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
             IEnumerable<string> names = new List<string>() { "Item 1" };
 
-            List<Item> matches = Item.MatchNames(dict, names);
-            Assert.AreEqual(1, matches.Count);
-            Assert.IsTrue(matches.First().Matched);
+            List<IItem> matches = Item.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(1));
+            Assert.That(matches.First().Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Item_MatchNames_MultipleMatches()
+        [Test]
+        public void MatchNames_MultipleMatches()
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
-                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
+                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
+                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
                         }
                     }
                 },
@@ -1121,43 +970,37 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
             IEnumerable<string> names = new List<string>() { "Item 1", "Item 2" };
 
-            List<Item> matches = Item.MatchNames(dict, names);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsTrue(matches[0].Matched);
-            Assert.IsTrue(matches[1].Matched);
+            List<IItem> matches = Item.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.True);
+            Assert.That(matches[1].Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Item_MatchNames_MultipleMatches_SetMatchedStatus()
+        [Test]
+        public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
-                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
+                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
+                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
                         }
                     }
                 },
@@ -1166,28 +1009,22 @@ namespace UnitTests.Models.System
                 UtilizedStats = new List<int> { 2 },
                 DealsDamage = 3,
                 Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
-                {
-                    new NamedStatConfig_Displayed()
-                    {
-                        SourceName = "Mt",
-                        Value = 5
-                    }
-                },
+                Stats = new List<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = 5,
+                    Maximum = 6
                 }
             };
 
-            IDictionary<string, Item> dict = Item.BuildDictionary(config, DICTIONARY_SKILL, DICTIONARY_TAGS, DICTIONARY_ENGRAVINGS);
+            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
             IEnumerable<string> names = new List<string>() { "Item 1", "Item 2" };
 
-            List<Item> matches = Item.MatchNames(dict, names, true);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsFalse(matches[0].Matched);
-            Assert.IsFalse(matches[1].Matched);
+            List<IItem> matches = Item.MatchNames(dict, names, false);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.False);
+            Assert.That(matches[1].Matched, Is.False);
         }
 
         #endregion MatchNames

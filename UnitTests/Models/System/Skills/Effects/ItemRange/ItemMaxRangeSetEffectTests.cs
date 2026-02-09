@@ -3,41 +3,40 @@ using RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange;
 
 namespace UnitTests.Models.System.Skills.Effects.ItemRange
 {
-    [TestClass]
     public class ItemMaxRangeSetEffectTests
     {
         #region Constructor
 
-        [TestMethod]
-        public void ItemMaxRangeSetEffect_Constructor_Null()
+        [Test]
+        public void Constructor_Null()
         {
             List<string> parameters = new List<string>();
 
-            Assert.ThrowsException<SkillEffectMissingParameterException>(() => new ItemMaxRangeSetEffect(parameters));
+            Assert.Throws<SkillEffectMissingParameterException>(() => new ItemMaxRangeSetEffect(parameters));
         }
 
-        [TestMethod]
-        public void ItemMaxRangeSetEffect_Constructor_1EmptyString()
+        [Test]
+        public void Constructor_1EmptyString()
         {
             List<string> parameters = new List<string>() { string.Empty };
 
-            Assert.ThrowsException<SkillEffectMissingParameterException>(() => new ItemMaxRangeSetEffect(parameters));
+            Assert.Throws<SkillEffectMissingParameterException>(() => new ItemMaxRangeSetEffect(parameters));
         }
 
-        [TestMethod]
-        public void ItemMaxRangeSetEffect_Constructor_2EmptyStrings()
+        [Test]
+        public void Constructor_2EmptyStrings()
         {
             List<string> parameters = new List<string>() { string.Empty, string.Empty };
 
-            Assert.ThrowsException<NonZeroPositiveIntegerException>(() => new ItemMaxRangeSetEffect(parameters));
+            Assert.Throws<NonZeroPositiveIntegerException>(() => new ItemMaxRangeSetEffect(parameters));
         }
 
-        [TestMethod]
-        public void ItemMaxRangeSetEffect_Constructor_EmptyCategories()
+        [Test]
+        public void Constructor_EmptyCategories()
         {
             List<string> parameters = new List<string>() { string.Empty, "1" };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new ItemMaxRangeSetEffect(parameters));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new ItemMaxRangeSetEffect(parameters));
         }
 
         #endregion Constructor

@@ -5,7 +5,6 @@ using RedditEmblemAPI.Models.Output.System;
 
 namespace UnitTests.Models.System
 {
-    [TestClass]
     public class ItemRangeTests
     {
         #region Constants
@@ -20,24 +19,8 @@ namespace UnitTests.Models.System
 
         #endregion Constants
 
-        [TestMethod]
-        public void ItemRangeConstructor_RequiredFields_Null()
-        {
-            ItemRangeConfig config = new ItemRangeConfig()
-            { 
-                Minimum = 0,
-                Maximum = 1
-            };
-
-            List<string> data = new List<string>() { };
-
-            ItemRange output = new ItemRange(config, data);
-            Assert.AreEqual<int>(0, output.Minimum);
-            Assert.AreEqual<int>(0, output.Maximum);
-        }
-
-        [TestMethod]
-        public void ItemRangeConstructor_RequiredFields_WithInvalidMinRange()
+        [Test]
+        public void Constructor_RequiredFields_Null()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -45,13 +28,16 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { "-1", "0" };
+            IEnumerable<string> data = new List<string>() { };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new ItemRange(config, data));
+            IItemRange output = new ItemRange(config, data);
+
+            Assert.That(output.Minimum, Is.EqualTo(0));
+            Assert.That(output.Maximum, Is.EqualTo(0));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_RequiredFields_WithInvalidMaxRange()
+        [Test]
+        public void Constructor_RequiredFields_WithInvalidMinRange()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -59,13 +45,13 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { "0", "-1" };
+            IEnumerable<string> data = new List<string>() { "-1", "0" };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new ItemRange(config, data));
+            Assert.Throws<PositiveIntegerException>(() => new ItemRange(config, data));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_RequiredFields_WithInvalidRangeSet()
+        [Test]
+        public void Constructor_RequiredFields_WithInvalidMaxRange()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -73,13 +59,13 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { "2", "1" };
+            IEnumerable<string> data = new List<string>() { "0", "-1" };
 
-            Assert.ThrowsException<MinimumGreaterThanMaximumException>(() => new ItemRange(config, data));
+            Assert.Throws<PositiveIntegerException>(() => new ItemRange(config, data));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_RequiredFields()
+        [Test]
+        public void Constructor_RequiredFields_WithInvalidRangeSet()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -87,17 +73,32 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1 };
+            IEnumerable<string> data = new List<string>() { "2", "1" };
 
-            ItemRange range = new ItemRange(config, data);
-            Assert.AreEqual<int>(1, range.Minimum);
-            Assert.AreEqual<int>(1, range.Maximum);
+            Assert.Throws<MinimumGreaterThanMaximumException>(() => new ItemRange(config, data));
+        }
+
+        [Test]
+        public void Constructor_RequiredFields()
+        {
+            ItemRangeConfig config = new ItemRangeConfig()
+            {
+                Minimum = 0,
+                Maximum = 1
+            };
+
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1 };
+
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.Minimum, Is.EqualTo(1));
+            Assert.That(range.Maximum, Is.EqualTo(1));
         }
 
         #region RequiredField_CalculatedMinMaxRanges
 
-        [TestMethod]
-        public void ItemRangeConstructor_RequiredFields_CalculatedMinimumRange_NoVariables()
+        [Test]
+        public void Constructor_RequiredFields_CalculatedMinimumRange_NoVariables()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -105,32 +106,33 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { "1 * 2", ITEM_RANGE_VAL_1 };
+            IEnumerable<string> data = new List<string>() { "1 * 2", ITEM_RANGE_VAL_1 };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new ItemRange(config, data));
+            Assert.Throws<PositiveIntegerException>(() => new ItemRange(config, data));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_RequiredFields_CalculatedMinimumRange()
+        [Test]
+        public void Constructor_RequiredFields_CalculatedMinimumRange()
         {
-            ItemRangeConfig config = new ItemRangeConfig()
-            {
-                Minimum = 0,
-                Maximum = 1
-            };
-
             string formula = "{UnitStat[Str]}*2";
 
-            List<string> data = new List<string>() { formula, ITEM_RANGE_VAL_1 };
+            ItemRangeConfig config = new ItemRangeConfig()
+            {
+                Minimum = 0,
+                Maximum = 1
+            };
 
-            ItemRange range = new ItemRange(config, data);
-            Assert.IsTrue(range.MinimumRequiresCalculation);
-            Assert.AreEqual<int>(0, range.Minimum);
-            Assert.AreEqual<string>(formula, range.MinimumRaw);
+            IEnumerable<string> data = new List<string>() { formula, ITEM_RANGE_VAL_1 };
+
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.MinimumRequiresCalculation, Is.True);
+            Assert.That(range.Minimum, Is.EqualTo(0));
+            Assert.That(range.MinimumRaw, Is.EqualTo(formula));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_RequiredFields_CalculatedMaximumRange_NoVariables()
+        [Test]
+        public void Constructor_RequiredFields_CalculatedMaximumRange_NoVariables()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -138,36 +140,37 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, "1 * 2" };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, "1 * 2" };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new ItemRange(config, data));
+            Assert.Throws<PositiveIntegerException>(() => new ItemRange(config, data));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_RequiredFields_CalculatedMaximumRange()
+        [Test]
+        public void Constructor_RequiredFields_CalculatedMaximumRange()
         {
-            ItemRangeConfig config = new ItemRangeConfig()
-            {
-                Minimum = 0,
-                Maximum = 1
-            };
-
             string formula = "{UnitStat[Str]}*2";
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, formula };
+            ItemRangeConfig config = new ItemRangeConfig()
+            {
+                Minimum = 0,
+                Maximum = 1
+            };
 
-            ItemRange range = new ItemRange(config, data);
-            Assert.IsTrue(range.MaximumRequiresCalculation);
-            Assert.AreEqual<int>(0, range.Maximum);
-            Assert.AreEqual<string>(formula, range.MaximumRaw);
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, formula };
+
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.MaximumRequiresCalculation, Is.True);
+            Assert.That(range.Maximum, Is.EqualTo(0));
+            Assert.That(range.MaximumRaw, Is.EqualTo(formula));
         }
 
         #endregion RequiredField_CalculatedMinMaxRanges
 
         #region OptionalField_Shape
 
-        [TestMethod]
-        public void ItemRangeConstructor_OptionalField_Shape_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_Shape_EmptyString()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -176,14 +179,15 @@ namespace UnitTests.Models.System
                 Shape = 2
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, string.Empty };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, string.Empty };
 
-            ItemRange range = new ItemRange(config, data);
-            Assert.AreEqual<ItemRangeShape>(ItemRangeShape.Standard, range.Shape);
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.Shape, Is.EqualTo(ItemRangeShape.Standard));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_OptionalField_Shape_InvalidValue()
+        [Test]
+        public void Constructor_OptionalField_Shape_InvalidValue()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -192,13 +196,13 @@ namespace UnitTests.Models.System
                 Shape = 2
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "NotAShape" };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "NotAShape" };
 
-            Assert.ThrowsException<UnmatchedItemRangeShapeException>(() => new ItemRange(config, data));
+            Assert.Throws<UnmatchedItemRangeShapeException>(() => new ItemRange(config, data));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_OptionalField_Shape_Standard()
+        [Test]
+        public void Constructor_OptionalField_Shape_Standard()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -207,14 +211,15 @@ namespace UnitTests.Models.System
                 Shape = 2
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STANDARD };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STANDARD };
 
-            ItemRange range = new ItemRange(config, data);
-            Assert.AreEqual<ItemRangeShape>(ItemRangeShape.Standard, range.Shape);
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.Shape, Is.EqualTo(ItemRangeShape.Standard));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_OptionalField_Shape_Standard_Lowercase()
+        [Test]
+        public void Constructor_OptionalField_Shape_Standard_Lowercase()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -223,13 +228,13 @@ namespace UnitTests.Models.System
                 Shape = 2
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STANDARD.ToLower() };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STANDARD.ToLower() };
 
-            Assert.ThrowsException<UnmatchedItemRangeShapeException>(() => new ItemRange(config, data));
+            Assert.Throws<UnmatchedItemRangeShapeException>(() => new ItemRange(config, data));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_OptionalField_Shape_Standard_Uppercase()
+        [Test]
+        public void Constructor_OptionalField_Shape_Standard_Uppercase()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -238,13 +243,13 @@ namespace UnitTests.Models.System
                 Shape = 2
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STANDARD.ToUpper() };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STANDARD.ToUpper() };
 
-            Assert.ThrowsException<UnmatchedItemRangeShapeException>(() => new ItemRange(config, data));
+            Assert.Throws<UnmatchedItemRangeShapeException>(() => new ItemRange(config, data));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_OptionalField_Shape_Square()
+        [Test]
+        public void Constructor_OptionalField_Shape_Square()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -253,14 +258,15 @@ namespace UnitTests.Models.System
                 Shape = 2
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_SQUARE };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_SQUARE };
 
-            ItemRange range = new ItemRange(config, data);
-            Assert.AreEqual<ItemRangeShape>(ItemRangeShape.Square, range.Shape);
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.Shape, Is.EqualTo(ItemRangeShape.Square));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_OptionalField_Shape_Cross()
+        [Test]
+        public void Constructor_OptionalField_Shape_Cross()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -269,14 +275,15 @@ namespace UnitTests.Models.System
                 Shape = 2
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_CROSS };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_CROSS };
 
-            ItemRange range = new ItemRange(config, data);
-            Assert.AreEqual<ItemRangeShape>(ItemRangeShape.Cross, range.Shape);
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.Shape, Is.EqualTo(ItemRangeShape.Cross));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_OptionalField_Shape_Saltire()
+        [Test]
+        public void Constructor_OptionalField_Shape_Saltire()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -285,14 +292,15 @@ namespace UnitTests.Models.System
                 Shape = 2
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_SALTIRE };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_SALTIRE };
 
-            ItemRange range = new ItemRange(config, data);
-            Assert.AreEqual<ItemRangeShape>(ItemRangeShape.Saltire, range.Shape);
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.Shape, Is.EqualTo(ItemRangeShape.Saltire));
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_OptionalField_Shape_Star()
+        [Test]
+        public void Constructor_OptionalField_Shape_Star()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -301,18 +309,19 @@ namespace UnitTests.Models.System
                 Shape = 2
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STAR };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STAR };
 
-            ItemRange range = new ItemRange(config, data);
-            Assert.AreEqual<ItemRangeShape>(ItemRangeShape.Star, range.Shape);
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.Shape, Is.EqualTo(ItemRangeShape.Star));
         }
 
         #endregion OptionalField_Shape
 
         #region OptionalField_CanOnlyUseBeforeMovement
 
-        [TestMethod]
-        public void ItemRangeConstructor_OptionalField_CanOnlyUseBeforeMovement_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_CanOnlyUseBeforeMovement_EmptyString()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -321,14 +330,15 @@ namespace UnitTests.Models.System
                 CanOnlyUseBeforeMovement = 2
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, string.Empty };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, string.Empty };
 
-            ItemRange range = new ItemRange(config, data);
-            Assert.IsFalse(range.CanOnlyUseBeforeMovement);
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.CanOnlyUseBeforeMovement, Is.False);
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_OptionalField_CanOnlyUseBeforeMovement_No()
+        [Test]
+        public void Constructor_OptionalField_CanOnlyUseBeforeMovement_No()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -337,14 +347,15 @@ namespace UnitTests.Models.System
                 CanOnlyUseBeforeMovement = 2
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "No" };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "No" };
 
-            ItemRange range = new ItemRange(config, data);
-            Assert.IsFalse(range.CanOnlyUseBeforeMovement);
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.CanOnlyUseBeforeMovement, Is.False);
         }
 
-        [TestMethod]
-        public void ItemRangeConstructor_OptionalField_CanOnlyUseBeforeMovement_Yes()
+        [Test]
+        public void Constructor_OptionalField_CanOnlyUseBeforeMovement_Yes()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -353,10 +364,11 @@ namespace UnitTests.Models.System
                 CanOnlyUseBeforeMovement = 2
             };
 
-            List<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "Yes" };
+            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "Yes" };
 
-            ItemRange range = new ItemRange(config, data);
-            Assert.IsTrue(range.CanOnlyUseBeforeMovement);
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.CanOnlyUseBeforeMovement, Is.True);
         }
 
         #endregion OptionalField_CanOnlyUseBeforeMovement

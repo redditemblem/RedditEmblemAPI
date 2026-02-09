@@ -7,7 +7,6 @@ using RedditEmblemAPI.Models.Output.System;
 
 namespace UnitTests.Models.System
 {
-    [TestClass]
     public class TagTests
     {
         #region Constants
@@ -16,38 +15,38 @@ namespace UnitTests.Models.System
 
         #endregion Constants
 
-        [TestMethod]
-        public void TagConstructor_RequiredFields_WithInputNull()
+        [Test]
+        public void Constructor_RequiredFields_WithInputNull()
         {
             TagsConfig config = new TagsConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new Tag(config, data));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new Tag(config, data));
         }
 
-        [TestMethod]
-        public void TagConstructor_RequiredFields()
+        [Test]
+        public void Constructor_RequiredFields()
         {
             TagsConfig config = new TagsConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>() { INPUT_NAME };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME };
 
-            Tag tag = new Tag(config, data);
+            ITag tag = new Tag(config, data);
 
-            Assert.AreEqual<string>(INPUT_NAME, tag.Name);
+            Assert.That(tag.Name, Is.EqualTo(INPUT_NAME));
         }
 
         #region OptionalField_SpriteURL
 
-        [TestMethod]
-        public void TagConstructor_OptionalField_SpriteURL_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_EmptyString()
         {
             TagsConfig config = new TagsConfig()
             {
@@ -55,15 +54,15 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, string.Empty };
 
-            Tag tag = new Tag(config, data);
+            ITag tag = new Tag(config, data);
 
-            Assert.AreEqual<string>(string.Empty, tag.SpriteURL);
+            Assert.That(tag.SpriteURL, Is.Empty);
         }
 
-        [TestMethod]
-        public void TagConstructor_OptionalField_SpriteURL_InvalidURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_InvalidURL()
         {
             TagsConfig config = new TagsConfig()
             {
@@ -71,13 +70,13 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, "NotAURL" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, "NotAURL" };
 
-            Assert.ThrowsException<URLException>(() => new Tag(config, data));
+            Assert.Throws<URLException>(() => new Tag(config, data));
         }
 
-        [TestMethod]
-        public void TagConstructor_OptionalField_SpriteURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL()
         {
             TagsConfig config = new TagsConfig()
             {
@@ -85,19 +84,19 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, UnitTestConsts.IMAGE_URL };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, UnitTestConsts.IMAGE_URL };
 
-            Tag tag = new Tag(config, data);
+            ITag tag = new Tag(config, data);
 
-            Assert.AreEqual<string>(UnitTestConsts.IMAGE_URL, tag.SpriteURL);
+            Assert.That(tag.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
         }
 
         #endregion OptionalField_SpriteURL
 
         #region OptionalField_ShowOnUnit
 
-        [TestMethod]
-        public void TagConstructor_OptionalField_ShowOnUnit_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_ShowOnUnit_EmptyString()
         {
             TagsConfig config = new TagsConfig()
             {
@@ -105,15 +104,15 @@ namespace UnitTests.Models.System
                 ShowOnUnit = 1
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, string.Empty };
 
-            Tag tag = new Tag(config, data);
+            ITag tag = new Tag(config, data);
 
-            Assert.IsFalse(tag.ShowOnUnit);
+            Assert.That(tag.ShowOnUnit, Is.False);
         }
 
-        [TestMethod]
-        public void TagConstructor_OptionalField_ShowOnUnit_No()
+        [Test]
+        public void Constructor_OptionalField_ShowOnUnit_No()
         {
             TagsConfig config = new TagsConfig()
             {
@@ -121,15 +120,15 @@ namespace UnitTests.Models.System
                 ShowOnUnit = 1
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, "No" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, "No" };
 
-            Tag tag = new Tag(config, data);
+            ITag tag = new Tag(config, data);
 
-            Assert.IsFalse(tag.ShowOnUnit);
+            Assert.That(tag.ShowOnUnit, Is.False);
         }
 
-        [TestMethod]
-        public void TagConstructor_OptionalField_ShowOnUnit_Yes_NoSpriteURL()
+        [Test]
+        public void Constructor_OptionalField_ShowOnUnit_Yes_MissingSpriteURL()
         {
             TagsConfig config = new TagsConfig()
             {
@@ -137,15 +136,15 @@ namespace UnitTests.Models.System
                 ShowOnUnit = 1
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, "Yes" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, "Yes" };
 
-            Tag tag = new Tag(config, data);
+            ITag tag = new Tag(config, data);
 
-            Assert.IsFalse(tag.ShowOnUnit);
+            Assert.That(tag.ShowOnUnit, Is.False);
         }
 
-        [TestMethod]
-        public void TagConstructor_OptionalField_ShowOnUnit_Yes_WithSpriteURL()
+        [Test]
+        public void Constructor_OptionalField_ShowOnUnit_Yes_WithSpriteURL()
         {
             TagsConfig config = new TagsConfig()
             {
@@ -154,19 +153,19 @@ namespace UnitTests.Models.System
                 ShowOnUnit = 2
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, UnitTestConsts.IMAGE_URL, "Yes" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, UnitTestConsts.IMAGE_URL, "Yes" };
 
-            Tag tag = new Tag(config, data);
+            ITag tag = new Tag(config, data);
 
-            Assert.IsTrue(tag.ShowOnUnit);
+            Assert.That(tag.ShowOnUnit, Is.True);
         }
 
         #endregion OptionalField_ShowOnUnit
 
         #region OptionalField_UnitAura
 
-        [TestMethod]
-        public void TagConstructor_OptionalField_UnitAura_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_UnitAura_EmptyString()
         {
             TagsConfig config = new TagsConfig()
             {
@@ -174,15 +173,15 @@ namespace UnitTests.Models.System
                 UnitAura = 1
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, string.Empty };
 
-            Tag tag = new Tag(config, data);
+            ITag tag = new Tag(config, data);
 
-            Assert.AreEqual<string>(string.Empty, tag.UnitAura);
+            Assert.That(tag.UnitAura, Is.Empty);
         }
 
-        [TestMethod]
-        public void TagConstructor_OptionalField_UnitAura_InvalidHex()
+        [Test]
+        public void Constructor_OptionalField_UnitAura_InvalidHex()
         {
             TagsConfig config = new TagsConfig()
             {
@@ -190,69 +189,71 @@ namespace UnitTests.Models.System
                 UnitAura = 1
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, "NotAHex" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, "NotAHex" };
 
-            Assert.ThrowsException<HexException>(() => new Tag(config, data));
+            Assert.Throws<HexException>(() => new Tag(config, data));
         }
 
-        [TestMethod]
-        public void TagConstructor_OptionalField_UnitAura()
+        [Test]
+        public void Constructor_OptionalField_UnitAura()
         {
-            TagsConfig config = new TagsConfig()
-            {
-                Name = 0,
-                UnitAura = 1
-            };
-
             string hexcode = "#F0F0F0";
 
-            List<string> data = new List<string>() { INPUT_NAME, hexcode };
+            TagsConfig config = new TagsConfig()
+            {
+                Name = 0,
+                UnitAura = 1
+            };
 
-            Tag tag = new Tag(config, data);
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, hexcode };
 
-            Assert.AreEqual<string>(hexcode, tag.UnitAura);
+            ITag tag = new Tag(config, data);
+
+            Assert.That(tag.UnitAura, Is.EqualTo(hexcode));
         }
 
         #endregion OptionalField_UnitAura
 
         #region FlagAsMatched
 
-        [TestMethod]
-        public void Tag_FlagAsMatched()
+        [Test]
+        public void FlagAsMatched()
         {
             TagsConfig config = new TagsConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>() { INPUT_NAME };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME };
 
-            Tag tag = new Tag(config, data);
+            ITag tag = new Tag(config, data);
 
-            Assert.IsFalse(tag.Matched);
+            Assert.That(tag.Matched, Is.False);
+
             tag.FlagAsMatched();
-            Assert.IsTrue(tag.Matched);
+
+            Assert.That(tag.Matched, Is.True);
         }
 
         #endregion FlagAsMatched
 
         #region BuildDictionary
 
-        [TestMethod]
-        public void Tag_BuildDictionary_WithQueryNull()
+        [Test]
+        public void BuildDictionary_WithQueryNull()
         {
             TagsConfig config = new TagsConfig();
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Tag_BuildDictionary_WithInput_Null()
+        [Test]
+        public void BuildDictionary_WithInput_Null()
         {
             TagsConfig config = new TagsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -265,16 +266,16 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Tag_BuildDictionary_WithInput_DuplicateName()
+        [Test]
+        public void BuildDictionary_WithInput_DuplicateName()
         {
             TagsConfig config = new TagsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -288,15 +289,15 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            Assert.ThrowsException<TagProcessingException>(() => Tag.BuildDictionary(config));
+            Assert.Throws<TagProcessingException>(() => Tag.BuildDictionary(config));
         }
 
-        [TestMethod]
-        public void Tag_BuildDictionary()
+        [Test]
+        public void BuildDictionary()
         {
             TagsConfig config = new TagsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -309,16 +310,16 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
-            Assert.AreEqual<int>(1, dict.Count);
+            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
+            Assert.That(dict.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void Tag_BuildDictionary_MultiQuery()
+        [Test]
+        public void BuildDictionary_MultiQuery()
         {
             TagsConfig config = new TagsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -340,20 +341,20 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
-            Assert.AreEqual<int>(4, dict.Count);
+            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
+            Assert.That(dict.Count, Is.EqualTo(4));
         }
 
         #endregion BuildDictionary
 
         #region MatchNames
 
-        [TestMethod]
-        public void Tag_MatchNames_UnmatchedName()
+        [Test]
+        public void MatchNames_UnmatchedName()
         {
             TagsConfig config = new TagsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -367,18 +368,18 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Tag 3" };
 
-            Assert.ThrowsException<UnmatchedTagException>(() => Tag.MatchNames(dict, names));
+            Assert.Throws<UnmatchedTagException>(() => Tag.MatchNames(dict, names));
         }
 
-        [TestMethod]
-        public void Tag_MatchNames_SingleMatch()
+        [Test]
+        public void MatchNames_SingleMatch()
         {
             TagsConfig config = new TagsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -392,20 +393,21 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Tag 1" };
 
-            List<Tag> matches = Tag.MatchNames(dict, names);
-            Assert.AreEqual(1, matches.Count);
-            Assert.IsTrue(matches.First().Matched);
+            List<ITag> matches = Tag.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(1));
+            Assert.That(matches.First().Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Tag_MatchNames_MultipleMatches()
+        [Test]
+        public void MatchNames_MultipleMatches()
         {
             TagsConfig config = new TagsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -419,21 +421,22 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Tag 1", "Tag 2" };
 
-            List<Tag> matches = Tag.MatchNames(dict, names);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsTrue(matches[0].Matched);
-            Assert.IsTrue(matches[1].Matched);
+            List<ITag> matches = Tag.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.True);
+            Assert.That(matches[1].Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Tag_MatchNames_MultipleMatches_SetMatchedStatus()
+        [Test]
+        public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
             TagsConfig config = new TagsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -447,13 +450,14 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Tag> dict = Tag.BuildDictionary(config);
+            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Tag 1", "Tag 2" };
 
-            List<Tag> matches = Tag.MatchNames(dict, names, true);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsFalse(matches[0].Matched);
-            Assert.IsFalse(matches[1].Matched);
+            List<ITag> matches = Tag.MatchNames(dict, names, false);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.False);
+            Assert.That(matches[1].Matched, Is.False);
         }
 
         #endregion MatchNames

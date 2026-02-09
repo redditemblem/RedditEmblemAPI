@@ -7,7 +7,6 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 
 namespace UnitTests.Models.System
 {
-    [TestClass]
     public class GambitTests
     {
         #region Constants
@@ -22,8 +21,8 @@ namespace UnitTests.Models.System
 
         #endregion Constants
 
-        [TestMethod]
-        public void GambitConstructor_RequiredFields_WithInputNull()
+        [Test]
+        public void Constructor_RequiredFields_WithInputNull()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -35,18 +34,14 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new Gambit(config, data));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new Gambit(config, data));
         }
 
-        [TestMethod]
-        public void GambitConstructor_RequiredFields_WithInput_InvalidMaxUses()
+        [Test]
+        public void Constructor_RequiredFields_WithInput_InvalidMaxUses()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -58,18 +53,14 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
-            List<string> data = new List<string>() { INPUT_NAME, "-1" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, "-1" };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new Gambit(config, data));
+            Assert.Throws<PositiveIntegerException>(() => new Gambit(config, data));
         }
 
-        [TestMethod]
-        public void GambitConstructor_RequiredFields_WithInput_InvalidMinimumRange()
+        [Test]
+        public void Constructor_RequiredFields_WithInput_InvalidMinimumRange()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -81,18 +72,14 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, "-1" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, "-1" };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new Gambit(config, data));
+            Assert.Throws<PositiveIntegerException>(() => new Gambit(config, data));
         }
 
-        [TestMethod]
-        public void GambitConstructor_RequiredFields_WithInput_InvalidMaximumRange()
+        [Test]
+        public void Constructor_RequiredFields_WithInput_InvalidMaximumRange()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -104,18 +91,14 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, "-1" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, "-1" };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new Gambit(config, data));
+            Assert.Throws<PositiveIntegerException>(() => new Gambit(config, data));
         }
 
-        [TestMethod]
-        public void GambitConstructor_RequiredFields_WithInput_InvalidRangeSet()
+        [Test]
+        public void Constructor_RequiredFields_WithInput_InvalidRangeSet()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -127,18 +110,14 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, "2", "1" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, "2", "1" };
 
-            Assert.ThrowsException<MinimumGreaterThanMaximumException>(() => new Gambit(config, data));
+            Assert.Throws<MinimumGreaterThanMaximumException>(() => new Gambit(config, data));
         }
 
-        [TestMethod]
-        public void GambitConstructor_RequiredFields_WithInput_InvalidStat()
+        [Test]
+        public void Constructor_RequiredFields_WithInput_InvalidStat()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -151,17 +130,16 @@ namespace UnitTests.Models.System
                 },
                 Stats = new List<NamedStatConfig>()
                 {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
+                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 }
                 }
             };
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "a" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "a" };
 
-            Assert.ThrowsException<AnyIntegerException>(() => new Gambit(config, data));
+            Assert.Throws<AnyIntegerException>(() => new Gambit(config, data));
         }
 
-        [TestMethod]
-        public void GambitConstructor_RequiredFields()
+        [Test]
+        public void Constructor_RequiredFields()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -178,22 +156,22 @@ namespace UnitTests.Models.System
                     new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
                 }
             };
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" };
 
-            Gambit gambit = new Gambit(config, data);
+            IGambit gambit = new Gambit(config, data);
 
-            Assert.AreEqual<string>(INPUT_NAME, gambit.Name);
-            Assert.AreEqual<int>(0, gambit.MaxUses);
-            Assert.AreEqual<int>(0, gambit.Range.Minimum);
-            Assert.AreEqual<int>(0, gambit.Range.Maximum);
-            Assert.AreEqual<int>(1, gambit.Stats[STAT_1_SOURCE_NAME]);
-            Assert.AreEqual<int>(2, gambit.Stats[STAT_2_SOURCE_NAME]);
+            Assert.That(gambit.Name, Is.EqualTo(INPUT_NAME));
+            Assert.That(gambit.MaxUses, Is.EqualTo(0));
+            Assert.That(gambit.Range.Minimum, Is.EqualTo(0));
+            Assert.That(gambit.Range.Maximum, Is.EqualTo(0));
+            Assert.That(gambit.Stats[STAT_1_SOURCE_NAME], Is.EqualTo(1));
+            Assert.That(gambit.Stats[STAT_2_SOURCE_NAME], Is.EqualTo(2));
         }
 
         #region OptionalField_SpriteURL
 
-        [TestMethod]
-        public void GambitConstructor_OptionalField_SpriteURL_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_EmptyString()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -204,22 +182,18 @@ namespace UnitTests.Models.System
                     Minimum = 2,
                     Maximum = 3
                 },
-                Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                },
-                SpriteURL = 6
+                Stats = new List<NamedStatConfig>(),
+                SpriteURL = 4
             };
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2", string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, string.Empty };
 
-            Gambit gambit = new Gambit(config, data);
+            IGambit gambit = new Gambit(config, data);
 
-            Assert.AreEqual<string>(string.Empty, gambit.SpriteURL);
+            Assert.That(gambit.SpriteURL, Is.Empty);
         }
 
-        [TestMethod]
-        public void GambitConstructor_OptionalField_SpriteURL_InvalidURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_InvalidURL()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -230,20 +204,16 @@ namespace UnitTests.Models.System
                     Minimum = 2,
                     Maximum = 3
                 },
-                Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                },
-                SpriteURL = 6
+                Stats = new List<NamedStatConfig>(),
+                SpriteURL = 4
             };
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2", "NotAURL" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "NotAURL" };
 
-            Assert.ThrowsException<URLException>(() => new Gambit(config, data));
+            Assert.Throws<URLException>(() => new Gambit(config, data));
         }
 
-        [TestMethod]
-        public void GambitConstructor_OptionalField_SpriteURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -254,27 +224,23 @@ namespace UnitTests.Models.System
                     Minimum = 2,
                     Maximum = 3
                 },
-                Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                },
-                SpriteURL = 6
+                Stats = new List<NamedStatConfig>(),
+                SpriteURL = 4
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2", UnitTestConsts.IMAGE_URL };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, UnitTestConsts.IMAGE_URL };
 
-            Gambit gambit = new Gambit(config, data);
+            IGambit gambit = new Gambit(config, data);
 
-            Assert.AreEqual<string>(UnitTestConsts.IMAGE_URL, gambit.SpriteURL);
+            Assert.That(gambit.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
         }
 
         #endregion OptionalField_SpriteURL
 
         #region OptionalField_UtilizedStats
 
-        [TestMethod]
-        public void GambitConstructor_OptionalField_UtilizedStats_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_UtilizedStats_EmptyString()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -285,23 +251,21 @@ namespace UnitTests.Models.System
                     Minimum = 2,
                     Maximum = 3
                 },
-                Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                },
-                UtilizedStats = 6
+                Stats = new List<NamedStatConfig>(),
+                UtilizedStats = 4
             };
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2", string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, string.Empty };
 
-            Gambit gambit = new Gambit(config, data);
+            IGambit gambit = new Gambit(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { }, gambit.UtilizedStats);
+            Assert.That(gambit.UtilizedStats, Is.Empty);
         }
 
-        [TestMethod]
-        public void GambitConstructor_OptionalField_UtilizedStats_SingleValue()
+        [Test]
+        public void Constructor_OptionalField_UtilizedStats_SingleValue()
         {
+            string stat = "Str";
+
             GambitsConfig config = new GambitsConfig()
             {
                 Name = 0,
@@ -311,22 +275,19 @@ namespace UnitTests.Models.System
                     Minimum = 2,
                     Maximum = 3
                 },
-                Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                },
-                UtilizedStats = 6
+                Stats = new List<NamedStatConfig>(),
+                UtilizedStats = 4
             };
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2", "Str" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, stat };
 
-            Gambit gambit = new Gambit(config, data);
+            IGambit gambit = new Gambit(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { "Str" }, gambit.UtilizedStats);
+            IEnumerable<string> expected = new List<string>() { stat };
+            Assert.That(gambit.UtilizedStats, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void GambitConstructor_OptionalField_UtilizedStats_MultipleValues()
+        [Test]
+        public void Constructor_OptionalField_UtilizedStats_MultipleValues()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -337,22 +298,19 @@ namespace UnitTests.Models.System
                     Minimum = 2,
                     Maximum = 3
                 },
-                Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                },
-                UtilizedStats = 6
+                Stats = new List<NamedStatConfig>(),
+                UtilizedStats = 4
             };
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2", "Str,Mag,Skl" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "Str,Mag,Skl" };
 
-            Gambit gambit = new Gambit(config, data);
+            IGambit gambit = new Gambit(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { "Str", "Mag", "Skl" }, gambit.UtilizedStats);
+            IEnumerable<string> expected = new List<string>() { "Str", "Mag", "Skl" };
+            Assert.That(gambit.UtilizedStats, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void GambitConstructor_OptionalField_UtilizedStats_ExtraComma()
+        [Test]
+        public void Constructor_OptionalField_UtilizedStats_ExtraComma()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -363,26 +321,23 @@ namespace UnitTests.Models.System
                     Minimum = 2,
                     Maximum = 3
                 },
-                Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                },
-                UtilizedStats = 6
+                Stats = new List<NamedStatConfig>(),
+                UtilizedStats = 4
             };
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2", "Str," };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "Str," };
 
-            Gambit gambit = new Gambit(config, data);
+            IGambit gambit = new Gambit(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { "Str" }, gambit.UtilizedStats);
+            IEnumerable<string> expected = new List<string>() { "Str" };
+            Assert.That(gambit.UtilizedStats, Is.EqualTo(expected));
         }
 
         #endregion OptionalField_UtilizedStats
 
         #region OptionalField_TextFields
 
-        [TestMethod]
-        public void GambitConstructor_OptionalField_TextFields_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_TextFields_EmptyString()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -393,24 +348,23 @@ namespace UnitTests.Models.System
                     Minimum = 2,
                     Maximum = 3
                 },
-                Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                },
-                TextFields = new List<int>() { 6, 7 }
+                Stats = new List<NamedStatConfig>(),
+                TextFields = new List<int>() { 4, 5 }
             };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2", string.Empty, string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, string.Empty, string.Empty };
 
-            Gambit gambit = new Gambit(config, data);
+            IGambit gambit = new Gambit(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { }, gambit.TextFields);
+            Assert.That(gambit.TextFields, Is.Empty);
         }
 
-        [TestMethod]
-        public void GambitConstructor_OptionalField_TextFields()
+        [Test]
+        public void Constructor_OptionalField_TextFields()
         {
+            string textField1 = "Text Field 1";
+            string textField2 = "Text Field 2";
+
             GambitsConfig config = new GambitsConfig()
             {
                 Name = 0,
@@ -420,31 +374,24 @@ namespace UnitTests.Models.System
                     Minimum = 2,
                     Maximum = 3
                 },
-                Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                },
-                TextFields = new List<int>() { 6, 7 }
+                Stats = new List<NamedStatConfig>(),
+                TextFields = new List<int>() { 4, 5 }
             };
 
-            string field1 = "Text Field 1";
-            string field2 = "Text Field 2";
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, textField1, textField2 };
 
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2", field1, field2 };
+            IGambit gambit = new Gambit(config, data);
 
-
-            Gambit gambit = new Gambit(config, data);
-
-            CollectionAssert.AreEqual(new List<string>() { field1, field2 }, gambit.TextFields);
+            IEnumerable<string> expected = new List<string>() { textField1, textField2 };
+            Assert.That(gambit.TextFields, Is.EqualTo(expected));
         }
 
         #endregion OptionalField_TextFields
 
         #region FlagAsMatched
 
-        [TestMethod]
-        public void Gambit_FlagAsMatched()
+        [Test]
+        public void FlagAsMatched()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -456,33 +403,31 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
-            List<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE };
 
-            Gambit gambit = new Gambit(config, data);
+            IGambit gambit = new Gambit(config, data);
 
-            Assert.IsFalse(gambit.Matched);
+            Assert.That(gambit.Matched, Is.False);
+
             gambit.FlagAsMatched();
-            Assert.IsTrue(gambit.Matched);
+
+            Assert.That(gambit.Matched, Is.True);
         }
 
         #endregion FlagAsMatched
 
         #region BuildDictionary
 
-        [TestMethod]
-        public void Gambit_BuildDictionary_WithInput_Null()
+        [Test]
+        public void BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(null);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IGambit> dict = Gambit.BuildDictionary(null);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Gambit_BuildDictionary_WithInput_NullQuery()
+        [Test]
+        public void BuildDictionary_WithInput_NullQuery()
         {
             GambitsConfig config = new GambitsConfig()
             {
@@ -495,22 +440,18 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Gambit_BuildDictionary_WithInput_EmptyQuery()
+        [Test]
+        public void BuildDictionary_WithInput_EmptyQuery()
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -528,29 +469,25 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Gambit_BuildDictionary_WithInput_DuplicateName()
+        [Test]
+        public void BuildDictionary_WithInput_DuplicateName()
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" },
-                            new List<object>(){ INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" },
+                            new List<object>(){ INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE },
+                            new List<object>(){ INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE },
                         }
                     }
                 },
@@ -562,27 +499,23 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
 
-            Assert.ThrowsException<GambitProcessingException>(() => Gambit.BuildDictionary(config));
+            Assert.Throws<GambitProcessingException>(() => Gambit.BuildDictionary(config));
         }
 
-        [TestMethod]
-        public void Gambit_BuildDictionary()
+        [Test]
+        public void BuildDictionary()
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" }
+                            new List<object>(){ INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE }
                         }
                     }
                 },
@@ -594,37 +527,33 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
-            Assert.AreEqual<int>(1, dict.Count);
+            IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
+            Assert.That(dict.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void Gambit_BuildDictionary_MultiQuery()
+        [Test]
+        public void BuildDictionary_MultiQuery()
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" },
-                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" }
+                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE },
+                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE }
                         }
                     },
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Gambit 3", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" },
-                            new List<object>(){ "Gambit 4", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "1" }
+                            new List<object>(){ "Gambit 3", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE },
+                            new List<object>(){ "Gambit 4", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE }
                         }
                     }
                 },
@@ -636,33 +565,29 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
-            Assert.AreEqual<int>(4, dict.Count);
+            IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
+            Assert.That(dict.Count, Is.EqualTo(4));
         }
 
         # endregion BuildDictionary
 
         #region MatchNames
 
-        [TestMethod]
-        public void Gambit_MatchNames_UnmatchedName()
+        [Test]
+        public void MatchNames_UnmatchedName()
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
-                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE },
+                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE }
                         }
                     }
                 },
@@ -674,31 +599,27 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Gambit 3" };
 
-            Assert.ThrowsException<UnmatchedGambitException>(() => Gambit.MatchNames(dict, names));
+            Assert.Throws<UnmatchedGambitException>(() => Gambit.MatchNames(dict, names));
         }
 
-        [TestMethod]
-        public void Gambit_MatchNames_SingleMatch()
+        [Test]
+        public void MatchNames_SingleMatch()
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
-                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE },
+                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE }
                         }
                     }
                 },
@@ -710,33 +631,30 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Gambit 1" };
 
-            List<Gambit> matches = Gambit.MatchNames(dict, names);
-            Assert.AreEqual(1, matches.Count);
-            Assert.IsTrue(matches.First().Matched);
+            List<IGambit> matches = Gambit.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(1));
+            Assert.That(matches.First().Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Gambit_MatchNames_MultipleMatches()
+        [Test]
+        public void MatchNames_MultipleMatches()
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
-                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE },
+                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE }
                         }
                     }
                 },
@@ -748,34 +666,31 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Gambit 1", "Gambit 2" };
 
-            List<Gambit> matches = Gambit.MatchNames(dict, names);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsTrue(matches[0].Matched);
-            Assert.IsTrue(matches[1].Matched);
+            List<IGambit> matches = Gambit.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.True);
+            Assert.That(matches[1].Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Gambit_MatchNames_MultipleMatches_SetMatchedStatus()
+        [Test]
+        public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" },
-                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" }
+                            new List<object>(){ "Gambit 1", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE },
+                            new List<object>(){ "Gambit 2", INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE }
                         }
                     }
                 },
@@ -787,19 +702,16 @@ namespace UnitTests.Models.System
                     Maximum = 3
                 },
                 Stats = new List<NamedStatConfig>()
-                {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
-                }
             };
 
-            IDictionary<string, Gambit> dict = Gambit.BuildDictionary(config);
+            IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Gambit 1", "Gambit 2" };
 
-            List<Gambit> matches = Gambit.MatchNames(dict, names, true);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsFalse(matches[0].Matched);
-            Assert.IsFalse(matches[1].Matched);
+            List<IGambit> matches = Gambit.MatchNames(dict, names, false);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.False);
+            Assert.That(matches[1].Matched, Is.False);
         }
 
         #endregion MatchNames

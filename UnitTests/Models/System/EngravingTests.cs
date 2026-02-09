@@ -1,6 +1,6 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Items;
-using RedditEmblemAPI.Models.Configuration.System.Tags;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
@@ -8,7 +8,6 @@ using RedditEmblemAPI.Models.Output.System;
 
 namespace UnitTests.Models.System
 {
-    [TestClass]
     public class EngravingTests
     {
         #region Constants
@@ -19,64 +18,58 @@ namespace UnitTests.Models.System
 
         #region Setup
 
-        private IDictionary<string, Tag> DICTIONARY_TAGS = new Dictionary<string, Tag>();
+        private IDictionary<string, ITag> TAGS;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
-            TagsConfig config = new TagsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Tag 1" },
-                            new List<object>(){ "Tag 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string tag1Name = "Tag 1";
+            ITag tag1 = Substitute.For<ITag>();
+            tag1.Name.Returns(tag1Name);
 
-            this.DICTIONARY_TAGS = Tag.BuildDictionary(config);
+            string tag2Name = "Tag 2";
+            ITag tag2 = Substitute.For<ITag>();
+            tag2.Name.Returns(tag2Name);
+
+            this.TAGS = new Dictionary<string, ITag>();
+            this.TAGS.Add(tag1Name, tag1);
+            this.TAGS.Add(tag2Name, tag2);
         }
 
         #endregion Setup
 
-        [TestMethod]
-        public void EngravingConstructor_RequiredFields_WithInputNull()
+        [Test]
+        public void Constructor_RequiredFields_WithInputNull()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>() { };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new Engraving(config, data, DICTIONARY_TAGS));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new Engraving(config, data, TAGS));
         }
 
-        [TestMethod]
-        public void EngravingConstructor_RequiredFields()
+        [Test]
+        public void Constructor_RequiredFields()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>() { INPUT_NAME };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<string>(INPUT_NAME, engraving.Name);
+            Assert.That(engraving.Name, Is.EqualTo(INPUT_NAME));
         }
 
         #region OptionalField_SpriteURL
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_SpriteURL_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_EmptyString()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -84,19 +77,19 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<string>(string.Empty, engraving.SpriteURL);
+            Assert.That(engraving.SpriteURL, Is.Empty);
         }
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_SpriteURL_InvalidURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_InvalidURL()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -104,17 +97,17 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "NotAURL"
             };
 
-            Assert.ThrowsException<URLException>(() => new Engraving(config, data, DICTIONARY_TAGS));
+            Assert.Throws<URLException>(() => new Engraving(config, data, TAGS));
         }
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_SpriteURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -122,23 +115,23 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 UnitTestConsts.IMAGE_URL
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<string>(UnitTestConsts.IMAGE_URL, engraving.SpriteURL);
+            Assert.That(engraving.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
         }
 
         #endregion OptionalField_SpriteURL
 
         #region OptionalField_ItemStatModifiers
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_ItemStatModifiers_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_ItemStatModifiers_EmptyString()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -153,20 +146,20 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty,
                 string.Empty
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(0, engraving.ItemStatModifiers.Count);
+            Assert.That(engraving.ItemStatModifiers, Is.Empty);
         }
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_ItemStatModifiers()
+        [Test]
+        public void Constructor_OptionalField_ItemStatModifiers()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -181,26 +174,26 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "1",
                 "-1"
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(2, engraving.ItemStatModifiers.Count);
-            Assert.AreEqual<int>(1, engraving.ItemStatModifiers[stat1]);
-            Assert.AreEqual<int>(-1, engraving.ItemStatModifiers[stat2]);
+            Assert.That(engraving.ItemStatModifiers.Count, Is.EqualTo(2));
+            Assert.That(engraving.ItemStatModifiers[stat1], Is.EqualTo(1));
+            Assert.That(engraving.ItemStatModifiers[stat2], Is.EqualTo(-1));
         }
 
         #endregion OptionalField_ItemStatModifiers
 
         #region OptionalField_ItemRangeOverrides
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_ItemRangeOverrides_EmptyStrings()
+        [Test]
+        public void Constructor_OptionalField_ItemRangeOverrides_EmptyStrings()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -212,23 +205,23 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty,
                 string.Empty
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(0, engraving.ItemRangeOverrides.Minimum);
-            Assert.AreEqual<int>(0, engraving.ItemRangeOverrides.Maximum);
-            Assert.AreEqual<ItemRangeShape>(ItemRangeShape.Standard, engraving.ItemRangeOverrides.Shape);
-            Assert.IsFalse(engraving.ItemRangeOverrides.CanOnlyUseBeforeMovement);
+            Assert.That(engraving.ItemRangeOverrides.Minimum, Is.EqualTo(0));
+            Assert.That(engraving.ItemRangeOverrides.Maximum, Is.EqualTo(0));
+            Assert.That(engraving.ItemRangeOverrides.Shape, Is.EqualTo(ItemRangeShape.Standard));
+            Assert.That(engraving.ItemRangeOverrides.CanOnlyUseBeforeMovement, Is.False);
         }
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_ItemRangeOverrides()
+        [Test]
+        public void Constructor_OptionalField_ItemRangeOverrides()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -240,23 +233,23 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "1",
                 "2"
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(1, engraving.ItemRangeOverrides.Minimum);
-            Assert.AreEqual<int>(2, engraving.ItemRangeOverrides.Maximum);
-            Assert.AreEqual<ItemRangeShape>(ItemRangeShape.Standard, engraving.ItemRangeOverrides.Shape);
-            Assert.IsFalse(engraving.ItemRangeOverrides.CanOnlyUseBeforeMovement);
+            Assert.That(engraving.ItemRangeOverrides.Minimum, Is.EqualTo(1));
+            Assert.That(engraving.ItemRangeOverrides.Maximum, Is.EqualTo(2));
+            Assert.That(engraving.ItemRangeOverrides.Shape, Is.EqualTo(ItemRangeShape.Standard));
+            Assert.That(engraving.ItemRangeOverrides.CanOnlyUseBeforeMovement, Is.False);
         }
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_ItemRangeOverrides_WithOptionalFields()
+        [Test]
+        public void Constructor_OptionalField_ItemRangeOverrides_WithOptionalFields()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -270,7 +263,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "1",
@@ -279,20 +272,20 @@ namespace UnitTests.Models.System
                 "Yes"
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(1, engraving.ItemRangeOverrides.Minimum);
-            Assert.AreEqual<int>(2, engraving.ItemRangeOverrides.Maximum);
-            Assert.AreEqual<ItemRangeShape>(ItemRangeShape.Cross, engraving.ItemRangeOverrides.Shape);
-            Assert.IsTrue(engraving.ItemRangeOverrides.CanOnlyUseBeforeMovement);
+            Assert.That(engraving.ItemRangeOverrides.Minimum, Is.EqualTo(1));
+            Assert.That(engraving.ItemRangeOverrides.Maximum, Is.EqualTo(2));
+            Assert.That(engraving.ItemRangeOverrides.Shape, Is.EqualTo(ItemRangeShape.Cross));
+            Assert.That(engraving.ItemRangeOverrides.CanOnlyUseBeforeMovement, Is.True);
         }
 
         #endregion OptionalField_ItemRangeOverrides
 
         #region OptionalField_CombatStatModifiers
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_CombatStatModifiers_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_CombatStatModifiers_EmptyString()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -307,20 +300,20 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty,
                 string.Empty
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(0, engraving.CombatStatModifiers.Count);
+            Assert.That(engraving.CombatStatModifiers, Is.Empty);
         }
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_CombatStatModifiers()
+        [Test]
+        public void Constructor_OptionalField_CombatStatModifiers()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -335,26 +328,26 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "1",
                 "-1"
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(2, engraving.CombatStatModifiers.Count);
-            Assert.AreEqual<int>(1, engraving.CombatStatModifiers[stat1]);
-            Assert.AreEqual<int>(-1, engraving.CombatStatModifiers[stat2]);
+            Assert.That(engraving.CombatStatModifiers.Count, Is.EqualTo(2));
+            Assert.That(engraving.CombatStatModifiers[stat1], Is.EqualTo(1));
+            Assert.That(engraving.CombatStatModifiers[stat2], Is.EqualTo(-1));
         }
 
         #endregion OptionalField_CombatStatModifiers
 
         #region OptionalField_StatModifiers
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_StatModifiers_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_StatModifiers_EmptyString()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -369,20 +362,20 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty,
                 string.Empty
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(0, engraving.StatModifiers.Count);
+            Assert.That(engraving.StatModifiers, Is.Empty);
         }
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_StatModifiers()
+        [Test]
+        public void Constructor_OptionalField_StatModifiers()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -397,26 +390,26 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "1",
                 "-1"
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(2, engraving.StatModifiers.Count);
-            Assert.AreEqual<int>(1, engraving.StatModifiers[stat1]);
-            Assert.AreEqual<int>(-1, engraving.StatModifiers[stat2]);
+            Assert.That(engraving.StatModifiers.Count, Is.EqualTo(2));
+            Assert.That(engraving.StatModifiers[stat1], Is.EqualTo(1));
+            Assert.That(engraving.StatModifiers[stat2], Is.EqualTo(-1));
         }
 
         #endregion OptionalField_StatModifiers
 
         #region OptionalField_Tags
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_Tags_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_Tags_EmptyString()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -424,20 +417,20 @@ namespace UnitTests.Models.System
                 Tags = new List<int> { 1, 2 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty,
                 string.Empty
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(0, engraving.Tags.Count);
+            Assert.That(engraving.Tags, Is.Empty);
         }
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_Tags_UnmatchedTag()
+        [Test]
+        public void Constructor_OptionalField_Tags_UnmatchedTag()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -445,17 +438,17 @@ namespace UnitTests.Models.System
                 Tags = new List<int> { 1 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "Tag 3"
             };
 
-            Assert.ThrowsException<UnmatchedTagException>(() => new Engraving(config, data, DICTIONARY_TAGS));
+            Assert.Throws<UnmatchedTagException>(() => new Engraving(config, data, TAGS));
         }
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_Tags_DuplicateTags()
+        [Test]
+        public void Constructor_OptionalField_Tags_DuplicateTags()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -463,20 +456,21 @@ namespace UnitTests.Models.System
                 Tags = new List<int> { 1, 2 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "Tag 1,Tag 1",
                 "Tag 1"
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(1, engraving.Tags.Count);
+            Assert.That(engraving.Tags.Count, Is.EqualTo(1));
+            engraving.Tags.First().DidNotReceive().FlagAsMatched();
         }
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_Tags_MultipleSameField()
+        [Test]
+        public void Constructor_OptionalField_Tags_MultipleSameField()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -484,19 +478,20 @@ namespace UnitTests.Models.System
                 Tags = new List<int> { 1 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "Tag 1,Tag 2"
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(2, engraving.Tags.Count);
+            Assert.That(engraving.Tags.Count, Is.EqualTo(2));
+            engraving.Tags.ForEach(t => t.DidNotReceive().FlagAsMatched());
         }
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_Tags_MultipleSeparateFields()
+        [Test]
+        public void Constructor_OptionalField_Tags_MultipleSeparateFields()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -504,24 +499,25 @@ namespace UnitTests.Models.System
                 Tags = new List<int> { 1, 2 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "Tag 1",
                 "Tag 2"
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.AreEqual<int>(2, engraving.Tags.Count);
+            Assert.That(engraving.Tags.Count, Is.EqualTo(2));
+            engraving.Tags.ForEach(t => t.DidNotReceive().FlagAsMatched());
         }
 
         #endregion OptionalField_Tags
 
         #region OptionalField_TextFields
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_TextFields_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_TextFields_EmptyString()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -529,48 +525,49 @@ namespace UnitTests.Models.System
                 TextFields = new List<int>() { 1, 2 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty,
                 string.Empty
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            CollectionAssert.AreEqual(new List<string>() { }, engraving.TextFields);
+            Assert.That(engraving.TextFields, Is.Empty);
         }
 
-        [TestMethod]
-        public void EngravingConstructor_OptionalField_TextFields()
+        [Test]
+        public void Constructor_OptionalField_TextFields()
         {
+            string textField1 = "Text Field 1";
+            string textField2 = "Text Field 2";
+
             EngravingsConfig config = new EngravingsConfig()
             {
                 Name = 0,
                 TextFields = new List<int>() { 1, 2 }
             };
 
-            string field1 = "Text Field 1";
-            string field2 = "Text Field 2";
-
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
-                field1,
-                field2
+                textField1,
+                textField2
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            CollectionAssert.AreEqual(new List<string>() { field1, field2 }, engraving.TextFields);
+            IEnumerable<string> expected = new List<string>() { textField1, textField2 };
+            Assert.That(engraving.TextFields, Is.EqualTo(expected));
         }
 
         #endregion OptionalField_TextFields
 
         #region FlagAsMatched
 
-        [TestMethod]
-        public void Engraving_FlagAsMatched()
+        [Test]
+        public void FlagAsMatched_WithTags()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -578,36 +575,36 @@ namespace UnitTests.Models.System
                 Tags = new List<int> { 1 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "Tag 1"
             };
 
-            Engraving engraving = new Engraving(config, data, DICTIONARY_TAGS);
+            IEngraving engraving = new Engraving(config, data, TAGS);
 
-            Assert.IsFalse(engraving.Matched);
-            Assert.IsFalse(engraving.Tags.First().Matched);
+            Assert.That(engraving.Matched, Is.False);
+            engraving.Tags.First().DidNotReceive().FlagAsMatched();
 
             engraving.FlagAsMatched();
 
-            Assert.IsTrue(engraving.Matched);
-            Assert.IsTrue(engraving.Tags.First().Matched);
+            Assert.That(engraving.Matched, Is.True);
+            engraving.Tags.First().Received().FlagAsMatched();
         }
 
         #endregion FlagAsMatched
 
         #region BuildDictionary
 
-        [TestMethod]
-        public void Engraving_BuildDictionary_WithInput_Null()
+        [Test]
+        public void BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(null, DICTIONARY_TAGS);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(null, TAGS);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Engraving_BuildDictionary_WithInput_NullQuery()
+        [Test]
+        public void BuildDictionary_WithInput_NullQuery()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
@@ -615,16 +612,16 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Engraving_BuildDictionary_WithInput_EmptyQuery()
+        [Test]
+        public void BuildDictionary_WithInput_EmptyQuery()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -637,16 +634,16 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Engraving_BuildDictionary_WithInput_DuplicateName()
+        [Test]
+        public void BuildDictionary_WithInput_DuplicateName()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -660,15 +657,15 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            Assert.ThrowsException<EngravingProcessingException>(() => Engraving.BuildDictionary(config, DICTIONARY_TAGS));
+            Assert.Throws<EngravingProcessingException>(() => Engraving.BuildDictionary(config, TAGS));
         }
 
-        [TestMethod]
-        public void Engraving_BuildDictionary()
+        [Test]
+        public void BuildDictionary()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -681,16 +678,16 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
-            Assert.AreEqual<int>(1, dict.Count);
+            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
+            Assert.That(dict.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void Engraving_BuildDictionary_MultiQuery()
+        [Test]
+        public void BuildDictionary_MultiQuery()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -712,20 +709,20 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
-            Assert.AreEqual<int>(4, dict.Count);
+            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
+            Assert.That(dict.Count, Is.EqualTo(4));
         }
 
         #endregion BuildDictionary
 
         #region MatchNames
 
-        [TestMethod]
-        public void Engraving_MatchNames_UnmatchedName()
+        [Test]
+        public void MatchNames_UnmatchedName()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -739,18 +736,18 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
             IEnumerable<string> names = new List<string>() { "Engraving 3" };
 
-            Assert.ThrowsException<UnmatchedEngravingException>(() => Engraving.MatchNames(dict, names));
+            Assert.Throws<UnmatchedEngravingException>(() => Engraving.MatchNames(dict, names));
         }
 
-        [TestMethod]
-        public void Engraving_MatchNames_SingleMatch()
+        [Test]
+        public void MatchNames_SingleMatch()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -764,20 +761,21 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
             IEnumerable<string> names = new List<string>() { "Engraving 1" };
 
-            List<Engraving> matches = Engraving.MatchNames(dict, names);
-            Assert.AreEqual(1, matches.Count);
-            Assert.IsTrue(matches.First().Matched);
+            List<IEngraving> matches = Engraving.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(1));
+            Assert.That(matches.First().Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Engraving_MatchNames_MultipleMatches()
+        [Test]
+        public void MatchNames_MultipleMatches()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -791,21 +789,22 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
             IEnumerable<string> names = new List<string>() { "Engraving 1", "Engraving 2" };
 
-            List<Engraving> matches = Engraving.MatchNames(dict, names);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsTrue(matches[0].Matched);
-            Assert.IsTrue(matches[1].Matched);
+            List<IEngraving> matches = Engraving.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.True);
+            Assert.That(matches[1].Matched, Is.True);
         }
 
-        [TestMethod]
-        public void Engraving_MatchNames_MultipleMatches_SetMatchedStatus()
+        [Test]
+        public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -819,13 +818,14 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Engraving> dict = Engraving.BuildDictionary(config, DICTIONARY_TAGS);
+            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
             IEnumerable<string> names = new List<string>() { "Engraving 1", "Engraving 2" };
 
-            List<Engraving> matches = Engraving.MatchNames(dict, names, true);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsFalse(matches[0].Matched);
-            Assert.IsFalse(matches[1].Matched);
+            List<IEngraving> matches = Engraving.MatchNames(dict, names, false);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.False);
+            Assert.That(matches[1].Matched, Is.False);
         }
 
         #endregion MatchNames

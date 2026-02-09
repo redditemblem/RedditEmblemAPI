@@ -7,7 +7,6 @@ using RedditEmblemAPI.Models.Output.System;
 
 namespace UnitTests.Models.System
 {
-    [TestClass]
     public class EngageAttackTests
     {
         #region Constants
@@ -16,40 +15,41 @@ namespace UnitTests.Models.System
 
         #endregion Constants
 
-        [TestMethod]
-        public void EngageAttackConstructor_RequiredFields_WithInputNull()
+        [Test]
+        public void Constructor_RequiredFields_WithInputNull()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>() { };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new EngageAttack(config, data));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new EngageAttack(config, data));
         }
 
-        [TestMethod]
-        public void EngageAttackConstructor_RequiredFields()
+        [Test]
+        public void Constructor_RequiredFields()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME
             };
 
-            EngageAttack attack = new EngageAttack(config, data);
+            IEngageAttack attack = new EngageAttack(config, data);
 
-            Assert.AreEqual<string>(INPUT_NAME, attack.Name);
+            Assert.That(attack.Name, Is.EqualTo(INPUT_NAME));
         }
 
         #region OptionalField_SpriteURL
 
-        public void EngageAttackConstructor_OptionalField_SpriteURL_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_EmptyString()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
@@ -57,19 +57,19 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty
             };
 
-            EngageAttack attack = new EngageAttack(config, data);
+            IEngageAttack attack = new EngageAttack(config, data);
 
-            Assert.AreEqual<string>(string.Empty, attack.SpriteURL);
+            Assert.That(attack.SpriteURL, Is.Empty);
         }
 
-        [TestMethod]
-        public void EngageAttackConstructor_OptionalField_SpriteURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
@@ -77,7 +77,7 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 UnitTestConsts.IMAGE_URL
@@ -85,15 +85,15 @@ namespace UnitTests.Models.System
 
             EngageAttack attack = new EngageAttack(config, data);
 
-            Assert.AreEqual<string>(UnitTestConsts.IMAGE_URL, attack.SpriteURL);
+            Assert.That(attack.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
         }
 
         #endregion OptionalField_SpriteURL
 
         #region OptionalField_TextFields
 
-        [TestMethod]
-        public void EngageAttackConstructor_OptionalField_TextFields_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_TextFields_EmptyString()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
@@ -101,76 +101,82 @@ namespace UnitTests.Models.System
                 TextFields = new List<int>() { 1, 2 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty,
                 string.Empty
             };
 
-            EngageAttack attack = new EngageAttack(config, data);
+            IEngageAttack attack = new EngageAttack(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { }, attack.TextFields);
+            Assert.That(attack.TextFields, Is.Empty);
         }
 
-        [TestMethod]
-        public void EngageAttackConstructor_OptionalField_TextFields()
+        [Test]
+        public void Constructor_OptionalField_TextFields()
         {
+            string textField1 = "Text Field 1";
+            string textField2 = "Text Field 2";
+
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
                 Name = 0,
                 TextFields = new List<int>() { 1, 2 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
-                "Text Field 1",
-                "Text Field 2"
+                textField1,
+                textField2
             };
 
-            EngageAttack attack = new EngageAttack(config, data);
+            IEngageAttack attack = new EngageAttack(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { "Text Field 1", "Text Field 2" }, attack.TextFields);
+            IEnumerable<string> expected = new List<string>() { textField1, textField2 };
+            Assert.That(attack.TextFields, Is.EqualTo(expected));
         }
 
         #endregion OptionalField_TextFields
 
         #region FlagAsMatched
 
-        [TestMethod]
-        public void EngageAttack_FlagAsMatched()
+        [Test]
+        public void FlagAsMatched()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME
             };
 
-            EngageAttack attack = new EngageAttack(config, data);
+            IEngageAttack attack = new EngageAttack(config, data);
 
-            Assert.IsFalse(attack.Matched);
+            Assert.That(attack.Matched, Is.False);
+
             attack.FlagAsMatched();
-            Assert.IsTrue(attack.Matched);
+
+            Assert.That(attack.Matched, Is.True);
         }
 
         #endregion FlagAsMatched
 
         #region BuildDictionary
 
-        [TestMethod]
-        public void EngageAttack_BuildDictionary_WithInput_Null()
+        [Test]
+        public void BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(null);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(null);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void EngageAttack_BuildDictionary_WithInput_NullQuery()
+        [Test]
+        public void BuildDictionary_WithInput_NullQuery()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
@@ -178,16 +184,16 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void EngageAttack_BuildDictionary_WithInput_EmptyQuery()
+        [Test]
+        public void BuildDictionary_WithInput_EmptyQuery()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -200,16 +206,16 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void EngageAttack_BuildDictionary_WithInput_DuplicateName()
+        [Test]
+        public void BuildDictionary_WithInput_DuplicateName()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -223,15 +229,15 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            Assert.ThrowsException<EngageAttackProcessingException>(() => EngageAttack.BuildDictionary(config));
+            Assert.Throws<EngageAttackProcessingException>(() => EngageAttack.BuildDictionary(config));
         }
 
-        [TestMethod]
-        public void EngageAttack_BuildDictionary_WithInput_Invalid()
+        [Test]
+        public void BuildDictionary_WithInput_Invalid()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -245,15 +251,15 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            Assert.ThrowsException<EngageAttackProcessingException>(() => EngageAttack.BuildDictionary(config));
+            Assert.Throws<EngageAttackProcessingException>(() => EngageAttack.BuildDictionary(config));
         }
 
-        [TestMethod]
-        public void EngageAttack_BuildDictionary()
+        [Test]
+        public void BuildDictionary()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -266,16 +272,16 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
-            Assert.AreEqual<int>(1, dict.Count);
+            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
+            Assert.That(dict.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void EngageAttack_BuildDictionary_MultiQuery()
+        [Test]
+        public void BuildDictionary_MultiQuery()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -297,20 +303,20 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
-            Assert.AreEqual<int>(4, dict.Count);
+            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
+            Assert.That(dict.Count, Is.EqualTo(4));
         }
 
         #endregion BuildDictionary
 
         #region MatchNames
 
-        [TestMethod]
-        public void EngageAttack_MatchNames_UnmatchedName()
+        [Test]
+        public void MatchNames_UnmatchedName()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -324,18 +330,18 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Engage Attack 3" };
 
-            Assert.ThrowsException<UnmatchedEngageAttackException>(() => EngageAttack.MatchNames(dict, names));
+            Assert.Throws<UnmatchedEngageAttackException>(() => EngageAttack.MatchNames(dict, names));
         }
 
-        [TestMethod]
-        public void EngageAttack_MatchNames_SingleMatch()
+        [Test]
+        public void MatchNames_SingleMatch()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -349,20 +355,21 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Engage Attack 1" };
 
-            List<EngageAttack> matches = EngageAttack.MatchNames(dict, names);
-            Assert.AreEqual(1, matches.Count);
-            Assert.IsTrue(matches.First().Matched);
+            List<IEngageAttack> matches = EngageAttack.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(1));
+            Assert.That(matches.First().Matched, Is.True);
         }
 
-        [TestMethod]
-        public void EngageAttack_MatchNames_MultipleMatches()
+        [Test]
+        public void MatchNames_MultipleMatches()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -376,21 +383,22 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Engage Attack 1", "Engage Attack 2" };
 
-            List<EngageAttack> matches = EngageAttack.MatchNames(dict, names);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsTrue(matches[0].Matched);
-            Assert.IsTrue(matches[1].Matched);
+            List<IEngageAttack> matches = EngageAttack.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.True);
+            Assert.That(matches[1].Matched, Is.True);
         }
 
-        [TestMethod]
-        public void EngageAttack_MatchNames_MultipleMatches_SetMatchedStatus()
+        [Test]
+        public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<Query>()
+                Queries = new List<IQuery>()
                 {
                     new Query()
                     {
@@ -404,13 +412,14 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, EngageAttack> dict = EngageAttack.BuildDictionary(config);
+            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
             IEnumerable<string> names = new List<string>() { "Engage Attack 1", "Engage Attack 2" };
 
-            List<EngageAttack> matches = EngageAttack.MatchNames(dict, names, true);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsFalse(matches[0].Matched);
-            Assert.IsFalse(matches[1].Matched);
+            List<IEngageAttack> matches = EngageAttack.MatchNames(dict, names, false);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches[0].Matched, Is.False);
+            Assert.That(matches[1].Matched, Is.False);
         }
 
         #endregion MatchNames

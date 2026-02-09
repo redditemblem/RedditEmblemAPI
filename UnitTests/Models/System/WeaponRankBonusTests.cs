@@ -6,7 +6,6 @@ using RedditEmblemAPI.Models.Output.System;
 
 namespace UnitTests.Models.System
 {
-    [TestClass]
     public class WeaponRankBonusTests
     {
         #region Constants
@@ -15,38 +14,38 @@ namespace UnitTests.Models.System
 
         #endregion Constants
 
-        [TestMethod]
-        public void WeaponRankBonusConstructor_RequiredFields_WithInputNull()
+        [Test]
+        public void Constructor_RequiredFields_WithInputNull()
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
                 Category = 0
             };
 
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>() { };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new WeaponRankBonus(config, data));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new WeaponRankBonus(config, data));
         }
 
-        [TestMethod]
-        public void WeaponRankBonusConstructor_RequiredFields()
+        [Test]
+        public void Constructor_RequiredFields()
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
                 Category = 0
             };
 
-            List<string> data = new List<string>() { INPUT_CATEGORY };
+            IEnumerable<string> data = new List<string>() { INPUT_CATEGORY };
 
-            WeaponRankBonus bonus = new WeaponRankBonus(config, data);
+            IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
 
-            Assert.AreEqual<string>(INPUT_CATEGORY, bonus.Category);
+            Assert.That(bonus.Category, Is.EqualTo(INPUT_CATEGORY));
         }
 
         #region OptionalField_Rank
 
-        [TestMethod]
-        public void WeaponRankBonusConstructor_OptionalField_Rank_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_Rank_EmptyString()
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
@@ -54,35 +53,37 @@ namespace UnitTests.Models.System
                 Rank = 1
             };
 
-            List<string> data = new List<string>() { INPUT_CATEGORY, string.Empty };
+            IEnumerable<string> data = new List<string>() { INPUT_CATEGORY, string.Empty };
 
-            WeaponRankBonus bonus = new WeaponRankBonus(config, data);
+            IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
 
-            Assert.AreEqual<string>(string.Empty, bonus.Rank);
+            Assert.That(bonus.Rank, Is.Empty);
         }
 
-        [TestMethod]
-        public void WeaponRankBonusConstructor_OptionalField_Rank()
+        [Test]
+        public void Constructor_OptionalField_Rank()
         {
+            string rank = "E";
+
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
                 Category = 0,
                 Rank = 1
             };
 
-            List<string> data = new List<string>() { INPUT_CATEGORY, "E" };
+            IEnumerable<string> data = new List<string>() { INPUT_CATEGORY, rank };
 
-            WeaponRankBonus bonus = new WeaponRankBonus(config, data);
+            IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
 
-            Assert.AreEqual<string>("E", bonus.Rank);
+            Assert.That(bonus.Rank, Is.EqualTo(rank));
         }
 
         #endregion OptionalField_Rank
 
         #region OptionalField_CombatStatModifiers
 
-        [TestMethod]
-        public void WeaponRankBonusConstructor_OptionalField_CombatStatModifiers_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_CombatStatModifiers_EmptyString()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -97,20 +98,20 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_CATEGORY,
                 string.Empty,
                 string.Empty
             };
 
-            WeaponRankBonus bonus = new WeaponRankBonus(config, data);
+            IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
 
-            Assert.AreEqual<int>(0, bonus.CombatStatModifiers.Count);
+            Assert.That(bonus.CombatStatModifiers, Is.Empty);
         }
 
-        [TestMethod]
-        public void WeaponRankBonusConstructor_OptionalField_CombatStatModifiers()
+        [Test]
+        public void Constructor_OptionalField_CombatStatModifiers()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -125,26 +126,26 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_CATEGORY,
                 "1",
                 "-1"
             };
 
-            WeaponRankBonus bonus = new WeaponRankBonus(config, data);
+            IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
 
-            Assert.AreEqual<int>(2, bonus.CombatStatModifiers.Count);
-            Assert.AreEqual<int>(1, bonus.CombatStatModifiers[stat1]);
-            Assert.AreEqual<int>(-1, bonus.CombatStatModifiers[stat2]);
+            Assert.That(bonus.CombatStatModifiers.Count, Is.EqualTo(2));
+            Assert.That(bonus.CombatStatModifiers[stat1], Is.EqualTo(1));
+            Assert.That(bonus.CombatStatModifiers[stat2], Is.EqualTo(-1));
         }
 
         #endregion OptionalField_CombatStatModifiers
 
         #region OptionalField_StatModifiers
 
-        [TestMethod]
-        public void WeaponRankBonusConstructor_OptionalField_StatModifiers_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_StatModifiers_EmptyString()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -159,20 +160,20 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_CATEGORY,
                 string.Empty,
                 string.Empty
             };
 
-            WeaponRankBonus bonus = new WeaponRankBonus(config, data);
+            IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
 
-            Assert.AreEqual<int>(0, bonus.StatModifiers.Count);
+            Assert.That(bonus.StatModifiers, Is.Empty);
         }
 
-        [TestMethod]
-        public void WeaponRankBonusConstructor_OptionalField_StatModifiers()
+        [Test]
+        public void Constructor_OptionalField_StatModifiers()
         {
             string stat1 = "Stat 1";
             string stat2 = "Stat 2";
@@ -187,33 +188,33 @@ namespace UnitTests.Models.System
                 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_CATEGORY,
                 "1",
                 "-1"
             };
 
-            WeaponRankBonus bonus = new WeaponRankBonus(config, data);
+            IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
 
-            Assert.AreEqual<int>(2, bonus.StatModifiers.Count);
-            Assert.AreEqual<int>(1, bonus.StatModifiers[stat1]);
-            Assert.AreEqual<int>(-1, bonus.StatModifiers[stat2]);
+            Assert.That(bonus.StatModifiers.Count, Is.EqualTo(2));
+            Assert.That(bonus.StatModifiers[stat1], Is.EqualTo(1));
+            Assert.That(bonus.StatModifiers[stat2], Is.EqualTo(-1));
         }
 
         #endregion OptionalField_StatModifiers
 
         #region BuildList
 
-        [TestMethod]
-        public void WeaponRankBonus_BuildList_WithInput_Null()
+        [Test]
+        public void BuildList_WithInput_Null()
         {
-            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(null);
-            Assert.AreEqual(0, list.Count);
+            List<IWeaponRankBonus> list = WeaponRankBonus.BuildList(null);
+            Assert.That(list, Is.Empty);
         }
 
-        [TestMethod]
-        public void WeaponRankBonus_BuildList_WithInput_NullQuery()
+        [Test]
+        public void BuildList_WithInput_NullQuery()
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
@@ -221,12 +222,12 @@ namespace UnitTests.Models.System
                 Category = 0
             };
 
-            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
-            Assert.AreEqual(0, list.Count);
+            List<IWeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            Assert.That(list, Is.Empty);
         }
 
-        [TestMethod]
-        public void WeaponRankBonus_BuildList_WithInput_EmptyQuery()
+        [Test]
+        public void BuildList_WithInput_EmptyQuery()
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
@@ -240,12 +241,12 @@ namespace UnitTests.Models.System
                 Category = 0
             };
 
-            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
-            Assert.AreEqual(0, list.Count);
+            List<IWeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            Assert.That(list, Is.Empty);
         }
 
-        [TestMethod]
-        public void WeaponRankBonus_BuildList_WithInput_CategoryOnly()
+        [Test]
+        public void BuildList_WithInput_CategoryOnly()
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
@@ -259,12 +260,12 @@ namespace UnitTests.Models.System
                 Category = 0
             };
 
-            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
-            Assert.AreEqual(1, list.Count);
+            List<IWeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            Assert.That(list.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void WeaponRankBonus_BuildList_WithInput_SingleBonus()
+        [Test]
+        public void BuildList_WithInput_SingleBonus()
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
@@ -279,12 +280,12 @@ namespace UnitTests.Models.System
                 Rank = 1
             };
 
-            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
-            Assert.AreEqual(1, list.Count);
+            List<IWeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            Assert.That(list.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void WeaponRankBonus_BuildList_WithInput_MultipleBonuses()
+        [Test]
+        public void BuildList_WithInput_MultipleBonuses()
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
@@ -301,12 +302,12 @@ namespace UnitTests.Models.System
                 Rank = 1
             };
 
-            List<WeaponRankBonus> list = WeaponRankBonus.BuildList(config);
-            Assert.AreEqual(3, list.Count);
+            List<IWeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+            Assert.That(list.Count, Is.EqualTo(3));
         }
 
-        [TestMethod]
-        public void WeaponRankBonus_BuildList_WithInput_DuplicateBonus()
+        [Test]
+        public void BuildList_WithInput_DuplicateBonus()
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
@@ -322,11 +323,11 @@ namespace UnitTests.Models.System
                 Rank = 1
             };
 
-            Assert.ThrowsException<WeaponRankBonusProcessingException>(() => WeaponRankBonus.BuildList(config));
+            Assert.Throws<WeaponRankBonusProcessingException>(() => WeaponRankBonus.BuildList(config));
         }
 
-        [TestMethod]
-        public void WeaponRankBonus_BuildList_WithInput_Invalid()
+        [Test]
+        public void BuildList_WithInput_Invalid()
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
@@ -345,7 +346,7 @@ namespace UnitTests.Models.System
                 }
             };
 
-            Assert.ThrowsException<WeaponRankBonusProcessingException>(() => WeaponRankBonus.BuildList(config));
+            Assert.Throws<WeaponRankBonusProcessingException>(() => WeaponRankBonus.BuildList(config));
         }
 
         #endregion BuildList

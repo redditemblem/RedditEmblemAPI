@@ -3,65 +3,64 @@ using RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem;
 
 namespace UnitTests.Models.System.Skills.Effects.EquippedItem
 {
-    [TestClass]
     public class EquippedCategoryCombatStatModifierEffectTests
     {
         #region Constructor
 
-        [TestMethod]
-        public void EquippedCategoryCombatStatModifierEffect_Constructor_Null()
+        [Test]
+        public void Constructor_Null()
         {
             List<string> parameters = new List<string>();
 
-            Assert.ThrowsException<SkillEffectMissingParameterException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
+            Assert.Throws<SkillEffectMissingParameterException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
         }
 
-        [TestMethod]
-        public void EquippedCategoryCombatStatModifierEffect_Constructor_1EmptyString()
+        [Test]
+        public void Constructor_1EmptyString()
         {
             List<string> parameters = new List<string>() { string.Empty };
 
-            Assert.ThrowsException<SkillEffectMissingParameterException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
+            Assert.Throws<SkillEffectMissingParameterException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
         }
 
-        [TestMethod]
-        public void EquippedCategoryCombatStatModifierEffect_Constructor_2EmptyString()
+        [Test]
+        public void Constructor_2EmptyString()
         {
             List<string> parameters = new List<string>() { string.Empty, string.Empty };
 
-            Assert.ThrowsException<SkillEffectMissingParameterException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
+            Assert.Throws<SkillEffectMissingParameterException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
         }
 
-        [TestMethod]
-        public void EquippedCategoryCombatStatModifierEffect_Constructor_3EmptyString()
+        [Test]
+        public void Constructor_3EmptyString()
         {
             List<string> parameters = new List<string>() { string.Empty, string.Empty, string.Empty };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
         }
 
-        [TestMethod]
-        public void EquippedCategoryCombatStatModifierEffect_Constructor_NoCategories()
+        [Test]
+        public void Constructor_NoCategories()
         {
             List<string> parameters = new List<string>() { string.Empty, "Stat1", "0" };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
         }
 
-        [TestMethod]
-        public void EquippedCategoryCombatStatModifierEffect_Constructor_NoStats()
+        [Test]
+        public void Constructor_NoStats()
         {
             List<string> parameters = new List<string>() { "Category", string.Empty, "0" };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
         }
 
-        [TestMethod]
-        public void EquippedCategoryCombatStatModifierEffect_Constructor_NoValues()
+        [Test]
+        public void Constructor_NoValues()
         {
             List<string> parameters = new List<string>() { "Category", "Stat1", string.Empty };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new EquippedCategoryCombatStatModifierEffect(parameters));
         }
 
         #endregion Constructor

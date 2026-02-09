@@ -4,7 +4,6 @@ using RedditEmblemAPI.Models.Output.System;
 
 namespace UnitTests.Models.System
 {
-    [TestClass]
     public class CombatArtRangeTests
     {
         #region Constants
@@ -13,8 +12,8 @@ namespace UnitTests.Models.System
 
         #endregion Constants
 
-        [TestMethod]
-        public void CombatArtRangeConstructor_RequiredFields_Null()
+        [Test]
+        public void Constructor_RequiredFields_Null()
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
@@ -22,15 +21,16 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
 
-            CombatArtRange output = new CombatArtRange(config, data);
-            Assert.AreEqual<int>(0, output.Minimum);
-            Assert.AreEqual<int>(0, output.Maximum);
+            ICombatArtRange range = new CombatArtRange(config, data);
+
+            Assert.That(range.Minimum, Is.EqualTo(0));
+            Assert.That(range.Maximum, Is.EqualTo(0));
         }
 
-        [TestMethod]
-        public void CombatArtRangeConstructor_RequiredFields_WithInvalidMinRange()
+        [Test]
+        public void Constructor_RequiredFields_WithInvalidMinRange()
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
@@ -38,13 +38,13 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { "-1", "0" };
+            IEnumerable<string> data = new List<string>() { "-1", "0" };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new CombatArtRange(config, data));
+            Assert.Throws<PositiveIntegerException>(() => new CombatArtRange(config, data));
         }
 
-        [TestMethod]
-        public void CombatArtRangeConstructor_RequiredFields_WithInvalidMaxRange()
+        [Test]
+        public void Constructor_RequiredFields_WithInvalidMaxRange()
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
@@ -52,13 +52,13 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { "0", "-1" };
+            IEnumerable<string> data = new List<string>() { "0", "-1" };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new CombatArtRange(config, data));
+            Assert.Throws<PositiveIntegerException>(() => new CombatArtRange(config, data));
         }
 
-        [TestMethod]
-        public void CombatArtRangeConstructor_RequiredFields_WithInvalidRangeSet()
+        [Test]
+        public void Constructor_RequiredFields_WithInvalidRangeSet()
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
@@ -66,13 +66,13 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { "2", "1" };
+            IEnumerable<string> data = new List<string>() { "2", "1" };
 
-            Assert.ThrowsException<MinimumGreaterThanMaximumException>(() => new CombatArtRange(config, data));
+            Assert.Throws<MinimumGreaterThanMaximumException>(() => new CombatArtRange(config, data));
         }
 
-        [TestMethod]
-        public void CombatArtRangeConstructor_RequiredFields_MinRangeUnset()
+        [Test]
+        public void Constructor_RequiredFields_MinRangeUnset()
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
@@ -80,13 +80,13 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { "0", "1" };
+            IEnumerable<string> data = new List<string>() { "0", "1" };
 
-            Assert.ThrowsException<ItemRangeMinimumNotSetException>(() => new CombatArtRange(config, data));
+            Assert.Throws<ItemRangeMinimumNotSetException>(() => new CombatArtRange(config, data));
         }
 
-        [TestMethod]
-        public void CombatArtRangeConstructor_RequiredFields_MaxRangeUnset()
+        [Test]
+        public void Constructor_RequiredFields_MaxRangeUnset()
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
@@ -94,13 +94,13 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { "1", "0" };
+            IEnumerable<string> data = new List<string>() { "1", "0" };
 
-            Assert.ThrowsException<ItemRangeMinimumNotSetException>(() => new CombatArtRange(config, data));
+            Assert.Throws<ItemRangeMinimumNotSetException>(() => new CombatArtRange(config, data));
         }
 
-        [TestMethod]
-        public void CombatArtRangeConstructor_RequiredFields()
+        [Test]
+        public void Constructor_RequiredFields()
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
@@ -108,11 +108,12 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            List<string> data = new List<string>() { ART_RANGE_VAL_1, ART_RANGE_VAL_1 };
+            IEnumerable<string> data = new List<string>() { ART_RANGE_VAL_1, ART_RANGE_VAL_1 };
 
-            CombatArtRange range = new CombatArtRange(config, data);
-            Assert.AreEqual<int>(1, range.Minimum);
-            Assert.AreEqual<int>(1, range.Maximum);
+            ICombatArtRange range = new CombatArtRange(config, data);
+
+            Assert.That(range.Minimum, Is.EqualTo(1));
+            Assert.That(range.Maximum, Is.EqualTo(1));
         }
     }
 }
