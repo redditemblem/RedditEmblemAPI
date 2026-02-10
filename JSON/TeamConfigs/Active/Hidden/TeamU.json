@@ -34,7 +34,12 @@
     }
   },
   "System": {
-    "Constants": { },
+    "Constants": {
+      "Currency": {
+        "CurrencySymbol": "G",
+        "IsSymbolLeftAligned": false
+      }
+    },
     "InterfaceLabels": {
       "Adjutants": "Affinity",
       "InventorySubsections": [ "", "Unique", "Scroll and Totem" ]
@@ -93,7 +98,8 @@
         },
         {
           "SourceName": "Wt",
-          "Value": 10
+          "Value": 10,
+          "InvertModifiedDisplayColors": true
         }
       ],
       "Range": {
@@ -295,7 +301,7 @@
           "Value": 3
         },
         {
-          "SourceName": "Crit Avo",
+          "SourceName": "Ddg",
           "Value": 4
         }
       ]
@@ -551,5 +557,16 @@
       }
     ],
     "Adjutants": [ 55 ]
+  },
+  "Convoy": {
+    "Query": {
+      "Sheet": "Convoy",
+      "Selection": "A2:E",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "Owner": 3,
+    "Value": 4,
+    "Uses": 2
   }
 }
