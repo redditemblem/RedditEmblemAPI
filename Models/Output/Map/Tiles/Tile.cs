@@ -22,7 +22,7 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// The terrain type of this tile.
         /// </summary>
         [JsonIgnore]
-        public TerrainType TerrainTypeObj { get; set; }
+        public ITerrainType TerrainTypeObj { get; set; }
 
         /// <summary>
         /// Container for information about this tile's unit properties.
@@ -89,14 +89,14 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// </summary>
         /// <param name="x">Used to initialize the Tile's coordinate in combination with <paramref name="y"/>.</param>
         /// <param name="y">Used to initialize the Tile's coordinate in combination with <paramref name="x"/>.</param>
-        public Tile(CoordinateFormat coordinateFormat, int x, int y, TerrainType terrainType)
+        public Tile(CoordinateFormat coordinateFormat, int x, int y, ITerrainType terrainType)
             : this(new Coordinate(coordinateFormat, x, y), terrainType)
         { }
 
         /// <summary>
         /// Constructor. Initializes the tile's coordinate using <paramref name="coord"/>.
         /// </summary>
-        public Tile(Coordinate coord, TerrainType terrainType)
+        public Tile(Coordinate coord, ITerrainType terrainType)
         {
             this.Coordinate = coord;
             this.TerrainTypeObj = terrainType;

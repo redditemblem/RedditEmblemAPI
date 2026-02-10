@@ -11,20 +11,26 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class Tag : IMatchable
+    #region Interface
+
+    /// <inheritdoc cref="Tag"/>
+    public interface ITag : IMatchable
+    {
+        /// <inheritdoc cref="Tag.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="Tag.ShowOnUnit"/>
+        bool ShowOnUnit { get; set; }
+
+        /// <inheritdoc cref="Tag.UnitAura"/>
+        string UnitAura { get; set; }
+    }
+
+    #endregion Interface
+
+    public class Tag : Matchable, ITag
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this status was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The name of the tag.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The sprite image URL for the tag.
@@ -42,37 +48,28 @@ namespace RedditEmblemAPI.Models.Output.System
         [JsonIgnore]
         public string UnitAura { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
         public Tag(TagsConfig config, IEnumerable<string> data)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.ShowOnUnit = (DataParser.OptionalBoolean_YesNo(data, config.ShowOnUnit, "Show On Unit") && !string.IsNullOrEmpty(this.SpriteURL));
             this.UnitAura = DataParser.OptionalString_HexCode(data, config.UnitAura, "Unit Aura");
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>Tag</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
-        {
-            this.Matched = true;
-        }
-
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Tag</c> from each valid row.
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>ITag</c> from each valid row.
         /// </summary>
         /// <exception cref="TagProcessingException"></exception>
-        public static IDictionary<string, Tag> BuildDictionary(TagsConfig config)
+        public static IDictionary<string, ITag> BuildDictionary(TagsConfig config)
         {
-            IDictionary<string, Tag> tags = new Dictionary<string, Tag>();
+            IDictionary<string, ITag> tags = new Dictionary<string, ITag>();
             if (config == null || config.Queries == null)
                 return tags;
 
@@ -98,30 +95,30 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to a <c>Tag</c> in <paramref name="tags"/> and returns the matches as a list.
+        /// Matches each of the strings in <paramref name="names"/> to an <c>ITag</c> in <paramref name="tags"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Tag> MatchNames(IDictionary<string, Tag> tags, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<ITag> MatchNames(IDictionary<string, ITag> tags, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(tags, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(tags, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>Tag</c> in <paramref name="tags"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>ITag</c> in <paramref name="tags"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedTagException"></exception>
-        public static Tag MatchName(IDictionary<string, Tag> tags, string name, bool skipMatchedStatusSet = false)
+        public static ITag MatchName(IDictionary<string, ITag> tags, string name, bool flagAsMatched = true)
         {
-            Tag match;
+            ITag match;
             if (!tags.TryGetValue(name, out match))
                 throw new UnmatchedTagException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
 
-        #endregion
+        #endregion Static Functions
     }
 }

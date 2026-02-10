@@ -11,20 +11,29 @@ using RedditEmblemAPI.Models.Configuration.System.Adjutants;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class Adjutant : IMatchable
+    #region Interface
+
+    /// <inheritdoc cref="Adjutant"/>
+    public interface IAdjutant : IMatchable
+    {
+        /// <inheritdoc cref="Adjutant.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="Adjutant.CombatStatModifiers"/>
+        IDictionary<string, int> CombatStatModifiers { get; set; }
+
+        /// <inheritdoc cref="Adjutant.StatModifiers"/>
+        IDictionary<string, int> StatModifiers { get; set; }
+
+        /// <inheritdoc cref="Adjutant.TextFields"/>
+        List<string> TextFields { get; set; }
+    }
+
+    #endregion Interface
+
+    public class Adjutant : Matchable, IAdjutant
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this adjutant was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The name of the adjutant.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The sprite image URL for the adjutant.
@@ -55,7 +64,6 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public Adjutant(AdjutantsConfig config, IEnumerable<string> data)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.CombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.CombatStatModifiers, data, false);
@@ -63,24 +71,16 @@ namespace RedditEmblemAPI.Models.Output.System
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>Adjutant</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
-        {
-            this.Matched = true;
-        }
-
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Adjutant</c> from each valid row.
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>IAdjutant</c> from each valid row.
         /// </summary>
         /// <exception cref="AdjutantProcessingException"></exception>
-        public static IDictionary<string, Adjutant> BuildDictionary(AdjutantsConfig config)
+        public static IDictionary<string, IAdjutant> BuildDictionary(AdjutantsConfig config)
         {
-            IDictionary<string, Adjutant> adjutants = new Dictionary<string, Adjutant>();
-            if (config == null || config.Queries == null)
+            IDictionary<string, IAdjutant> adjutants = new Dictionary<string, IAdjutant>();
+            if (config?.Queries == null)
                 return adjutants;
 
             foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
@@ -107,28 +107,28 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Matches each of the strings in <paramref name="names"/> to an <c>Adjutant</c> in <paramref name="adjutants"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Adjutant> MatchNames(IDictionary<string, Adjutant> adjutants, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched</c> for all returned objects.</param>
+        public static List<IAdjutant> MatchNames(IDictionary<string, IAdjutant> adjutants, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(adjutants, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(adjutants, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
         /// Matches <paramref name="name"/> to an <c>Adjutant</c> in <paramref name="adjutants"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched</c> for the returned object.</param>
         /// <exception cref="UnmatchedAdjutantException"></exception>
-        public static Adjutant MatchName(IDictionary<string, Adjutant> adjutants, string name, bool skipMatchedStatusSet = false)
+        public static IAdjutant MatchName(IDictionary<string, IAdjutant> adjutants, string name, bool flagAsMatched = true)
         {
-            Adjutant match;
+            IAdjutant match;
             if (!adjutants.TryGetValue(name, out match))
                 throw new UnmatchedAdjutantException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
 
-        #endregion
+        #endregion Static Functions
     }
 }

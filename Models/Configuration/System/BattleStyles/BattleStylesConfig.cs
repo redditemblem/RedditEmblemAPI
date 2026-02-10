@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Common;
+﻿using RedditEmblemAPI.Models.Configuration.Common;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.BattleStyles
@@ -7,21 +6,8 @@ namespace RedditEmblemAPI.Models.Configuration.System.BattleStyles
     /// <summary>
     /// Container class for deserialized JSON <c>"BattleStyles"</c> object data.
     /// </summary>
-    public class BattleStylesConfig : IMultiQueryable
+    public class BattleStylesConfig : MultiQueryable
     {
-        #region Required Fields
-
-        [JsonRequired]
-        public IEnumerable<Query> Queries { get; set; }
-
-        /// <summary>
-        /// Required. Cell index of a battle style's name value.
-        /// </summary>
-        [JsonRequired]
-        public int Name { get; set; }
-
-        #endregion
-
         #region Optional Fields
 
         /// <summary>

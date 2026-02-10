@@ -11,20 +11,44 @@ using Newtonsoft.Json;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class CombatArt : IMatchable
+    #region Interface
+
+    /// <inheritdoc cref="CombatArt"/>
+    public interface ICombatArt : IMatchable
+    {
+        /// <inheritdoc cref="CombatArt.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="CombatArt.WeaponRank"/>
+        string WeaponRank { get; set; }
+
+        /// <inheritdoc cref="CombatArt.Category"/>
+        string Category { get; set; }
+
+        /// <inheritdoc cref="CombatArt.UtilizedStats"/>
+        List<string> UtilizedStats { get; set; }
+
+        /// <inheritdoc cref="CombatArt.Range"/>
+        ICombatArtRange Range { get; set; }
+
+        /// <inheritdoc cref="CombatArt.Stats"/>
+        IDictionary<string, int> Stats { get; set; }
+
+        /// <inheritdoc cref="CombatArt.DurabilityCost"/>
+        int DurabilityCost { get; set; }
+
+        /// <inheritdoc cref="CombatArt.TagsList"/>
+        List<ITag> TagsList { get; set; }
+
+        /// <inheritdoc cref="CombatArt.TextFields"/>
+        List<string> TextFields { get; set; }
+    }
+
+    #endregion Interface
+
+    public class CombatArt : Matchable, ICombatArt
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this combat art was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The combat art's name. 
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The sprite image URL for the combat art.
@@ -49,7 +73,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Container object for the combat art's range values.
         /// </summary>
-        public CombatArtRange Range { get; set; }
+        public ICombatArtRange Range { get; set; }
 
         /// <summary>
         /// Collection of stat values for the combat art. (ex. Hit)
@@ -65,7 +89,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// The combat art's tags.
         /// </summary>
         [JsonIgnore]
-        public List<Tag> TagsList { get; set; }
+        public List<ITag> TagsList { get; set; }
 
         /// <summary>
         /// List of the combat art's text fields.
@@ -84,9 +108,8 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion Attributes
 
-        public CombatArt(CombatArtsConfig config, IEnumerable<string> data, IDictionary<string, Tag> tags)
+        public CombatArt(CombatArtsConfig config, IEnumerable<string> data, IDictionary<string, ITag> tags)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.WeaponRank = DataParser.OptionalString(data, config.WeaponRank, "Weapon Rank");
@@ -98,13 +121,10 @@ namespace RedditEmblemAPI.Models.Output.System
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
             IEnumerable<string> tagList = DataParser.List_StringCSV(data, config.Tags).Distinct();
-            this.TagsList = Tag.MatchNames(tags, tagList, true);
+            this.TagsList = Tag.MatchNames(tags, tagList, false);
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>CombatArt</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
+        public override void FlagAsMatched()
         {
             this.Matched = true;
             this.TagsList.ForEach(t => t.FlagAsMatched());
@@ -113,13 +133,13 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>CombatArt</c> from each valid row.
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>ICombatArt</c> from each valid row.
         /// </summary>
         /// <exception cref="CombatArtProcessingException"></exception>
-        public static IDictionary<string, CombatArt> BuildDictionary(CombatArtsConfig config, IDictionary<string, Tag> tags)
+        public static IDictionary<string, ICombatArt> BuildDictionary(CombatArtsConfig config, IDictionary<string, ITag> tags)
         {
-            IDictionary<string, CombatArt> combatArts = new Dictionary<string, CombatArt>();
-            if (config == null || config.Queries == null)
+            IDictionary<string, ICombatArt> combatArts = new Dictionary<string, ICombatArt>();
+            if (config?.Queries == null)
                 return combatArts;
 
             foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
@@ -144,30 +164,30 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to a <c>CombatArt</c> in <paramref name="combatArts"/> and returns the matches as a list.
+        /// Matches each of the strings in <paramref name="names"/> to an <c>ICombatArt</c> in <paramref name="combatArts"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<CombatArt> MatchNames(IDictionary<string, CombatArt> combatArts, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<ICombatArt> MatchNames(IDictionary<string, ICombatArt> combatArts, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(combatArts, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(combatArts, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>CombatArt</c> in <paramref name="combatArts"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>ICombatArt</c> in <paramref name="combatArts"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedCombatArtException"></exception>
-        public static CombatArt MatchName(IDictionary<string, CombatArt> combatArts, string name, bool skipMatchedStatusSet = false)
+        public static ICombatArt MatchName(IDictionary<string, ICombatArt> combatArts, string name, bool flagAsMatched = true)
         {
-            CombatArt match;
+            ICombatArt match;
             if (!combatArts.TryGetValue(name, out match))
                 throw new UnmatchedCombatArtException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
 
-        #endregion
+        #endregion Static Functions
     }
 }

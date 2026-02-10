@@ -8,7 +8,27 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class WeaponRankBonus
+    #region Interface
+
+    /// <inheritdoc cref="WeaponRankBonus"/>
+    public interface IWeaponRankBonus
+    {
+        /// <inheritdoc cref="WeaponRankBonus.Category"/>
+        string Category { get; set; }
+
+        /// <inheritdoc cref="WeaponRankBonus.Rank"/>
+        string Rank { get; set; }
+
+        /// <inheritdoc cref="WeaponRankBonus.CombatStatModifiers"/>
+        IDictionary<string, int> CombatStatModifiers { get; set; }
+
+        /// <inheritdoc cref="WeaponRankBonus.StatModifiers"/>
+        IDictionary<string, int> StatModifiers { get; set; }
+    }
+
+    #endregion Interface
+
+    public class WeaponRankBonus : IWeaponRankBonus
     {
         #region Attributes
 
@@ -32,7 +52,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public IDictionary<string, int> StatModifiers { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
@@ -49,12 +69,12 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>WeaponRankBonus</c> from each valid row.
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>IWeaponRankBonus</c> from each valid row.
         /// </summary>
         /// <exception cref="WeaponRankBonusProcessingException"></exception>
-        public static List<WeaponRankBonus> BuildList(WeaponRankBonusesConfig config)
+        public static List<IWeaponRankBonus> BuildList(WeaponRankBonusesConfig config)
         {
-            List<WeaponRankBonus> weaponRankBonuses = new List<WeaponRankBonus>();
+            List<IWeaponRankBonus> weaponRankBonuses = new List<IWeaponRankBonus>();
             if (config == null || config.Query == null)
                 return weaponRankBonuses;
 

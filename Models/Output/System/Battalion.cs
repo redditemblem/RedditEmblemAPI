@@ -11,29 +11,50 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
+    #region Interface
+
+    /// <inheritdoc cref="Battalion"/>
+    public interface IBattalion : IMatchable
+    {
+        /// <inheritdoc cref="Battalion.GambitObj"/>
+        IGambit GambitObj { get; set; }
+
+        /// <inheritdoc cref="Battalion.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="Battalion.MaxEndurance"/>
+        int MaxEndurance { get; set; }
+
+        /// <inheritdoc cref="Battalion.Rank"/>
+        string Rank { get; set; }
+
+        /// <inheritdoc cref="Battalion.Stats"/>
+        IDictionary<string, int> Stats { get; set; }
+
+        /// <inheritdoc cref="Battalion.StatModifiers"/>
+        IDictionary<string, int> StatModifiers { get; set; }
+
+        /// <inheritdoc cref="Battalion.TextFields"/>
+        List<string> TextFields { get; set; }
+
+        /// <inheritdoc cref="Battalion.MatchStatName(string)"/>
+        int MatchStatName(string name);
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing a battalion definition in the team's system. 
     /// </summary>
-    public class Battalion : IMatchable
+    public class Battalion : Matchable, IBattalion
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this battalion was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The battalion's name. 
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The battalion's gambit.
         /// </summary>
         [JsonIgnore]
-        public Gambit GambitObj { get; set; }
+        public IGambit GambitObj { get; set; }
 
         /// <summary>
         /// The battalion's icon sprite URL.
@@ -75,15 +96,14 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion JSON Serialization Only
 
-        #endregion
+        #endregion Attributes
 
-        public Battalion(BattalionsConfig config, IEnumerable<string> data, IDictionary<string, Gambit> gambits)
+        public Battalion(BattalionsConfig config, IEnumerable<string> data, IDictionary<string, IGambit> gambits)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
 
             string gambitName = DataParser.String(data, config.Gambit, "Gambit");
-            this.GambitObj = System.Gambit.MatchName(gambits, gambitName, true);
+            this.GambitObj = System.Gambit.MatchName(gambits, gambitName, false);
 
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.MaxEndurance = DataParser.Int_Positive(data, config.MaxEndurance, "Max Endurance");
@@ -94,6 +114,10 @@ namespace RedditEmblemAPI.Models.Output.System
             this.StatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.StatModifiers, data, false, "{0} Modifier");
         }
 
+        /// <summary>
+        /// Searches <c>this.Stats</c> for a stat matching <paramref name="name"/>. If one is found, returns its value.
+        /// </summary>
+        /// <exception cref="UnmatchedStatException"></exception>
         public int MatchStatName(string name)
         {
             int value;
@@ -103,10 +127,7 @@ namespace RedditEmblemAPI.Models.Output.System
             return value;
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>Battalion</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
+        public override void FlagAsMatched()
         {
             this.Matched = true;
             this.GambitObj.FlagAsMatched();
@@ -115,13 +136,13 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Battalion</c> from each valid row.
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>IBattalion</c> from each valid row.
         /// </summary>
         /// <exception cref="BattalionProcessingException"></exception>
-        public static IDictionary<string, Battalion> BuildDictionary(BattalionsConfig config, IDictionary<string, Gambit> gambits)
+        public static IDictionary<string, IBattalion> BuildDictionary(BattalionsConfig config, IDictionary<string, IGambit> gambits)
         {
-            IDictionary<string, Battalion> battalions = new Dictionary<string, Battalion>();
-            if (config == null || config.Queries == null)
+            IDictionary<string, IBattalion> battalions = new Dictionary<string, IBattalion>();
+            if (config?.Queries == null)
                 return battalions;
 
             foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
@@ -146,31 +167,31 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to a <c>Battalion</c> in <paramref name="battalions"/> and returns the matches as a list.
+        /// Matches each of the strings in <paramref name="names"/> to an <c>IBattalion</c> in <paramref name="battalions"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Battalion> MatchNames(IDictionary<string, Battalion> battalions, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<IBattalion> MatchNames(IDictionary<string, IBattalion> battalions, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(battalions, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(battalions, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>Battalion</c> in <paramref name="battalions"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>IBattalion</c> in <paramref name="battalions"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedBattalionException"></exception>
-        public static Battalion MatchName(IDictionary<string, Battalion> battalions, string name, bool skipMatchedStatusSet = false)
+        public static IBattalion MatchName(IDictionary<string, IBattalion> battalions, string name, bool flagAsMatched = true)
         {
-            Battalion match;
+            IBattalion match;
             if (!battalions.TryGetValue(name, out match))
                 throw new UnmatchedBattalionException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
 
-        #endregion
+        #endregion Static Functions
 
     }
 }

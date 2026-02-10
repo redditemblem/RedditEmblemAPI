@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.System.Battalions;
+﻿using RedditEmblemAPI.Models.Configuration.System.Battalions;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
@@ -11,23 +10,38 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
+    #region Interface
+
+    /// <inheritdoc cref="Gambit"/>
+    public interface IGambit : IMatchable
+    {
+        /// <inheritdoc cref="Gambit.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="Gambit.MaxUses"/>
+        int MaxUses { get; set; }
+
+        /// <inheritdoc cref="Gambit.UtilizedStats"/>
+        List<string> UtilizedStats { get; set; }
+
+        /// <inheritdoc cref="Gambit.Range"/>
+        IGambitRange Range { get; set; }
+
+        /// <inheritdoc cref="Gambit.Stats"/>
+        IDictionary<string, int> Stats { get; set; }
+
+        /// <inheritdoc cref="Gambit.TextFields"/>
+        List<string> TextFields { get; set; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing a gambit definition in the team's system. 
     /// </summary>
-    public class Gambit : IMatchable
+    public class Gambit : Matchable, IGambit
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this gambit was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The gambit's name. 
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The battalion's icon sprite URL.
@@ -47,7 +61,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Container object for the gambit's range values.
         /// </summary>
-        public GambitRange Range { get; set; }
+        public IGambitRange Range { get; set; }
 
         /// <summary>
         /// Collection of stat values for the gambit. (ex. Hit)
@@ -59,11 +73,10 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public List<string> TextFields { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         public Gambit(GambitsConfig config, IEnumerable<string> data)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.MaxUses = DataParser.Int_Positive(data, config.MaxUses, "Max Uses");
@@ -74,23 +87,15 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Stats = DataParser.NamedStatDictionary_Int_Any(config.Stats, data, true);
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>Gambit</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
-        {
-            this.Matched = true;
-        }
-
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Gambit</c> from each valid row.
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>IGambit</c> from each valid row.
         /// </summary>
         /// <exception cref="GambitProcessingException"></exception>
-        public static IDictionary<string, Gambit> BuildDictionary(GambitsConfig config)
+        public static IDictionary<string, IGambit> BuildDictionary(GambitsConfig config)
         {
-            IDictionary<string, Gambit> gambits = new Dictionary<string, Gambit>();
+            IDictionary<string, IGambit> gambits = new Dictionary<string, IGambit>();
             if (config == null || config.Queries == null)
                 return gambits;
 
@@ -116,31 +121,30 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to a <c>Gambit</c> in <paramref name="gambits"/> and returns the matches as a list.
+        /// Matches each of the strings in <paramref name="names"/> to an <c>IGambit</c> in <paramref name="gambits"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Gambit> MatchNames(IDictionary<string, Gambit> gambits, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<IGambit> MatchNames(IDictionary<string, IGambit> gambits, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(gambits, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(gambits, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>Gambit</c> in <paramref name="gambits"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>IGambit</c> in <paramref name="gambits"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedGambitException"></exception>
-        public static Gambit MatchName(IDictionary<string, Gambit> gambits, string name, bool skipMatchedStatusSet = false)
+        public static IGambit MatchName(IDictionary<string, IGambit> gambits, string name, bool flagAsMatched = true)
         {
-            Gambit match;
+            IGambit match;
             if (!gambits.TryGetValue(name, out match))
                 throw new UnmatchedGambitException(name);
             
-            if(!skipMatchedStatusSet) match.FlagAsMatched();
+            if(flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
 
-        #endregion
-
+        #endregion Static Functions
     }
 }

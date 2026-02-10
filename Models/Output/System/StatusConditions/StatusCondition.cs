@@ -12,23 +12,35 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 {
+    #region Interface
+
+    /// <inheritdoc cref="StatusCondition">
+    public interface IStatusCondition : IMatchable
+    {
+        /// <inheritdoc cref="StatusCondition.SpriteURL">
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="StatusCondition.Type">
+        StatusConditionType Type { get; set; }
+
+        /// <inheritdoc cref="StatusCondition.Turns">
+        int Turns { get; set; }
+
+        /// <inheritdoc cref="StatusCondition.TextFields">
+        List<string> TextFields { get; set; }
+
+        /// <inheritdoc cref="StatusCondition.Effects">
+        List<IStatusConditionEffect> Effects { get; set; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing a status condition in a team's system.
     /// </summary>
-    public class StatusCondition : IMatchable
+    public class StatusCondition : Matchable, IStatusCondition
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this status was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The name of the status condition.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The sprite image URL for the status condition.
@@ -54,7 +66,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// The effect the status condition applies, if any.
         /// </summary>
         [JsonIgnore]
-        public List<StatusConditionEffect> Effects { get; set; }
+        public List<IStatusConditionEffect> Effects { get; set; }
 
         #region JSON Serialization Only
 
@@ -66,21 +78,20 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 
         #endregion JSON Serialization Only
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
         public StatusCondition(StatusConditionConfig config, IEnumerable<string> data)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.Type = ParseStatusConditionType(data, config.Type);
             this.Turns = DataParser.OptionalInt_NonZeroPositive(data, config.Turns, "Turns", 0);
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
-            this.Effects = new List<StatusConditionEffect>();
+            this.Effects = new List<IStatusConditionEffect>();
             foreach (StatusConditionEffectConfig effect in config.Effects)
             {
                 string effectType = DataParser.OptionalString(data, effect.Type, "Status Condition Effect Type");
@@ -108,7 +119,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
             }
         }
 
-        private StatusConditionEffect BuildStatusConditionEffect(string effectType, List<string> parameters)
+        private IStatusConditionEffect BuildStatusConditionEffect(string effectType, List<string> parameters)
         {
             switch (effectType)
             {
@@ -130,23 +141,15 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
             throw new UnmatchedStatusConditionEffectException(effectType);
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>StatusCondition</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
-        {
-            this.Matched = true;
-        }
-
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>StatusCondition</c> from each valid row.
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>IStatusCondition</c> from each valid row.
         /// </summary>
         /// <exception cref="StatusConditionProcessingException"></exception>
-        public static IDictionary<string, StatusCondition> BuildDictionary(StatusConditionConfig config)
+        public static IDictionary<string, IStatusCondition> BuildDictionary(StatusConditionConfig config)
         {
-            IDictionary<string, StatusCondition> statusConditions = new Dictionary<string, StatusCondition>();
+            IDictionary<string, IStatusCondition> statusConditions = new Dictionary<string, IStatusCondition>();
             if (config == null || config.Queries == null)
                 return statusConditions;
 
@@ -172,31 +175,31 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to a <c>StatusCondition</c> in <paramref name="statusConditions"/> and returns the matches as a list.
+        /// Matches each of the strings in <paramref name="names"/> to an <c>IStatusCondition</c> in <paramref name="statusConditions"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<StatusCondition> MatchNames(IDictionary<string, StatusCondition> statusConditions, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched</c> for all returned objects.</param>
+        public static List<IStatusCondition> MatchNames(IDictionary<string, IStatusCondition> statusConditions, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(statusConditions, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(statusConditions, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>StatusCondition</c> in <paramref name="statusConditions"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>IStatusCondition</c> in <paramref name="statusConditions"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched</c> for the returned object.</param>
         /// <exception cref="UnmatchedStatusConditionException"></exception>
-        public static StatusCondition MatchName(IDictionary<string, StatusCondition> statusConditions, string name, bool skipMatchedStatusSet = false)
+        public static IStatusCondition MatchName(IDictionary<string, IStatusCondition> statusConditions, string name, bool flagAsMatched = true)
         {
-            StatusCondition match;
+            IStatusCondition match;
             if (!statusConditions.TryGetValue(name, out match))
                 throw new UnmatchedStatusConditionException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
 
-        #endregion
+        #endregion Static Functions
     }
 
     public enum StatusConditionType

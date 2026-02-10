@@ -10,7 +10,21 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
-    public abstract class SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="SkillEffect"/>
+    public interface ISkillEffect
+    {
+        /// <inheritdoc cref="SkillEffect.ExecutionOrder"/>
+        SkillEffectExecutionOrder ExecutionOrder { get; }
+
+        /// <inheritdoc cref="SkillEffect.Apply(Unit, ISkill, MapObj, List{Unit})"/>
+        void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units);
+    }
+
+    #endregion Interface
+
+    public abstract class SkillEffect : ISkillEffect
     {
         #region Constants
 
@@ -46,7 +60,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
             this.ExecutionOrder = SkillEffectExecutionOrder.Standard;
         }
 
-        public virtual void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
+        public virtual void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
         {
             //By default, the effect applies nothing
         }
@@ -64,7 +78,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 
             foreach (Tile tile in targetTiles)
             {
-                TerrainTypeStats terrainStats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(unit.AffiliationObj);
+                ITerrainTypeStats terrainStats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(unit.AffiliationObj);
 
                 //Ensure that this unit can move to this tile
                 int moveCost;

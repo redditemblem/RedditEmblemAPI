@@ -19,23 +19,29 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills
 {
+    #region Interface
+
+    /// <inheritdoc cref="Skill"/>
+    public interface ISkill : IMatchable
+    {
+        /// <inheritdoc cref="Skill.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="Skill.TextFields"/>
+        List<string> TextFields { get; set; }
+
+        /// <inheritdoc cref="Skill.Effects"/>
+        List<SkillEffect> Effects { get; set; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing a Skill definition in the team's system. 
     /// </summary>
-    public class Skill : IMatchable
+    public class Skill : Matchable, ISkill
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this skill was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The name of the skill.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The sprite image URL for the skill.
@@ -70,7 +76,6 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// </summary>
         public Skill(SkillsConfig config, IEnumerable<string> data)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
@@ -164,23 +169,15 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             throw new UnmatchedSkillEffectException(effectType);
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>Skill</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
-        {
-            this.Matched = true;
-        }
-
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Skill</c> from each valid row.
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>ISkill</c> from each valid row.
         /// </summary>
         /// <exception cref="SkillProcessingException"></exception>
-        public static IDictionary<string, Skill> BuildDictionary(SkillsConfig config)
+        public static IDictionary<string, ISkill> BuildDictionary(SkillsConfig config)
         {
-            IDictionary<string, Skill> skills = new Dictionary<string, Skill>();
+            IDictionary<string, ISkill> skills = new Dictionary<string, ISkill>();
             if (config == null || config.Queries == null)
                 return skills;
 
@@ -206,30 +203,30 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to a <c>Skill</c> in <paramref name="skills"/> and returns the matches as a list.
+        /// Matches each of the strings in <paramref name="names"/> to an <c>ISkill</c> in <paramref name="skills"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Skill> MatchNames(IDictionary<string, Skill> skills, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched</c> for all returned objects.</param>
+        public static List<ISkill> MatchNames(IDictionary<string, ISkill> skills, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(skills, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(skills, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>Skill</c> in <paramref name="skills"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>ISkill</c> in <paramref name="skills"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched</c> for the returned object.</param>
         /// <exception cref="UnmatchedSkillException"></exception>
-        public static Skill MatchName(IDictionary<string, Skill> skills, string name, bool skipMatchedStatusSet = false)
+        public static ISkill MatchName(IDictionary<string, ISkill> skills, string name, bool flagAsMatched = true)
         {
-            Skill match;
+            ISkill match;
             if (!skills.TryGetValue(name, out match))
                 throw new UnmatchedSkillException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
 
-        #endregion
+        #endregion Static Functions
     }
 }

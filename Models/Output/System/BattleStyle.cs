@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.System.BattleStyles;
+﻿using RedditEmblemAPI.Models.Configuration.System.BattleStyles;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
@@ -11,20 +10,23 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class BattleStyle : IMatchable
+    #region Interface
+
+    /// <inheritdoc cref="BattleStyle"/>
+    public interface IBattleStyle : IMatchable
+    {
+        /// <inheritdoc cref="BattleStyle.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="BattleStyle.TextFields"/>
+        List<string> TextFields { get; set; }
+    }
+
+    #endregion Interface
+
+    public class BattleStyle : Matchable, IBattleStyle
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this battle style was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The battle style's name.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The sprite image URL for the battle style.
@@ -36,36 +38,27 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public List<string> TextFields { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
         public BattleStyle(BattleStylesConfig config, IEnumerable<string> data)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>BattleStyle</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
-        {
-            this.Matched = true;
-        }
-
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>BattleStyle</c> from each valid row.
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>IBattleStyle</c> from each valid row.
         /// </summary>
         /// <exception cref="BattleStyleProcessingException"></exception>
-        public static IDictionary<string, BattleStyle> BuildDictionary(BattleStylesConfig config)
+        public static IDictionary<string, IBattleStyle> BuildDictionary(BattleStylesConfig config)
         {
-            IDictionary<string, BattleStyle> battleStyles = new Dictionary<string, BattleStyle>();
+            IDictionary<string, IBattleStyle> battleStyles = new Dictionary<string, IBattleStyle>();
             if (config == null || config.Queries == null)
                 return battleStyles;
 
@@ -91,30 +84,30 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to a <c>BattleStyle</c> in <paramref name="battleStyles"/> and returns the matches as a list.
+        /// Matches each of the strings in <paramref name="names"/> to an <c>IBattleStyle</c> in <paramref name="battleStyles"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<BattleStyle> MatchNames(IDictionary<string, BattleStyle> battleStyles, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<IBattleStyle> MatchNames(IDictionary<string, IBattleStyle> battleStyles, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(battleStyles, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(battleStyles, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>Class</c> in <paramref name="battleStyles"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>IBattleStyle</c> in <paramref name="battleStyles"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedBattleStyleException"></exception>
-        public static BattleStyle MatchName(IDictionary<string, BattleStyle> battleStyles, string name, bool skipMatchedStatusSet = false)
+        public static IBattleStyle MatchName(IDictionary<string, IBattleStyle> battleStyles, string name, bool flagAsMatched = true)
         {
-            BattleStyle match;
+            IBattleStyle match;
             if (!battleStyles.TryGetValue(name, out match))
                 throw new UnmatchedBattleStyleException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
 
-        #endregion
+        #endregion Static Functions
     }
 }

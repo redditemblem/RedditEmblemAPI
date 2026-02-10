@@ -7,18 +7,9 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
     /// <summary>
     /// Container class for deserialized JSON <c>"TerrainTypes"</c> object data.
     /// </summary>
-    public class TerrainTypesConfig : IMultiQueryable
+    public class TerrainTypesConfig : MultiQueryable
     {
         #region Required Fields
-
-        [JsonRequired]
-        public IEnumerable<Query> Queries { get; set; }
-
-        /// <summary>
-        /// Required. Cell index for a terrain type's name value.
-        /// </summary>
-        [JsonRequired]
-        public int Name { get; set; }
 
         /// <summary>
         /// Required. List of containers for stat groups.

@@ -7,18 +7,9 @@ namespace RedditEmblemAPI.Models.Configuration.System.CombatArts
     /// <summary>
     /// Container class for deserialized JSON <c>"CombatArts"</c> object data.
     /// </summary>
-    public class CombatArtsConfig : IMultiQueryable
+    public class CombatArtsConfig : MultiQueryable
     {
         #region Required Fields
-
-        [JsonRequired]
-        public IEnumerable<Query> Queries { get; set; }
-
-        /// <summary>
-        /// Required. Cell index of a combat art's name value.
-        /// </summary>
-        [JsonRequired]
-        public int Name { get; set; }
 
         /// <summary>
         /// Required. Container object for a combat art's range configuration.

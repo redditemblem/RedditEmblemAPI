@@ -34,7 +34,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Uses the <paramref name="config"/> and <paramref name="data"/> to initialize a new <c>UnitInventoryItem</c> and adds it to <c>this.Items</c>. If the <paramref name="data"/> is empty, increments <c>this.EmptySlotCount</c> instead.
         /// </summary>
-        public void AddUnitInventoryItem(UnitInventoryItemConfig config, IEnumerable<string> data, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        public void AddUnitInventoryItem(UnitInventoryItemConfig config, IEnumerable<string> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
         {
             string name = DataParser.OptionalString(data, config.Name, "Item Name");
             if (string.IsNullOrEmpty(name))

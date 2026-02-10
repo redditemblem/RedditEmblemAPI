@@ -122,7 +122,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                     string unitRank;
                     this.WeaponRanks.TryGetValue(primaryEquipped.Item.Category, out unitRank);
 
-                    WeaponRankBonus rankBonus = system.WeaponRankBonuses.FirstOrDefault(b => b.Category == primaryEquipped.Item.Category && b.Rank == unitRank);
+                    IWeaponRankBonus rankBonus = system.WeaponRankBonuses.FirstOrDefault(b => b.Category == primaryEquipped.Item.Category && b.Rank == unitRank);
                     if (rankBonus != null)
                     {
                         string modifierName = $"{primaryEquipped.Item.Category} {unitRank} Rank Bonus";
@@ -147,7 +147,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 this.Stats.ApplyGeneralStatModifiers(equipped.Item.EquippedStatModifiers, modifierName);
 
                 //If the equipped item has an engraving, apply those modifiers too.
-                foreach (Engraving engraving in equipped.EngravingsList)
+                foreach (IEngraving engraving in equipped.EngravingsList)
                 {
                     string engravingModifierName = $"{equipped.Item.Name} (Eqp) {engraving.Name}";
                     this.Stats.ApplyCombatStatModifiers(engraving.CombatStatModifiers, engravingModifierName);

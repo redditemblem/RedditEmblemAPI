@@ -5,10 +5,24 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
+    #region Interface
+
+    /// <inheritdoc cref="GambitRange"/>
+    public interface IGambitRange
+    {
+        /// <inheritdoc cref="GambitRange.Minimum"/>
+        int Minimum { get; }
+
+        /// <inheritdoc cref="GambitRange.Maximum"/>
+        int Maximum { get; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing an <c>Gambit</c>'s range.
     /// </summary>
-    public class GambitRange
+    public class GambitRange : IGambitRange
     {
         /// <summary>
         /// The minimum number of tiles a gambit can reach.

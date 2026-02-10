@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Common;
+﻿using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 
 namespace RedditEmblemAPI.Models.Configuration.Map
@@ -7,12 +6,9 @@ namespace RedditEmblemAPI.Models.Configuration.Map
     /// <summary>
     /// Container class for deserialized JSON <c>"MapObjects"</c> object data.
     /// </summary>
-    public class MapObjectsConfig : IQueryable
+    public class MapObjectsConfig : Queryable
     {
         #region Required Fields
-
-        [JsonRequired]
-        public Query Query { get; set; }
 
         /// <summary>
         /// Required. Cell index of the name of a tile object placed on the map.

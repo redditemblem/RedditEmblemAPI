@@ -16,7 +16,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// List of the combat arts the unit possesses.
         /// </summary>
         [JsonIgnore]
-        public List<CombatArt> CombatArtsList { get; set; }
+        public List<ICombatArt> CombatArtsList { get; set; }
 
         /// <summary>
         /// Container for information about a unit's battalion.
@@ -28,7 +28,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The unit's adjutants.
         /// </summary>
         [JsonIgnore]
-        public List<Adjutant> AdjutantList { get; set; }
+        public List<IAdjutant> AdjutantList { get; set; }
 
         #region JSON Serialization
 
@@ -70,9 +70,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         #region Build Functions
 
         /// <summary>
-        /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>CombatArt</c> from <paramref name="combatArts"/>.
+        /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to an <c>ICombatArt</c> from <paramref name="combatArts"/>.
         /// </summary>
-        private List<CombatArt> BuildCombatArts(IEnumerable<string> data, List<int> indexes, IDictionary<string, CombatArt> combatArts)
+        private List<ICombatArt> BuildCombatArts(IEnumerable<string> data, List<int> indexes, IDictionary<string, ICombatArt> combatArts)
         {
             List<string> names = DataParser.List_Strings(data, indexes);
             return CombatArt.MatchNames(combatArts, names);
@@ -87,7 +87,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <item>Stats</item>
         /// </list>
         /// </remarks>
-        private UnitBattalion BuildBattalion(IEnumerable<string> data, UnitBattalionConfig config, IDictionary<string, Battalion> battalions)
+        private UnitBattalion BuildBattalion(IEnumerable<string> data, UnitBattalionConfig config, IDictionary<string, IBattalion> battalions)
         {
             if (config == null) return null;
 
@@ -101,17 +101,17 @@ namespace RedditEmblemAPI.Models.Output.Units
         }
 
         /// <summary>
-        /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>Adjutant</c> from <paramref name="adjutants"/>.
+        /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>IAdjutant</c> from <paramref name="adjutants"/>.
         /// </summary>
         /// <remarks>
         /// Dependent on Stats.
         /// </remarks>
-        private List<Adjutant> BuildAdjutants(IEnumerable<string> data, List<int> indexes, IDictionary<string, Adjutant> adjutants)
+        private List<IAdjutant> BuildAdjutants(IEnumerable<string> data, List<int> indexes, IDictionary<string, IAdjutant> adjutants)
         {
             List<string> names = DataParser.List_Strings(data, indexes);
-            List<Adjutant> matches = Adjutant.MatchNames(adjutants, names);
+            List<IAdjutant> matches = Adjutant.MatchNames(adjutants, names);
 
-            foreach (Adjutant adjutant in matches)
+            foreach (IAdjutant adjutant in matches)
             {
                 this.Stats.ApplyCombatStatModifiers(adjutant.CombatStatModifiers, adjutant.Name);
                 this.Stats.ApplyGeneralStatModifiers(adjutant.StatModifiers, adjutant.Name);

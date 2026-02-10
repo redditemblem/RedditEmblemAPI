@@ -11,20 +11,29 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class Emblem : IMatchable
+    #region Interface
+
+    /// <inheritdoc cref="Emblem"/>
+    public interface IEmblem : IMatchable
+    {
+        /// <inheritdoc cref="Emblem.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="Emblem.Tagline"/>
+        public string Tagline { get; set; }
+
+        /// <inheritdoc cref="Emblem.EngagedUnitAura"/>
+        string EngagedUnitAura { get; set; }
+
+        /// <inheritdoc cref="Emblem.TextFields"/>
+        List<string> TextFields { get; set; }
+    }
+
+    #endregion Interface
+
+    public class Emblem : Matchable, IEmblem
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this emblem was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The emblem's name. 
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The sprite image URL for the emblem.
@@ -51,7 +60,6 @@ namespace RedditEmblemAPI.Models.Output.System
 
         public Emblem(EmblemsConfig config, IEnumerable<string> data)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.Tagline = DataParser.OptionalString(data, config.Tagline, "Tagline");
@@ -59,23 +67,15 @@ namespace RedditEmblemAPI.Models.Output.System
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>Emblem</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
-        {
-            this.Matched = true;
-        }
-
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Emblem</c> from each valid row.
+        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>IEmblem</c> from each valid row.
         /// </summary>
         /// <exception cref="EmblemProcessingException"></exception>
-        public static IDictionary<string, Emblem> BuildDictionary(EmblemsConfig config)
+        public static IDictionary<string, IEmblem> BuildDictionary(EmblemsConfig config)
         {
-            IDictionary<string, Emblem> emblems = new Dictionary<string, Emblem>();
+            IDictionary<string, IEmblem> emblems = new Dictionary<string, IEmblem>();
             if (config == null || config.Queries == null)
                 return emblems;
 
@@ -101,26 +101,26 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>Emblem</c> in <paramref name="emblems"/> and returns the matches as a list.
+        /// Matches each of the strings in <paramref name="names"/> to an <c>IEmblem</c> in <paramref name="emblems"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Emblem> MatchNames(IDictionary<string, Emblem> emblems, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<IEmblem> MatchNames(IDictionary<string, IEmblem> emblems, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(emblems, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(emblems, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>Emblem</c> in <paramref name="emblems"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>IEmblem</c> in <paramref name="emblems"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedEmblemException"></exception>
-        public static Emblem MatchName(IDictionary<string, Emblem> emblems, string name, bool skipMatchedStatusSet = false)
+        public static IEmblem MatchName(IDictionary<string, IEmblem> emblems, string name, bool flagAsMatched = true)
         {
-            Emblem match;
+            IEmblem match;
             if (!emblems.TryGetValue(name, out match))
                 throw new UnmatchedEmblemException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }

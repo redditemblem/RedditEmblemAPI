@@ -1,24 +1,9 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+﻿using RedditEmblemAPI.Models.Configuration.Common;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Tags
 {
-    public class TagsConfig : IMultiQueryable
+    public class TagsConfig : MultiQueryable
     {
-        #region Required Fields
-
-        [JsonRequired]
-        public IEnumerable<Query> Queries { get; set; }
-
-        /// <summary>
-        /// Required. Cell index for a tag's name value.
-        /// </summary>
-        [JsonRequired]
-        public int Name { get; set; }
-
-        #endregion
-
         #region Optional Fields
 
         /// <summary>

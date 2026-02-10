@@ -6,12 +6,9 @@ namespace RedditEmblemAPI.Models.Configuration.Map
     /// <summary>
     /// Container class for deserialized JSON <c>"MapControls"</c> object data.
     /// </summary>
-    public class MapControlsConfig : IQueryable
+    public class MapControlsConfig : Queryable
     {
         #region Required Fields
-
-        [JsonRequired]
-        public Query Query { get; set; }
 
         /// <summary>
         /// Required. Cell index of the map switch value.

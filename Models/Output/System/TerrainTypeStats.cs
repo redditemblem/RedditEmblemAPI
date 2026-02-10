@@ -7,7 +7,33 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class TerrainTypeStats
+    #region Interface
+
+    /// <inheritdoc cref="TerrainTypeStats"/>
+    public interface ITerrainTypeStats
+    {
+        /// <inheritdoc cref="TerrainTypeStats.AffiliationGroupings"/>
+        List<int> AffiliationGroupings { get; set; }
+
+        /// <inheritdoc cref="TerrainTypeStats.IsDefaultGroup"/>
+        bool IsDefaultGroup { get; }
+
+        /// <inheritdoc cref="TerrainTypeStats.HPModifier"/>
+        int HPModifier { get; set; }
+
+        /// <inheritdoc cref="TerrainTypeStats.CombatStatModifiers"/>
+        IDictionary<string, int> CombatStatModifiers { get; set; }
+
+        /// <inheritdoc cref="TerrainTypeStats.StatModifiers"/>
+        IDictionary<string, int> StatModifiers { get; set; }
+
+        /// <inheritdoc cref="TerrainTypeStats.MovementCosts"/>
+        IDictionary<string, int> MovementCosts { get; set; }
+    }
+
+    #endregion Interface
+
+    public class TerrainTypeStats : ITerrainTypeStats
     {
         #region Attributes
 
@@ -55,7 +81,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion Attributes
 
-        public TerrainTypeStats(TerrainTypeStatsConfig config, IEnumerable<string> data, IDictionary<string, Affiliation> affiliations) 
+        public TerrainTypeStats(TerrainTypeStatsConfig config, IEnumerable<string> data, IDictionary<string, IAffiliation> affiliations) 
         {
             this.AffiliationGroupings = DataParser.List_IntCSV(data, config.AffiliationGroupings, "Affiliation Groupings", true);
             this.AffiliationNames = GetAffiliationGroupingNames(affiliations);
@@ -66,13 +92,13 @@ namespace RedditEmblemAPI.Models.Output.System
             this.MovementCosts = DataParser.NamedStatDictionary_Int_NonZeroPositive(config.MovementCosts, data, "{0} Movement Cost");
         }
 
-        private List<string> GetAffiliationGroupingNames(IDictionary<string, Affiliation> affiliations)
+        private List<string> GetAffiliationGroupingNames(IDictionary<string, IAffiliation> affiliations)
         {
             List<string> names = new List<string>();
             foreach(int grouping in this.AffiliationGroupings)
             {
                 bool foundMatch = false;
-                foreach(Affiliation aff in affiliations.Where(a => a.Value.Grouping == grouping).Select(a => a.Value))
+                foreach(IAffiliation aff in affiliations.Where(a => a.Value.Grouping == grouping).Select(a => a.Value))
                 {
                     if (!names.Contains(aff.Name))
                     {
