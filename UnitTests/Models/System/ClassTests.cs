@@ -373,7 +373,7 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -395,7 +395,7 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -417,7 +417,7 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -439,7 +439,7 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -474,7 +474,7 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -499,7 +499,7 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -527,7 +527,7 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -555,7 +555,7 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {

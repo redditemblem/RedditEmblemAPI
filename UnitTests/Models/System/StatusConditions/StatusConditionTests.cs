@@ -425,7 +425,7 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -447,7 +447,7 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -469,7 +469,7 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -491,7 +491,7 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -513,7 +513,7 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -548,7 +548,7 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -573,7 +573,7 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -601,7 +601,7 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -630,7 +630,7 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {

@@ -1,4 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Map;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using System;
 using System.Text.RegularExpressions;
@@ -73,13 +74,11 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Initializes the <c>Coordinate</c> with the passed in <paramref name="x"/> and <paramref name="y"/> values.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
         public Coordinate(CoordinateFormat coordinateFormat, int x, int y)
         {
             this.X = x;
             this.Y = y;
-            SetAsTextValue(coordinateFormat);
+            this.AsText = BuildAsTextValue(coordinateFormat);
         }
 
         /// <summary>
@@ -147,14 +146,15 @@ namespace RedditEmblemAPI.Models.Output.Map
 
         #endregion
 
-        private void SetAsTextValue(CoordinateFormat coordinateFormat)
+        private string BuildAsTextValue(CoordinateFormat format)
         {
-            switch (coordinateFormat)
+            switch (format)
             {
-                case CoordinateFormat.XY: this.AsText = BuildAsTextValue_XY(); break;
-                case CoordinateFormat.Alphanumerical: this.AsText = BuildAsTextValue_Alphanumerical(); break;
-                default: throw new Exception("Unrecognized coordinate format");
+                case CoordinateFormat.XY: return BuildAsTextValue_XY();
+                case CoordinateFormat.Alphanumerical: return BuildAsTextValue_Alphanumerical();
             }
+
+            return string.Empty;
         }
 
         /// <summary>

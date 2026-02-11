@@ -451,7 +451,7 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -480,7 +480,7 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -509,7 +509,7 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -538,7 +538,7 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -580,7 +580,7 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -612,7 +612,7 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -647,7 +647,7 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -683,7 +683,7 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {

@@ -114,7 +114,7 @@ namespace UnitTests.Models.Map
         #region DistanceFrom
 
         [Test]
-        public void Coordinate_DistanceFrom_Self()
+        public void DistanceFrom_Self()
         {
             ICoordinate coord = new Coordinate();
 
@@ -129,7 +129,7 @@ namespace UnitTests.Models.Map
         [TestCase(2, 2, 1, 1, 2)] //northwest
         [TestCase(2, 2, 3, 3, 2)] //southeast
         [TestCase(2, 2, 1, 3, 2)] //southwest
-        public void Coordinate_DistanceFrom(int x1, int y1, int x2, int y2, int expectedDistance)
+        public void DistanceFrom(int x1, int y1, int x2, int y2, int expectedDistance)
         {
             ICoordinate coord1 = new Coordinate(CoordinateFormat.XY, x1, y1);
             ICoordinate coord2 = new Coordinate(CoordinateFormat.XY, x2, y2);
@@ -139,10 +139,42 @@ namespace UnitTests.Models.Map
 
         #endregion DistanceFrom
 
+        #region ToString
+
+        [Test]
+        public void ToString_DefaultConstructor()
+        {
+            ICoordinate coord = new Coordinate();
+
+            Assert.That(coord.ToString(), Is.Empty);
+        }
+
+        [TestCase(CoordinateFormat.XY, 1, 1, "1,1")]
+        [TestCase(CoordinateFormat.Alphanumerical, 1, 1, "A1")]
+        public void ToString_Constructor_IntInput(CoordinateFormat format, int x, int y, string expected)
+        {
+            ICoordinate coord = new Coordinate(format, x, y);
+
+            Assert.That(coord.AsText, Is.EqualTo(expected));
+            Assert.That(coord.ToString(), Is.EqualTo(expected));
+        }
+
+        [TestCase(CoordinateFormat.XY, "1,1")]
+        [TestCase(CoordinateFormat.Alphanumerical, "A1")]
+        public void ToString_Constructor_StringInput(CoordinateFormat format, string input)
+        {
+            ICoordinate coord = new Coordinate(format, input);
+
+            Assert.That(coord.AsText, Is.EqualTo(input));
+            Assert.That(coord.ToString(), Is.EqualTo(input));
+        }
+
+        #endregion ToString
+
         #region Equals
 
         [Test]
-        public void Coordinate_Equals_Self()
+        public void Equals_Self()
         {
             Coordinate coord = new Coordinate(CoordinateFormat.XY, 0, 0);
 
@@ -150,7 +182,7 @@ namespace UnitTests.Models.Map
         }
 
         [Test]
-        public void Coordinate_Equals_SameX()
+        public void Equals_SameX()
         {
             Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 0, 0);
             Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 0, 1);
@@ -159,7 +191,7 @@ namespace UnitTests.Models.Map
         }
 
         [Test]
-        public void Coordinate_Equals_SameY()
+        public void Equals_SameY()
         {
             Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 0, 0);
             Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 1, 0);
@@ -168,7 +200,7 @@ namespace UnitTests.Models.Map
         }
 
         [Test]
-        public void Coordinate_Equals_Different()
+        public void Equals_Different()
         {
             Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 0, 0);
             Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 1, 1);

@@ -328,7 +328,7 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -351,7 +351,7 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -373,7 +373,7 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -395,7 +395,7 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -418,7 +418,7 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -454,7 +454,7 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -479,7 +479,7 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -506,7 +506,7 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -534,7 +534,7 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {

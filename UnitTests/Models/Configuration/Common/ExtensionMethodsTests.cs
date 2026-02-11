@@ -54,7 +54,7 @@ namespace UnitTests.Models.Configuration.Common
             List<IQuery> queries = new List<IQuery>();
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<IQuery>(),
+                Queries = new List<Query>(),
                 Name = 0,
                 Grouping = 1
             };
@@ -71,7 +71,7 @@ namespace UnitTests.Models.Configuration.Common
             List<IQuery> queries = new List<IQuery>();
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                 },
@@ -91,7 +91,7 @@ namespace UnitTests.Models.Configuration.Common
             List<IQuery> queries = new List<IQuery>();
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query(),
                     new Query()

@@ -648,7 +648,7 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -677,7 +677,7 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -706,7 +706,7 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -735,7 +735,7 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -777,7 +777,7 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -809,7 +809,7 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -847,7 +847,7 @@ namespace UnitTests.Models.System
 
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -886,7 +886,7 @@ namespace UnitTests.Models.System
 
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {

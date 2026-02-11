@@ -399,7 +399,7 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -421,7 +421,7 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -443,7 +443,7 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -465,7 +465,7 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -487,7 +487,7 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -522,7 +522,7 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -547,7 +547,7 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -575,7 +575,7 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -604,7 +604,7 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {

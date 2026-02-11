@@ -20,7 +20,7 @@ namespace UnitTests.Models.System
         #endregion Constants
 
         [Test]
-        public void Constructor_RequiredFields_Null()
+        public void Constructor_RequiredFields_IndexOutOfBounds()
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
@@ -28,7 +28,7 @@ namespace UnitTests.Models.System
                 Maximum = 1
             };
 
-            IEnumerable<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
 
             IItemRange output = new ItemRange(config, data);
 
@@ -62,6 +62,20 @@ namespace UnitTests.Models.System
             IEnumerable<string> data = new List<string>() { "0", "-1" };
 
             Assert.Throws<PositiveIntegerException>(() => new ItemRange(config, data));
+        }
+
+        [Test]
+        public void Constructor_RequiredFields_MinRangeNotSet()
+        {
+            ItemRangeConfig config = new ItemRangeConfig()
+            {
+                Minimum = 0,
+                Maximum = 1
+            };
+
+            IEnumerable<string> data = new List<string>() { "0", "1" };
+
+            Assert.Throws<ItemRangeMinimumNotSetException>(() => new ItemRange(config, data));
         }
 
         [Test]

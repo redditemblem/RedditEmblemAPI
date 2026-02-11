@@ -315,7 +315,7 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -337,7 +337,7 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -359,7 +359,7 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -381,7 +381,7 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -416,7 +416,7 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -441,7 +441,7 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -469,7 +469,7 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -498,7 +498,7 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {

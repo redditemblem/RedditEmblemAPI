@@ -1,186 +1,200 @@
-﻿//using RedditEmblemAPI.Services.Helpers;
+﻿using RedditEmblemAPI.Services.Helpers;
 
-//namespace UnitTests.Helpers
-//{
-//    [TestClass]
-//    public class EquationParserOptionsTests
-//    {
-//        #region Union
+namespace UnitTests.Helpers
+{
+    public class EquationParserOptionsTests
+    {
+        #region Union
 
-//        [TestMethod]
-//        public void EquationParserOptions_Union_NoOptions()
-//        {
-//            EquationParserOptions options1 = new EquationParserOptions();
-//            EquationParserOptions options2 = new EquationParserOptions();
+        [Test]
+        public void EquationParserOptions_Union_NoOptions()
+        {
+            EquationParserOptions options1 = new EquationParserOptions();
+            Assert.That(options1.EvalUnitCombatStat, Is.False);
+            Assert.That(options1.EvalUnitStat, Is.False);
+            Assert.That(options1.EvalUnitLevel, Is.False);
+            Assert.That(options1.EvalWeaponUtilStat_Greatest, Is.False);
+            Assert.That(options1.EvalWeaponUtilStat_Sum, Is.False);
+            Assert.That(options1.EvalWeaponStat, Is.False);
+            Assert.That(options1.EvalBattalionStat, Is.False);
 
-//            EquationParserOptions union = options1.Union(options2);
-//            Assert.IsFalse(union.EvalUnitCombatStat);
-//            Assert.IsFalse(union.EvalUnitStat);
-//            Assert.IsFalse(union.EvalUnitLevel);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Greatest);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Sum);
-//            Assert.IsFalse(union.EvalWeaponStat);
-//            Assert.IsFalse(union.EvalBattalionStat);
-//        }
+            EquationParserOptions options2 = new EquationParserOptions();
+            Assert.That(options2.EvalUnitCombatStat, Is.False);
+            Assert.That(options2.EvalUnitStat, Is.False);
+            Assert.That(options2.EvalUnitLevel, Is.False);
+            Assert.That(options2.EvalWeaponUtilStat_Greatest, Is.False);
+            Assert.That(options2.EvalWeaponUtilStat_Sum, Is.False);
+            Assert.That(options2.EvalWeaponStat, Is.False);
+            Assert.That(options2.EvalBattalionStat, Is.False);
 
-//        [TestMethod]
-//        public void EquationParserOptions_Union_EvalUnitCombatStat()
-//        {
-//            EquationParserOptions options1 = new EquationParserOptions();
-//            EquationParserOptions options2 = new EquationParserOptions()
-//            {
-//                EvalUnitCombatStat = true
-//            };
+            EquationParserOptions union = options1.Union(options2);
+            Assert.That(union.EvalUnitCombatStat, Is.False);
+            Assert.That(union.EvalUnitStat, Is.False);
+            Assert.That(union.EvalUnitLevel, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Greatest, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Sum, Is.False);
+            Assert.That(union.EvalWeaponStat, Is.False);
+            Assert.That(union.EvalBattalionStat, Is.False);
+        }
 
-//            EquationParserOptions union = options1.Union(options2);
-//            Assert.IsTrue(union.EvalUnitCombatStat);
-//            Assert.IsFalse(union.EvalUnitStat);
-//            Assert.IsFalse(union.EvalUnitLevel);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Greatest);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Sum);
-//            Assert.IsFalse(union.EvalWeaponStat);
-//            Assert.IsFalse(union.EvalBattalionStat);
-//        }
+        [Test]
+        public void EquationParserOptions_Union_EvalUnitCombatStat()
+        {
+            EquationParserOptions options1 = new EquationParserOptions();
+            EquationParserOptions options2 = new EquationParserOptions()
+            {
+                EvalUnitCombatStat = true
+            };
 
-//        [TestMethod]
-//        public void EquationParserOptions_Union_EvalUnitStat()
-//        {
-//            EquationParserOptions options1 = new EquationParserOptions();
-//            EquationParserOptions options2 = new EquationParserOptions()
-//            {
-//                EvalUnitStat = true
-//            };
+            EquationParserOptions union = options1.Union(options2);
+            Assert.That(union.EvalUnitCombatStat, Is.True);
+            Assert.That(union.EvalUnitStat, Is.False);
+            Assert.That(union.EvalUnitLevel, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Greatest, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Sum, Is.False);
+            Assert.That(union.EvalWeaponStat, Is.False);
+            Assert.That(union.EvalBattalionStat, Is.False);
+        }
 
-//            EquationParserOptions union = options1.Union(options2);
-//            Assert.IsFalse(union.EvalUnitCombatStat);
-//            Assert.IsTrue(union.EvalUnitStat);
-//            Assert.IsFalse(union.EvalUnitLevel);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Greatest);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Sum);
-//            Assert.IsFalse(union.EvalWeaponStat);
-//            Assert.IsFalse(union.EvalBattalionStat);
-//        }
+        [Test]
+        public void EquationParserOptions_Union_EvalUnitStat()
+        {
+            EquationParserOptions options1 = new EquationParserOptions();
+            EquationParserOptions options2 = new EquationParserOptions()
+            {
+                EvalUnitStat = true
+            };
 
-//        [TestMethod]
-//        public void EquationParserOptions_Union_EvalUnitLevel()
-//        {
-//            EquationParserOptions options1 = new EquationParserOptions();
-//            EquationParserOptions options2 = new EquationParserOptions()
-//            {
-//                EvalUnitLevel = true
-//            };
+            EquationParserOptions union = options1.Union(options2);
+            Assert.That(union.EvalUnitCombatStat, Is.False);
+            Assert.That(union.EvalUnitStat, Is.True);
+            Assert.That(union.EvalUnitLevel, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Greatest, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Sum, Is.False);
+            Assert.That(union.EvalWeaponStat, Is.False);
+            Assert.That(union.EvalBattalionStat, Is.False);
+        }
 
-//            EquationParserOptions union = options1.Union(options2);
-//            Assert.IsFalse(union.EvalUnitCombatStat);
-//            Assert.IsFalse(union.EvalUnitStat);
-//            Assert.IsTrue(union.EvalUnitLevel);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Greatest);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Sum);
-//            Assert.IsFalse(union.EvalWeaponStat);
-//            Assert.IsFalse(union.EvalBattalionStat);
-//        }
+        [Test]
+        public void EquationParserOptions_Union_EvalUnitLevel()
+        {
+            EquationParserOptions options1 = new EquationParserOptions();
+            EquationParserOptions options2 = new EquationParserOptions()
+            {
+                EvalUnitLevel = true
+            };
 
-//        [TestMethod]
-//        public void EquationParserOptions_Union_EvalWeaponUtilStat_Greatest()
-//        {
-//            EquationParserOptions options1 = new EquationParserOptions();
-//            EquationParserOptions options2 = new EquationParserOptions()
-//            {
-//                EvalWeaponUtilStat_Greatest = true
-//            };
+            EquationParserOptions union = options1.Union(options2);
+            Assert.That(union.EvalUnitCombatStat, Is.False);
+            Assert.That(union.EvalUnitStat, Is.False);
+            Assert.That(union.EvalUnitLevel, Is.True);
+            Assert.That(union.EvalWeaponUtilStat_Greatest, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Sum, Is.False);
+            Assert.That(union.EvalWeaponStat, Is.False);
+            Assert.That(union.EvalBattalionStat, Is.False);
+        }
 
-//            EquationParserOptions union = options1.Union(options2);
-//            Assert.IsFalse(union.EvalUnitCombatStat);
-//            Assert.IsFalse(union.EvalUnitStat);
-//            Assert.IsFalse(union.EvalUnitLevel);
-//            Assert.IsTrue(union.EvalWeaponUtilStat_Greatest);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Sum);
-//            Assert.IsFalse(union.EvalWeaponStat);
-//            Assert.IsFalse(union.EvalBattalionStat);
-//        }
+        [Test]
+        public void EquationParserOptions_Union_EvalWeaponUtilStat_Greatest()
+        {
+            EquationParserOptions options1 = new EquationParserOptions();
+            EquationParserOptions options2 = new EquationParserOptions()
+            {
+                EvalWeaponUtilStat_Greatest = true
+            };
 
-//        [TestMethod]
-//        public void EquationParserOptions_Union_EvalWeaponUtilStat_Sum()
-//        {
-//            EquationParserOptions options1 = new EquationParserOptions();
-//            EquationParserOptions options2 = new EquationParserOptions()
-//            {
-//                EvalWeaponUtilStat_Sum = true
-//            };
+            EquationParserOptions union = options1.Union(options2);
+            Assert.That(union.EvalUnitCombatStat, Is.False);
+            Assert.That(union.EvalUnitStat, Is.False);
+            Assert.That(union.EvalUnitLevel, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Greatest, Is.True);
+            Assert.That(union.EvalWeaponUtilStat_Sum, Is.False);
+            Assert.That(union.EvalWeaponStat, Is.False);
+            Assert.That(union.EvalBattalionStat, Is.False);
+        }
 
-//            EquationParserOptions union = options1.Union(options2);
-//            Assert.IsFalse(union.EvalUnitCombatStat);
-//            Assert.IsFalse(union.EvalUnitStat);
-//            Assert.IsFalse(union.EvalUnitLevel);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Greatest);
-//            Assert.IsTrue(union.EvalWeaponUtilStat_Sum);
-//            Assert.IsFalse(union.EvalWeaponStat);
-//            Assert.IsFalse(union.EvalBattalionStat);
-//        }
+        [Test]
+        public void EquationParserOptions_Union_EvalWeaponUtilStat_Sum()
+        {
+            EquationParserOptions options1 = new EquationParserOptions();
+            EquationParserOptions options2 = new EquationParserOptions()
+            {
+                EvalWeaponUtilStat_Sum = true
+            };
 
-//        [TestMethod]
-//        public void EquationParserOptions_Union_EvalWeaponStat()
-//        {
-//            EquationParserOptions options1 = new EquationParserOptions();
-//            EquationParserOptions options2 = new EquationParserOptions()
-//            {
-//                EvalWeaponStat = true
-//            };
+            EquationParserOptions union = options1.Union(options2);
+            Assert.That(union.EvalUnitCombatStat, Is.False);
+            Assert.That(union.EvalUnitStat, Is.False);
+            Assert.That(union.EvalUnitLevel, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Greatest, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Sum, Is.True);
+            Assert.That(union.EvalWeaponStat, Is.False);
+            Assert.That(union.EvalBattalionStat, Is.False);
+        }
 
-//            EquationParserOptions union = options1.Union(options2);
-//            Assert.IsFalse(union.EvalUnitCombatStat);
-//            Assert.IsFalse(union.EvalUnitStat);
-//            Assert.IsFalse(union.EvalUnitLevel);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Greatest);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Sum);
-//            Assert.IsTrue(union.EvalWeaponStat);
-//            Assert.IsFalse(union.EvalBattalionStat);
-//        }
+        [Test]
+        public void EquationParserOptions_Union_EvalWeaponStat()
+        {
+            EquationParserOptions options1 = new EquationParserOptions();
+            EquationParserOptions options2 = new EquationParserOptions()
+            {
+                EvalWeaponStat = true
+            };
 
-//        [TestMethod]
-//        public void EquationParserOptions_Union_EvalBattalionStat()
-//        {
-//            EquationParserOptions options1 = new EquationParserOptions();
-//            EquationParserOptions options2 = new EquationParserOptions()
-//            {
-//                EvalBattalionStat = true
-//            };
+            EquationParserOptions union = options1.Union(options2);
+            Assert.That(union.EvalUnitCombatStat, Is.False);
+            Assert.That(union.EvalUnitStat, Is.False);
+            Assert.That(union.EvalUnitLevel, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Greatest, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Sum, Is.False);
+            Assert.That(union.EvalWeaponStat, Is.True);
+            Assert.That(union.EvalBattalionStat, Is.False);
+        }
 
-//            EquationParserOptions union = options1.Union(options2);
-//            Assert.IsFalse(union.EvalUnitCombatStat);
-//            Assert.IsFalse(union.EvalUnitStat);
-//            Assert.IsFalse(union.EvalUnitLevel);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Greatest);
-//            Assert.IsFalse(union.EvalWeaponUtilStat_Sum);
-//            Assert.IsFalse(union.EvalWeaponStat);
-//            Assert.IsTrue(union.EvalBattalionStat);
-//        }
+        [Test]
+        public void EquationParserOptions_Union_EvalBattalionStat()
+        {
+            EquationParserOptions options1 = new EquationParserOptions();
+            EquationParserOptions options2 = new EquationParserOptions()
+            {
+                EvalBattalionStat = true
+            };
 
-//        [TestMethod]
-//        public void EquationParserOptions_Union_AllOptions()
-//        {
-//            EquationParserOptions options1 = new EquationParserOptions();
-//            EquationParserOptions options2 = new EquationParserOptions()
-//            {
-//                EvalUnitCombatStat = true,
-//                EvalUnitStat = true,
-//                EvalUnitLevel = true,
-//                EvalWeaponUtilStat_Greatest = true,
-//                EvalWeaponUtilStat_Sum = true,
-//                EvalWeaponStat = true,
-//                EvalBattalionStat = true
-//            };
+            EquationParserOptions union = options1.Union(options2);
+            Assert.That(union.EvalUnitCombatStat, Is.False);
+            Assert.That(union.EvalUnitStat, Is.False);
+            Assert.That(union.EvalUnitLevel, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Greatest, Is.False);
+            Assert.That(union.EvalWeaponUtilStat_Sum, Is.False);
+            Assert.That(union.EvalWeaponStat, Is.False);
+            Assert.That(union.EvalBattalionStat, Is.True);
+        }
 
-//            EquationParserOptions union = options1.Union(options2);
-//            Assert.IsTrue(union.EvalUnitCombatStat);
-//            Assert.IsTrue(union.EvalUnitStat);
-//            Assert.IsTrue(union.EvalUnitLevel);
-//            Assert.IsTrue(union.EvalWeaponUtilStat_Greatest);
-//            Assert.IsTrue(union.EvalWeaponUtilStat_Sum);
-//            Assert.IsTrue(union.EvalWeaponStat);
-//            Assert.IsTrue(union.EvalBattalionStat);
-//        }
+        [Test]
+        public void EquationParserOptions_Union_AllOptions()
+        {
+            EquationParserOptions options1 = new EquationParserOptions();
+            EquationParserOptions options2 = new EquationParserOptions()
+            {
+                EvalUnitCombatStat = true,
+                EvalUnitStat = true,
+                EvalUnitLevel = true,
+                EvalWeaponUtilStat_Greatest = true,
+                EvalWeaponUtilStat_Sum = true,
+                EvalWeaponStat = true,
+                EvalBattalionStat = true
+            };
 
-//        #endregion Union
-//    }
-//}
+            EquationParserOptions union = options1.Union(options2);
+            Assert.That(union.EvalUnitCombatStat, Is.True);
+            Assert.That(union.EvalUnitStat, Is.True);
+            Assert.That(union.EvalUnitLevel, Is.True);
+            Assert.That(union.EvalWeaponUtilStat_Greatest, Is.True);
+            Assert.That(union.EvalWeaponUtilStat_Sum, Is.True);
+            Assert.That(union.EvalWeaponStat, Is.True);
+            Assert.That(union.EvalBattalionStat, Is.True);
+        }
+
+        #endregion Union
+    }
+}

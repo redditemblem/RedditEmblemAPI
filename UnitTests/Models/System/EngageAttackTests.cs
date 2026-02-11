@@ -193,7 +193,7 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -215,7 +215,7 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -237,7 +237,7 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -259,7 +259,7 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -281,7 +281,7 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -316,7 +316,7 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -341,7 +341,7 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -369,7 +369,7 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -398,7 +398,7 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {

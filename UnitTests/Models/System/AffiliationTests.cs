@@ -17,7 +17,7 @@ namespace UnitTests.Models.System
         #endregion Constants
 
         [Test]
-        public void Constructor_RequiredFields_WithInputNull()
+        public void Constructor_RequiredFields_IndexOutOfBounds()
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
@@ -318,7 +318,7 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -341,7 +341,7 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -364,7 +364,7 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -386,7 +386,7 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -409,7 +409,7 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -445,7 +445,7 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -471,7 +471,7 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -499,7 +499,7 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -528,7 +528,7 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {

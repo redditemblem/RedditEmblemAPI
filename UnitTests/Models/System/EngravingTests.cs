@@ -621,7 +621,7 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -643,7 +643,7 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -665,7 +665,7 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -687,7 +687,7 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -722,7 +722,7 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -747,7 +747,7 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -775,7 +775,7 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {
@@ -804,7 +804,7 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Queries = new List<IQuery>()
+                Queries = new List<Query>()
                 {
                     new Query()
                     {

@@ -158,7 +158,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Matches each of the strings in <paramref name="names"/> to an <c>ITileObject</c> in <paramref name="tileObjects"/> and returns the matches as a list.
         /// </summary>
         /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
-        public static List<ITileObject> MatchNames(IDictionary<string, ITileObject> tileObjects, IEnumerable<string> names, Coordinate coord, bool flagAsMatched = true)
+        public static List<ITileObject> MatchNames(IDictionary<string, ITileObject> tileObjects, IEnumerable<string> names, ICoordinate coord, bool flagAsMatched = true)
         {
             return names.Select(n => MatchName(tileObjects, n, coord, flagAsMatched)).ToList();
         }
@@ -168,7 +168,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedTileObjectException"></exception>
-        public static ITileObject MatchName(IDictionary<string, ITileObject> tileObjects, string name, Coordinate coord, bool flagAsMatched = false)
+        public static ITileObject MatchName(IDictionary<string, ITileObject> tileObjects, string name, ICoordinate coord, bool flagAsMatched = true)
         {
             ITileObject match;
             if (!tileObjects.TryGetValue(name, out match))
