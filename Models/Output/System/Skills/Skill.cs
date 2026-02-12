@@ -31,7 +31,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         List<string> TextFields { get; set; }
 
         /// <inheritdoc cref="Skill.Effects"/>
-        List<SkillEffect> Effects { get; set; }
+        List<ISkillEffect> Effects { get; set; }
     }
 
     #endregion Interface
@@ -57,7 +57,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// The effect the skill applies, if any.
         /// </summary>
         [JsonIgnore]
-        public List<SkillEffect> Effects { get; set; }
+        public List<ISkillEffect> Effects { get; set; }
 
         #region JSON Serialization Only
 
@@ -80,7 +80,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
-            this.Effects = new List<SkillEffect>();
+            this.Effects = new List<ISkillEffect>();
             foreach (SkillEffectConfig effect in config.Effects)
             {
                 string effectType = DataParser.OptionalString(data, effect.Type, "Skill Effect Type");
@@ -91,7 +91,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             }
         }
 
-        private SkillEffect BuildSkillEffect(string effectType, List<string> parameters)
+        private ISkillEffect BuildSkillEffect(string effectType, List<string> parameters)
         {
             switch (effectType)
             {
@@ -172,16 +172,15 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>ISkill</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>ISkill</c> from each valid row.
         /// </summary>
         /// <exception cref="SkillProcessingException"></exception>
         public static IDictionary<string, ISkill> BuildDictionary(SkillsConfig config)
         {
             IDictionary<string, ISkill> skills = new Dictionary<string, ISkill>();
-            if (config == null || config.Queries == null)
-                return skills;
+            if (config?.Queries is null) return skills;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -203,7 +202,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>ISkill</c> in <paramref name="skills"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>ISkill</c> in <paramref name="skills"/> and returns the matches as a list.
         /// </summary>
         /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched</c> for all returned objects.</param>
         public static List<ISkill> MatchNames(IDictionary<string, ISkill> skills, IEnumerable<string> names, bool flagAsMatched = true)

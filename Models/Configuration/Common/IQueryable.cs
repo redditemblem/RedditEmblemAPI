@@ -20,7 +20,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
     public abstract class Queryable : IQueryable
     {
         /// <summary>
-        /// [IQueryable] Represents the Google Sheets API query associated with data for this class.
+        /// [IQueryable] The Google Sheets API query associated with this object.
         /// </summary>
         [JsonRequired]
         public Query Query { get; set; }
@@ -31,7 +31,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
     #region IMultiQueryable
 
     /// <summary>
-    /// Requires class to include a <c>Queries</c> list.
+    /// Requires class to include a <c>Queries</c> list and <c>Name</c> identifier.
     /// </summary>
     public interface IMultiQueryable
     {
@@ -43,12 +43,12 @@ namespace RedditEmblemAPI.Models.Configuration.Common
     }
 
     /// <summary>
-    /// Implements a <c>Queries</c> list.
+    /// Implements a <c>Queries</c> list and <c>Name</c> identifier.
     /// </summary>
     public abstract class MultiQueryable : IMultiQueryable
     {
         /// <summary>
-        /// [IMultiQueryable] Represents the Google Sheets API query associated with for this object.
+        /// [IMultiQueryable] The set of Google Sheets API queries associated with this object.
         /// </summary>
         [JsonRequired]
         public IEnumerable<Query> Queries { get; set; }

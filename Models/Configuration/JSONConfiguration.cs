@@ -58,13 +58,12 @@ namespace RedditEmblemAPI.Models.Configuration
 
         #endregion
 
-        #region Batch Query Requests
+        #region Get Query Sets
 
         /// <summary>
-        /// Returns a <c>List</c> containing all the <c>IQuery</c> objects to be batch queried.
+        /// Returns a list containing all the queries required to load a team's map.
         /// </summary>
-        /// <returns></returns>
-        public List<IQuery> GetMapBatchQueries()
+        public List<IQuery> GetMapLoadQueries()
         {
             List<IQuery> queries = new List<IQuery>();
 
@@ -97,9 +96,9 @@ namespace RedditEmblemAPI.Models.Configuration
         }
 
         /// <summary>
-        /// Returns a <c>List</c> containing all the <c>IQuery</c> objects to be batch queried.
+        /// Returns a list containing all the queries required to load a team's map analysis tool.
         /// </summary>
-        public List<IQuery> GetMapAnalysisBatchQueries()
+        public List<IQuery> GetMapAnalysisToolQueries()
         {
             List<IQuery> queries = new List<IQuery>();
 
@@ -113,10 +112,9 @@ namespace RedditEmblemAPI.Models.Configuration
         }
 
         /// <summary>
-        /// Returns a <c>List</c> containing all the <c>IQuery</c> objects to be batch queried.
+        /// Returns a list containing all the queries required to load a team's convoy.
         /// </summary>
-        /// <returns></returns>
-        public List<IQuery> GetConvoyBatchQueries()
+        public List<IQuery> GetConvoyLoadQueries()
         {
             List<IQuery> queries = new List<IQuery>();
 
@@ -138,10 +136,9 @@ namespace RedditEmblemAPI.Models.Configuration
         }
 
         /// <summary>
-        /// Returns a <c>List</c> containing all the <c>IQuery</c> objects to be batch queried.
+        /// Returns a list containing all the queries required to load a team's shop.
         /// </summary>
-        /// <returns></returns>
-        public List<IQuery> GetShopBatchQueries()
+        public List<IQuery> GetShopLoadQueries()
         {
             List<IQuery> queries = new List<IQuery>();
 
@@ -162,6 +159,6 @@ namespace RedditEmblemAPI.Models.Configuration
             return queries;
         }
 
-        #endregion Batch Query Requests
+        #endregion Get Query Sets
     }
 }

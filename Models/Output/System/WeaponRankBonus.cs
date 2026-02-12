@@ -75,10 +75,9 @@ namespace RedditEmblemAPI.Models.Output.System
         public static List<IWeaponRankBonus> BuildList(WeaponRankBonusesConfig config)
         {
             List<IWeaponRankBonus> weaponRankBonuses = new List<IWeaponRankBonus>();
-            if (config == null || config.Query == null)
-                return weaponRankBonuses;
+            if (config?.Query is null) return weaponRankBonuses;
 
-            foreach (List<object> row in config.Query.Data)
+            foreach (IList<object> row in config.Query.Data)
             {
                 string category = string.Empty;
                 string rank = string.Empty;

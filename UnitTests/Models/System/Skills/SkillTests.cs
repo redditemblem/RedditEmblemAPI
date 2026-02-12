@@ -1,8 +1,10 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Skills;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange;
@@ -520,24 +522,16 @@ namespace UnitTests.Models.System.Skills
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            SkillsConfig config = new SkillsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Skill 1" },
-                            new List<object>(){ "Skill 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string skill1Name = "Skill 1";
+            string skill2Name = "Skill 2";
 
-            IDictionary<string, ISkill> dict = Skill.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Skill 3" };
+            ISkill skill1 = Substitute.For<ISkill>();
+            skill1.Name.Returns(skill1Name);
+
+            IDictionary<string, ISkill> dict = new Dictionary<string, ISkill>();
+            dict.Add(skill1Name, skill1);
+
+            IEnumerable<string> names = new List<string>() { skill2Name };
 
             Assert.Throws<UnmatchedSkillException>(() => Skill.MatchNames(dict, names));
         }
@@ -545,89 +539,137 @@ namespace UnitTests.Models.System.Skills
         [Test]
         public void MatchNames_SingleMatch()
         {
-            SkillsConfig config = new SkillsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Skill 1" },
-                            new List<object>(){ "Skill 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string skill1Name = "Skill 1";
+            string skill2Name = "Skill 2";
 
-            IDictionary<string, ISkill> dict = Skill.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Skill 1" };
+            ISkill skill1 = Substitute.For<ISkill>();
+            skill1.Name.Returns(skill1Name);
 
+            ISkill skill2 = Substitute.For<ISkill>();
+            skill2.Name.Returns(skill2Name);
+
+            IDictionary<string, ISkill> dict = new Dictionary<string, ISkill>();
+            dict.Add(skill1Name, skill1);
+            dict.Add(skill2Name, skill2);
+
+            IEnumerable<string> names = new List<string>() { skill1Name };
             List<ISkill> matches = Skill.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(skill1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            SkillsConfig config = new SkillsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Skill 1" },
-                            new List<object>(){ "Skill 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string skill1Name = "Skill 1";
+            string skill2Name = "Skill 2";
 
-            IDictionary<string, ISkill> dict = Skill.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Skill 1", "Skill 2" };
+            ISkill skill1 = Substitute.For<ISkill>();
+            skill1.Name.Returns(skill1Name);
 
+            ISkill skill2 = Substitute.For<ISkill>();
+            skill2.Name.Returns(skill2Name);
+
+            IDictionary<string, ISkill> dict = new Dictionary<string, ISkill>();
+            dict.Add(skill1Name, skill1);
+            dict.Add(skill2Name, skill2);
+
+            IEnumerable<string> names = new List<string>() { skill1Name, skill2Name };
             List<ISkill> matches = Skill.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(skill1), Is.True);
+            Assert.That(matches.Contains(skill2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            SkillsConfig config = new SkillsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Skill 1" },
-                            new List<object>(){ "Skill 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string skill1Name = "Skill 1";
+            string skill2Name = "Skill 2";
 
-            IDictionary<string, ISkill> dict = Skill.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Skill 1", "Skill 2" };
+            ISkill skill1 = Substitute.For<ISkill>();
+            skill1.Name.Returns(skill1Name);
 
+            ISkill skill2 = Substitute.For<ISkill>();
+            skill2.Name.Returns(skill2Name);
+
+            IDictionary<string, ISkill> dict = new Dictionary<string, ISkill>();
+            dict.Add(skill1Name, skill1);
+            dict.Add(skill2Name, skill2);
+
+            IEnumerable<string> names = new List<string>() { skill1Name, skill2Name };
             List<ISkill> matches = Skill.MatchNames(dict, names, false);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(skill1), Is.True);
+            Assert.That(matches.Contains(skill2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string skill1Name = "Skill 1";
+
+            ISkill skill1 = Substitute.For<ISkill>();
+            skill1.Name.Returns(skill1Name);
+
+            IDictionary<string, ISkill> dict = new Dictionary<string, ISkill>();
+            dict.Add(skill1Name, skill1);
+
+            string name = "Skill 2";
+
+            Assert.Throws<UnmatchedSkillException>(() => Skill.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string skill1Name = "Skill 1";
+
+            ISkill skill1 = Substitute.For<ISkill>();
+            skill1.Name.Returns(skill1Name);
+
+            IDictionary<string, ISkill> dict = new Dictionary<string, ISkill>();
+            dict.Add(skill1Name, skill1);
+
+            ISkill match = Skill.MatchName(dict, skill1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(skill1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string skill1Name = "Skill 1";
+
+            ISkill skill1 = Substitute.For<ISkill>();
+            skill1.Name.Returns(skill1Name);
+
+            IDictionary<string, ISkill> dict = new Dictionary<string, ISkill>();
+            dict.Add(skill1Name, skill1);
+
+            ISkill match = Skill.MatchName(dict, skill1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(skill1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

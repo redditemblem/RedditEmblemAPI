@@ -33,7 +33,7 @@ namespace RedditEmblemAPI.Services
         public MapData LoadMapData(string teamName)
         {
             JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
-            QueryGoogleSheets(config, config.GetMapBatchQueries());
+            QueryGoogleSheets(config, config.GetMapLoadQueries());
 
             return new MapData(config);
         }
@@ -45,7 +45,7 @@ namespace RedditEmblemAPI.Services
         public MapData LoadMapAnalysis(string teamName)
         {
             JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
-            QueryGoogleSheets(config, config.GetMapAnalysisBatchQueries());
+            QueryGoogleSheets(config, config.GetMapAnalysisToolQueries());
 
             return new MapData(config);
         }
@@ -60,7 +60,7 @@ namespace RedditEmblemAPI.Services
             JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
             if (config.Convoy == null)
                 throw new ConvoyNotConfiguredException();
-            QueryGoogleSheets(config, config.GetConvoyBatchQueries());
+            QueryGoogleSheets(config, config.GetConvoyLoadQueries());
 
             return new ConvoyData(config);
         }
@@ -75,7 +75,7 @@ namespace RedditEmblemAPI.Services
             JSONConfiguration config = LoadTeamJSONConfiguration(teamName);
             if (config.Shop == null)
                 throw new ShopNotConfiguredException();
-            QueryGoogleSheets(config, config.GetShopBatchQueries());
+            QueryGoogleSheets(config, config.GetShopLoadQueries());
 
             return new ShopData(config);
         }

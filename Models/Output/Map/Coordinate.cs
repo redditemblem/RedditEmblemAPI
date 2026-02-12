@@ -1,5 +1,4 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Map;
-using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using System;
 using System.Text.RegularExpressions;

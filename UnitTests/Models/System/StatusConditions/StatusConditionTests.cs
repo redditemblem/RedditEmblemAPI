@@ -1,8 +1,10 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Statuses;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
 
@@ -546,24 +548,16 @@ namespace UnitTests.Models.System.StatusConditions
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            StatusConditionConfig config = new StatusConditionConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Status Condition 1" },
-                            new List<object>(){ "Status Condition 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string status1Name = "Status Condition 1";
+            string status2Name = "Status Condition 2";
 
-            IDictionary<string, IStatusCondition> dict = StatusCondition.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Status Condition 3" };
+            IStatusCondition status1 = Substitute.For<IStatusCondition>();
+            status1.Name.Returns(status1Name);
+
+            IDictionary<string, IStatusCondition> dict = new Dictionary<string, IStatusCondition>();
+            dict.Add(status1Name, status1);
+
+            IEnumerable<string> names = new List<string>() { status2Name };
 
             Assert.Throws<UnmatchedStatusConditionException>(() => StatusCondition.MatchNames(dict, names));
         }
@@ -571,89 +565,137 @@ namespace UnitTests.Models.System.StatusConditions
         [Test]
         public void MatchNames_SingleMatch()
         {
-            StatusConditionConfig config = new StatusConditionConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Status Condition 1" },
-                            new List<object>(){ "Status Condition 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string status1Name = "Status Condition 1";
+            string status2Name = "Status Condition 2";
 
-            IDictionary<string, IStatusCondition> dict = StatusCondition.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Status Condition 1" };
+            IStatusCondition status1 = Substitute.For<IStatusCondition>();
+            status1.Name.Returns(status1Name);
 
+            IStatusCondition status2 = Substitute.For<IStatusCondition>();
+            status2.Name.Returns(status2Name);
+
+            IDictionary<string, IStatusCondition> dict = new Dictionary<string, IStatusCondition>();
+            dict.Add(status1Name, status1);
+            dict.Add(status2Name, status2);
+
+            IEnumerable<string> names = new List<string>() { status1Name };
             List<IStatusCondition> matches = StatusCondition.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(status1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            StatusConditionConfig config = new StatusConditionConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Status Condition 1" },
-                            new List<object>(){ "Status Condition 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string status1Name = "Status Condition 1";
+            string status2Name = "Status Condition 2";
 
-            IDictionary<string, IStatusCondition> dict = StatusCondition.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Status Condition 1", "Status Condition 2" };
+            IStatusCondition status1 = Substitute.For<IStatusCondition>();
+            status1.Name.Returns(status1Name);
 
+            IStatusCondition status2 = Substitute.For<IStatusCondition>();
+            status2.Name.Returns(status2Name);
+
+            IDictionary<string, IStatusCondition> dict = new Dictionary<string, IStatusCondition>();
+            dict.Add(status1Name, status1);
+            dict.Add(status2Name, status2);
+
+            IEnumerable<string> names = new List<string>() { status1Name, status2Name };
             List<IStatusCondition> matches = StatusCondition.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(status1), Is.True);
+            Assert.That(matches.Contains(status2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            StatusConditionConfig config = new StatusConditionConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Status Condition 1" },
-                            new List<object>(){ "Status Condition 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string status1Name = "Status Condition 1";
+            string status2Name = "Status Condition 2";
 
-            IDictionary<string, IStatusCondition> dict = StatusCondition.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Status Condition 1", "Status Condition 2" };
+            IStatusCondition status1 = Substitute.For<IStatusCondition>();
+            status1.Name.Returns(status1Name);
 
+            IStatusCondition status2 = Substitute.For<IStatusCondition>();
+            status2.Name.Returns(status2Name);
+
+            IDictionary<string, IStatusCondition> dict = new Dictionary<string, IStatusCondition>();
+            dict.Add(status1Name, status1);
+            dict.Add(status2Name, status2);
+
+            IEnumerable<string> names = new List<string>() { status1Name, status2Name };
             List<IStatusCondition> matches = StatusCondition.MatchNames(dict, names, false);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(status1), Is.True);
+            Assert.That(matches.Contains(status2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string status1Name = "Status Condition 1";
+
+            IStatusCondition status1 = Substitute.For<IStatusCondition>();
+            status1.Name.Returns(status1Name);
+
+            IDictionary<string, IStatusCondition> dict = new Dictionary<string, IStatusCondition>();
+            dict.Add(status1Name, status1);
+
+            string name = "Status Condition 2";
+
+            Assert.Throws<UnmatchedStatusConditionException>(() => StatusCondition.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string status1Name = "Status Condition 1";
+
+            IStatusCondition status1 = Substitute.For<IStatusCondition>();
+            status1.Name.Returns(status1Name);
+
+            IDictionary<string, IStatusCondition> dict = new Dictionary<string, IStatusCondition>();
+            dict.Add(status1Name, status1);
+
+            IStatusCondition match = StatusCondition.MatchName(dict, status1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(status1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string status1Name = "Status Condition 1";
+
+            IStatusCondition status1 = Substitute.For<IStatusCondition>();
+            status1.Name.Returns(status1Name);
+
+            IDictionary<string, IStatusCondition> dict = new Dictionary<string, IStatusCondition>();
+            dict.Add(status1Name, status1);
+
+            IStatusCondition match = StatusCondition.MatchName(dict, status1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(status1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }
