@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Affiliations;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -443,25 +444,16 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            AffiliationsConfig config = new AffiliationsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Affiliation 1", "1" },
-                            new List<object>(){ "Affiliation 2", "1" }
-                        }
-                    }
-                },
-                Name = 0,
-                Grouping = 1
-            };
+            string aff1Name = "Affiliation 1";
+            string aff2Name = "Affiliation 2";
 
-            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Affiliation 3" };
+            IAffiliation aff1 = Substitute.For<IAffiliation>();
+            aff1.Name.Returns(aff1Name);
+
+            IDictionary<string, IAffiliation> dict = new Dictionary<string, IAffiliation>();
+            dict.Add(aff1Name, aff1);
+
+            IEnumerable<string> names = new List<string>() { aff2Name };
 
             Assert.Throws<UnmatchedAffiliationException>(() => Affiliation.MatchNames(dict, names));
         }
@@ -469,89 +461,137 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_SingleMatch()
         {
-            AffiliationsConfig config = new AffiliationsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Affiliation 1", "1" },
-                            new List<object>(){ "Affiliation 2", "1" }
-                        }
-                    }
-                },
-                Name = 0,
-                Grouping = 1
-            };
+            string aff1Name = "Affiliation 1";
+            string aff2Name = "Affiliation 2";
 
-            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Affiliation 1" };
+            IAffiliation aff1 = Substitute.For<IAffiliation>();
+            aff1.Name.Returns(aff1Name);
 
+            IAffiliation aff2 = Substitute.For<IAffiliation>();
+            aff2.Name.Returns(aff2Name);
+
+            IDictionary<string, IAffiliation> dict = new Dictionary<string, IAffiliation>();
+            dict.Add(aff1Name, aff1);
+            dict.Add(aff2Name, aff2);
+
+            IEnumerable<string> names = new List<string>() { aff1Name };
             List<IAffiliation> matches = Affiliation.MatchNames(dict, names);
+
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(aff1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            AffiliationsConfig config = new AffiliationsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Affiliation 1", "1" },
-                            new List<object>(){ "Affiliation 2", "1" }
-                        }
-                    }
-                },
-                Name = 0,
-                Grouping = 1
-            };
+            string aff1Name = "Affiliation 1";
+            string aff2Name = "Affiliation 2";
 
-            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Affiliation 1", "Affiliation 2" };
+            IAffiliation aff1 = Substitute.For<IAffiliation>();
+            aff1.Name.Returns(aff1Name);
 
+            IAffiliation aff2 = Substitute.For<IAffiliation>();
+            aff2.Name.Returns(aff2Name);
+
+            IDictionary<string, IAffiliation> dict = new Dictionary<string, IAffiliation>();
+            dict.Add(aff1Name, aff1);
+            dict.Add(aff2Name, aff2);
+
+            IEnumerable<string> names = new List<string>() { aff1Name, aff2Name };
             List<IAffiliation> matches = Affiliation.MatchNames(dict, names);
+
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(aff1), Is.True);
+            Assert.That(matches.Contains(aff2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            AffiliationsConfig config = new AffiliationsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Affiliation 1", "1" },
-                            new List<object>(){ "Affiliation 2", "1" }
-                        }
-                    }
-                },
-                Name = 0,
-                Grouping = 1
-            };
+            string aff1Name = "Affiliation 1";
+            string aff2Name = "Affiliation 2";
 
-            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Affiliation 1", "Affiliation 2" };
+            IAffiliation aff1 = Substitute.For<IAffiliation>();
+            aff1.Name.Returns(aff1Name);
 
+            IAffiliation aff2 = Substitute.For<IAffiliation>();
+            aff2.Name.Returns(aff2Name);
+
+            IDictionary<string, IAffiliation> dict = new Dictionary<string, IAffiliation>();
+            dict.Add(aff1Name, aff1);
+            dict.Add(aff2Name, aff2);
+
+            IEnumerable<string> names = new List<string>() { aff1Name, aff2Name };
             List<IAffiliation> matches = Affiliation.MatchNames(dict, names, false);
+
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(aff1), Is.True);
+            Assert.That(matches.Contains(aff2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string aff1Name = "Affiliation 1";
+
+            IAffiliation aff1 = Substitute.For<IAffiliation>();
+            aff1.Name.Returns(aff1Name);
+
+            IDictionary<string, IAffiliation> dict = new Dictionary<string, IAffiliation>();
+            dict.Add(aff1Name, aff1);
+
+            string name = "Affiliation 2";
+
+            Assert.Throws<UnmatchedAffiliationException>(() => Affiliation.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string aff1Name = "Affiliation 1";
+
+            IAffiliation aff1 = Substitute.For<IAffiliation>();
+            aff1.Name.Returns(aff1Name);
+
+            IDictionary<string, IAffiliation> dict = new Dictionary<string, IAffiliation>();
+            dict.Add(aff1Name, aff1);
+
+            IAffiliation match = Affiliation.MatchName(dict, aff1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(aff1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string aff1Name = "Affiliation 1";
+
+            IAffiliation aff1 = Substitute.For<IAffiliation>();
+            aff1.Name.Returns(aff1Name);
+
+            IDictionary<string, IAffiliation> dict = new Dictionary<string, IAffiliation>();
+            dict.Add(aff1Name, aff1);
+
+            IAffiliation match = Affiliation.MatchName(dict, aff1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(aff1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

@@ -643,7 +643,7 @@ namespace UnitTests.Models.System
             item.FlagAsMatched();
 
             Assert.That(item.Matched, Is.True);
-            item.EquippedSkills.ForEach(s => s.SkillObj.Received().FlagAsMatched());
+            item.EquippedSkills.ForEach(s => s.SkillObj.Received(1).FlagAsMatched());
         }
 
         [Test]
@@ -676,7 +676,7 @@ namespace UnitTests.Models.System
             item.FlagAsMatched();
 
             Assert.That(item.Matched, Is.True);
-            item.Tags.ForEach(t => t.Received().FlagAsMatched());
+            item.Tags.ForEach(t => t.Received(1).FlagAsMatched());
         }
 
         public void FlagAsMatched_WithEngravings()
@@ -708,7 +708,7 @@ namespace UnitTests.Models.System
             item.FlagAsMatched();
 
             Assert.That(item.Matched, Is.True);
-            item.Engravings.ForEach(e => e.Received().FlagAsMatched());
+            item.Engravings.ForEach(e => e.Received(1).FlagAsMatched());
         }
 
         #endregion FlagAsMatched
@@ -879,34 +879,16 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            ItemsConfig config = new ItemsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
-                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
-                        }
-                    }
-                },
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
-                Range = new ItemRangeConfig()
-                {
-                    Minimum = 5,
-                    Maximum = 6
-                }
-            };
+            string item1Name = "Item 1";
+            string item2Name = "Item 2";
 
-            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
-            IEnumerable<string> names = new List<string>() { "Item 3" };
+            IItem item1 = Substitute.For<IItem>();
+            item1.Name.Returns(item1Name);
+
+            IDictionary<string, IItem> dict = new Dictionary<string, IItem>();
+            dict.Add(item1Name, item1);
+
+            IEnumerable<string> names = new List<string>() { item2Name };
 
             Assert.Throws<UnmatchedItemException>(() => Item.MatchNames(dict, names));
         }
@@ -914,119 +896,137 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_SingleMatch()
         {
-            ItemsConfig config = new ItemsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
-                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
-                        }
-                    }
-                },
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
-                Range = new ItemRangeConfig()
-                {
-                    Minimum = 5,
-                    Maximum = 6
-                }
-            };
+            string item1Name = "Item 1";
+            string item2Name = "Item 2";
 
-            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
-            IEnumerable<string> names = new List<string>() { "Item 1" };
+            IItem item1 = Substitute.For<IItem>();
+            item1.Name.Returns(item1Name);
 
+            IItem item2 = Substitute.For<IItem>();
+            item2.Name.Returns(item2Name);
+
+            IDictionary<string, IItem> dict = new Dictionary<string, IItem>();
+            dict.Add(item1Name, item1);
+            dict.Add(item2Name, item2);
+
+            IEnumerable<string> names = new List<string>() { item1Name };
             List<IItem> matches = Item.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(item1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            ItemsConfig config = new ItemsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
-                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
-                        }
-                    }
-                },
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
-                Range = new ItemRangeConfig()
-                {
-                    Minimum = 5,
-                    Maximum = 6
-                }
-            };
+            string item1Name = "Item 1";
+            string item2Name = "Item 2";
 
-            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
-            IEnumerable<string> names = new List<string>() { "Item 1", "Item 2" };
+            IItem item1 = Substitute.For<IItem>();
+            item1.Name.Returns(item1Name);
 
+            IItem item2 = Substitute.For<IItem>();
+            item2.Name.Returns(item2Name);
+
+            IDictionary<string, IItem> dict = new Dictionary<string, IItem>();
+            dict.Add(item1Name, item1);
+            dict.Add(item2Name, item2);
+
+            IEnumerable<string> names = new List<string>() { item1Name, item2Name };
             List<IItem> matches = Item.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(item1), Is.True);
+            Assert.That(matches.Contains(item2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            ItemsConfig config = new ItemsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Item 1", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM },
-                            new List<object>(){ "Item 2", INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM }
-                        }
-                    }
-                },
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
-                Range = new ItemRangeConfig()
-                {
-                    Minimum = 5,
-                    Maximum = 6
-                }
-            };
+            string item1Name = "Item 1";
+            string item2Name = "Item 2";
 
-            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
-            IEnumerable<string> names = new List<string>() { "Item 1", "Item 2" };
+            IItem item1 = Substitute.For<IItem>();
+            item1.Name.Returns(item1Name);
 
+            IItem item2 = Substitute.For<IItem>();
+            item2.Name.Returns(item2Name);
+
+            IDictionary<string, IItem> dict = new Dictionary<string, IItem>();
+            dict.Add(item1Name, item1);
+            dict.Add(item2Name, item2);
+
+            IEnumerable<string> names = new List<string>() { item1Name, item2Name };
             List<IItem> matches = Item.MatchNames(dict, names, false);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(item1), Is.True);
+            Assert.That(matches.Contains(item2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string item1Name = "Item 1";
+
+            IItem item1 = Substitute.For<IItem>();
+            item1.Name.Returns(item1Name);
+
+            IDictionary<string, IItem> dict = new Dictionary<string, IItem>();
+            dict.Add(item1Name, item1);
+
+            string name = "Item 2";
+
+            Assert.Throws<UnmatchedItemException>(() => Item.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string item1Name = "Item 1";
+
+            IItem item1 = Substitute.For<IItem>();
+            item1.Name.Returns(item1Name);
+
+            IDictionary<string, IItem> dict = new Dictionary<string, IItem>();
+            dict.Add(item1Name, item1);
+
+            IItem match = Item.MatchName(dict, item1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(item1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string item1Name = "Item 1";
+
+            IItem item1 = Substitute.For<IItem>();
+            item1.Name.Returns(item1Name);
+
+            IDictionary<string, IItem> dict = new Dictionary<string, IItem>();
+            dict.Add(item1Name, item1);
+
+            IItem match = Item.MatchName(dict, item1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(item1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

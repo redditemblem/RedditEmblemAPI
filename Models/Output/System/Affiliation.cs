@@ -72,16 +72,15 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>IAffiliation</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>IAffiliation</c> from each valid row.
         /// </summary>
         /// <exception cref="AffiliationProcessingException"></exception>
         public static IDictionary<string, IAffiliation> BuildDictionary(AffiliationsConfig config)
         {
             IDictionary<string, IAffiliation> affiliations = new Dictionary<string, IAffiliation>();
-            if (config == null || config.Queries == null)
-                return affiliations;
+            if (config?.Queries is null) return affiliations;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -103,7 +102,7 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>IAffiliation</c> in <paramref name="affiliations"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>IAffiliation</c> in <paramref name="affiliations"/> and returns the matches as a list.
         /// </summary>
         /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
         public static List<IAffiliation> MatchNames(IDictionary<string, IAffiliation> affiliations, IEnumerable<string> names, bool flagAsMatched = true)

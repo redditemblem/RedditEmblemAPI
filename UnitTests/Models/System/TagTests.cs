@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Tags;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -352,24 +353,16 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            TagsConfig config = new TagsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Tag 1" },
-                            new List<object>(){ "Tag 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string tag1Name = "Tag 1";
+            string tag2Name = "Tag 2";
 
-            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Tag 3" };
+            ITag tag1 = Substitute.For<ITag>();
+            tag1.Name.Returns(tag1Name);
+
+            IDictionary<string, ITag> dict = new Dictionary<string, ITag>();
+            dict.Add(tag1Name, tag1);
+
+            IEnumerable<string> names = new List<string>() { tag2Name };
 
             Assert.Throws<UnmatchedTagException>(() => Tag.MatchNames(dict, names));
         }
@@ -377,89 +370,137 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_SingleMatch()
         {
-            TagsConfig config = new TagsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Tag 1" },
-                            new List<object>(){ "Tag 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string tag1Name = "Tag 1";
+            string tag2Name = "Tag 2";
 
-            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Tag 1" };
+            ITag tag1 = Substitute.For<ITag>();
+            tag1.Name.Returns(tag1Name);
 
+            ITag tag2 = Substitute.For<ITag>();
+            tag2.Name.Returns(tag2Name);
+
+            IDictionary<string, ITag> dict = new Dictionary<string, ITag>();
+            dict.Add(tag1Name, tag1);
+            dict.Add(tag2Name, tag2);
+
+            IEnumerable<string> names = new List<string>() { tag1Name };
             List<ITag> matches = Tag.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(tag1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            TagsConfig config = new TagsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Tag 1" },
-                            new List<object>(){ "Tag 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string tag1Name = "Tag 1";
+            string tag2Name = "Tag 2";
 
-            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Tag 1", "Tag 2" };
+            ITag tag1 = Substitute.For<ITag>();
+            tag1.Name.Returns(tag1Name);
 
+            ITag tag2 = Substitute.For<ITag>();
+            tag2.Name.Returns(tag2Name);
+
+            IDictionary<string, ITag> dict = new Dictionary<string, ITag>();
+            dict.Add(tag1Name, tag1);
+            dict.Add(tag2Name, tag2);
+
+            IEnumerable<string> names = new List<string>() { tag1Name, tag2Name };
             List<ITag> matches = Tag.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(tag1), Is.True);
+            Assert.That(matches.Contains(tag2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            TagsConfig config = new TagsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Tag 1" },
-                            new List<object>(){ "Tag 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string tag1Name = "Tag 1";
+            string tag2Name = "Tag 2";
 
-            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Tag 1", "Tag 2" };
+            ITag tag1 = Substitute.For<ITag>();
+            tag1.Name.Returns(tag1Name);
 
+            ITag tag2 = Substitute.For<ITag>();
+            tag2.Name.Returns(tag2Name);
+
+            IDictionary<string, ITag> dict = new Dictionary<string, ITag>();
+            dict.Add(tag1Name, tag1);
+            dict.Add(tag2Name, tag2);
+
+            IEnumerable<string> names = new List<string>() { tag1Name, tag2Name };
             List<ITag> matches = Tag.MatchNames(dict, names, false);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(tag1), Is.True);
+            Assert.That(matches.Contains(tag2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string tag1Name = "Tag 1";
+
+            ITag tag1 = Substitute.For<ITag>();
+            tag1.Name.Returns(tag1Name);
+
+            IDictionary<string, ITag> dict = new Dictionary<string, ITag>();
+            dict.Add(tag1Name, tag1);
+
+            string name = "Tag 2";
+
+            Assert.Throws<UnmatchedTagException>(() => Tag.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string tag1Name = "Tag 1";
+
+            ITag tag1 = Substitute.For<ITag>();
+            tag1.Name.Returns(tag1Name);
+
+            IDictionary<string, ITag> dict = new Dictionary<string, ITag>();
+            dict.Add(tag1Name, tag1);
+
+            ITag match = Tag.MatchName(dict, tag1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(tag1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string tag1Name = "Tag 1";
+
+            ITag tag1 = Substitute.For<ITag>();
+            tag1.Name.Returns(tag1Name);
+
+            IDictionary<string, ITag> dict = new Dictionary<string, ITag>();
+            dict.Add(tag1Name, tag1);
+
+            ITag match = Tag.MatchName(dict, tag1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(tag1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

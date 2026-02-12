@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Emblems;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -414,24 +415,16 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            EmblemsConfig config = new EmblemsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Emblem 1" },
-                            new List<object>(){ "Emblem 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string emblem1Name = "Emblem 1";
+            string emblem2Name = "Emblem 2";
 
-            IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Emblem 3" };
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+
+            IEnumerable<string> names = new List<string>() { emblem2Name };
 
             Assert.Throws<UnmatchedEmblemException>(() => Emblem.MatchNames(dict, names));
         }
@@ -439,89 +432,137 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_SingleMatch()
         {
-            EmblemsConfig config = new EmblemsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Emblem 1" },
-                            new List<object>(){ "Emblem 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string emblem1Name = "Emblem 1";
+            string emblem2Name = "Emblem 2";
 
-            IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Emblem 1" };
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
 
+            IEmblem emblem2 = Substitute.For<IEmblem>();
+            emblem2.Name.Returns(emblem2Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+            dict.Add(emblem2Name, emblem2);
+
+            IEnumerable<string> names = new List<string>() { emblem1Name };
             List<IEmblem> matches = Emblem.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(emblem1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            EmblemsConfig config = new EmblemsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Emblem 1" },
-                            new List<object>(){ "Emblem 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string emblem1Name = "Emblem 1";
+            string emblem2Name = "Emblem 2";
 
-            IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Emblem 1", "Emblem 2" };
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
 
+            IEmblem emblem2 = Substitute.For<IEmblem>();
+            emblem2.Name.Returns(emblem2Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+            dict.Add(emblem2Name, emblem2);
+
+            IEnumerable<string> names = new List<string>() { emblem1Name, emblem2Name };
             List<IEmblem> matches = Emblem.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(emblem1), Is.True);
+            Assert.That(matches.Contains(emblem2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            EmblemsConfig config = new EmblemsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Emblem 1" },
-                            new List<object>(){ "Emblem 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string emblem1Name = "Emblem 1";
+            string emblem2Name = "Emblem 2";
 
-            IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Emblem 1", "Emblem 2" };
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
 
+            IEmblem emblem2 = Substitute.For<IEmblem>();
+            emblem2.Name.Returns(emblem2Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+            dict.Add(emblem2Name, emblem2);
+
+            IEnumerable<string> names = new List<string>() { emblem1Name, emblem2Name };
             List<IEmblem> matches = Emblem.MatchNames(dict, names, false);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(emblem1), Is.True);
+            Assert.That(matches.Contains(emblem2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string emblem1Name = "Emblem 1";
+
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+
+            string name = "Emblem 2";
+
+            Assert.Throws<UnmatchedEmblemException>(() => Emblem.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string emblem1Name = "Emblem 1";
+
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+
+            IEmblem match = Emblem.MatchName(dict, emblem1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(emblem1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string emblem1Name = "Emblem 1";
+
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+
+            IEmblem match = Emblem.MatchName(dict, emblem1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(emblem1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

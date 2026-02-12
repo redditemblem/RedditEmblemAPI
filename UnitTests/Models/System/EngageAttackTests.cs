@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Emblems;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -314,24 +315,16 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            EngageAttacksConfig config = new EngageAttacksConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Engage Attack 1" },
-                            new List<object>(){ "Engage Attack 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string attack1Name = "Engage Attack 1";
+            string attack2Name = "Engage Attack 2";
 
-            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Engage Attack 3" };
+            IEngageAttack attack1 = Substitute.For<IEngageAttack>();
+            attack1.Name.Returns(attack1Name);
+
+            IDictionary<string, IEngageAttack> dict = new Dictionary<string, IEngageAttack>();
+            dict.Add(attack1Name, attack1);
+
+            IEnumerable<string> names = new List<string>() { attack2Name };
 
             Assert.Throws<UnmatchedEngageAttackException>(() => EngageAttack.MatchNames(dict, names));
         }
@@ -339,89 +332,137 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_SingleMatch()
         {
-            EngageAttacksConfig config = new EngageAttacksConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Engage Attack 1" },
-                            new List<object>(){ "Engage Attack 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string attack1Name = "Engage Attack 1";
+            string attack2Name = "Engage Attack 2";
 
-            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Engage Attack 1" };
+            IEngageAttack attack1 = Substitute.For<IEngageAttack>();
+            attack1.Name.Returns(attack1Name);
 
+            IEngageAttack attack2 = Substitute.For<IEngageAttack>();
+            attack2.Name.Returns(attack2Name);
+
+            IDictionary<string, IEngageAttack> dict = new Dictionary<string, IEngageAttack>();
+            dict.Add(attack1Name, attack1);
+            dict.Add(attack2Name, attack2);
+
+            IEnumerable<string> names = new List<string>() { attack1Name };
             List<IEngageAttack> matches = EngageAttack.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(attack1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            EngageAttacksConfig config = new EngageAttacksConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Engage Attack 1" },
-                            new List<object>(){ "Engage Attack 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string attack1Name = "Engage Attack 1";
+            string attack2Name = "Engage Attack 2";
 
-            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Engage Attack 1", "Engage Attack 2" };
+            IEngageAttack attack1 = Substitute.For<IEngageAttack>();
+            attack1.Name.Returns(attack1Name);
 
+            IEngageAttack attack2 = Substitute.For<IEngageAttack>();
+            attack2.Name.Returns(attack2Name);
+
+            IDictionary<string, IEngageAttack> dict = new Dictionary<string, IEngageAttack>();
+            dict.Add(attack1Name, attack1);
+            dict.Add(attack2Name, attack2);
+
+            IEnumerable<string> names = new List<string>() { attack1Name, attack2Name };
             List<IEngageAttack> matches = EngageAttack.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(attack1), Is.True);
+            Assert.That(matches.Contains(attack2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            EngageAttacksConfig config = new EngageAttacksConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Engage Attack 1" },
-                            new List<object>(){ "Engage Attack 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string attack1Name = "Engage Attack 1";
+            string attack2Name = "Engage Attack 2";
 
-            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Engage Attack 1", "Engage Attack 2" };
+            IEngageAttack attack1 = Substitute.For<IEngageAttack>();
+            attack1.Name.Returns(attack1Name);
 
+            IEngageAttack attack2 = Substitute.For<IEngageAttack>();
+            attack2.Name.Returns(attack2Name);
+
+            IDictionary<string, IEngageAttack> dict = new Dictionary<string, IEngageAttack>();
+            dict.Add(attack1Name, attack1);
+            dict.Add(attack2Name, attack2);
+
+            IEnumerable<string> names = new List<string>() { attack1Name, attack2Name };
             List<IEngageAttack> matches = EngageAttack.MatchNames(dict, names, false);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(attack1), Is.True);
+            Assert.That(matches.Contains(attack2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string attack1Name = "Engage Attack 1";
+
+            IEngageAttack attack1 = Substitute.For<IEngageAttack>();
+            attack1.Name.Returns(attack1Name);
+
+            IDictionary<string, IEngageAttack> dict = new Dictionary<string, IEngageAttack>();
+            dict.Add(attack1Name, attack1);
+
+            string name = "Engage Attack 2";
+
+            Assert.Throws<UnmatchedEngageAttackException>(() => EngageAttack.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string attack1Name = "Engage Attack 1";
+
+            IEngageAttack attack1 = Substitute.For<IEngageAttack>();
+            attack1.Name.Returns(attack1Name);
+
+            IDictionary<string, IEngageAttack> dict = new Dictionary<string, IEngageAttack>();
+            dict.Add(attack1Name, attack1);
+
+            IEngageAttack match = EngageAttack.MatchName(dict, attack1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(attack1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string attack1Name = "Engage Attack 1";
+
+            IEngageAttack attack1 = Substitute.For<IEngageAttack>();
+            attack1.Name.Returns(attack1Name);
+
+            IDictionary<string, IEngageAttack> dict = new Dictionary<string, IEngageAttack>();
+            dict.Add(attack1Name, attack1);
+
+            IEngageAttack match = EngageAttack.MatchName(dict, attack1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(attack1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

@@ -195,16 +195,15 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>ITerrainType</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>ITerrainType</c> from each valid row.
         /// </summary>
         /// <exception cref="TerrainTypeProcessingException"></exception>
         public static IDictionary<string, ITerrainType> BuildDictionary(TerrainTypesConfig config, IDictionary<string, IAffiliation> affiliations)
         {
             IDictionary<string, ITerrainType> terrainTypes = new Dictionary<string, ITerrainType>();
-            if (config == null || config.Queries == null)
-                return terrainTypes;
+            if (config?.Queries is null) return terrainTypes;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -226,20 +225,20 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>ITerrainType</c> in <paramref name="terrainTypes"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>ITerrainType</c> in <paramref name="terrainTypes"/> and returns the matches as a list.
         /// </summary>
         /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
-        public static List<ITerrainType> MatchNames(IDictionary<string, ITerrainType> terrainTypes, IEnumerable<string> names, Coordinate coord, bool flagAsMatched = true)
+        public static List<ITerrainType> MatchNames(IDictionary<string, ITerrainType> terrainTypes, IEnumerable<string> names, ICoordinate coord, bool flagAsMatched = true)
         {
             return names.Select(n => MatchName(terrainTypes, n, coord, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>TerrainType</c> in <paramref name="terrainTypes"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>ITerrainType</c> in <paramref name="terrainTypes"/> and returns it.
         /// </summary>
         /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedTileTerrainTypeException"></exception>
-        public static ITerrainType MatchName(IDictionary<string, ITerrainType> terrainTypes, string name, Coordinate coord, bool flagAsMatched = true)
+        public static ITerrainType MatchName(IDictionary<string, ITerrainType> terrainTypes, string name, ICoordinate coord, bool flagAsMatched = true)
         {
             ITerrainType match;
             if (!terrainTypes.TryGetValue(name, out match))

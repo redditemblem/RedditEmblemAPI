@@ -855,122 +855,161 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            TerrainTypesConfig config = new TerrainTypesConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Terrain Type 1" },
-                            new List<object>(){ "Terrain Type 2" }
-                        }
-                    }
-                },
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
-            };
+            string type1Name = "Terrain Type 1";
+            string type2Name = "Terrain Type 2";
 
-            IDictionary<string, ITerrainType> dict = TerrainType.BuildDictionary(config, AFFILIATIONS);
-            IEnumerable<string> names = new List<string>() { "Terrain Type 3" };
-            Coordinate coord = new Coordinate();
+            ITerrainType type1 = Substitute.For<ITerrainType>();
+            type1.Name.Returns(type1Name);
 
+            IDictionary<string, ITerrainType> dict = new Dictionary<string, ITerrainType>();
+            dict.Add(type1Name, type1);
+
+            IEnumerable<string> names = new List<string>() { type2Name };
+
+            ICoordinate coord = new Coordinate();
             Assert.Throws<UnmatchedTileTerrainTypeException>(() => TerrainType.MatchNames(dict, names, coord));
         }
 
         [Test]
         public void MatchNames_SingleMatch()
         {
-            TerrainTypesConfig config = new TerrainTypesConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Terrain Type 1" },
-                            new List<object>(){ "Terrain Type 2" }
-                        }
-                    }
-                },
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
-            };
+            string type1Name = "Terrain Type 1";
+            string type2Name = "Terrain Type 2";
 
-            IDictionary<string, ITerrainType> dict = TerrainType.BuildDictionary(config, AFFILIATIONS);
-            IEnumerable<string> names = new List<string>() { "Terrain Type 1" };
-            Coordinate coord = new Coordinate();
+            ITerrainType type1 = Substitute.For<ITerrainType>();
+            type1.Name.Returns(type1Name);
 
+            ITerrainType type2 = Substitute.For<ITerrainType>();
+            type2.Name.Returns(type2Name);
+
+            IDictionary<string, ITerrainType> dict = new Dictionary<string, ITerrainType>();
+            dict.Add(type1Name, type1);
+            dict.Add(type2Name, type2);
+
+            IEnumerable<string> names = new List<string>() { type1Name };
+            ICoordinate coord = new Coordinate();
             List<ITerrainType> matches = TerrainType.MatchNames(dict, names, coord);
 
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(type1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            TerrainTypesConfig config = new TerrainTypesConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Terrain Type 1" },
-                            new List<object>(){ "Terrain Type 2" }
-                        }
-                    }
-                },
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
-            };
+            string type1Name = "Terrain Type 1";
+            string type2Name = "Terrain Type 2";
 
-            IDictionary<string, ITerrainType> dict = TerrainType.BuildDictionary(config, AFFILIATIONS);
-            IEnumerable<string> names = new List<string>() { "Terrain Type 1", "Terrain Type 2" };
-            Coordinate coord = new Coordinate();
+            ITerrainType type1 = Substitute.For<ITerrainType>();
+            type1.Name.Returns(type1Name);
 
+            ITerrainType type2 = Substitute.For<ITerrainType>();
+            type2.Name.Returns(type2Name);
+
+            IDictionary<string, ITerrainType> dict = new Dictionary<string, ITerrainType>();
+            dict.Add(type1Name, type1);
+            dict.Add(type2Name, type2);
+
+            IEnumerable<string> names = new List<string>() { type1Name, type2Name };
+            ICoordinate coord = new Coordinate();
             List<ITerrainType> matches = TerrainType.MatchNames(dict, names, coord);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(type1), Is.True);
+            Assert.That(matches.Contains(type2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            TerrainTypesConfig config = new TerrainTypesConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Terrain Type 1" },
-                            new List<object>(){ "Terrain Type 2" }
-                        }
-                    }
-                },
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
-            };
+            string type1Name = "Terrain Type 1";
+            string type2Name = "Terrain Type 2";
 
-            IDictionary<string, ITerrainType> dict = TerrainType.BuildDictionary(config, AFFILIATIONS);
-            IEnumerable<string> names = new List<string>() { "Terrain Type 1", "Terrain Type 2" };
-            Coordinate coord = new Coordinate();
+            ITerrainType type1 = Substitute.For<ITerrainType>();
+            type1.Name.Returns(type1Name);
 
+            ITerrainType type2 = Substitute.For<ITerrainType>();
+            type2.Name.Returns(type2Name);
+
+            IDictionary<string, ITerrainType> dict = new Dictionary<string, ITerrainType>();
+            dict.Add(type1Name, type1);
+            dict.Add(type2Name, type2);
+
+            IEnumerable<string> names = new List<string>() { type1Name, type2Name };
+            ICoordinate coord = new Coordinate();
             List<ITerrainType> matches = TerrainType.MatchNames(dict, names, coord, false);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(type1), Is.True);
+            Assert.That(matches.Contains(type2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string type1Name = "Terrain Type 1";
+
+            ITerrainType type1 = Substitute.For<ITerrainType>();
+            type1.Name.Returns(type1Name);
+
+            IDictionary<string, ITerrainType> dict = new Dictionary<string, ITerrainType>();
+            dict.Add(type1Name, type1);
+
+            string name = "Terrain Type 2";
+            ICoordinate coord = new Coordinate();
+
+            Assert.Throws<UnmatchedTileTerrainTypeException>(() => TerrainType.MatchName(dict, name, coord));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string type1Name = "Terrain Type 1";
+
+            ITerrainType type1 = Substitute.For<ITerrainType>();
+            type1.Name.Returns(type1Name);
+
+            IDictionary<string, ITerrainType> dict = new Dictionary<string, ITerrainType>();
+            dict.Add(type1Name, type1);
+
+            ICoordinate coord = new Coordinate();
+            ITerrainType match = TerrainType.MatchName(dict, type1Name, coord);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(type1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string type1Name = "Terrain Type 1";
+
+            ITerrainType type1 = Substitute.For<ITerrainType>();
+            type1.Name.Returns(type1Name);
+
+            IDictionary<string, ITerrainType> dict = new Dictionary<string, ITerrainType>();
+            dict.Add(type1Name, type1);
+
+            ICoordinate coord = new Coordinate();
+            ITerrainType match = TerrainType.MatchName(dict, type1Name, coord, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(type1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

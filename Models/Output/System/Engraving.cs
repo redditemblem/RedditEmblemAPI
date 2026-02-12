@@ -116,16 +116,15 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>IEngraving</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>IEngraving</c> from each valid row.
         /// </summary>
         /// <exception cref="EngravingProcessingException"></exception>
         public static IDictionary<string, IEngraving> BuildDictionary(EngravingsConfig config, IDictionary<string, ITag> tags)
         {
             IDictionary<string, IEngraving> engravings = new Dictionary<string, IEngraving>();
-            if (config == null || config.Queries == null)
-                return engravings;
+            if (config?.Queries is null) return engravings;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -147,7 +146,7 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>IEngraving</c> in <paramref name="engravings"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>IEngraving</c> in <paramref name="engravings"/> and returns the matches as a list.
         /// </summary>
         /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
         public static List<IEngraving> MatchNames(IDictionary<string, IEngraving> engravings, IEnumerable<string> names, bool flagAsMatched = true)

@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Adjutants;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -452,24 +453,16 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            AdjutantsConfig config = new AdjutantsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Adjutant 1" },
-                            new List<object>(){ "Adjutant 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string adj1Name = "Adjutant 1";
+            string adj2Name = "Adjutant 2";
 
-            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Adjutant 3" };
+            IAdjutant adj1 = Substitute.For<IAdjutant>();
+            adj1.Name.Returns(adj1Name);
+
+            IDictionary<string, IAdjutant> dict = new Dictionary<string, IAdjutant>();
+            dict.Add(adj1Name, adj1);
+
+            IEnumerable<string> names = new List<string>() { adj2Name };
 
             Assert.Throws<UnmatchedAdjutantException>(() => Adjutant.MatchNames(dict, names));
         }
@@ -477,86 +470,137 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_SingleMatch()
         {
-            AdjutantsConfig config = new AdjutantsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Adjutant 1" },
-                            new List<object>(){ "Adjutant 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string adj1Name = "Adjutant 1";
+            string adj2Name = "Adjutant 2";
 
-            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Adjutant 1" };
+            IAdjutant adj1 = Substitute.For<IAdjutant>();
+            adj1.Name.Returns(adj1Name);
 
+            IAdjutant adj2 = Substitute.For<IAdjutant>();
+            adj2.Name.Returns(adj2Name);
+
+            IDictionary<string, IAdjutant> dict = new Dictionary<string, IAdjutant>();
+            dict.Add(adj1Name, adj1);
+            dict.Add(adj2Name, adj2);
+
+            IEnumerable<string> names = new List<string>() { adj1Name };
             List<IAdjutant> matches = Adjutant.MatchNames(dict, names);
+
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(adj1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            AdjutantsConfig config = new AdjutantsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Adjutant 1" },
-                            new List<object>(){ "Adjutant 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string adj1Name = "Adjutant 1";
+            string adj2Name = "Adjutant 2";
 
-            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Adjutant 1", "Adjutant 2" };
+            IAdjutant adj1 = Substitute.For<IAdjutant>();
+            adj1.Name.Returns(adj1Name);
 
+            IAdjutant adj2 = Substitute.For<IAdjutant>();
+            adj2.Name.Returns(adj2Name);
+
+            IDictionary<string, IAdjutant> dict = new Dictionary<string, IAdjutant>();
+            dict.Add(adj1Name, adj1);
+            dict.Add(adj2Name, adj2);
+
+            IEnumerable<string> names = new List<string>() { adj1Name, adj2Name };
             List<IAdjutant> matches = Adjutant.MatchNames(dict, names);
+
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(adj1), Is.True);
+            Assert.That(matches.Contains(adj2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            AdjutantsConfig config = new AdjutantsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Adjutant 1" },
-                            new List<object>(){ "Adjutant 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string adj1Name = "Adjutant 1";
+            string adj2Name = "Adjutant 2";
 
-            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Adjutant 1", "Adjutant 2" };
+            IAdjutant adj1 = Substitute.For<IAdjutant>();
+            adj1.Name.Returns(adj1Name);
 
+            IAdjutant adj2 = Substitute.For<IAdjutant>();
+            adj2.Name.Returns(adj2Name);
+
+            IDictionary<string, IAdjutant> dict = new Dictionary<string, IAdjutant>();
+            dict.Add(adj1Name, adj1);
+            dict.Add(adj2Name, adj2);
+
+            IEnumerable<string> names = new List<string>() { adj1Name, adj2Name };
             List<IAdjutant> matches = Adjutant.MatchNames(dict, names, false);
+
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(adj1), Is.True);
+            Assert.That(matches.Contains(adj2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string adj1Name = "Adjutant 1";
+
+            IAdjutant adj1 = Substitute.For<IAdjutant>();
+            adj1.Name.Returns(adj1Name);
+
+            IDictionary<string, IAdjutant> dict = new Dictionary<string, IAdjutant>();
+            dict.Add(adj1Name, adj1);
+
+            string name = "Adjutant 2";
+            
+            Assert.Throws<UnmatchedAdjutantException>(() => Adjutant.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string adj1Name = "Adjutant 1";
+
+            IAdjutant adj1 = Substitute.For<IAdjutant>();
+            adj1.Name.Returns(adj1Name);
+
+            IDictionary<string, IAdjutant> dict = new Dictionary<string, IAdjutant>();
+            dict.Add(adj1Name, adj1);
+
+            IAdjutant match = Adjutant.MatchName(dict, adj1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(adj1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string adj1Name = "Adjutant 1";
+
+            IAdjutant adj1 = Substitute.For<IAdjutant>();
+            adj1.Name.Returns(adj1Name);
+
+            IDictionary<string, IAdjutant> dict = new Dictionary<string, IAdjutant>();
+            dict.Add(adj1Name, adj1);
+
+            IAdjutant match = Adjutant.MatchName(dict, adj1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(adj1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

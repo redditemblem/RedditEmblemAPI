@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.TileObjects;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -667,122 +668,161 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            TileObjectsConfig config = new TileObjectsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Tile Object 1", UnitTestConsts.IMAGE_URL },
-                            new List<object>(){ "Tile Object 2", UnitTestConsts.IMAGE_URL }
-                        }
-                    }
-                },
-                Name = 0,
-                SpriteURL = 1
-            };
+            string obj1Name = "Tile Object 1";
+            string obj2Name = "Tile Object 2";
 
-            IDictionary<string, ITileObject> dict = TileObject.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Tile Object 3" };
+            ITileObject obj1 = Substitute.For<ITileObject>();
+            obj1.Name.Returns(obj1Name);
 
+            IDictionary<string, ITileObject> dict = new Dictionary<string, ITileObject>();
+            dict.Add(obj1Name, obj1);
+
+            IEnumerable<string> names = new List<string>() { obj2Name };
             ICoordinate coord = new Coordinate();
+
             Assert.Throws<UnmatchedTileObjectException>(() => TileObject.MatchNames(dict, names, coord));
         }
 
         [Test]
         public void MatchNames_SingleMatch()
         {
-            TileObjectsConfig config = new TileObjectsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Tile Object 1", UnitTestConsts.IMAGE_URL },
-                            new List<object>(){ "Tile Object 2", UnitTestConsts.IMAGE_URL }
-                        }
-                    }
-                },
-                Name = 0,
-                SpriteURL = 1
-            };
+            string obj1Name = "Tile Object 1";
+            string obj2Name = "Tile Object 2";
 
-            IDictionary<string, ITileObject> dict = TileObject.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Tile Object 1" };
+            ITileObject obj1 = Substitute.For<ITileObject>();
+            obj1.Name.Returns(obj1Name);
 
+            ITileObject obj2 = Substitute.For<ITileObject>();
+            obj2.Name.Returns(obj2Name);
+
+            IDictionary<string, ITileObject> dict = new Dictionary<string, ITileObject>();
+            dict.Add(obj1Name, obj1);
+            dict.Add(obj2Name, obj2);
+
+            IEnumerable<string> names = new List<string>() { obj1Name };
             ICoordinate coord = new Coordinate();
             List<ITileObject> matches = TileObject.MatchNames(dict, names, coord);
 
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(obj1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            TileObjectsConfig config = new TileObjectsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Tile Object 1", UnitTestConsts.IMAGE_URL },
-                            new List<object>(){ "Tile Object 2", UnitTestConsts.IMAGE_URL }
-                        }
-                    }
-                },
-                Name = 0,
-                SpriteURL = 1
-            };
+            string obj1Name = "Tile Object 1";
+            string obj2Name = "Tile Object 2";
 
-            IDictionary<string, ITileObject> dict = TileObject.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Tile Object 1", "Tile Object 2" };
+            ITileObject obj1 = Substitute.For<ITileObject>();
+            obj1.Name.Returns(obj1Name);
 
+            ITileObject obj2 = Substitute.For<ITileObject>();
+            obj2.Name.Returns(obj2Name);
+
+            IDictionary<string, ITileObject> dict = new Dictionary<string, ITileObject>();
+            dict.Add(obj1Name, obj1);
+            dict.Add(obj2Name, obj2);
+
+            IEnumerable<string> names = new List<string>() { obj1Name, obj2Name };
             ICoordinate coord = new Coordinate();
             List<ITileObject> matches = TileObject.MatchNames(dict, names, coord);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(obj1), Is.True);
+            Assert.That(matches.Contains(obj2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            TileObjectsConfig config = new TileObjectsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Tile Object 1", UnitTestConsts.IMAGE_URL },
-                            new List<object>(){ "Tile Object 2", UnitTestConsts.IMAGE_URL }
-                        }
-                    }
-                },
-                Name = 0,
-                SpriteURL = 1
-            };
+            string obj1Name = "Tile Object 1";
+            string obj2Name = "Tile Object 2";
 
-            IDictionary<string, ITileObject> dict = TileObject.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Tile Object 1", "Tile Object 2" };
+            ITileObject obj1 = Substitute.For<ITileObject>();
+            obj1.Name.Returns(obj1Name);
 
+            ITileObject obj2 = Substitute.For<ITileObject>();
+            obj2.Name.Returns(obj2Name);
+
+            IDictionary<string, ITileObject> dict = new Dictionary<string, ITileObject>();
+            dict.Add(obj1Name, obj1);
+            dict.Add(obj2Name, obj2);
+
+            IEnumerable<string> names = new List<string>() { obj1Name, obj2Name };
             ICoordinate coord = new Coordinate();
             List<ITileObject> matches = TileObject.MatchNames(dict, names, coord, false);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(obj1), Is.True);
+            Assert.That(matches.Contains(obj2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string obj1Name = "Tile Object 1";
+
+            ITileObject obj1 = Substitute.For<ITileObject>();
+            obj1.Name.Returns(obj1Name);
+
+            IDictionary<string, ITileObject> dict = new Dictionary<string, ITileObject>();
+            dict.Add(obj1Name, obj1);
+
+            string name = "Tile Object 2";
+            ICoordinate coord = new Coordinate();
+
+            Assert.Throws<UnmatchedTileObjectException>(() => TileObject.MatchName(dict, name, coord));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string obj1Name = "Tile Object 1";
+
+            ITileObject obj1 = Substitute.For<ITileObject>();
+            obj1.Name.Returns(obj1Name);
+
+            IDictionary<string, ITileObject> dict = new Dictionary<string, ITileObject>();
+            dict.Add(obj1Name, obj1);
+
+            ICoordinate coord = new Coordinate();
+            ITileObject match = TileObject.MatchName(dict, obj1Name, coord);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(obj1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string obj1Name = "Tile Object 1";
+
+            ITileObject obj1 = Substitute.For<ITileObject>();
+            obj1.Name.Returns(obj1Name);
+
+            IDictionary<string, ITileObject> dict = new Dictionary<string, ITileObject>();
+            dict.Add(obj1Name, obj1);
+
+            ICoordinate coord = new Coordinate();
+            ITileObject match = TileObject.MatchName(dict, obj1Name, coord, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(obj1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

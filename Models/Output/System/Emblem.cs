@@ -70,16 +70,15 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>IEmblem</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>IEmblem</c> from each valid row.
         /// </summary>
         /// <exception cref="EmblemProcessingException"></exception>
         public static IDictionary<string, IEmblem> BuildDictionary(EmblemsConfig config)
         {
             IDictionary<string, IEmblem> emblems = new Dictionary<string, IEmblem>();
-            if (config == null || config.Queries == null)
-                return emblems;
+            if (config?.Queries is null) return emblems;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -101,7 +100,7 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>IEmblem</c> in <paramref name="emblems"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>IEmblem</c> in <paramref name="emblems"/> and returns the matches as a list.
         /// </summary>
         /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
         public static List<IEmblem> MatchNames(IDictionary<string, IEmblem> emblems, IEnumerable<string> names, bool flagAsMatched = true)

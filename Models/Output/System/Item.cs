@@ -259,16 +259,15 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>IItem</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>IItem</c> from each valid row.
         /// </summary>
         /// <exception cref="ItemProcessingException"></exception>
         public static IDictionary<string, IItem> BuildDictionary(ItemsConfig config, IDictionary<string, ISkill> skills, IDictionary<string, ITag> tags, IDictionary<string, IEngraving> engravings)
         {
             IDictionary<string, IItem> items = new Dictionary<string, IItem>();
-            if (config?.Queries == null)
-                return items;
+            if (config?.Queries is null) return items;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -290,7 +289,7 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>IItem</c> in <paramref name="items"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>IItem</c> in <paramref name="items"/> and returns the matches as a list.
         /// </summary>
         /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
         public static List<IItem> MatchNames(IDictionary<string, IItem> items, IEnumerable<string> names, bool flagAsMatched = true)

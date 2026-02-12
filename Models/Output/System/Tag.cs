@@ -64,16 +64,15 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>ITag</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>ITag</c> from each valid row.
         /// </summary>
         /// <exception cref="TagProcessingException"></exception>
         public static IDictionary<string, ITag> BuildDictionary(TagsConfig config)
         {
             IDictionary<string, ITag> tags = new Dictionary<string, ITag>();
-            if (config == null || config.Queries == null)
-                return tags;
+            if (config?.Queries is null) return tags;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -95,7 +94,7 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>ITag</c> in <paramref name="tags"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>ITag</c> in <paramref name="tags"/> and returns the matches as a list.
         /// </summary>
         /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
         public static List<ITag> MatchNames(IDictionary<string, ITag> tags, IEnumerable<string> names, bool flagAsMatched = true)

@@ -611,13 +611,12 @@ namespace UnitTests.Models.System
 
             Assert.That(art.Matched, Is.False);
             Assert.That(art.TagsList.Count, Is.EqualTo(2));
-            Assert.That(art.TagsList[0].Matched, Is.False);
-            Assert.That(art.TagsList[1].Matched, Is.False);
+            art.TagsList.ForEach(t => t.DidNotReceive().FlagAsMatched());
 
             art.FlagAsMatched();
 
             Assert.That(art.Matched, Is.True);
-            art.TagsList.ForEach(t => t.Received().FlagAsMatched());
+            art.TagsList.ForEach(t => t.Received(1).FlagAsMatched());
         }
 
         #endregion FlagAsMatched
@@ -775,31 +774,16 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            CombatArtsConfig config = new CombatArtsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>() { "Combat Art 1", INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST },
-                            new List<object>() { "Combat Art 2", INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST }
-                        }
-                    }
-                },
-                Name = 0,
-                Range = new CombatArtRangeConfig()
-                {
-                    Minimum = 1,
-                    Maximum = 2
-                },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3
-            };
+            string art1Name = "Combat Art 1";
+            string art2Name = "Combat Art 2";
 
-            IDictionary<string, ICombatArt> dict = CombatArt.BuildDictionary(config, TAGS);
-            IEnumerable<string> names = new List<string>() { "Combat Art 3" };
+            ICombatArt art1 = Substitute.For<ICombatArt>();
+            art1.Name.Returns(art1Name);
+
+            IDictionary<string, ICombatArt> dict = new Dictionary<string, ICombatArt>();
+            dict.Add(art1Name, art1);
+
+            IEnumerable<string> names = new List<string>() { art2Name };
 
             Assert.Throws<UnmatchedCombatArtException>(() => CombatArt.MatchNames(dict, names));
         }
@@ -807,116 +791,137 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_SingleMatch()
         {
-            CombatArtsConfig config = new CombatArtsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>() { "Combat Art 1", INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST },
-                            new List<object>() { "Combat Art 2", INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST }
-                        }
-                    }
-                },
-                Name = 0,
-                Range = new CombatArtRangeConfig()
-                {
-                    Minimum = 1,
-                    Maximum = 2
-                },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3
-            };
+            string art1Name = "Combat Art 1";
+            string art2Name = "Combat Art 2";
 
-            IDictionary<string, ICombatArt> dict = CombatArt.BuildDictionary(config, TAGS);
-            IEnumerable<string> names = new List<string>() { "Combat Art 1" };
+            ICombatArt art1 = Substitute.For<ICombatArt>();
+            art1.Name.Returns(art1Name);
 
+            ICombatArt art2 = Substitute.For<ICombatArt>();
+            art2.Name.Returns(art2Name);
+
+            IDictionary<string, ICombatArt> dict = new Dictionary<string, ICombatArt>();
+            dict.Add(art1Name, art1);
+            dict.Add(art2Name, art2);
+
+            IEnumerable<string> names = new List<string>() { art1Name };
             List<ICombatArt> matches = CombatArt.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(art1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            string combatArt1 = "Combat Art 1";
-            string combatArt2 = "Combat Art 2";
+            string art1Name = "Combat Art 1";
+            string art2Name = "Combat Art 2";
 
-            CombatArtsConfig config = new CombatArtsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>() { combatArt1, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST },
-                            new List<object>() { combatArt2, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST }
-                        }
-                    }
-                },
-                Name = 0,
-                Range = new CombatArtRangeConfig()
-                {
-                    Minimum = 1,
-                    Maximum = 2
-                },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3
-            };
+            ICombatArt art1 = Substitute.For<ICombatArt>();
+            art1.Name.Returns(art1Name);
 
-            IDictionary<string, ICombatArt> dict = CombatArt.BuildDictionary(config, TAGS);
-            IEnumerable<string> names = new List<string>() { combatArt1, combatArt2 };
+            ICombatArt art2 = Substitute.For<ICombatArt>();
+            art2.Name.Returns(art2Name);
 
+            IDictionary<string, ICombatArt> dict = new Dictionary<string, ICombatArt>();
+            dict.Add(art1Name, art1);
+            dict.Add(art2Name, art2);
+
+            IEnumerable<string> names = new List<string>() { art1Name, art2Name };
             List<ICombatArt> matches = CombatArt.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(art1), Is.True);
+            Assert.That(matches.Contains(art2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            string combatArt1 = "Combat Art 1";
-            string combatArt2 = "Combat Art 2";
+            string art1Name = "Combat Art 1";
+            string art2Name = "Combat Art 2";
 
-            CombatArtsConfig config = new CombatArtsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>() { combatArt1, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST },
-                            new List<object>() { combatArt2, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST }
-                        }
-                    }
-                },
-                Name = 0,
-                Range = new CombatArtRangeConfig()
-                {
-                    Minimum = 1,
-                    Maximum = 2
-                },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3
-            };
+            ICombatArt art1 = Substitute.For<ICombatArt>();
+            art1.Name.Returns(art1Name);
 
-            IDictionary<string, ICombatArt> dict = CombatArt.BuildDictionary(config, TAGS);
-            IEnumerable<string> names = new List<string>() { "Combat Art 1", "Combat Art 2" };
+            ICombatArt art2 = Substitute.For<ICombatArt>();
+            art2.Name.Returns(art2Name);
 
+            IDictionary<string, ICombatArt> dict = new Dictionary<string, ICombatArt>();
+            dict.Add(art1Name, art1);
+            dict.Add(art2Name, art2);
+
+            IEnumerable<string> names = new List<string>() { art1Name, art2Name };
             List<ICombatArt> matches = CombatArt.MatchNames(dict, names, false);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(art1), Is.True);
+            Assert.That(matches.Contains(art2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string art1Name = "Combat Art 1";
+
+            ICombatArt art1 = Substitute.For<ICombatArt>();
+            art1.Name.Returns(art1Name);
+
+            IDictionary<string, ICombatArt> dict = new Dictionary<string, ICombatArt>();
+            dict.Add(art1Name, art1);
+
+            string name = "Combat Art 2";
+
+            Assert.Throws<UnmatchedCombatArtException>(() => CombatArt.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string art1Name = "Combat Art 1";
+
+            ICombatArt art1 = Substitute.For<ICombatArt>();
+            art1.Name.Returns(art1Name);
+
+            IDictionary<string, ICombatArt> dict = new Dictionary<string, ICombatArt>();
+            dict.Add(art1Name, art1);
+
+            ICombatArt match = CombatArt.MatchName(dict, art1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(art1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string art1Name = "Combat Art 1";
+
+            ICombatArt art1 = Substitute.For<ICombatArt>();
+            art1.Name.Returns(art1Name);
+
+            IDictionary<string, ICombatArt> dict = new Dictionary<string, ICombatArt>();
+            dict.Add(art1Name, art1);
+
+            ICombatArt match = CombatArt.MatchName(dict, art1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(art1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

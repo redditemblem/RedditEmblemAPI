@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.BattleStyles;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -313,24 +314,16 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            BattleStylesConfig config = new BattleStylesConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Battle Style 1" },
-                            new List<object>(){ "Battle Style 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string style1Name = "Battle Style 1";
+            string style2Name = "Battle Style 2";
 
-            IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Battle Style 3" };
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+
+            IEnumerable<string> names = new List<string>() { style2Name };
 
             Assert.Throws<UnmatchedBattleStyleException>(() => BattleStyle.MatchNames(dict, names));
         }
@@ -338,86 +331,137 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_SingleMatch()
         {
-            BattleStylesConfig config = new BattleStylesConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Battle Style 1" },
-                            new List<object>(){ "Battle Style 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string style1Name = "Battle Style 1";
+            string style2Name = "Battle Style 2";
 
-            IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Battle Style 1" };
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
 
+            IBattleStyle style2 = Substitute.For<IBattleStyle>();
+            style2.Name.Returns(style2Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+            dict.Add(style2Name, style2);
+
+            IEnumerable<string> names = new List<string>() { style1Name };
             List<IBattleStyle> matches = BattleStyle.MatchNames(dict, names);
+
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(style1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            BattleStylesConfig config = new BattleStylesConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Battle Style 1" },
-                            new List<object>(){ "Battle Style 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string style1Name = "Battle Style 1";
+            string style2Name = "Battle Style 2";
 
-            IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Battle Style 1", "Battle Style 2" };
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
 
+            IBattleStyle style2 = Substitute.For<IBattleStyle>();
+            style2.Name.Returns(style2Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+            dict.Add(style2Name, style2);
+
+            IEnumerable<string> names = new List<string>() { style1Name, style2Name };
             List<IBattleStyle> matches = BattleStyle.MatchNames(dict, names);
+
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(style1), Is.True);
+            Assert.That(matches.Contains(style2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            BattleStylesConfig config = new BattleStylesConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Battle Style 1" },
-                            new List<object>(){ "Battle Style 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string style1Name = "Battle Style 1";
+            string style2Name = "Battle Style 2";
 
-            IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Battle Style 1", "Battle Style 2" };
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
 
+            IBattleStyle style2 = Substitute.For<IBattleStyle>();
+            style2.Name.Returns(style2Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+            dict.Add(style2Name, style2);
+
+            IEnumerable<string> names = new List<string>() { style1Name, style2Name };
             List<IBattleStyle> matches = BattleStyle.MatchNames(dict, names, false);
+
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(style1), Is.True);
+            Assert.That(matches.Contains(style2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string style1Name = "Battle Style 1";
+
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+
+            string name = "Battle Style 2";
+
+            Assert.Throws<UnmatchedBattleStyleException>(() => BattleStyle.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string style1Name = "Battle Style 1";
+
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+
+            IBattleStyle match = BattleStyle.MatchName(dict, style1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(style1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string style1Name = "Battle Style 1";
+
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+
+            IBattleStyle match = BattleStyle.MatchName(dict, style1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(style1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

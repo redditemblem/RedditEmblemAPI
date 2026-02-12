@@ -28,8 +28,8 @@ namespace UnitTests.Models.System
             IGambit gambit1 = Substitute.For<IGambit>();
             gambit1.Name.Returns(INPUT_GAMBIT);
 
-            this.GAMBITS = new Dictionary<string, IGambit>();
-            this.GAMBITS.Add(INPUT_GAMBIT, gambit1);
+            GAMBITS = new Dictionary<string, IGambit>();
+            GAMBITS.Add(INPUT_GAMBIT, gambit1);
         }
 
         #endregion Setup
@@ -47,7 +47,7 @@ namespace UnitTests.Models.System
 
             IEnumerable<string> data = new List<string>();
 
-            Assert.Throws<RequiredValueNotProvidedException>(() => new Battalion(config, data, this.GAMBITS));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new Battalion(config, data, GAMBITS));
         }
 
         [Test]
@@ -67,7 +67,7 @@ namespace UnitTests.Models.System
                 string.Empty
             };
 
-            Assert.Throws<RequiredValueNotProvidedException>(() => new Battalion(config, data, this.GAMBITS));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new Battalion(config, data, GAMBITS));
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace UnitTests.Models.System
                 "Gambit 3"
             };
 
-            Assert.Throws<UnmatchedGambitException>(() => new Battalion(config, data, this.GAMBITS));
+            Assert.Throws<UnmatchedGambitException>(() => new Battalion(config, data, GAMBITS));
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace UnitTests.Models.System
                 string.Empty
             };
 
-            Assert.Throws<PositiveIntegerException>(() => new Battalion(config, data, this.GAMBITS));
+            Assert.Throws<PositiveIntegerException>(() => new Battalion(config, data, GAMBITS));
         }
 
         [Test]
@@ -129,7 +129,7 @@ namespace UnitTests.Models.System
                 "-1"
             };
 
-            Assert.Throws<PositiveIntegerException>(() => new Battalion(config, data, this.GAMBITS));
+            Assert.Throws<PositiveIntegerException>(() => new Battalion(config, data, GAMBITS));
         }
 
         [Test]
@@ -150,10 +150,10 @@ namespace UnitTests.Models.System
                 INPUT_MAX_ENDURANCE
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.Name, Is.EqualTo(INPUT_NAME));
-            Assert.That(batt.GambitObj, Is.EqualTo(this.GAMBITS[INPUT_GAMBIT]));
+            Assert.That(batt.GambitObj, Is.EqualTo(GAMBITS[INPUT_GAMBIT]));
             Assert.That(batt.GambitObj.Matched, Is.False);
             Assert.That(batt.MaxEndurance, Is.EqualTo(1));
         }
@@ -180,7 +180,7 @@ namespace UnitTests.Models.System
                 string.Empty
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.SpriteURL, Is.Empty);
         }
@@ -205,7 +205,7 @@ namespace UnitTests.Models.System
                 "NotAURL"
             };
 
-            Assert.Throws<URLException>(() => new Battalion(config, data, this.GAMBITS));
+            Assert.Throws<URLException>(() => new Battalion(config, data, GAMBITS));
         }
 
         [Test]
@@ -228,7 +228,7 @@ namespace UnitTests.Models.System
                 UnitTestConsts.IMAGE_URL
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
         }
@@ -257,7 +257,7 @@ namespace UnitTests.Models.System
                 string.Empty
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.Rank, Is.Empty);
         }
@@ -284,7 +284,7 @@ namespace UnitTests.Models.System
                 rank
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.Rank, Is.EqualTo(rank));
         }
@@ -314,7 +314,7 @@ namespace UnitTests.Models.System
                 string.Empty
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.TextFields, Is.Empty);
         }
@@ -343,7 +343,7 @@ namespace UnitTests.Models.System
                 textField2
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             List<string> expected = new List<string>() { textField1, textField2 };
             Assert.That(batt.TextFields, Is.EqualTo(expected));
@@ -383,7 +383,7 @@ namespace UnitTests.Models.System
                 string.Empty
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.Stats.Count, Is.EqualTo(3));
             Assert.That(batt.Stats[stat1], Is.EqualTo(0));
@@ -421,7 +421,7 @@ namespace UnitTests.Models.System
                 "1"
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.Stats.Count, Is.EqualTo(3));
             Assert.That(batt.Stats[stat1], Is.EqualTo(-1));
@@ -460,7 +460,7 @@ namespace UnitTests.Models.System
                 string.Empty
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.StatModifiers, Is.Empty);
         }
@@ -496,7 +496,7 @@ namespace UnitTests.Models.System
                 "1"
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.StatModifiers.Count, Is.EqualTo(2));
             Assert.That(batt.StatModifiers[stat1], Is.EqualTo(-1));
@@ -532,7 +532,7 @@ namespace UnitTests.Models.System
                 "3"
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.Throws<UnmatchedStatException>(() => batt.MatchStatName("Stat 2"));
         }
@@ -561,7 +561,7 @@ namespace UnitTests.Models.System
                 "3"
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             int value = batt.MatchStatName(stat1);
             Assert.That(value, Is.EqualTo(3));
@@ -589,15 +589,15 @@ namespace UnitTests.Models.System
                 INPUT_MAX_ENDURANCE
             };
 
-            IBattalion batt = new Battalion(config, data, this.GAMBITS);
+            IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.Matched, Is.False);
-            Assert.That(batt.GambitObj.Matched, Is.False);
+            batt.GambitObj.DidNotReceive().FlagAsMatched();
 
             batt.FlagAsMatched();
 
             Assert.That(batt.Matched, Is.True);
-            batt.GambitObj.Received().FlagAsMatched();
+            batt.GambitObj.Received(1).FlagAsMatched();
         }
 
         #endregion FlagAsMatched
@@ -607,7 +607,7 @@ namespace UnitTests.Models.System
         [Test]
         public void BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(null, this.GAMBITS);
+            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(null, GAMBITS);
             Assert.That(dict, Is.Empty);
         }
 
@@ -623,7 +623,7 @@ namespace UnitTests.Models.System
                 Stats = new List<NamedStatConfig>()
             };
 
-            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, this.GAMBITS);
+            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, GAMBITS);
             Assert.That(dict, Is.Empty);
         }
 
@@ -648,7 +648,7 @@ namespace UnitTests.Models.System
                 Stats = new List<NamedStatConfig>()
             };
 
-            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, this.GAMBITS);
+            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, GAMBITS);
             Assert.That(dict, Is.Empty);
         }
 
@@ -674,7 +674,7 @@ namespace UnitTests.Models.System
                 Stats = new List<NamedStatConfig>()
             };
 
-            Assert.Throws<BattalionProcessingException>(() => Battalion.BuildDictionary(config, this.GAMBITS));
+            Assert.Throws<BattalionProcessingException>(() => Battalion.BuildDictionary(config, GAMBITS));
         }
 
         [Test]
@@ -699,7 +699,7 @@ namespace UnitTests.Models.System
                 Stats = new List<NamedStatConfig>()
             };
 
-            Assert.Throws<BattalionProcessingException>(() => Battalion.BuildDictionary(config, this.GAMBITS));
+            Assert.Throws<BattalionProcessingException>(() => Battalion.BuildDictionary(config, GAMBITS));
         }
 
         [Test]
@@ -723,7 +723,7 @@ namespace UnitTests.Models.System
                 Stats = new List<NamedStatConfig>()
             };
 
-            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, this.GAMBITS);
+            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, GAMBITS);
             Assert.That(dict.Count, Is.EqualTo(1));
         }
 
@@ -757,7 +757,7 @@ namespace UnitTests.Models.System
                 Stats = new List<NamedStatConfig>()
             };
 
-            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, this.GAMBITS);
+            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, GAMBITS);
             Assert.That(dict.Count, Is.EqualTo(4));
         }
 
@@ -768,27 +768,16 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            BattalionsConfig config = new BattalionsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Battalion 1", INPUT_GAMBIT, INPUT_MAX_ENDURANCE },
-                            new List<object>(){ "Battalion 2", INPUT_GAMBIT, INPUT_MAX_ENDURANCE }
-                        }
-                    }
-                },
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
-            };
+            string batt1Name = "Battalion 1";
+            string batt2Name = "Battalion 2";
 
-            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, this.GAMBITS);
-            IEnumerable<string> names = new List<string>() { "Fake Battalion" };
+            IBattalion batt1 = Substitute.For<IBattalion>();
+            batt1.Name.Returns(batt1Name);
+
+            IDictionary<string, IBattalion> dict = new Dictionary<string, IBattalion>();
+            dict.Add(batt1Name, batt1);
+
+            IEnumerable<string> names = new List<string>() { batt2Name };
 
             Assert.Throws<UnmatchedBattalionException>(() => Battalion.MatchNames(dict, names));
         }
@@ -796,95 +785,137 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_SingleMatch()
         {
-            BattalionsConfig config = new BattalionsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Battalion 1", INPUT_GAMBIT, INPUT_MAX_ENDURANCE },
-                            new List<object>(){ "Battalion 2", INPUT_GAMBIT, INPUT_MAX_ENDURANCE }
-                        }
-                    }
-                },
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
-            };
+            string batt1Name = "Battalion 1";
+            string batt2Name = "Battalion 2";
 
-            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, this.GAMBITS);
-            IEnumerable<string> names = new List<string>() { "Battalion 1" };
+            IBattalion batt1 = Substitute.For<IBattalion>();
+            batt1.Name.Returns(batt1Name);
 
+            IBattalion batt2 = Substitute.For<IBattalion>();
+            batt2.Name.Returns(batt2Name);
+
+            IDictionary<string, IBattalion> dict = new Dictionary<string, IBattalion>();
+            dict.Add(batt1Name, batt1);
+            dict.Add(batt2Name, batt2);
+
+            IEnumerable<string> names = new List<string>() { batt1Name };
             List<IBattalion> matches = Battalion.MatchNames(dict, names);
+
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(batt1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            BattalionsConfig config = new BattalionsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Battalion 1", INPUT_GAMBIT, INPUT_MAX_ENDURANCE },
-                            new List<object>(){ "Battalion 2", INPUT_GAMBIT, INPUT_MAX_ENDURANCE }
-                        }
-                    }
-                },
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
-            };
+            string batt1Name = "Battalion 1";
+            string batt2Name = "Battalion 2";
 
-            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, this.GAMBITS);
-            IEnumerable<string> names = new List<string>() { "Battalion 1", "Battalion 2" };
+            IBattalion batt1 = Substitute.For<IBattalion>();
+            batt1.Name.Returns(batt1Name);
 
+            IBattalion batt2 = Substitute.For<IBattalion>();
+            batt2.Name.Returns(batt2Name);
+
+            IDictionary<string, IBattalion> dict = new Dictionary<string, IBattalion>();
+            dict.Add(batt1Name, batt1);
+            dict.Add(batt2Name, batt2);
+
+            IEnumerable<string> names = new List<string>() { batt1Name, batt2Name };
             List<IBattalion> matches = Battalion.MatchNames(dict, names);
+
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(batt1), Is.True);
+            Assert.That(matches.Contains(batt2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            BattalionsConfig config = new BattalionsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Battalion 1", INPUT_GAMBIT, INPUT_MAX_ENDURANCE },
-                            new List<object>(){ "Battalion 2", INPUT_GAMBIT, INPUT_MAX_ENDURANCE }
-                        }
-                    }
-                },
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
-            };
+            string batt1Name = "Battalion 1";
+            string batt2Name = "Battalion 2";
 
-            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, this.GAMBITS);
-            IEnumerable<string> names = new List<string>() { "Battalion 1", "Battalion 2" };
+            IBattalion batt1 = Substitute.For<IBattalion>();
+            batt1.Name.Returns(batt1Name);
 
+            IBattalion batt2 = Substitute.For<IBattalion>();
+            batt2.Name.Returns(batt2Name);
+
+            IDictionary<string, IBattalion> dict = new Dictionary<string, IBattalion>();
+            dict.Add(batt1Name, batt1);
+            dict.Add(batt2Name, batt2);
+
+            IEnumerable<string> names = new List<string>() { batt1Name, batt2Name };
             List<IBattalion> matches = Battalion.MatchNames(dict, names, false);
+
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(batt1), Is.True);
+            Assert.That(matches.Contains(batt2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string batt1Name = "Battalion 1";
+
+            IBattalion batt1 = Substitute.For<IBattalion>();
+            batt1.Name.Returns(batt1Name);
+
+            IDictionary<string, IBattalion> dict = new Dictionary<string, IBattalion>();
+            dict.Add(batt1Name, batt1);
+
+            string name = "Battalion 2";
+
+            Assert.Throws<UnmatchedBattalionException>(() => Battalion.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string batt1Name = "Battalion 1";
+
+            IBattalion batt1 = Substitute.For<IBattalion>();
+            batt1.Name.Returns(batt1Name);
+
+            IDictionary<string, IBattalion> dict = new Dictionary<string, IBattalion>();
+            dict.Add(batt1Name, batt1);
+
+            IBattalion match = Battalion.MatchName(dict, batt1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(batt1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string batt1Name = "Battalion 1";
+
+            IBattalion batt1 = Substitute.For<IBattalion>();
+            batt1.Name.Returns(batt1Name);
+
+            IDictionary<string, IBattalion> dict = new Dictionary<string, IBattalion>();
+            dict.Add(batt1Name, batt1);
+
+            IBattalion match = Battalion.MatchName(dict, batt1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(batt1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

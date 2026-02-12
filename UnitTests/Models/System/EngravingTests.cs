@@ -578,18 +578,19 @@ namespace UnitTests.Models.System
             IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
-                "Tag 1"
+                "Tag 1,Tag 2"
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
 
             Assert.That(engraving.Matched, Is.False);
-            engraving.Tags.First().DidNotReceive().FlagAsMatched();
+            Assert.That(engraving.Tags.Count, Is.EqualTo(2));
+            engraving.Tags.ForEach(t => t.DidNotReceive().FlagAsMatched());
 
             engraving.FlagAsMatched();
 
             Assert.That(engraving.Matched, Is.True);
-            engraving.Tags.First().Received().FlagAsMatched();
+            engraving.Tags.ForEach(t => t.Received(1).FlagAsMatched());
         }
 
         #endregion FlagAsMatched
@@ -720,24 +721,16 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_UnmatchedName()
         {
-            EngravingsConfig config = new EngravingsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Engraving 1" },
-                            new List<object>(){ "Engraving 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string engrv1Name = "Engraving 1";
+            string engrv2Name = "Engraving 2";
 
-            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
-            IEnumerable<string> names = new List<string>() { "Engraving 3" };
+            IEngraving engrv1 = Substitute.For<IEngraving>();
+            engrv1.Name.Returns(engrv1Name);
+
+            IDictionary<string, IEngraving> dict = new Dictionary<string, IEngraving>();
+            dict.Add(engrv1Name, engrv1);
+
+            IEnumerable<string> names = new List<string>() { engrv2Name };
 
             Assert.Throws<UnmatchedEngravingException>(() => Engraving.MatchNames(dict, names));
         }
@@ -745,89 +738,137 @@ namespace UnitTests.Models.System
         [Test]
         public void MatchNames_SingleMatch()
         {
-            EngravingsConfig config = new EngravingsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Engraving 1" },
-                            new List<object>(){ "Engraving 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string engrv1Name = "Engraving 1";
+            string engrv2Name = "Engraving 2";
 
-            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
-            IEnumerable<string> names = new List<string>() { "Engraving 1" };
+            IEngraving engrv1 = Substitute.For<IEngraving>();
+            engrv1.Name.Returns(engrv1Name);
 
+            IEngraving engrv2 = Substitute.For<IEngraving>();
+            engrv2.Name.Returns(engrv2Name);
+
+            IDictionary<string, IEngraving> dict = new Dictionary<string, IEngraving>();
+            dict.Add(engrv1Name, engrv1);
+            dict.Add(engrv2Name, engrv2);
+
+            IEnumerable<string> names = new List<string>() { engrv1Name };
             List<IEngraving> matches = Engraving.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches.First().Matched, Is.True);
+            Assert.That(matches.Contains(engrv1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches()
         {
-            EngravingsConfig config = new EngravingsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Engraving 1" },
-                            new List<object>(){ "Engraving 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string engrv1Name = "Engraving 1";
+            string engrv2Name = "Engraving 2";
 
-            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
-            IEnumerable<string> names = new List<string>() { "Engraving 1", "Engraving 2" };
+            IEngraving engrv1 = Substitute.For<IEngraving>();
+            engrv1.Name.Returns(engrv1Name);
 
+            IEngraving engrv2 = Substitute.For<IEngraving>();
+            engrv2.Name.Returns(engrv2Name);
+
+            IDictionary<string, IEngraving> dict = new Dictionary<string, IEngraving>();
+            dict.Add(engrv1Name, engrv1);
+            dict.Add(engrv2Name, engrv2);
+
+            IEnumerable<string> names = new List<string>() { engrv1Name, engrv2Name };
             List<IEngraving> matches = Engraving.MatchNames(dict, names);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.True);
-            Assert.That(matches[1].Matched, Is.True);
+            Assert.That(matches.Contains(engrv1), Is.True);
+            Assert.That(matches.Contains(engrv2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
         [Test]
         public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            EngravingsConfig config = new EngravingsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Engraving 1" },
-                            new List<object>(){ "Engraving 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string engrv1Name = "Engraving 1";
+            string engrv2Name = "Engraving 2";
 
-            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
-            IEnumerable<string> names = new List<string>() { "Engraving 1", "Engraving 2" };
+            IEngraving engrv1 = Substitute.For<IEngraving>();
+            engrv1.Name.Returns(engrv1Name);
 
+            IEngraving engrv2 = Substitute.For<IEngraving>();
+            engrv2.Name.Returns(engrv2Name);
+
+            IDictionary<string, IEngraving> dict = new Dictionary<string, IEngraving>();
+            dict.Add(engrv1Name, engrv1);
+            dict.Add(engrv2Name, engrv2);
+
+            IEnumerable<string> names = new List<string>() { engrv1Name, engrv2Name };
             List<IEngraving> matches = Engraving.MatchNames(dict, names, false);
 
             Assert.That(matches.Count, Is.EqualTo(2));
-            Assert.That(matches[0].Matched, Is.False);
-            Assert.That(matches[1].Matched, Is.False);
+            Assert.That(matches.Contains(engrv1), Is.True);
+            Assert.That(matches.Contains(engrv2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string engrv1Name = "Engraving 1";
+
+            IEngraving engrv1 = Substitute.For<IEngraving>();
+            engrv1.Name.Returns(engrv1Name);
+
+            IDictionary<string, IEngraving> dict = new Dictionary<string, IEngraving>();
+            dict.Add(engrv1Name, engrv1);
+
+            string name = "Engraving 2";
+
+            Assert.Throws<UnmatchedEngravingException>(() => Engraving.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string engrv1Name = "Engraving 1";
+
+            IEngraving engrv1 = Substitute.For<IEngraving>();
+            engrv1.Name.Returns(engrv1Name);
+
+            IDictionary<string, IEngraving> dict = new Dictionary<string, IEngraving>();
+            dict.Add(engrv1Name, engrv1);
+
+            IEngraving match = Engraving.MatchName(dict, engrv1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(engrv1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string engrv1Name = "Engraving 1";
+
+            IEngraving engrv1 = Substitute.For<IEngraving>();
+            engrv1.Name.Returns(engrv1Name);
+
+            IDictionary<string, IEngraving> dict = new Dictionary<string, IEngraving>();
+            dict.Add(engrv1Name, engrv1);
+
+            IEngraving match = Engraving.MatchName(dict, engrv1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(engrv1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

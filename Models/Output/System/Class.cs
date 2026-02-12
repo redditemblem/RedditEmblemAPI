@@ -88,16 +88,15 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>IClass</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>IClass</c> from each valid row.
         /// </summary>
         /// <exception cref="ClassProcessingException"></exception>
         public static IDictionary<string, IClass> BuildDictionary(ClassesConfig config, bool isUnitMovementTypeConfigured, IDictionary<string, IBattleStyle> battleStyles)
         {
             IDictionary<string, IClass> classes = new Dictionary<string, IClass>();
-            if (config == null || config.Queries == null)
-                return classes;
+            if (config?.Queries is null) return classes;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -119,7 +118,7 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>IClass</c> in <paramref name="classes"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>IClass</c> in <paramref name="classes"/> and returns the matches as a list.
         /// </summary>
         /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
         public static List<IClass> MatchNames(IDictionary<string, IClass> classes, IEnumerable<string> names, bool flagAsMatched = true)

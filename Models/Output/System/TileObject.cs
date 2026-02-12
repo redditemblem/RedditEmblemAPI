@@ -124,16 +124,15 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>ITileObject</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>ITileObject</c> from each valid row.
         /// </summary>
         /// <exception cref="TileObjectProcessingException"></exception>
         public static IDictionary<string, ITileObject> BuildDictionary(TileObjectsConfig config)
         {
             IDictionary<string, ITileObject> tileObjects = new Dictionary<string, ITileObject>();
-            if (config == null || config.Queries == null)
-                return tileObjects;
+            if (config?.Queries is null) return tileObjects;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -155,7 +154,7 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>ITileObject</c> in <paramref name="tileObjects"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>ITileObject</c> in <paramref name="tileObjects"/> and returns the matches as a list.
         /// </summary>
         /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
         public static List<ITileObject> MatchNames(IDictionary<string, ITileObject> tileObjects, IEnumerable<string> names, ICoordinate coord, bool flagAsMatched = true)
