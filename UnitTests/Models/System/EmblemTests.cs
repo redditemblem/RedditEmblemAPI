@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Emblems;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -7,7 +8,6 @@ using RedditEmblemAPI.Models.Output.System;
 
 namespace UnitTests.Models.System
 {
-    [TestClass]
     public class EmblemTests
     {
         #region Constants
@@ -16,38 +16,38 @@ namespace UnitTests.Models.System
 
         #endregion Constants
 
-        [TestMethod]
-        public void EmblemConstructor_RequiredFields_WithInputNull()
+        [Test]
+        public void Constructor_RequiredFields_WithInputNull()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>() { };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new Emblem(config, data));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new Emblem(config, data));
         }
 
-        [TestMethod]
-        public void EmblemConstructor_RequiredFields()
+        [Test]
+        public void Constructor_RequiredFields()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>() { INPUT_NAME };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME };
 
-            Emblem emblem = new Emblem(config, data);
+            IEmblem emblem = new Emblem(config, data);
 
-            Assert.AreEqual<string>(INPUT_NAME, emblem.Name);
+            Assert.That(emblem.Name, Is.EqualTo(INPUT_NAME));
         }
 
         #region OptionalField_SpriteURL
 
-        [TestMethod]
-        public void EmblemConstructor_OptionalField_SpriteURL_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_EmptyString()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -55,19 +55,19 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty
             };
 
-            Emblem emblem = new Emblem(config, data);
+            IEmblem emblem = new Emblem(config, data);
 
-            Assert.AreEqual<string>(string.Empty, emblem.SpriteURL);
+            Assert.That(emblem.SpriteURL, Is.Empty);
         }
 
-        [TestMethod]
-        public void EmblemConstructor_OptionalField_SpriteURL_InvalidURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL_InvalidURL()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -75,17 +75,17 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "NotAURL"
             };
 
-            Assert.ThrowsException<URLException>(() => new Emblem(config, data));
+            Assert.Throws<URLException>(() => new Emblem(config, data));
         }
 
-        [TestMethod]
-        public void EmblemConstructor_OptionalField_SpriteURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -93,23 +93,23 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 UnitTestConsts.IMAGE_URL
             };
 
-            Emblem emblem = new Emblem(config, data);
+            IEmblem emblem = new Emblem(config, data);
 
-            Assert.AreEqual<string>(UnitTestConsts.IMAGE_URL, emblem.SpriteURL);
+            Assert.That(emblem.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
         }
 
         #endregion OptionalField_SpriteURL
 
         #region OptionalField_Tagline
 
-        [TestMethod]
-        public void EmblemConstructor_OptionalField_Tagline_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_Tagline_EmptyString()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -117,45 +117,45 @@ namespace UnitTests.Models.System
                 Tagline = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty
             };
 
-            Emblem emblem = new Emblem(config, data);
+            IEmblem emblem = new Emblem(config, data);
 
-            Assert.AreEqual<string>(string.Empty, emblem.Tagline);
+            Assert.That(emblem.Tagline, Is.Empty);
         }
 
-        [TestMethod]
-        public void EmblemConstructor_OptionalField_Tagline()
+        [Test]
+        public void Constructor_OptionalField_Tagline()
         {
+            string tagline = "This is my tagline";
+
             EmblemsConfig config = new EmblemsConfig()
             {
                 Name = 0,
                 Tagline = 1
             };
 
-            string tagline = "This is my tagline";
-
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 tagline
             };
 
-            Emblem emblem = new Emblem(config, data);
+            IEmblem emblem = new Emblem(config, data);
 
-            Assert.AreEqual<string>(tagline, emblem.Tagline);
+            Assert.That(emblem.Tagline, Is.EqualTo(tagline));
         }
 
         #endregion OptionalField_Tagline
 
         #region OptionalField_EngagedUnitAura
 
-        [TestMethod]
-        public void EmblemConstructor_OptionalField_EngagedUnitAura_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_EngagedUnitAura_EmptyString()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -163,19 +163,19 @@ namespace UnitTests.Models.System
                 EngagedUnitAura = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty
             };
 
-            Emblem emblem = new Emblem(config, data);
+            IEmblem emblem = new Emblem(config, data);
 
-            Assert.AreEqual<string>(string.Empty, emblem.EngagedUnitAura);
+            Assert.That(emblem.EngagedUnitAura, Is.Empty);
         }
 
-        [TestMethod]
-        public void EmblemConstructor_OptionalField_EngagedUnitAura_InvalidHex()
+        [Test]
+        public void Constructor_OptionalField_EngagedUnitAura_InvalidHex()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -183,43 +183,43 @@ namespace UnitTests.Models.System
                 EngagedUnitAura = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 "NotAHexCode"
             };
 
-            Assert.ThrowsException<HexException>(() => new Emblem(config, data));
+            Assert.Throws<HexException>(() => new Emblem(config, data));
         }
 
-        [TestMethod]
-        public void EmblemConstructor_OptionalField_EngagedUnitAura()
+        [Test]
+        public void Constructor_OptionalField_EngagedUnitAura()
         {
+            string hexCode = "#F0F0F0";
+
             EmblemsConfig config = new EmblemsConfig()
             {
                 Name = 0,
                 EngagedUnitAura = 1
             };
 
-            string hexCode = "#F0F0F0";
-
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 hexCode
             };
 
-            Emblem emblem = new Emblem(config, data);
+            IEmblem emblem = new Emblem(config, data);
 
-            Assert.AreEqual<string>(hexCode, emblem.EngagedUnitAura);
+            Assert.That(emblem.EngagedUnitAura, Is.EqualTo(hexCode));
         }
 
         #endregion OptionalField_EngagedUnitAura
 
         #region OptionalField_TextFields
 
-        [TestMethod]
-        public void EmblemConstructor_OptionalField_TextFields_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_TextFields_EmptyString()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -227,76 +227,79 @@ namespace UnitTests.Models.System
                 TextFields = new List<int>() { 1, 2 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty,
                 string.Empty
             };
 
-            Emblem emblem = new Emblem(config, data);
+            IEmblem emblem = new Emblem(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { }, emblem.TextFields);
+            Assert.That(emblem.TextFields, Is.Empty);
         }
 
-        [TestMethod]
-        public void EmblemConstructor_OptionalField_TextFields()
+        [Test]
+        public void Constructor_OptionalField_TextFields()
         {
+            string textField1 = "Text Field 1";
+            string textField2 = "Text Field 2";
+
             EmblemsConfig config = new EmblemsConfig()
             {
                 Name = 0,
                 TextFields = new List<int>() { 1, 2 }
             };
 
-            string field1 = "Text Field 1";
-            string field2 = "Text Field 2";
-
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
-                field1,
-                field2
+                textField1,
+                textField2
             };
 
-            Emblem emblem = new Emblem(config, data);
+            IEmblem emblem = new Emblem(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { field1, field2 }, emblem.TextFields);
+            IEnumerable<string> expected = new List<string>() { textField1, textField2 };
+            Assert.That(emblem.TextFields, Is.EqualTo(expected));
         }
 
         #endregion OptionalField_TextFields
 
         #region FlagAsMatched
 
-        [TestMethod]
-        public void Emblem_FlagAsMatched()
+        [Test]
+        public void FlagAsMatched()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>() { INPUT_NAME };
+            IEnumerable<string> data = new List<string>() { INPUT_NAME };
 
-            Emblem emblem = new Emblem(config, data);
+            IEmblem emblem = new Emblem(config, data);
 
-            Assert.IsFalse(emblem.Matched);
+            Assert.That(emblem.Matched, Is.False);
+
             emblem.FlagAsMatched();
-            Assert.IsTrue(emblem.Matched);
+
+            Assert.That(emblem.Matched, Is.True);
         }
 
         #endregion FlagAsMatched
 
         #region BuildDictionary
 
-        [TestMethod]
-        public void Emblem_BuildDictionary_WithInput_Null()
+        [Test]
+        public void BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(null);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(null);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Emblem_BuildDictionary_WithInput_NullQuery()
+        [Test]
+        public void BuildDictionary_WithInput_NullQuery()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -304,12 +307,12 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Emblem_BuildDictionary_WithInput_EmptyQuery()
+        [Test]
+        public void BuildDictionary_WithInput_EmptyQuery()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -326,12 +329,12 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void Emblem_BuildDictionary_WithInput_DuplicateName()
+        [Test]
+        public void BuildDictionary_WithInput_DuplicateName()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -349,11 +352,11 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            Assert.ThrowsException<EmblemProcessingException>(() => Emblem.BuildDictionary(config));
+            Assert.Throws<EmblemProcessingException>(() => Emblem.BuildDictionary(config));
         }
 
-        [TestMethod]
-        public void Emblem_BuildDictionary()
+        [Test]
+        public void BuildDictionary()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -370,12 +373,12 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
-            Assert.AreEqual<int>(1, dict.Count);
+            IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
+            Assert.That(dict.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void Emblem_BuildDictionary_MultiQuery()
+        [Test]
+        public void BuildDictionary_MultiQuery()
         {
             EmblemsConfig config = new EmblemsConfig()
             {
@@ -401,122 +404,165 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
-            Assert.AreEqual<int>(4, dict.Count);
+            IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
+            Assert.That(dict.Count, Is.EqualTo(4));
         }
 
         #endregion BuildDictionary
 
         #region MatchNames
 
-        [TestMethod]
-        public void Emblem_MatchNames_UnmatchedName()
+        [Test]
+        public void MatchNames_UnmatchedName()
         {
-            EmblemsConfig config = new EmblemsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Emblem 1" },
-                            new List<object>(){ "Emblem 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string emblem1Name = "Emblem 1";
+            string emblem2Name = "Emblem 2";
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Emblem 3" };
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
 
-            Assert.ThrowsException<UnmatchedEmblemException>(() => Emblem.MatchNames(dict, names));
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+
+            IEnumerable<string> names = new List<string>() { emblem2Name };
+
+            Assert.Throws<UnmatchedEmblemException>(() => Emblem.MatchNames(dict, names));
         }
 
-        [TestMethod]
-        public void Emblem_MatchNames_SingleMatch()
+        [Test]
+        public void MatchNames_SingleMatch()
         {
-            EmblemsConfig config = new EmblemsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Emblem 1" },
-                            new List<object>(){ "Emblem 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string emblem1Name = "Emblem 1";
+            string emblem2Name = "Emblem 2";
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Emblem 1" };
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
 
-            List<Emblem> matches = Emblem.MatchNames(dict, names);
-            Assert.AreEqual(1, matches.Count);
-            Assert.IsTrue(matches.First().Matched);
+            IEmblem emblem2 = Substitute.For<IEmblem>();
+            emblem2.Name.Returns(emblem2Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+            dict.Add(emblem2Name, emblem2);
+
+            IEnumerable<string> names = new List<string>() { emblem1Name };
+            List<IEmblem> matches = Emblem.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(1));
+            Assert.That(matches.Contains(emblem1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
-        [TestMethod]
-        public void Emblem_MatchNames_MultipleMatches()
+        [Test]
+        public void MatchNames_MultipleMatches()
         {
-            EmblemsConfig config = new EmblemsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Emblem 1" },
-                            new List<object>(){ "Emblem 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string emblem1Name = "Emblem 1";
+            string emblem2Name = "Emblem 2";
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Emblem 1", "Emblem 2" };
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
 
-            List<Emblem> matches = Emblem.MatchNames(dict, names);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsTrue(matches[0].Matched);
-            Assert.IsTrue(matches[1].Matched);
+            IEmblem emblem2 = Substitute.For<IEmblem>();
+            emblem2.Name.Returns(emblem2Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+            dict.Add(emblem2Name, emblem2);
+
+            IEnumerable<string> names = new List<string>() { emblem1Name, emblem2Name };
+            List<IEmblem> matches = Emblem.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches.Contains(emblem1), Is.True);
+            Assert.That(matches.Contains(emblem2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
-        [TestMethod]
-        public void Emblem_MatchNames_MultipleMatches_SetMatchedStatus()
+        [Test]
+        public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            EmblemsConfig config = new EmblemsConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Emblem 1" },
-                            new List<object>(){ "Emblem 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string emblem1Name = "Emblem 1";
+            string emblem2Name = "Emblem 2";
 
-            IDictionary<string, Emblem> dict = Emblem.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Emblem 1", "Emblem 2" };
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
 
-            List<Emblem> matches = Emblem.MatchNames(dict, names, true);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsFalse(matches[0].Matched);
-            Assert.IsFalse(matches[1].Matched);
+            IEmblem emblem2 = Substitute.For<IEmblem>();
+            emblem2.Name.Returns(emblem2Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+            dict.Add(emblem2Name, emblem2);
+
+            IEnumerable<string> names = new List<string>() { emblem1Name, emblem2Name };
+            List<IEmblem> matches = Emblem.MatchNames(dict, names, false);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches.Contains(emblem1), Is.True);
+            Assert.That(matches.Contains(emblem2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string emblem1Name = "Emblem 1";
+
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+
+            string name = "Emblem 2";
+
+            Assert.Throws<UnmatchedEmblemException>(() => Emblem.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string emblem1Name = "Emblem 1";
+
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+
+            IEmblem match = Emblem.MatchName(dict, emblem1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(emblem1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string emblem1Name = "Emblem 1";
+
+            IEmblem emblem1 = Substitute.For<IEmblem>();
+            emblem1.Name.Returns(emblem1Name);
+
+            IDictionary<string, IEmblem> dict = new Dictionary<string, IEmblem>();
+            dict.Add(emblem1Name, emblem1);
+
+            IEmblem match = Emblem.MatchName(dict, emblem1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(emblem1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

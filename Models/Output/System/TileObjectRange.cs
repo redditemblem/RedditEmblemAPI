@@ -5,10 +5,24 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
+    #region Interface
+
+    /// <inheritdoc cref="TileObjectRange"/>
+    public interface ITileObjectRange
+    {
+        /// <inheritdoc cref="TileObjectRange.Minimum"/>
+        int Minimum { get; }
+
+        /// <inheritdoc cref="TileObjectRange.Maximum"/>
+        int Maximum { get; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing an <c>TileObject</c>'s range.
     /// </summary>
-    public class TileObjectRange
+    public class TileObjectRange : ITileObjectRange
     {
         /// <summary>
         /// The minimum number of tiles a terrain object can reach.

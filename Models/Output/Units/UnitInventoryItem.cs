@@ -24,10 +24,10 @@ namespace RedditEmblemAPI.Models.Output.Units
         public string FullName { get; set; }
 
         /// <summary>
-        /// The <c>Item</c> object.
+        /// The <c>IItem</c> object.
         /// </summary>
         [JsonIgnore]
-        public Item Item { get; set; }
+        public IItem Item { get; set; }
 
         /// <summary>
         /// Flag indicating if this item can be equipped by the unit.
@@ -98,19 +98,19 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// List of the item's tags.
         /// </summary>
         [JsonIgnore]
-        public List<Tag> TagsList { get; set; }
+        public List<ITag> TagsList { get; set; }
 
         /// <summary>
         /// List of the item's engravings.
         /// </summary>
         [JsonIgnore]
-        public List<Engraving> EngravingsList { get; set; }
+        public List<IEngraving> EngravingsList { get; set; }
 
         /// <summary>
         /// The engraving that overrides the item's default range values, if one exists.
         /// </summary>
         [JsonIgnore]
-        private Engraving EngravingOverridesRanges { get; set; }
+        private IEngraving EngravingOverridesRanges { get; set; }
 
         /// <summary>
         /// Is true if this item possesses a minimum or maximum range that requires calculation.
@@ -161,7 +161,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         /// <exception cref="UnmatchedItemException"></exception>
         /// <exception cref="UnmatchedEngravingException"></exception>
-        public UnitInventoryItem(string itemFullName, int itemUses, IEnumerable<string> itemEngravings, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        public UnitInventoryItem(string itemFullName, int itemUses, IEnumerable<string> itemEngravings, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
         {
             this.FullName = itemFullName;
             this.CanEquip = false;
@@ -201,7 +201,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             name = name.Trim();
-            this.Item = Item.MatchName(items, name);
+            this.Item = System.Item.MatchName(items, name);
 
             //Copy data over from the matched item
             this.MaxUses = this.Item.MaxUses;
@@ -215,13 +215,13 @@ namespace RedditEmblemAPI.Models.Output.Units
             MatchEngravings(itemEngravings, engravings);   
         }
 
-        private void MatchEngravings(IEnumerable<string> itemEngravings, IDictionary<string, Engraving> engravings)
+        private void MatchEngravings(IEnumerable<string> itemEngravings, IDictionary<string, IEngraving> engravings)
         {
             this.EngravingsList = Engraving.MatchNames(engravings, itemEngravings);
             this.EngravingsList = this.EngravingsList.Union(this.Item.Engravings).DistinctBy(e => e.Name).ToList();
             this.EngravingOverridesRanges = null;
 
-            foreach (Engraving engraving in this.EngravingsList)
+            foreach (IEngraving engraving in this.EngravingsList)
             {
                 //Apply any modifiers to the item's stats
                 foreach (KeyValuePair<string, int> mod in engraving.ItemStatModifiers)
@@ -255,7 +255,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             string minRangeLabel = "Minimum Range";
             string maxRangeLabel = "Maximum Range";
 
-            ItemRange range;
+            IItemRange range;
             if (this.EngravingOverridesRanges != null) range = this.EngravingOverridesRanges.ItemRangeOverrides;
             else range = this.Item.Range;
 

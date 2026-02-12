@@ -5,10 +5,33 @@ using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Models.Output.Map
 {
+    #region Interface
+
+    /// <inheritdoc cref="Coordinate"
+    public interface ICoordinate
+    {
+        /// <inheritdoc cref="Coordinate.X"/>
+        int X { get; }
+
+        /// <inheritdoc cref="Coordinate.Y"/>
+        int Y { get; }
+
+        /// <inheritdoc cref="Coordinate.AsText"/>
+        string AsText { get; }
+
+        /// <inheritdoc cref="Coordinate.DistanceFrom(ICoordinate)"/>
+        int DistanceFrom(ICoordinate coord);
+
+        /// <inheritdoc cref="Coordinate.DistanceFrom(int, int)"/>
+        int DistanceFrom(int x, int y);
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// A coordinate pair (ex. "x,y") on the map.
     /// </summary>
-    public class Coordinate
+    public class Coordinate : ICoordinate
     {
         #region Constants
 
@@ -21,19 +44,19 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// The coordinate's horizontal displacement value.
         /// </summary>
-        public int X;
+        public int X { get; private set; }
 
         /// <summary>
         /// The coordinate's vertical displacement value.
         /// </summary>
-        public int Y;
+        public int Y { get; private set; }
 
         /// <summary>
         /// The textual representation of the coordinate. Can be in x,y or alphanumerical representation.
         /// </summary>
-        public string AsText;
+        public string AsText { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         #region Constructors
 
@@ -50,13 +73,11 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Initializes the <c>Coordinate</c> with the passed in <paramref name="x"/> and <paramref name="y"/> values.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
         public Coordinate(CoordinateFormat coordinateFormat, int x, int y)
         {
             this.X = x;
             this.Y = y;
-            SetAsTextValue(coordinateFormat);
+            this.AsText = BuildAsTextValue(coordinateFormat);
         }
 
         /// <summary>
@@ -79,13 +100,16 @@ namespace RedditEmblemAPI.Models.Output.Map
             {
                 //Error if the passed string is not a tuple of non-zero, positive integers
                 string[] split = coord.Split(',');
+                int x, y;
                 if (split.Length != 2
-                    || !int.TryParse(split[0].Trim(), out this.X)
-                    || !int.TryParse(split[1].Trim(), out this.Y)
-                    || this.X < 1
-                    || this.Y < 1
+                    || !int.TryParse(split[0].Trim(), out x)
+                    || !int.TryParse(split[1].Trim(), out y)
+                    || x < 1
+                    || y < 1
                    )
                     throw new XYCoordinateFormattingException(coord);
+                this.X = x;
+                this.Y = y;
                 this.AsText = coord;
             }
             else
@@ -112,7 +136,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// Initializes the <c>Coordinate</c> with the same x,y values as <paramref name="coord"/>.
         /// </summary>
         /// <param name="coord"></param>
-        public Coordinate(Coordinate coord)
+        public Coordinate(ICoordinate coord)
         {
             this.X = coord.X;
             this.Y = coord.Y;
@@ -121,14 +145,15 @@ namespace RedditEmblemAPI.Models.Output.Map
 
         #endregion
 
-        private void SetAsTextValue(CoordinateFormat coordinateFormat)
+        private string BuildAsTextValue(CoordinateFormat format)
         {
-            switch (coordinateFormat)
+            switch (format)
             {
-                case CoordinateFormat.XY: this.AsText = BuildAsTextValue_XY(); break;
-                case CoordinateFormat.Alphanumerical: this.AsText = BuildAsTextValue_Alphanumerical(); break;
-                default: throw new Exception("Unrecognized coordinate format");
+                case CoordinateFormat.XY: return BuildAsTextValue_XY();
+                case CoordinateFormat.Alphanumerical: return BuildAsTextValue_Alphanumerical();
             }
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -166,9 +191,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Returns the Manhattan Distance (horizontal/vertical displacement) between this coordinate and <paramref name="coord"/>.
         /// </summary>
-        /// <param name="coord"></param>
-        /// <returns></returns>
-        public int DistanceFrom(Coordinate coord)
+        public int DistanceFrom(ICoordinate coord)
         {
             return DistanceFrom(coord.X, coord.Y);
         }
@@ -176,8 +199,6 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Returns the Manhattan Distance (horizontal/vertical displacement) between this coordinate and the coordinate at <paramref name="x"/>, <paramref name="y"/>.
         /// </summary>
-        /// <param name="coord"></param>
-        /// <returns></returns>
         public int DistanceFrom(int x, int y)
         {
             return Math.Abs(this.X - x) + Math.Abs(this.Y - y);
@@ -186,7 +207,6 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Returns the <c>Coordinate</c> in "x,y" or alphanumerical print format for display.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return this.AsText;

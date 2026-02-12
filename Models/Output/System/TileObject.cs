@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.System.TileObjects;
+﻿using RedditEmblemAPI.Models.Configuration.System.TileObjects;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
@@ -12,20 +11,41 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class TileObject : IMatchable
+    #region Interface
+
+    /// <inheritdoc cref="TileObject"/>
+    public interface ITileObject : IMatchable
+    {
+        /// <inheritdoc cref="TileObject.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="TileObject.Size"/>
+        int Size { get; set; }
+
+        /// <inheritdoc cref="TileObject.Layer"/>
+        TileObjectLayer Layer { get; set; }
+
+        /// <inheritdoc cref="TileObject.Range"/>
+        ITileObjectRange Range { get; set; }
+
+        /// <inheritdoc cref="TileObject.HPModifier"/>
+        int HPModifier { get; set; }
+
+        /// <inheritdoc cref="TileObject.CombatStatModifiers"/>
+        IDictionary<string, int> CombatStatModifiers { get; set; }
+
+        /// <inheritdoc cref="TileObject.StatModifiers"/>
+        IDictionary<string, int> StatModifiers { get; set; }
+
+        /// <inheritdoc cref="TileObject.TextFields"/>
+        List<string> TextFields { get; set; }
+    }
+
+    #endregion Interface
+
+    public class TileObject : Matchable, ITileObject
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this tile object was found on a tile. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The name of the tile object.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The sprite image URL for the tile object.
@@ -45,7 +65,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Container object for the tile object's range.
         /// </summary>
-        public TileObjectRange Range { get; set; }
+        public ITileObjectRange Range { get; set; }
 
         /// <summary>
         /// The value by which the tile object modifies a unit's HP. Assumed to be a percentage.
@@ -67,11 +87,10 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public List<string> TextFields { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         public TileObject(TileObjectsConfig config, IEnumerable<string> data)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.String_URL(data, config.SpriteURL, "Sprite URL");
             this.Size = DataParser.OptionalInt_NonZeroPositive(data, config.Size, "Size");
@@ -102,27 +121,18 @@ namespace RedditEmblemAPI.Models.Output.System
             return (TileObjectLayer)layerEnum;
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>TileObject</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
-        {
-            this.Matched = true;
-        }
-
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>TileObject</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>ITileObject</c> from each valid row.
         /// </summary>
         /// <exception cref="TileObjectProcessingException"></exception>
-        public static IDictionary<string, TileObject> BuildDictionary(TileObjectsConfig config)
+        public static IDictionary<string, ITileObject> BuildDictionary(TileObjectsConfig config)
         {
-            IDictionary<string, TileObject> tileObjects = new Dictionary<string, TileObject>();
-            if (config == null || config.Queries == null)
-                return tileObjects;
+            IDictionary<string, ITileObject> tileObjects = new Dictionary<string, ITileObject>();
+            if (config?.Queries is null) return tileObjects;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -144,31 +154,31 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to a <c>TileObject</c> in <paramref name="tileObjects"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>ITileObject</c> in <paramref name="tileObjects"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<TileObject> MatchNames(IDictionary<string, TileObject> tileObjects, IEnumerable<string> names, Coordinate coord, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<ITileObject> MatchNames(IDictionary<string, ITileObject> tileObjects, IEnumerable<string> names, ICoordinate coord, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(tileObjects, n, coord, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(tileObjects, n, coord, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>TileObject</c> in <paramref name="tileObjects"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>ITileObject</c> in <paramref name="tileObjects"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedTileObjectException"></exception>
-        public static TileObject MatchName(IDictionary<string, TileObject> tileObjects, string name, Coordinate coord, bool skipMatchedStatusSet = false)
+        public static ITileObject MatchName(IDictionary<string, ITileObject> tileObjects, string name, ICoordinate coord, bool flagAsMatched = true)
         {
-            TileObject match;
+            ITileObject match;
             if (!tileObjects.TryGetValue(name, out match))
                 throw new UnmatchedTileObjectException(coord, name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
 
-        #endregion
+        #endregion Static Functions
     }
 
     //Note: enum equals (=) value is important for calculating the z-index of the sprite render

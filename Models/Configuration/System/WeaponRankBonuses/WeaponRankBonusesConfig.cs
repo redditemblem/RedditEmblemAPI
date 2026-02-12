@@ -7,12 +7,9 @@ namespace RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses
     /// <summary>
     /// Container class for deserialized JSON <c>"WeaponRankBonus"</c> object data.
     /// </summary>
-    public class WeaponRankBonusesConfig : IQueryable
+    public class WeaponRankBonusesConfig : Queryable
     {
         #region Required Fields
-
-        [JsonRequired]
-        public Query Query { get; set; }
 
         /// <summary>
         /// Required. Cell index of a weapon rank bonus category.
@@ -20,7 +17,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses
         [JsonRequired]
         public int Category { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
@@ -39,6 +36,6 @@ namespace RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses
         /// </summary>
         public List<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
 
-        #endregion
+        #endregion Optional Fields
     }
 }

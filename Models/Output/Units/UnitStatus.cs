@@ -29,10 +29,10 @@ namespace RedditEmblemAPI.Models.Output.Units
         private string Name { get { return this.StatusObj.Name; } }
 
         /// <summary>
-        /// The <c>StatusCondition</c> object.
+        /// The <c>IStatusCondition</c> object.
         /// </summary>
         [JsonIgnore]
-        public StatusCondition StatusObj { get; set; }
+        public IStatusCondition StatusObj { get; set; }
 
         /// <summary>
         /// The number of turns this status has left.
@@ -52,7 +52,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Searches for a <c>StatusCondition</c> in <paramref name="statusConditions"/> that matches <paramref name="fullStatusName"/>.
         /// </summary>
         /// <exception cref="UnmatchedStatusConditionException"></exception>
-        public UnitStatus(IEnumerable<string> data, UnitStatusConditionConfig config, IDictionary<string, StatusCondition> statusConditions)
+        public UnitStatus(IEnumerable<string> data, UnitStatusConditionConfig config, IDictionary<string, IStatusCondition> statusConditions)
         {
             this.FullName = DataParser.String(data, config.Name, "Status Condition Name");
             this.RemainingTurns = 0;

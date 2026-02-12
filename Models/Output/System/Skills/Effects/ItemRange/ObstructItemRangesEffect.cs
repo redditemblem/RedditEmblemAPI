@@ -33,7 +33,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// ddfdf
         /// </summary>
-        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
+        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
         {
             //Ignore units not on the map
             if (!unit.Location.IsOnMap())

@@ -16,7 +16,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The <c>Emblem</c> object.
         /// </summary>
         [JsonIgnore]
-        public Emblem Emblem { get; set; }
+        public IEmblem Emblem { get; set; }
 
         /// <summary>
         /// The bond level that the unit has with this emblem.
@@ -51,7 +51,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// List of the emblem's engage attacks.
         /// </summary>
         [JsonIgnore]
-        public List<EngageAttack> EngageAttacksList { get; set; }
+        public List<IEngageAttack> EngageAttacksList { get; set; }
 
         #region JSON Serialization ONLY
 
@@ -77,7 +77,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         public UnitEmblem(UnitEmblemConfig config, IEnumerable<string> data, SystemInfo systemData)
         {
             string name = DataParser.String(data, config.Name, "Emblem");
-            this.Emblem = Emblem.MatchName(systemData.Emblems, name);
+            this.Emblem = System.Emblem.MatchName(systemData.Emblems, name);
 
             this.BondLevel = DataParser.OptionalInt_NonZeroPositive(data, config.BondLevel, "Emblem Bond Level", 0);
             this.EngageMeterCount = DataParser.OptionalInt_Positive(data, config.EngageMeterCount, "Engage Meter Count", -1);
@@ -95,7 +95,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Builds and returns a list of the unit's skills.
         /// </summary>
-        private List<UnitSkill> BuildUnitSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, Skill> skills)
+        private List<UnitSkill> BuildUnitSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, ISkill> skills)
         {
             List<UnitSkill> unitSkills = new List<UnitSkill>();
             foreach (UnitSkillConfig config in configs)
@@ -109,7 +109,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             return unitSkills;
         }
 
-        private void BuildItems(IEnumerable<string> data, UnitEmblemConfig config, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        private void BuildItems(IEnumerable<string> data, UnitEmblemConfig config, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
         {
             this.EngageWeapons = new List<UnitInventoryItem>();
             IEnumerable<string> weapons = DataParser.List_Strings(data, config.EngageWeapons);

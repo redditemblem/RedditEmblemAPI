@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Common;
+﻿using RedditEmblemAPI.Models.Configuration.Common;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Skills
@@ -7,21 +6,8 @@ namespace RedditEmblemAPI.Models.Configuration.System.Skills
     /// <summary>
     /// Container class for deserialized JSON <c>"Skills"</c> object data.
     /// </summary>
-    public class SkillsConfig : IMultiQueryable
+    public class SkillsConfig : MultiQueryable
     {
-        #region Required Fields
-
-        [JsonRequired]
-        public IEnumerable<Query> Queries { get; set; }
-
-        /// <summary>
-        /// Required. Cell index of a skill's name value.
-        /// </summary>
-        [JsonRequired]
-        public int Name { get; set; }
-
-        #endregion
-
         #region Optional Fields
 
         /// <summary>

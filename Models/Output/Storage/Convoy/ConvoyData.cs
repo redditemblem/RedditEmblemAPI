@@ -52,22 +52,22 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// <summary>
         /// List of <c>Item</c>s linked by the values in <c>ConvoyItems</c>.
         /// </summary>
-        public IDictionary<string, Item> Items { get; set; }
+        public IDictionary<string, IItem> Items { get; set; }
 
         /// <summary>
         /// Container dictionary for data about skills.
         /// </summary>
-        public IDictionary<string, Skill> Skills { get; set; }
+        public IDictionary<string, ISkill> Skills { get; set; }
 
         /// <summary>
         /// Container dictionary for data about tags.
         /// </summary>
-        public IDictionary<string, Tag> Tags { get; set; }
+        public IDictionary<string, ITag> Tags { get; set; }
 
         /// <summary>
         /// Container dictionary for data about engravings.
         /// </summary>
-        public IDictionary<string, Engraving> Engravings { get; set; }
+        public IDictionary<string, IEngraving> Engravings { get; set; }
 
         #endregion
 

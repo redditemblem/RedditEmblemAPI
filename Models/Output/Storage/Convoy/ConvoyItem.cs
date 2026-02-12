@@ -23,7 +23,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         public string FullName { get; set; }
 
         [JsonIgnore]
-        public Item Item { get; set; }
+        public IItem Item { get; set; }
 
         /// <summary>
         /// The player that owns this item.
@@ -54,13 +54,13 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// List of the item's tags.
         /// </summary>
         [JsonIgnore]
-        public List<Tag> TagsList { get; set; }
+        public List<ITag> TagsList { get; set; }
 
         /// <summary>
         /// List of the engravings applied to the item.
         /// </summary>
         [JsonIgnore]
-        public List<Engraving> EngravingsList { get; set; }
+        public List<IEngraving> EngravingsList { get; set; }
 
         #region JSON Serialization Only
 
@@ -91,7 +91,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// <summary>
         /// Constructor. Builds the <c>ConvoyItem</c> and matches it to an <c>Item</c> definition from <paramref name="items"/>.
         /// </summary>
-        public ConvoyItem(ConvoyConfig config, IEnumerable<string> data, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        public ConvoyItem(ConvoyConfig config, IEnumerable<string> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
         {
             this.FullName = DataParser.String(data, config.Name, "Name");
             this.Uses = 0;
@@ -116,7 +116,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             }
             
             name = name.Trim();
-            this.Item = Item.MatchName(items, name);
+            this.Item = System.Item.MatchName(items, name);
 
             //Copy data from parent item
             this.Stats = new Dictionary<string, UnitInventoryItemStat>();
@@ -136,7 +136,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
 
         private void ApplyEngravings()
         {
-            foreach (Engraving engraving in this.EngravingsList.Union(this.Item.Engravings))
+            foreach (IEngraving engraving in this.EngravingsList.Union(this.Item.Engravings))
             {
                 //Apply any modifiers to the item's stats
                 foreach (KeyValuePair<string, int> mod in engraving.ItemStatModifiers)
@@ -165,7 +165,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>ConvoyItem</c> from each valid row.
         /// </summary>
         /// <exception cref="ConvoyItemProcessingException"></exception>
-        public static List<ConvoyItem> BuildList(ConvoyConfig config, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        public static List<ConvoyItem> BuildList(ConvoyConfig config, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
         {
             List<ConvoyItem> convoyItems = new List<ConvoyItem>();
             if (config == null || config.Query == null)

@@ -22,10 +22,10 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         public string FullName { get; set; }
 
         /// <summary>
-        /// The <c>Item</c> object.
+        /// The <c>IItem</c> object.
         /// </summary>
         [JsonIgnore]
-        public Item Item { get; set; }
+        public IItem Item { get; set; }
 
         /// <summary>
         /// Dictionary of the item's stats. Copied over from <c>Item</c> on match.
@@ -56,13 +56,13 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// List of the item's tags.
         /// </summary>
         [JsonIgnore]
-        public List<Tag> TagsList { get; set; }
+        public List<ITag> TagsList { get; set; }
 
         /// <summary>
         /// List of engravings applied to the item.
         /// </summary>
         [JsonIgnore]
-        public List<Engraving> EngravingsList { get; set; }
+        public List<IEngraving> EngravingsList { get; set; }
 
         #region JSON Serialization Only
 
@@ -92,10 +92,10 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// Constructor. Builds the <c>ShopItem</c> and matches it to an <c>Item</c> definition from <paramref name="items"/>.
         /// </summary>
         /// <exception cref="UnmatchedItemException"></exception>
-        public ShopItem(ShopConfig config, IEnumerable<string> data, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        public ShopItem(ShopConfig config, IEnumerable<string> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
         {
             this.FullName = DataParser.String(data, config.Name, "Name");
-            this.Item = Item.MatchName(items, this.FullName);
+            this.Item = System.Item.MatchName(items, this.FullName);
 
             //Copy data from parent item
             this.Stats = new Dictionary<string, UnitInventoryItemStat>();
@@ -116,7 +116,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
 
         private void ApplyEngravings()
         {
-            foreach (Engraving engraving in this.EngravingsList.Union(this.Item.Engravings))
+            foreach (IEngraving engraving in this.EngravingsList.Union(this.Item.Engravings))
             {
                 //Apply any modifiers to the item's stats
                 foreach (KeyValuePair<string, int> mod in engraving.ItemStatModifiers)
@@ -145,7 +145,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>ShopItem</c> from each valid row.
         /// </summary>
         /// <exception cref="ShopItemProcessingException"></exception>
-        public static List<ShopItem> BuildList(ShopConfig config, IDictionary<string, Item> items, IDictionary<string, Engraving> engravings)
+        public static List<ShopItem> BuildList(ShopConfig config, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
         {
             List<ShopItem> shopItems = new List<ShopItem>();
             if (config == null || config.Query == null)

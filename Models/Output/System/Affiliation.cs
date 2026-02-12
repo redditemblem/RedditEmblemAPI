@@ -11,20 +11,28 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class Affiliation : IMatchable
+    #region Interface
+
+    /// <inheritdoc cref="Affiliation"/>
+    public interface IAffiliation : IMatchable
+    {
+        /// <inheritdoc cref="Affiliation.Grouping"/>
+        int Grouping {  get; set; }
+
+        /// <inheritdoc cref="Affiliation.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="Affiliation.FlipUnitSprites"/>
+        bool FlipUnitSprites { get; set; }
+
+        /// <inheritdoc cref="Affiliation.TextFields"/>
+        List<string> TextFields { get; set; }
+    }
+
+    #endregion Interface
+    public class Affiliation : Matchable, IAffiliation
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this affiliation was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The name of the affiliation.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The grouping that the affiliation belongs to.
@@ -47,14 +55,13 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public List<string> TextFields { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
         public Affiliation(AffiliationsConfig config, IEnumerable<string> data)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.Grouping = DataParser.Int_NonZeroPositive(data, config.Grouping, "Grouping");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -62,27 +69,18 @@ namespace RedditEmblemAPI.Models.Output.System
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>Affiliation</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
-        {
-            this.Matched = true;
-        }
-
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Affiliation</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>IAffiliation</c> from each valid row.
         /// </summary>
         /// <exception cref="AffiliationProcessingException"></exception>
-        public static IDictionary<string, Affiliation> BuildDictionary(AffiliationsConfig config)
+        public static IDictionary<string, IAffiliation> BuildDictionary(AffiliationsConfig config)
         {
-            IDictionary<string, Affiliation> affiliations = new Dictionary<string, Affiliation>();
-            if (config == null || config.Queries == null)
-                return affiliations;
+            IDictionary<string, IAffiliation> affiliations = new Dictionary<string, IAffiliation>();
+            if (config?.Queries is null) return affiliations;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -104,30 +102,30 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>Affiliation</c> in <paramref name="affiliations"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>IAffiliation</c> in <paramref name="affiliations"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Affiliation> MatchNames(IDictionary<string, Affiliation> affiliations, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<IAffiliation> MatchNames(IDictionary<string, IAffiliation> affiliations, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(affiliations, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(affiliations, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to an <c>Affiliation</c> in <paramref name="affiliations"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>IAffiliation</c> in <paramref name="affiliations"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedAffiliationException"></exception>
-        public static Affiliation MatchName(IDictionary<string, Affiliation> affiliations, string name, bool skipMatchedStatusSet = false)
+        public static IAffiliation MatchName(IDictionary<string, IAffiliation> affiliations, string name, bool flagAsMatched = true)
         {
-            Affiliation match;
+            IAffiliation match;
             if (!affiliations.TryGetValue(name, out match))
                 throw new UnmatchedAffiliationException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
 
-        #endregion
+        #endregion Static Functions
     }
 }

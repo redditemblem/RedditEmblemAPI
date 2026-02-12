@@ -38,7 +38,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
         /// <summary>
         /// Applies <c>Modifiers</c> to <paramref name="unit"/> if a friendly, allied unit exists within <c>Radius</c> tiles of <paramref name="unit"/>.
         /// </summary>
-        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
+        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
         {
             //If unit is not on the map, don't apply
             if (!unit.Location.IsOnMap())

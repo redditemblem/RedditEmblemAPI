@@ -3,34 +3,33 @@ using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
 
 namespace UnitTests.Models.System.StatusConditions.Effects
 {
-    [TestClass]
     public class OverrideMovementTypeEffect_StatusTests
     {
         #region Constructor
 
-        [TestMethod]
-        public void OverrideMovementTypeEffect_Status_Constructor_Null()
+        [Test]
+        public void Constructor_Null()
         {
             List<string> parameters = new List<string>();
 
-            Assert.ThrowsException<StatusConditionEffectMissingParameterException>(() => new OverrideMovementTypeEffect_Status(parameters));
+            Assert.Throws<StatusConditionEffectMissingParameterException>(() => new OverrideMovementTypeEffect_Status(parameters));
         }
 
-        [TestMethod]
-        public void OverrideMovementTypeEffect_Status_Constructor_1EmptyString()
+        [Test]
+        public void Constructor_1EmptyString()
         {
             List<string> parameters = new List<string>() { string.Empty };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new OverrideMovementTypeEffect_Status(parameters));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new OverrideMovementTypeEffect_Status(parameters));
         }
 
-        [TestMethod]
-        public void OverrideMovementTypeEffect_Status_Constructor()
+        [Test]
+        public void Constructor()
         {
             List<string> parameters = new List<string>() { "MoveType" };
             OverrideMovementTypeEffect_Status effect = new OverrideMovementTypeEffect_Status(parameters);
 
-            Assert.AreEqual<string>("MoveType", effect.MovementType);
+            Assert.That(effect.MovementType, Is.EqualTo("MoveType"));
         }
 
         #endregion Constructor

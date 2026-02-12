@@ -28,10 +28,10 @@ namespace RedditEmblemAPI.Models.Output.Map
         private string Name { get { return this.TileObject.Name; } }
 
         /// <summary>
-        /// The <c>TileObject</c> located on the tile. 
+        /// The <c>ITileObject</c> located on the tile. 
         /// </summary>
         [JsonIgnore]
-        public TileObject TileObject { get; set; }
+        public ITileObject TileObject { get; set; }
 
         /// <summary>
         /// List of <c>Tile</c>s from which the tile object's range originates.
@@ -66,7 +66,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// Constructor.
         /// </summary>
         [Obsolete("Leaving this constructor in until all teams using the old Tile Object placement method are finished.")]
-        public TileObjectInstance(int tileObjectID, TileObject tileObject)
+        public TileObjectInstance(int tileObjectID, ITileObject tileObject)
         {
             this.ID = tileObjectID;
             this.TileObject = tileObject;
@@ -78,7 +78,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// Constructor.
         /// </summary>
         /// <param name="tileObjectID">ID for identifying this particular tile object instance. Should be unique.</param>
-        public TileObjectInstance(MapObjectsConfig config, MapConstantsConfig mapConstants, int tileObjectID, IEnumerable<string> data, IDictionary<string, TileObject> tileObjects)
+        public TileObjectInstance(MapObjectsConfig config, MapConstantsConfig mapConstants, int tileObjectID, IEnumerable<string> data, IDictionary<string, ITileObject> tileObjects)
         {
             this.ID = tileObjectID;
             this.OriginTiles = new List<Tile>();
@@ -88,7 +88,7 @@ namespace RedditEmblemAPI.Models.Output.Map
             string coordString = DataParser.String(data, config.Coordinate, "Coordinate");
 
             this.AnchorCoordinateObj = new Coordinate(mapConstants.CoordinateFormat, coordString);
-            this.TileObject = TileObject.MatchName(tileObjects, name, this.AnchorCoordinateObj);
+            this.TileObject = System.TileObject.MatchName(tileObjects, name, this.AnchorCoordinateObj);
 
             if(config.HP != null)
             {
@@ -106,7 +106,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// </summary>
         /// <remarks>The returned dictionary's key is a unique ID for each tile object instance.</remarks>
         /// <exception cref="TileObjectInstanceProcessingException"></exception>
-        public static Dictionary<int, TileObjectInstance> BuildDictionary(MapObjectsConfig config, MapConstantsConfig mapConstantsConfig, IDictionary<string, TileObject> tileObjects)
+        public static Dictionary<int, TileObjectInstance> BuildDictionary(MapObjectsConfig config, MapConstantsConfig mapConstantsConfig, IDictionary<string, ITileObject> tileObjects)
         {
             Dictionary<int, TileObjectInstance> tileObjectInsts = new Dictionary<int, TileObjectInstance>();
             if (config == null || config.Query == null)

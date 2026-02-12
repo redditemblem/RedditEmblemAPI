@@ -44,7 +44,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Calculates the HP difference and adds it as a modifier to the stats in <c>Stats</c> for <paramref name="unit"/>.
         /// </summary>
-        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
+        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
         {
             int modifier = (int)Math.Floor(unit.Stats.HP.Difference * this.Multiplier);
             if (modifier == 0) return;

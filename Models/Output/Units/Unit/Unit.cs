@@ -63,7 +63,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// A list of the unit's classes.
         /// </summary>
         [JsonIgnore]
-        public List<Class> ClassList { get; set; }
+        public List<IClass> ClassList { get; set; }
 
         /// <summary>
         /// The unit's movement type. Only used if classes are not provided.
@@ -74,7 +74,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The unit's affiliation.
         /// </summary>
         [JsonIgnore]
-        public Affiliation AffiliationObj { get; set; }
+        public IAffiliation AffiliationObj { get; set; }
 
         /// <summary>
         /// Container for information about the unit's raw numbers.
@@ -195,7 +195,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Builds and returns a list of the unit's status conditions.
         /// </summary>
-        private List<UnitStatus> BuildUnitStatusConditions(IEnumerable<string> data, List<UnitStatusConditionConfig> configs, IDictionary<string, StatusCondition> statuses)
+        private List<UnitStatus> BuildUnitStatusConditions(IEnumerable<string> data, List<UnitStatusConditionConfig> configs, IDictionary<string, IStatusCondition> statuses)
         {
             List<UnitStatus> statusConditions = new List<UnitStatus>();
             foreach (UnitStatusConditionConfig config in configs)
@@ -210,7 +210,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         }
 
         /// <summary>
-        /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>Class</c> from <paramref name="classes"/>.
+        /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>IClass</c> from <paramref name="classes"/>.
         /// </summary>
         /// /// <remarks>
         /// Depends on the following being built beforehand:
@@ -219,9 +219,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </list>
         /// </remarks>
         /// <exception cref="UnmatchedClassException"></exception>
-        private List<Class> BuildClasses(IEnumerable<string> data, List<int> indexes, IDictionary<string, Class> classes)
+        private List<IClass> BuildClasses(IEnumerable<string> data, List<int> indexes, IDictionary<string, IClass> classes)
         {
-            List<Class> unitClasses = new List<Class>();
+            List<IClass> unitClasses = new List<IClass>();
 
             foreach (int index in indexes)
             {
@@ -229,7 +229,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 if (string.IsNullOrEmpty(name))
                     continue;
 
-                Class match = Class.MatchName(classes, name);
+                IClass match = Class.MatchName(classes, name);
                 unitClasses.Add(match);
 
                 //Append class tags to unit's tags
@@ -250,16 +250,16 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Dependent on <c>this.Tags</c> already being built. Iterates through the values in <c>this.Tags</c> and attempts to match them a <c>Tag</c> from <paramref name="tags"/>.
         /// </summary>
-        private void MatchTags(IDictionary<string, Tag> tags)
+        private void MatchTags(IDictionary<string, ITag> tags)
         {
             if (!tags.Any()) return;
 
-            List<Tag> matched = Tag.MatchNames(tags, this.Tags);
+            List<ITag> matched = Tag.MatchNames(tags, this.Tags);
             
             //Apply the unit aura from the first valid tag encountered
             if(string.IsNullOrEmpty(this.Sprite.Aura))
             {
-                Tag aura = matched.FirstOrDefault(t => !string.IsNullOrEmpty(t.UnitAura));
+                ITag aura = matched.FirstOrDefault(t => !string.IsNullOrEmpty(t.UnitAura));
                 if(aura != null)
                     this.Sprite.Aura = aura.UnitAura;
             }
@@ -308,9 +308,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Returns complete list of skills on the unit, including skills from things like the equipped item or emblems, ignoring subsection organization.
         /// </summary>
-        public IEnumerable<Skill> GetFullSkillsList()
+        public IEnumerable<ISkill> GetFullSkillsList()
         {
-            IEnumerable<Skill> skills = this.SkillSubsections.SelectMany(s => s.Skills.Select(s => s.SkillObj));
+            IEnumerable<ISkill> skills = this.SkillSubsections.SelectMany(s => s.Skills.Select(s => s.SkillObj));
 
             //Union w/ equipped item skills
             List<UnitInventoryItem> equipped = this.Inventory.GetAllEquippedItems();

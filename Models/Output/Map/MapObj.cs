@@ -88,7 +88,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// </summary>
         /// <exception cref="MapDataLockedException"></exception>
         /// <exception cref="MapImageURLNotFoundException"></exception>
-        public MapObj(MapConfig config, IDictionary<string, TerrainType> terrainTypes, IDictionary<string, TileObject> tileObjects)
+        public MapObj(MapConfig config, IDictionary<string, ITerrainType> terrainTypes, IDictionary<string, ITileObject> tileObjects)
         {
             this.Constants = config.Constants;
 
@@ -187,7 +187,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <param name="config"></param>
         /// <param name="terrainTypes"></param>
         /// <exception cref="MapProcessingException"></exception>
-        private void BuildTiles(MapTilesConfig config, IDictionary<string, TerrainType> terrainTypes)
+        private void BuildTiles(MapTilesConfig config, IDictionary<string, ITerrainType> terrainTypes)
         {
             int x = 1;
             int y = 1;
@@ -221,7 +221,7 @@ namespace RedditEmblemAPI.Models.Output.Map
 
                         //Match on tile's terrain type
                         Coordinate coord = new Coordinate(this.Constants.CoordinateFormat, x, y);
-                        TerrainType type = TerrainType.MatchName(terrainTypes, t, coord);
+                        ITerrainType type = TerrainType.MatchName(terrainTypes, t, coord);
                         Tile temp = new Tile(coord, type);
 
                         //If we found a warp group number, add the new tile to a warp group.
@@ -280,7 +280,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Uses the data from <paramref name="config"/> to build a dictionary of <c>TileObjectInstance</c>s and place them on the map.
         /// </summary>
-        private void AddTileObjectsToTiles(MapObjectsConfig config, IDictionary<string, TileObject> tileObjects)
+        private void AddTileObjectsToTiles(MapObjectsConfig config, IDictionary<string, ITileObject> tileObjects)
         {
             this.TileObjectInstances = TileObjectInstance.BuildDictionary(config, this.Constants, tileObjects);
             foreach (TileObjectInstance tileObjInst in this.TileObjectInstances.Values)
@@ -308,10 +308,10 @@ namespace RedditEmblemAPI.Models.Output.Map
         }
 
         /// <summary>
-        /// Uses the data from <paramref name="config"/>'s query to apply <c>TileObjects</c>s to the map.
+        /// Uses the data from <paramref name="config"/>'s query to apply <c>ITileObject</c>s to the map.
         /// </summary>
         [Obsolete("Leaving this function in until all teams using the old Tile Object placement method are finished.")]
-        private void AddTileObjectsToTiles_Old(MapObjectsConfig config, IDictionary<string, TileObject> tileObjects)
+        private void AddTileObjectsToTiles_Old(MapObjectsConfig config, IDictionary<string, ITileObject> tileObjects)
         {
             try
             {
@@ -343,7 +343,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                             //Skip any empty strings
                             if (string.IsNullOrWhiteSpace(value)) continue;
 
-                            TileObject tileObj = TileObject.MatchName(tileObjects, value.Trim(), tiles[c].Coordinate);
+                            ITileObject tileObj = TileObject.MatchName(tileObjects, value.Trim(), tiles[c].Coordinate);
                             TileObjectInstance tileObjInst = new TileObjectInstance(idIterator++, tileObj);
 
                             this.TileObjectInstances.Add(tileObjInst.ID, tileObjInst);

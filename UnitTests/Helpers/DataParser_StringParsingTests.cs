@@ -3,466 +3,304 @@ using RedditEmblemAPI.Services.Helpers;
 
 namespace UnitTests.Helpers
 {
-    [TestClass]
     public class DataParser_StringParsingTests
     {
         #region String
 
-        [TestMethod]
-        public void String_WithInput_Null()
+        [Test]
+        public void String_WithInput_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => DataParser.String(data, index, "String_WithInput_Null"));
+            Assert.Throws<RequiredValueNotProvidedException>(() => DataParser.String(data, index, "String_WithInput_IndexOutOfBounds"));
         }
 
-        [TestMethod]
-        public void String_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        public void String_WithInput_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => DataParser.String(data, index, "String_WithInput_EmptyString"));
+            Assert.Throws<RequiredValueNotProvidedException>(() => DataParser.String(data, index, "String_WithInput_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void String_WithInput_Whitespace()
+        [TestCase("123")]
+        [TestCase("test")]
+        public void String_WithInput_ValidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => DataParser.String(data, index, "String_WithInput_Whitespace"));
+            string value = DataParser.String(data, index, "String_WithInput_ValidInputs");
+
+            Assert.That(value, Is.EqualTo(input));
         }
 
-        [TestMethod]
-        public void String_WithInput_Numerical()
+
+        [Test]
+        public void String_WithInput_TrimWhitespace()
         {
-            List<string> data = new List<string>() { "123" };
+            IEnumerable<string> data = new List<string>() { " test " };
             int index = 0;
 
-            string value = DataParser.String(data, index, "String_WithInput_Numerical");
-            Assert.AreEqual<string>("123", value);
-        }
+            string value = DataParser.String(data, index, "String_WithInput_TrimWhitespace");
 
-        [TestMethod]
-        public void String_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            string value = DataParser.String(data, index, "String_WithInput_Alphabetical");
-            Assert.AreEqual<string>("test", value);
-        }
-
-        [TestMethod]
-        public void String_WithInput_Alphabetical_And_Whitespace()
-        {
-            List<string> data = new List<string>() { " test " };
-            int index = 0;
-
-            string value = DataParser.String(data, index, "String_WithInput_Alphabetical_And_Whitespace");
-            Assert.AreEqual<string>("test", value);
+            Assert.That(value, Is.EqualTo("test"));
         }
 
         #endregion String
 
         #region OptionalString
 
-        [TestMethod]
-        public void OptionalString_WithInput_Null()
+        [Test]
+        public void OptionalString_WithInput_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            string value = DataParser.OptionalString(data, index, "OptionalString_WithInput_Null");
-            Assert.AreEqual<string>(string.Empty, value);
+            string value = DataParser.OptionalString(data, index, "OptionalString_WithInput_IndexOutOfBounds");
+
+            Assert.That(value, Is.Empty);
         }
 
-        [TestMethod]
-        public void OptionalString_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        public void OptionalString_EmptyStringInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            string value = DataParser.OptionalString(data, index, "OptionalString_WithInput_EmptyString");
-            Assert.AreEqual<string>(string.Empty, value);
+            string value = DataParser.OptionalString(data, index, "OptionalString_EmptyStringInputs");
+
+            Assert.That(value, Is.Empty);
         }
 
-        [TestMethod]
-        public void OptionalString_WithInput_Whitespace()
+        [TestCase("test")]
+        public void OptionalString_ValidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            string value = DataParser.OptionalString(data, index, "OptionalString_WithInput_Whitespace");
-            Assert.AreEqual<string>(string.Empty, value);
+            string value = DataParser.OptionalString(data, index, "OptionalString_ValidInputs");
+
+            Assert.That(value, Is.EqualTo(input));
         }
 
-        [TestMethod]
-        public void OptionalString_WithInput_Alphabetical()
+        [Test]
+        public void OptionalString_WithInput_TrimWhitespace()
         {
-            List<string> data = new List<string>() { "test" };
+            IEnumerable<string> data = new List<string>() { " test " };
             int index = 0;
 
-            string value = DataParser.OptionalString(data, index, "OptionalString_WithInput_Alphabetical");
-            Assert.AreEqual<string>("test", value);
-        }
+            string value = DataParser.OptionalString(data, index, "OptionalString_WithInput_TrimWhitespace");
 
-        [TestMethod]
-        public void OptionalString_WithInput_Alphabetical_And_Whitespace()
-        {
-            List<string> data = new List<string>() { " test " };
-            int index = 0;
-
-            string value = DataParser.OptionalString(data, index, "OptionalString_WithInput_Alphabetical_And_Whitespace");
-            Assert.AreEqual<string>("test", value);
+            Assert.That(value, Is.EqualTo("test"));
         }
 
         #endregion OptionalString
 
         #region String_URL
 
-        [TestMethod]
-        public void String_URL_WithInput_Null()
+        [Test]
+        public void String_URL_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => DataParser.String_URL(data, index, "String_URL_WithInput_Null"));
+            Assert.Throws<RequiredValueNotProvidedException>(() => DataParser.String_URL(data, index, "String_URL_IndexOutOfBounds"));
         }
 
-        [TestMethod]
-        public void String_URL_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        public void String_URL_EmptyStringInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => DataParser.String_URL(data, index, "String_URL_WithInput_EmptyString"));
+            Assert.Throws<RequiredValueNotProvidedException>(() => DataParser.String_URL(data, index, "String_URL_EmptyStringInputs"));
         }
 
-        [TestMethod]
-        public void String_URL_WithInput_Whitespace()
+        [TestCase("123")]
+        [TestCase("test")]
+        [TestCase("alert(\"Hacked!\")")] //Javascript
+        [TestCase("google.com")] //partial URL
+        public void String_URL_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => DataParser.String_URL(data, index, "String_URL_WithInput_Whitespace"));
+            Assert.Throws<URLException>(() => DataParser.String_URL(data, index, "String_URL_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void String_URL_WithInput_Numerical()
+        [TestCase("http://www.google.com")] //http
+        [TestCase("https://www.google.com")] //https
+        [TestCase("https://www.google.com/test_image.png")] //image URL
+        public void String_URL_ValidInputs(string input)
         {
-            List<string> data = new List<string>() { "123" };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<URLException>(() => DataParser.String_URL(data, index, "String_URL_WithInput_Numerical"));
-        }
+            string value = DataParser.String_URL(data, index, "String_URL_ValidInputs");
 
-        [TestMethod]
-        public void String_URL_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            Assert.ThrowsException<URLException>(() => DataParser.String_URL(data, index, "String_URL_WithInput_Alphabetical"));
-        }
-
-        [TestMethod]
-        public void String_URL_WithInput_Javascript()
-        {
-            List<string> data = new List<string>() { "alert(\"Hacked!\")" };
-            int index = 0;
-
-            Assert.ThrowsException<URLException>(() => DataParser.String_URL(data, index, "String_URL_WithInput_Javascript"));
-        }
-
-        [TestMethod]
-        public void String_URL_WithInput_PartialURL()
-        {
-            List<string> data = new List<string>() { "google.com" };
-            int index = 0;
-
-            Assert.ThrowsException<URLException>(() => DataParser.String_URL(data, index, "String_URL_WithInput_PartialURL"));
-        }
-
-        [TestMethod]
-        public void String_URL_WithInput_HTTP_URL()
-        {
-            List<string> data = new List<string>() { "http://www.google.com" };
-            int index = 0;
-
-            string value = DataParser.String_URL(data, index, "String_URL_WithInput_HTTP_URL");
-            Assert.AreEqual<string>("http://www.google.com", value);
-        }
-
-        [TestMethod]
-        public void String_URL_WithInput_HTTPS_URL()
-        {
-            List<string> data = new List<string>() { "https://www.google.com" };
-            int index = 0;
-
-            string value = DataParser.String_URL(data, index, "String_URL_WithInput_HTTPS_URL");
-            Assert.AreEqual<string>("https://www.google.com", value);
-        }
-
-        [TestMethod]
-        public void String_URL_WithInput_ImageURL()
-        {
-            List<string> data = new List<string>() { "https://www.google.com/test_image.png" };
-            int index = 0;
-
-            string value = DataParser.String_URL(data, index, "String_URL_WithInput_ImageURL");
-            Assert.AreEqual<string>("https://www.google.com/test_image.png", value);
+            Assert.That(value, Is.EqualTo(input));
         }
 
         #endregion String_URL
 
         #region OptionalString_URL
 
-        [TestMethod]
-        public void OptionalString_URL_WithInput_Null()
+        [Test]
+        public void OptionalString_URL_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            string value = DataParser.OptionalString_URL(data, index, "OptionalString_URL_WithInput_Null");
-            Assert.AreEqual<string>(string.Empty, value);
+            string value = DataParser.OptionalString_URL(data, index, "OptionalString_URL_IndexOutOfBounds");
+
+            Assert.That(value, Is.Empty);
         }
 
-        [TestMethod]
-        public void OptionalString_URL_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        public void OptionalString_URL_EmptyStringInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            string value = DataParser.OptionalString_URL(data, index, "OptionalString_URL_WithInput_EmptyString");
-            Assert.AreEqual<string>(string.Empty, value);
+            string value = DataParser.OptionalString_URL(data, index, "OptionalString_URL_EmptyStringInputs");
+
+            Assert.That(value, Is.Empty);
         }
 
-        [TestMethod]
-        public void OptionalString_URL_WithInput_Whitespace()
+        [TestCase("123")]
+        [TestCase("test")]
+        [TestCase("alert(\"Hacked!\")")] //Javascript
+        [TestCase("google.com")] //partial URL
+        public void OptionalString_URL_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            string value = DataParser.OptionalString_URL(data, index, "OptionalString_URL_WithInput_Whitespace");
-            Assert.AreEqual<string>(string.Empty, value);
+            Assert.Throws<URLException>(() => DataParser.OptionalString_URL(data, index, "OptionalString_URL_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void OptionalString_URL_WithInput_Alphabetical()
+        [TestCase("http://www.google.com")] //http
+        [TestCase("https://www.google.com")] //https
+        [TestCase("https://www.google.com/test_image.png")] //image URL
+        public void OptionalString_URL_ValidInputs(string input)
         {
-            List<string> data = new List<string>() { "test" };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<URLException>(() => DataParser.OptionalString_URL(data, index, "OptionalString_URL_WithInput_Alphabetical"));
-        }
+            string value = DataParser.OptionalString_URL(data, index, "OptionalString_URL_ValidInputs");
 
-        [TestMethod]
-        public void OptionalString_URL_WithInput_Alphabetical_And_Whitespace()
-        {
-            List<string> data = new List<string>() { " test " };
-            int index = 0;
-
-            Assert.ThrowsException<URLException>(() => DataParser.OptionalString_URL(data, index, "OptionalString_URL_WithInput_Alphabetical_And_Whitespace"));
-        }
-
-        [TestMethod]
-        public void OptionalString_URL_WithInput_ImageURL()
-        {
-            List<string> data = new List<string>() { "https://www.google.com/test_image.png" };
-            int index = 0;
-
-            string value = DataParser.OptionalString_URL(data, index, "OptionalString_URL_WithInput_ImageURL");
-            Assert.AreEqual<string>("https://www.google.com/test_image.png", value);
+            Assert.That(value, Is.EqualTo(input));
         }
 
         #endregion OptionalString_URL
 
         #region String_HexCode
 
-        [TestMethod]
-        public void String_HexCode_WithInput_Null()
+        [Test]
+        public void String_HexCode_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => DataParser.String_HexCode(data, index, "String_HexCode_WithInput_Null"));
+            Assert.Throws<RequiredValueNotProvidedException>(() => DataParser.String_HexCode(data, index, "String_HexCode_IndexOutOfBounds"));
         }
 
-        [TestMethod]
-        public void String_HexCode_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        public void String_HexCode_EmptyStringInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => DataParser.String_HexCode(data, index, "String_HexCode_WithInput_EmptyString"));
+            Assert.Throws<RequiredValueNotProvidedException>(() => DataParser.String_HexCode(data, index, "String_HexCode_EmptyStringInputs"));
         }
 
-        [TestMethod]
-        public void String_HexCode_WithInput_Whitespace()
+        [TestCase("123")]
+        [TestCase("test")]
+        [TestCase("FFFFFFFF")] //too many characters
+        [TestCase("ABCDEG")] //illegal character
+        [TestCase("?ABCDEF")] //illegal leading character
+        [TestCase("##1A2B3C")] //double hash
+        public void String_HexCode_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => DataParser.String_HexCode(data, index, "String_HexCode_WithInput_Whitespace"));
+            Assert.Throws<HexException>(() => DataParser.String_HexCode(data, index, "String_HexCode_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void String_HexCode_WithInput_Numerical()
+        [TestCase("1A2B3C", "#1A2B3C")]
+        [TestCase("#1A2B3C", "#1A2B3C")]
+        [TestCase(" #1A2B3C ", "#1A2B3C")]
+        public void String_HexCode_ValidInputs(string input, string expected)
         {
-            List<string> data = new List<string>() { "123" };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<HexException>(() => DataParser.String_HexCode(data, index, "String_HexCode_WithInput_Numerical"));
-        }
+            string value = DataParser.String_HexCode(data, index, "String_HexCode_ValidInputs");
 
-        [TestMethod]
-        public void String_HexCode_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            Assert.ThrowsException<HexException>(() => DataParser.String_HexCode(data, index, "String_HexCode_WithInput_Alphabetical"));
-        }
-
-        [TestMethod]
-        public void String_HexCode_WithInput_TooManyChars()
-        {
-            List<string> data = new List<string>() { "FFFFFFFF" };
-            int index = 0;
-
-            Assert.ThrowsException<HexException>(() => DataParser.String_HexCode(data, index, "String_HexCode_WithInput_TooManyChars"));
-        }
-
-        [TestMethod]
-        public void String_HexCode_WithInput_InvalidChar()
-        {
-            List<string> data = new List<string>() { "ABCDEG" };
-            int index = 0;
-
-            Assert.ThrowsException<HexException>(() => DataParser.String_HexCode(data, index, "String_HexCode_WithInput_InvalidChar"));
-        }
-
-        [TestMethod]
-        public void String_HexCode_WithInput_InvalidLeadingChar()
-        {
-            List<string> data = new List<string>() { "?ABCDEF" };
-            int index = 0;
-
-            Assert.ThrowsException<HexException>(() => DataParser.String_HexCode(data, index, "String_HexCode_WithInput_InvalidLeadingChar"));
-        }
-
-        [TestMethod]
-        public void String_HexCode_WithInput_NoHash()
-        {
-            List<string> data = new List<string>() { "1A2B3C" };
-            int index = 0;
-
-            string value = DataParser.String_HexCode(data, index, "String_HexCode_WithInput_NoHash");
-            Assert.AreEqual<string>("#1A2B3C", value);
-        }
-
-        [TestMethod]
-        public void String_HexCode_WithInput_Hash()
-        {
-            List<string> data = new List<string>() { "#1A2B3C" };
-            int index = 0;
-
-            string value = DataParser.String_HexCode(data, index, "String_HexCode_WithInput_Hash");
-            Assert.AreEqual<string>("#1A2B3C", value);
-        }
-
-        [TestMethod]
-        public void String_HexCode_WithInput_DoubleHash()
-        {
-            List<string> data = new List<string>() { "##1A2B3C" };
-            int index = 0;
-
-            Assert.ThrowsException<HexException>(() => DataParser.String_HexCode(data, index, "String_HexCode_WithInput_DoubleHash"));
-        }
-
-        [TestMethod]
-        public void String_HexCode_WithInput_Hash_And_Whitespace()
-        {
-            List<string> data = new List<string>() { " #1A2B3C " };
-            int index = 0;
-
-            string value = DataParser.String_HexCode(data, index, "String_HexCode_WithInput_Hash_And_Whitespace");
-            Assert.AreEqual<string>("#1A2B3C", value);
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion String_HexCode
 
         #region OptionalString_HexCode
 
-        [TestMethod]
-        public void OptionalString_HexCode_WithInput_Null()
+        [Test]
+        public void OptionalString_HexCode_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            string value = DataParser.OptionalString_HexCode(data, index, "OptionalString_HexCode_WithInput_Null");
-            Assert.AreEqual<string>(string.Empty, value);
+            string value = DataParser.OptionalString_HexCode(data, index, "OptionalString_HexCode_IndexOutOfBounds");
+
+            Assert.That(value, Is.Empty);
         }
 
-        [TestMethod]
-        public void OptionalString_HexCode_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        public void OptionalString_HexCode_EmptyStringInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            string value = DataParser.OptionalString_HexCode(data, index, "OptionalString_HexCode_WithInput_EmptyString");
-            Assert.AreEqual<string>(string.Empty, value);
+            string value = DataParser.OptionalString_HexCode(data, index, "OptionalString_HexCode_EmptyStringInputs");
+
+            Assert.That(value, Is.Empty);
         }
 
-        [TestMethod]
-        public void OptionalString_HexCode_WithInput_Whitespace()
+        [TestCase("123")]
+        [TestCase("test")]
+        [TestCase("FFFFFFFF")] //too many characters
+        [TestCase("ABCDEG")] //illegal character
+        [TestCase("?ABCDEF")] //illegal leading character
+        [TestCase("##1A2B3C")] //double hash
+        public void OptionalString_HexCode_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            string value = DataParser.OptionalString_HexCode(data, index, "OptionalString_HexCode_WithInput_Whitespace");
-            Assert.AreEqual<string>(string.Empty, value);
+            Assert.Throws<HexException>(() => DataParser.OptionalString_HexCode(data, index, "OptionalString_HexCode_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void OptionalString_HexCode_WithInput_Numerical()
+        [TestCase("1A2B3C", "#1A2B3C")]
+        [TestCase("#1A2B3C", "#1A2B3C")]
+        [TestCase(" #1A2B3C ", "#1A2B3C")]
+        public void OptionalString_HexCode_ValidInputs(string input, string expected)
         {
-            List<string> data = new List<string>() { "123" };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<HexException>(() => DataParser.OptionalString_HexCode(data, index, "OptionalString_HexCode_WithInput_Numerical"));
-        }
-
-        [TestMethod]
-        public void OptionalString_HexCode_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            Assert.ThrowsException<HexException>(() => DataParser.OptionalString_HexCode(data, index, "OptionalString_HexCode_WithInput_Alphabetical"));
-        }
-
-        [TestMethod]
-        public void OptionalString_HexCode_WithInput_NoHash()
-        {
-            List<string> data = new List<string>() { "1A2B3C" };
-            int index = 0;
-
-            string value = DataParser.OptionalString_HexCode(data, index, "OptionalString_HexCode_WithInput_NoHash");
-            Assert.AreEqual<string>("#1A2B3C", value);
-        }
-
-        [TestMethod]
-        public void OptionalString_HexCode_WithInput_Hash()
-        {
-            List<string> data = new List<string>() { "#1A2B3C" };
-            int index = 0;
-
-            string value = DataParser.OptionalString_HexCode(data, index, "OptionalString_HexCode_WithInput_Hash");
-            Assert.AreEqual<string>("#1A2B3C", value);
+            string value = DataParser.OptionalString_HexCode(data, index, "OptionalString_HexCode_ValidInputs");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion OptionalString_HexCode

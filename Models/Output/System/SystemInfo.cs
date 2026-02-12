@@ -28,22 +28,22 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Container dictionary for data about terrain types.
         /// </summary>
-        public IDictionary<string, TerrainType> TerrainTypes { get; set; }
+        public IDictionary<string, ITerrainType> TerrainTypes { get; set; }
 
         /// <summary>
         /// Container dictionary for data about classes.
         /// </summary>
-        public IDictionary<string, Class> Classes { get; set; }
+        public IDictionary<string, IClass> Classes { get; set; }
 
         /// <summary>
         /// Container dictionary for data about affiliations.
         /// </summary>
-        public IDictionary<string, Affiliation> Affiliations { get; set; }
+        public IDictionary<string, IAffiliation> Affiliations { get; set; }
 
         /// <summary>
         /// Container dictionary for data about items.
         /// </summary>
-        public IDictionary<string, Item> Items { get; set; }
+        public IDictionary<string, IItem> Items { get; set; }
 
         #endregion
 
@@ -52,68 +52,68 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Container dictionary for data about tile objects.
         /// </summary>
-        public IDictionary<string, TileObject> TileObjects { get; set; }
+        public IDictionary<string, ITileObject> TileObjects { get; set; }
 
         /// <summary>
         /// Container dictionary for data about skills.
         /// </summary>
-        public IDictionary<string, Skill> Skills { get; set; }
+        public IDictionary<string, ISkill> Skills { get; set; }
 
         /// <summary>
         /// Container dictionary for data about status conditions.
         /// </summary>
-        public IDictionary<string, StatusCondition> StatusConditions { get; set; }
+        public IDictionary<string, IStatusCondition> StatusConditions { get; set; }
 
         /// <summary>
         /// Container dictionary for data about tags.
         /// </summary>
-        public IDictionary<string, Tag> Tags { get; set; }
+        public IDictionary<string, ITag> Tags { get; set; }
 
         /// <summary>
         /// Container list for data about weapon rank bonuses.
         /// </summary>
         [JsonIgnore]
-        public List<WeaponRankBonus> WeaponRankBonuses { get; set; }
+        public List<IWeaponRankBonus> WeaponRankBonuses { get; set; }
 
         /// <summary>
         /// Container dictionary for data about engravings.
         /// </summary>
-        public IDictionary<string, Engraving> Engravings { get; set; }
+        public IDictionary<string, IEngraving> Engravings { get; set; }
 
         /// <summary>
         /// Container dictionary for data about combat arts.
         /// </summary>
-        public IDictionary<string, CombatArt> CombatArts { get; set; }
+        public IDictionary<string, ICombatArt> CombatArts { get; set; }
 
         /// <summary>
         /// Container dictionary for data about battalions.
         /// </summary>
-        public IDictionary<string, Battalion> Battalions { get; set; }
+        public IDictionary<string, IBattalion> Battalions { get; set; }
 
         /// <summary>
         /// Container dictionary for data about gambits.
         /// </summary>
-        public IDictionary<string, Gambit> Gambits { get; set; }
+        public IDictionary<string, IGambit> Gambits { get; set; }
 
         /// <summary>
         /// Container dictionary for data about adjutants.
         /// </summary>
-        public IDictionary<string, Adjutant> Adjutants { get; set; }
+        public IDictionary<string, IAdjutant> Adjutants { get; set; }
 
         /// <summary>
         /// Container dictionary for data about battle styles.
         /// </summary>
-        public IDictionary<string, BattleStyle> BattleStyles { get; set; }
+        public IDictionary<string, IBattleStyle> BattleStyles { get; set; }
 
         /// <summary>
         /// Container dictionary for data about emblems.
         /// </summary>
-        public IDictionary<string, Emblem> Emblems { get; set; }
+        public IDictionary<string, IEmblem> Emblems { get; set; }
 
         /// <summary>
         /// Container dictionary for data about emblem engage attacks.
         /// </summary>
-        public IDictionary<string, EngageAttack> EngageAttacks { get; set; }
+        public IDictionary<string, IEngageAttack> EngageAttacks { get; set; }
 
 
         #endregion Optional Data

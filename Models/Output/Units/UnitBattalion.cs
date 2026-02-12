@@ -17,7 +17,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The <c>Battalion</c> object represented by this unit's instance.
         /// </summary>
         [JsonIgnore]
-        public Battalion BattalionObj { get; set; }
+        public IBattalion BattalionObj { get; set; }
 
         /// <summary>
         /// The endurance the battalion has remaining.
@@ -41,7 +41,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #endregion Attributes
 
-        public UnitBattalion(UnitBattalionConfig config, IEnumerable<string> data, IDictionary<string, Battalion> battalions)
+        public UnitBattalion(UnitBattalionConfig config, IEnumerable<string> data, IDictionary<string, IBattalion> battalions)
         {
             string name = DataParser.String(data, config.Battalion, "Battalion");
             this.BattalionObj = Battalion.MatchName(battalions, name);

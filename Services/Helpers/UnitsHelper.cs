@@ -79,9 +79,9 @@ namespace RedditEmblemAPI.Services.Helpers
             foreach (Unit unit in units)
             {
                 //Skill effects
-                foreach (Skill skill in unit.GetFullSkillsList().Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard)))
+                foreach (ISkill skill in unit.GetFullSkillsList().Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard)))
                 {
-                    foreach(SkillEffect effect in skill.Effects.Where(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard))
+                    foreach(ISkillEffect effect in skill.Effects.Where(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard))
                     {
                         try { effect.Apply(unit, skill, map, units); }
                         catch(Exception ex) { throw new UnitSkillEffectProcessingException(unit.Name, skill.Name, ex); }
@@ -93,7 +93,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     try
                     {
-                        foreach (StatusConditionEffect effect in status.StatusObj.Effects)
+                        foreach (IStatusConditionEffect effect in status.StatusObj.Effects)
                             effect.Apply(unit, status, system.Tags);
                     }
                     catch (Exception ex)
@@ -202,7 +202,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         private static void ApplyTileModifiersToUnit(Unit unit, Tile tile)
         {
-            TerrainTypeStats stats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(unit.AffiliationObj);
+            ITerrainTypeStats stats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(unit.AffiliationObj);
             unit.Stats.ApplyCombatStatModifiers(stats.CombatStatModifiers, tile.TerrainTypeObj.Name);
             unit.Stats.ApplyGeneralStatModifiers(stats.StatModifiers, tile.TerrainTypeObj.Name);
             

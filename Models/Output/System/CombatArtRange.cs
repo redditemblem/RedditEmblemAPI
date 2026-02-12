@@ -5,10 +5,24 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
+    #region Interface
+
+    /// <inheritdoc cref="CombatArtRange"/>
+    public interface ICombatArtRange
+    {
+        /// <inheritdoc cref="CombatArtRange.Minimum"/>
+        int Minimum { get; }
+
+        /// <inheritdoc cref="CombatArtRange.Maximum"/>
+        int Maximum { get; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing an <c>CombatArt</c>'s range.
     /// </summary>
-    public class CombatArtRange
+    public class CombatArtRange : ICombatArtRange
     {
         /// <summary>
         /// The minimum number of tiles a combat art can reach.

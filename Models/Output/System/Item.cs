@@ -15,23 +15,77 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
+    #region Interface
+
+    /// <inheritdoc cref="Item"/>
+    public interface IItem : IMatchable
+    {
+        /// <inheritdoc cref="Item.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="Item.Category"/>
+        string Category { get; set; }
+
+        /// <inheritdoc cref="Item.WeaponRank"/>
+        string WeaponRank { get; set; }
+
+        /// <inheritdoc cref="Item.IsAlwaysUsable"/>
+        bool IsAlwaysUsable { get; set; }
+
+        /// <inheritdoc cref="Item.UtilizedStats"/>
+        List<string> UtilizedStats { get; set; }
+
+        /// <inheritdoc cref="Item.TargetedStats"/>
+        List<string> TargetedStats { get; set; }
+
+        /// <inheritdoc cref="Item.DealsDamage"/>
+        bool DealsDamage { get; set; }
+
+        /// <inheritdoc cref="Item.MaxUses"/>
+        int MaxUses { get; set; }
+
+        /// <inheritdoc cref="Item.Stats"/>
+        IDictionary<string, NamedStatValue> Stats { get; set; }
+
+        /// <inheritdoc cref="Item.EquippedCombatStatModifiers"/>
+        IDictionary<string, int> EquippedCombatStatModifiers { get; set; }
+
+        /// <inheritdoc cref="Item.EquippedStatModifiers"/>
+        IDictionary<string, int> EquippedStatModifiers { get; set; }
+
+        /// <inheritdoc cref="Item.EquippedSkills"/>
+        List<UnitSkill> EquippedSkills { get; set; }
+
+        /// <inheritdoc cref="Item.InventoryCombatStatModifiers"/>
+        IDictionary<string, int> InventoryCombatStatModifiers { get; set; }
+
+        /// <inheritdoc cref="Item.InventoryStatModifiers"/>
+        IDictionary<string, int> InventoryStatModifiers { get; set; }
+
+        /// <inheritdoc cref="Item.Range"/>
+        IItemRange Range { get; set; }
+
+        /// <inheritdoc cref="Item.Tags"/>
+        List<ITag> Tags { get; set; }
+
+        /// <inheritdoc cref="Item.Engravings"/>
+        List<IEngraving> Engravings { get; set; }
+
+        /// <inheritdoc cref="Item.TextFields"/>
+        List<string> TextFields { get; set; }
+
+        /// <inheritdoc cref="Item.GraphicURL"/>
+        string GraphicURL { get; set; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing an item definition in the team's system. 
     /// </summary>
-    public class Item : IMatchable
+    public class Item : Matchable, IItem
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this item was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The item's name. 
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The sprite image URL for the item.
@@ -111,19 +165,19 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// The item's range.
         /// </summary>
-        public ItemRange Range { get; set; }
+        public IItemRange Range { get; set; }
 
         /// <summary>
         /// The item's tags.
         /// </summary>
         [JsonIgnore]
-        public List<Tag> Tags { get; set; }
+        public List<ITag> Tags { get; set; }
 
         /// <summary>
         /// The item's engravings.
         /// </summary>
         [JsonIgnore]
-        public List<Engraving> Engravings { get; set; }
+        public List<IEngraving> Engravings { get; set; }
 
         /// <summary>
         /// List of the item's text fields.
@@ -142,9 +196,8 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Item(ItemsConfig config, IEnumerable<string> data, IDictionary<string, Skill> skills, IDictionary<string, Tag> tags, IDictionary<string, Engraving> engravings)
+        public Item(ItemsConfig config, IEnumerable<string> data, IDictionary<string, ISkill> skills, IDictionary<string, ITag> tags, IDictionary<string, IEngraving> engravings)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.Category = DataParser.String(data, config.Category, "Category");
@@ -159,10 +212,10 @@ namespace RedditEmblemAPI.Models.Output.System
             this.GraphicURL = DataParser.OptionalString_URL(data, config.GraphicURL, "Graphic URL");
 
             IEnumerable<string> itemTags = DataParser.List_StringCSV(data, config.Tags).Distinct();
-            this.Tags = Tag.MatchNames(tags, itemTags, true);
+            this.Tags = Tag.MatchNames(tags, itemTags, false);
 
             IEnumerable<string> itemEngravings = DataParser.List_Strings(data, config.Engravings).Distinct();
-            this.Engravings = Engraving.MatchNames(engravings, itemEngravings, true);
+            this.Engravings = Engraving.MatchNames(engravings, itemEngravings, false);
 
             this.Stats = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(config.Stats, data, true);
             this.EquippedCombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.EquippedCombatStatModifiers, data, false, "{0} (Equipped)");
@@ -178,7 +231,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Builds and returns a list of the item's equipped skills.
         /// </summary>
-        private List<UnitSkill> BuildEquippedSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, Skill> skills)
+        private List<UnitSkill> BuildEquippedSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, ISkill> skills)
         {
             //Note: I'm using UnitSkill here because that's what input structure the skill display is expecting
             List<UnitSkill> equippedSkills = new List<UnitSkill>();
@@ -187,7 +240,7 @@ namespace RedditEmblemAPI.Models.Output.System
                 string name = DataParser.OptionalString(data, config.Name, "Skill Name");
                 if (string.IsNullOrEmpty(name)) continue;
 
-                equippedSkills.Add(new UnitSkill(data, config, skills, true));
+                equippedSkills.Add(new UnitSkill(data, config, skills, false));
             }
 
             return equippedSkills;
@@ -195,10 +248,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion Build Functions
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>Item</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
+        public override void FlagAsMatched()
         {
             this.Matched = true;
             this.EquippedSkills.ForEach(s => s.SkillObj.FlagAsMatched());
@@ -209,16 +259,15 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Item</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>IItem</c> from each valid row.
         /// </summary>
         /// <exception cref="ItemProcessingException"></exception>
-        public static IDictionary<string, Item> BuildDictionary(ItemsConfig config, IDictionary<string, Skill> skills, IDictionary<string, Tag> tags, IDictionary<string, Engraving> engravings)
+        public static IDictionary<string, IItem> BuildDictionary(ItemsConfig config, IDictionary<string, ISkill> skills, IDictionary<string, ITag> tags, IDictionary<string, IEngraving> engravings)
         {
-            IDictionary<string, Item> items = new Dictionary<string, Item>();
-            if (config == null || config.Queries == null)
-                return items;
+            IDictionary<string, IItem> items = new Dictionary<string, IItem>();
+            if (config?.Queries is null) return items;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -240,30 +289,30 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to a <c>Item</c> in <paramref name="items"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>IItem</c> in <paramref name="items"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Item> MatchNames(IDictionary<string, Item> items, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<IItem> MatchNames(IDictionary<string, IItem> items, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(items, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(items, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>Item</c> in <paramref name="items"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>IItem</c> in <paramref name="items"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedItemException"></exception>
-        public static Item MatchName(IDictionary<string, Item> items, string name, bool skipMatchedStatusSet = false)
+        public static IItem MatchName(IDictionary<string, IItem> items, string name, bool flagAsMatched = true)
         {
-            Item match;
+            IItem match;
             if (!items.TryGetValue(name, out match))
                 throw new UnmatchedItemException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
 
-        #endregion
+        #endregion Static Functions
     }
 }

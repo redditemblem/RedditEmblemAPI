@@ -4,27 +4,26 @@ using RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses;
 
 namespace UnitTests.Models.Configuration.Common
 {
-    [TestClass]
     public class ExtensionMethodsTests
     {
         #region AddQueryable
 
-        [TestMethod]
+        [Test]
         public void ExtensionMethods_AddQueryable_IQueryable_NullQuery()
         {
-            List<Query> queries = new List<Query>();
+            List<IQuery> queries = new List<IQuery>();
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig();
 
             bool wasAdded = queries.AddQueryable(config);
 
-            Assert.IsFalse(wasAdded);
-            Assert.AreEqual(0, queries.Count);
+            Assert.That(wasAdded, Is.False);
+            Assert.That(queries, Is.Empty);
         }
 
-        [TestMethod]
+        [Test]
         public void ExtensionMethods_AddQueryable_IQueryable()
         {
-            List<Query> queries = new List<Query>();
+            List<IQuery> queries = new List<IQuery>();
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
                 Query = new Query(),
@@ -33,26 +32,26 @@ namespace UnitTests.Models.Configuration.Common
 
             bool wasAdded = queries.AddQueryable(config);
 
-            Assert.IsTrue(wasAdded);
-            Assert.AreEqual(1, queries.Count);
+            Assert.That(wasAdded, Is.True);
+            Assert.That(queries.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
+        [Test]
         public void ExtensionMethods_AddQueryable_IMultiQueryable_NullQuery()
         {
-            List<Query> queries = new List<Query>();
+            List<IQuery> queries = new List<IQuery>();
             AffiliationsConfig config = new AffiliationsConfig();
 
             bool wasAdded = queries.AddQueryable(config);
 
-            Assert.IsFalse(wasAdded);
-            Assert.AreEqual(0, queries.Count);
+            Assert.That(wasAdded, Is.False);
+            Assert.That(queries, Is.Empty);
         }
 
-        [TestMethod]
+        [Test]
         public void ExtensionMethods_AddQueryable_IMultiQueryable_EmptyList()
         {
-            List<Query> queries = new List<Query>();
+            List<IQuery> queries = new List<IQuery>();
             AffiliationsConfig config = new AffiliationsConfig()
             {
                 Queries = new List<Query>(),
@@ -62,14 +61,14 @@ namespace UnitTests.Models.Configuration.Common
 
             bool wasAdded = queries.AddQueryable(config);
 
-            Assert.IsFalse(wasAdded);
-            Assert.AreEqual(0, queries.Count);
+            Assert.That(wasAdded, Is.False);
+            Assert.That(queries, Is.Empty);
         }
 
-        [TestMethod]
+        [Test]
         public void ExtensionMethods_AddQueryable_IMultiQueryable_SingleQuery()
         {
-            List<Query> queries = new List<Query>();
+            List<IQuery> queries = new List<IQuery>();
             AffiliationsConfig config = new AffiliationsConfig()
             {
                 Queries = new List<Query>()
@@ -82,14 +81,14 @@ namespace UnitTests.Models.Configuration.Common
 
             bool wasAdded = queries.AddQueryable(config);
 
-            Assert.IsTrue(wasAdded);
-            Assert.AreEqual(1, queries.Count);
+            Assert.That(wasAdded, Is.True);
+            Assert.That(queries.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
+        [Test]
         public void ExtensionMethods_AddQueryable_IMultiQueryable_MultipleQueries()
         {
-            List<Query> queries = new List<Query>();
+            List<IQuery> queries = new List<IQuery>();
             AffiliationsConfig config = new AffiliationsConfig()
             {
                 Queries = new List<Query>()
@@ -103,8 +102,8 @@ namespace UnitTests.Models.Configuration.Common
 
             bool wasAdded = queries.AddQueryable(config);
 
-            Assert.IsTrue(wasAdded);
-            Assert.AreEqual(2, queries.Count);
+            Assert.That(wasAdded, Is.True);
+            Assert.That(queries.Count, Is.EqualTo(2));
         }
 
         #endregion AddQueryable

@@ -3,1541 +3,1032 @@ using RedditEmblemAPI.Services.Helpers;
 
 namespace UnitTests.Helpers
 {
-    [TestClass]
     public class DataParser_NumericalParsingTests
     {
         #region Int_Any
 
-        [TestMethod]
-        public void Int_Any_WithInput_Null()
+        [Test]
+        public void Int_Any_WithInput_IndexOutOfRange()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            Assert.ThrowsException<AnyIntegerException>(() => DataParser.Int_Any(data, index, "Int_Any_WithInput_Null"));
+            Assert.Throws<AnyIntegerException>(() => DataParser.Int_Any(data, index, "Int_Any_WithInput_Null"));
         }
 
-        [TestMethod]
-        public void Int_Any_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        [TestCase("test")]
+        [TestCase("1.5")]
+        public void Int_Any_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<AnyIntegerException>(() => DataParser.Int_Any(data, index, "Int_Any_WithInput_EmptyString"));
+            Assert.Throws<AnyIntegerException>(() => DataParser.Int_Any(data, index, "Int_Any_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void Int_Any_WithInput_Whitespace()
+        [TestCase("0", 0)]
+        [TestCase("1", 1)]
+        [TestCase("-1", -1)]
+        public void Int_Any_ValidInputs(string input, int expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<AnyIntegerException>(() => DataParser.Int_Any(data, index, "Int_Any_WithInput_Whitespace"));
-        }
+            int value = DataParser.Int_Any(data, index, "Int_Any_ValidInputs");
 
-        [TestMethod]
-        public void Int_Any_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            Assert.ThrowsException<AnyIntegerException>(() => DataParser.Int_Any(data, index, "Int_Any_WithInput_Alphabetical"));
-        }
-
-        [TestMethod]
-        public void Int_Any_WithInput_Decimal()
-        {
-            List<string> data = new List<string>() { "1.5" };
-            int index = 0;
-
-            Assert.ThrowsException<AnyIntegerException>(() => DataParser.Int_Any(data, index, "Int_Any_WithInput_Decimal"));
-        }
-
-        [TestMethod]
-        public void Int_Any_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            int value = DataParser.Int_Any(data, index, "Int_Any_WithInput_0");
-            Assert.AreEqual<int>(0, value);
-        }
-
-        [TestMethod]
-        public void Int_Any_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            int value = DataParser.Int_Any(data, index, "Int_Any_WithInput_1");
-            Assert.AreEqual<int>(1, value);
-        }
-
-        [TestMethod]
-        public void Int_Any_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            int value = DataParser.Int_Any(data, index, "Int_Any_WithInput_Neg1");
-            Assert.AreEqual<int>(-1, value);
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion Int_Any
 
         #region OptionalInt_Any
 
-        [TestMethod]
-        public void OptionalInt_Any_WithInput_Null_NoDefault()
+        [Test]
+        public void OptionalInt_Any_WithInput_IndexOutOfBounds_NoDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_Null_NoDefault");
-            Assert.AreEqual<int>(0, value);
+            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_IndexOutOfBounds_NoDefault");
+
+            Assert.That(value, Is.Zero);
         }
 
-        [TestMethod]
-        public void OptionalInt_Any_WithInput_Null_WithDefault()
+        [Test]
+        public void OptionalInt_Any_WithInput_IndexOutOfBounds_WithDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_Null_WithDefault", 1);
-            Assert.AreEqual<int>(1, value);
+            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_IndexOutOfBounds_WithDefault", 1);
+
+            Assert.That(value, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void OptionalInt_Any_WithInput_EmptyString_NoDefault()
+        [TestCase("", 0)]
+        [TestCase("   ", 0)]
+        public void OptionalInt_Any_EmptyStringInputs_NoDefault(string input, int expected)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_EmptyString_NoDefault");
-            Assert.AreEqual<int>(0, value);
+            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_EmptyStringInputs_NoDefault");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void OptionalInt_Any_WithInput_EmptyString_WithDefault()
+        [TestCase("", 1)]
+        [TestCase("   ", 1)]
+        public void OptionalInt_Any_EmptyStringInputs_WithDefault(string input, int expectedDefault)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_EmptyString_WithDefault", 1);
-            Assert.AreEqual<int>(1, value);
+            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_EmptyStringInputs_WithDefault", expectedDefault);
+            
+            Assert.That(value, Is.EqualTo(expectedDefault));
         }
 
-        [TestMethod]
-        public void OptionalInt_Any_WithInput_Whitespace_NoDefault()
+        [TestCase("test")]
+        [TestCase("1.5")]
+        public void OptionalInt_Any_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_Whitespace_NoDefault");
-            Assert.AreEqual<int>(0, value);
+            Assert.Throws<AnyIntegerException>(() => DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void OptionalInt_Any_WithInput_Whitespace_WithDefault()
+        [TestCase("0", 0)]
+        [TestCase("1", 1)]
+        [TestCase("-1", -1)]
+        public void OptionalInt_Any_ValidInputs(string input, int expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_Whitespace_WithDefault", 1);
-            Assert.AreEqual<int>(1, value);
-        }
+            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_ValidInputs");
 
-        [TestMethod]
-        public void OptionalInt_Any_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_0");
-            Assert.AreEqual<int>(0, value);
-        }
-
-        [TestMethod]
-        public void OptionalInt_Any_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_1");
-            Assert.AreEqual<int>(1, value);
-        }
-
-        [TestMethod]
-        public void OptionalInt_Any_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            int value = DataParser.OptionalInt_Any(data, index, "OptionalInt_Any_WithInput_Neg1");
-            Assert.AreEqual<int>(-1, value);
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion OptionalInt_Any
 
         #region Int_Positive
 
-        [TestMethod]
-        public void Int_Positive_WithInput_Null()
+        [Test]
+        public void Int_Positive_WithInput_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            Assert.ThrowsException<PositiveIntegerException>(() => DataParser.Int_Positive(data, index, "Int_Positive_WithInput_Null"));
+            Assert.Throws<PositiveIntegerException>(() => DataParser.Int_Positive(data, index, "Int_Positive_WithInput_IndexOutOfBounds"));
         }
 
-        [TestMethod]
-        public void Int_Positive_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        [TestCase("test")]
+        [TestCase("1.5")]
+        [TestCase("-1")]
+        public void Int_Positive_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<PositiveIntegerException>(() => DataParser.Int_Positive(data, index, "Int_Positive_WithInput_EmptyString"));
+            Assert.Throws<PositiveIntegerException>(() => DataParser.Int_Positive(data, index, "Int_Positive_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void Int_Positive_WithInput_Whitespace()
+        [TestCase("0", 0)]
+        [TestCase("1", 1)]
+        public void Int_Positive_ValidInputs(string input, int expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<PositiveIntegerException>(() => DataParser.Int_Positive(data, index, "Int_Positive_WithInput_Whitespace"));
-        }
+            int value = DataParser.Int_Positive(data, index, "Int_Positive_ValidInputs");
 
-        [TestMethod]
-        public void Int_Positive_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            Assert.ThrowsException<PositiveIntegerException>(() => DataParser.Int_Positive(data, index, "Int_Positive_WithInput_Alphabetical"));
-        }
-
-        [TestMethod]
-        public void Int_Positive_WithInput_Decimal()
-        {
-            List<string> data = new List<string>() { "1.5" };
-            int index = 0;
-
-            Assert.ThrowsException<PositiveIntegerException>(() => DataParser.Int_Positive(data, index, "Int_Positive_WithInput_Decimal"));
-        }
-
-        [TestMethod]
-        public void Int_Positive_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            int value = DataParser.Int_Positive(data, index, "Int_Positive_WithInput_0");
-            Assert.AreEqual<int>(0, value);
-        }
-
-        [TestMethod]
-        public void Int_Positive_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            int value = DataParser.Int_Positive(data, index, "Int_Positive_WithInput_1");
-            Assert.AreEqual<int>(1, value);
-        }
-
-        [TestMethod]
-        public void Int_Positive_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            Assert.ThrowsException<PositiveIntegerException>(() => DataParser.Int_Positive(data, index, "Int_Positive_WithInput_Neg1"));
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion Int_Positive
 
         #region OptionalInt_Positive
 
-        [TestMethod]
-        public void OptionalInt_Positive_WithInput_Null_NoDefault()
+        [Test]
+        public void OptionalInt_Positive_WithInput_IndexOutOfBounds_NoDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_Null_NoDefault");
-            Assert.AreEqual<int>(0, value);
+            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_IndexOutOfBounds_NoDefault");
+            
+            Assert.That(value, Is.Zero);
         }
 
-        [TestMethod]
-        public void OptionalInt_Positive_WithInput_Null_WithDefault()
+        [Test]
+        public void OptionalInt_Positive_WithInput_IndexOutOfBounds_WithDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_Null_WithDefault", 1);
-            Assert.AreEqual<int>(1, value);
+            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_IndexOutOfBounds_WithDefault", 1);
+            
+            Assert.That(value, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void OptionalInt_Positive_WithInput_EmptyString_NoDefault()
+        [TestCase("", 0)]
+        [TestCase("   ", 0)]
+        public void OptionalInt_Positive_EmptyStringInputs_NoDefault(string input, int expected)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_EmptyString_NoDefault");
-            Assert.AreEqual<int>(0, value);
+            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_EmptyStringInputs_NoDefault");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void OptionalInt_Positive_WithInput_EmptyString_WithDefault()
+        [TestCase("", 1)]
+        [TestCase("   ", 1)]
+        public void OptionalInt_Positive_EmptyStringInputs_WithDefault(string input, int expectedDefault)
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_EmptyString_WithDefault", 1);
-            Assert.AreEqual<int>(1, value);
+            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_EmptyStringInputs_WithDefault", expectedDefault);
+            
+            Assert.That(value, Is.EqualTo(expectedDefault));
         }
 
-        [TestMethod]
-        public void OptionalInt_Positive_WithInput_Whitespace_NoDefault()
+        [TestCase("-1")]
+        [TestCase("1.5")]
+        public void OptionalInt_Positive_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_Whitespace_NoDefault");
-            Assert.AreEqual<int>(0, value);
+            Assert.Throws<PositiveIntegerException>(() => DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void OptionalInt_Positive_WithInput_Whitespace_WithDefault()
+        [TestCase("0", 0)]
+        [TestCase("1", 1)]
+        public void OptionalInt_Positive_ValidInputs(string input, int expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_Whitespace_WithDefault", 1);
-            Assert.AreEqual<int>(1, value);
-        }
-
-        [TestMethod]
-        public void OptionalInt_Positive_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_0");
-            Assert.AreEqual<int>(0, value);
-        }
-
-        [TestMethod]
-        public void OptionalInt_Positive_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_1");
-            Assert.AreEqual<int>(1, value);
-        }
-
-        [TestMethod]
-        public void OptionalInt_Positive_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            Assert.ThrowsException<PositiveIntegerException>(() => DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_WithInput_Neg1"));
+            int value = DataParser.OptionalInt_Positive(data, index, "OptionalInt_Positive_ValidInputs");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion OptionalInt_Positive
 
         #region Int_NonZeroPositive
 
-        [TestMethod]
-        public void Int_NonZeroPositive_WithInput_Null()
+        [Test]
+        public void Int_NonZeroPositive_WithInput_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            Assert.ThrowsException<NonZeroPositiveIntegerException>(() => DataParser.Int_NonZeroPositive(data, index, "Int_NonZeroPositive_WithInput_Null"));
+            Assert.Throws<NonZeroPositiveIntegerException>(() => DataParser.Int_NonZeroPositive(data, index, "Int_NonZeroPositive_WithInput_IndexOutOfBounds"));
         }
 
-        [TestMethod]
-        public void Int_NonZeroPositive_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        [TestCase("test")]
+        [TestCase("1.5")]
+        [TestCase("0")]
+        [TestCase("-1")]
+        public void Int_NonZeroPositive_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<NonZeroPositiveIntegerException>(() => DataParser.Int_NonZeroPositive(data, index, "Int_NonZeroPositive_WithInput_EmptyString"));
+            Assert.Throws<NonZeroPositiveIntegerException>(() => DataParser.Int_NonZeroPositive(data, index, "Int_NonZeroPositive_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void Int_NonZeroPositive_WithInput_Whitespace()
+        [TestCase("1", 1)]
+        public void Int_NonZeroPositive_ValidInputs(string input, int expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<NonZeroPositiveIntegerException>(() => DataParser.Int_NonZeroPositive(data, index, "Int_NonZeroPositive_WithInput_Whitespace"));
-        }
-
-        [TestMethod]
-        public void Int_NonZeroPositive_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            Assert.ThrowsException<NonZeroPositiveIntegerException>(() => DataParser.Int_NonZeroPositive(data, index, "Int_NonZeroPositive_WithInput_Alphabetical"));
-        }
-
-        [TestMethod]
-        public void Int_NonZeroPositive_WithInput_Decimal()
-        {
-            List<string> data = new List<string>() { "1.5" };
-            int index = 0;
-
-            Assert.ThrowsException<NonZeroPositiveIntegerException>(() => DataParser.Int_NonZeroPositive(data, index, "Int_NonZeroPositive_WithInput_Decimal"));
-        }
-
-        [TestMethod]
-        public void Int_NonZeroPositive_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            Assert.ThrowsException<NonZeroPositiveIntegerException>(() => DataParser.Int_NonZeroPositive(data, index, "Int_NonZeroPositive_WithInput_0"));
-        }
-
-        [TestMethod]
-        public void Int_NonZeroPositive_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            int value = DataParser.Int_NonZeroPositive(data, index, "Int_NonZeroPositive_WithInput_1");
-            Assert.AreEqual<int>(1, value);
-        }
-
-        [TestMethod]
-        public void Int_NonZeroPositive_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            Assert.ThrowsException<NonZeroPositiveIntegerException>(() => DataParser.Int_NonZeroPositive(data, index, "Int_NonZeroPositive_WithInput_Neg1"));
+            int value = DataParser.Int_NonZeroPositive(data, index, "Int_NonZeroPositive_ValidInputs");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion Int_NonZeroPositive
 
         #region OptionalInt_NonZeroPositive
 
-        [TestMethod]
-        public void OptionalInt_NonZeroPositive_WithInput_Null_NoDefault()
+        [Test]
+        public void OptionalInt_NonZeroPositive_WithInput_IndexOutOfBounds_NoDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_Null_NoDefault");
-            Assert.AreEqual<int>(1, value);
+            int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_IndexOutOfBounds_NoDefault");
+            
+            Assert.That(value, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void OptionalInt_NonZeroPositive_WithInput_Null_WithDefault()
+        [Test]
+        public void OptionalInt_NonZeroPositive_WithInput_IndexOutOfBounds_WithDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_Null_WithDefault", 2);
-            Assert.AreEqual<int>(2, value);
+            int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_IndexOutOfBounds_WithDefault", 2);
+            
+            Assert.That(value, Is.EqualTo(2));
         }
 
-        [TestMethod]
-        public void OptionalInt_NonZeroPositive_WithInput_EmptyString_NoDefault()
+        [TestCase("", 1)]
+        [TestCase("   ", 1)]
+        public void OptionalInt_NonZeroPositive_EmptyStringInputs_NoDefault(string input, int expected)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_EmptyString_NoDefault");
-            Assert.AreEqual<int>(1, value);
+            int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_EmptyStringInputs_NoDefault");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void OptionalInt_NonZeroPositive_WithInput_EmptyString_WithDefault()
+        [TestCase("", 2)]
+        [TestCase("   ", 2)]
+        public void OptionalInt_NonZeroPositive_EmptyStringInputs_WithDefault(string input, int expectedDefault)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_EmptyString_WithDefault", 2);
-            Assert.AreEqual<int>(2, value);
+            int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_EmptyStringInputs_WithDefault", expectedDefault);
+            
+            Assert.That(value, Is.EqualTo(expectedDefault));
         }
 
-        [TestMethod]
-        public void OptionalInt_NonZeroPositive_WithInput_Whitespace_NoDefault()
+        [TestCase("test")]
+        [TestCase("-1")]
+        [TestCase("0")]
+        [TestCase("1.5")]
+        public void OptionalInt_NonZeroPositive_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_Whitespace_NoDefault");
-            Assert.AreEqual<int>(1, value);
+            Assert.Throws<NonZeroPositiveIntegerException>(() => DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void OptionalInt_NonZeroPositive_WithInput_Whitespace_WithDefault()
+        [TestCase("1", 1)]
+        public void OptionalInt_NonZeroPositive_ValidInputs(string input, int expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_Whitespace_WithDefault", 2);
-            Assert.AreEqual<int>(2, value);
-        }
-
-        [TestMethod]
-        public void OptionalInt_NonZeroPositive_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            Assert.ThrowsException<NonZeroPositiveIntegerException>(() => DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_0"));
-        }
-
-        [TestMethod]
-        public void OptionalInt_NonZeroPositive_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_1");
-            Assert.AreEqual<int>(1, value);
-        }
-
-        [TestMethod]
-        public void OptionalInt_NonZeroPositive_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            Assert.ThrowsException<NonZeroPositiveIntegerException>(() => DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_WithInput_Neg1"));
+            int value = DataParser.OptionalInt_NonZeroPositive(data, index, "OptionalInt_NonZeroPositive_ValidInputs");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion OptionalInt_NonZeroPositive
 
         #region Int_Negative
 
-        [TestMethod]
-        public void Int_Negative_WithInput_Null()
+        [Test]
+        public void Int_Negative_WithInput_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            Assert.ThrowsException<NegativeIntegerException>(() => DataParser.Int_Negative(data, index, "Int_Negative_WithInput_Null"));
+            Assert.Throws<NegativeIntegerException>(() => DataParser.Int_Negative(data, index, "Int_Negative_WithInput_IndexOutOfBounds"));
         }
 
-        [TestMethod]
-        public void Int_Negative_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        [TestCase("test")]
+        [TestCase("1.5")]
+        [TestCase("1")]
+        [TestCase("0")]
+        public void Int_Negative_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<NegativeIntegerException>(() => DataParser.Int_Negative(data, index, "Int_Negative_WithInput_EmptyString"));
+            Assert.Throws<NegativeIntegerException>(() => DataParser.Int_Negative(data, index, "Int_Negative_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void Int_Negative_WithInput_Whitespace()
+
+        [TestCase("-1", -1)]
+        public void Int_Negative_ValidInputs(string input, int expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<NegativeIntegerException>(() => DataParser.Int_Negative(data, index, "Int_Negative_WithInput_Whitespace"));
-        }
-
-        [TestMethod]
-        public void Int_Negative_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            Assert.ThrowsException<NegativeIntegerException>(() => DataParser.Int_Negative(data, index, "Int_Negative_WithInput_Alphabetical"));
-        }
-
-        [TestMethod]
-        public void Int_Negative_WithInput_Decimal()
-        {
-            List<string> data = new List<string>() { "1.5" };
-            int index = 0;
-
-            Assert.ThrowsException<NegativeIntegerException>(() => DataParser.Int_Negative(data, index, "Int_Negative_WithInput_Decimal"));
-        }
-
-        [TestMethod]
-        public void Int_Negative_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            Assert.ThrowsException<NegativeIntegerException>(() => DataParser.Int_Negative(data, index, "Int_Negative_WithInput_0"));
-        }
-
-        [TestMethod]
-        public void Int_Negative_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            Assert.ThrowsException<NegativeIntegerException>(() => DataParser.Int_Negative(data, index, "Int_Negative_WithInput_1"));
-        }
-
-        [TestMethod]
-        public void Int_Negative_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            int value = DataParser.Int_Negative(data, index, "Int_Negative_WithInput_Neg1");
-            Assert.AreEqual<int>(-1, value);
+            int value = DataParser.Int_Negative(data, index, "Int_Negative_ValidInputs");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion Int_Negative
 
         #region OptionalInt_Negative
 
-        [TestMethod]
-        public void OptionalInt_Negative_WithInput_Null_NoDefault()
+        [Test]
+        public void OptionalInt_Negative_WithInput_IndexOutOfBounds_NoDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_Null_NoDefault");
-            Assert.AreEqual<int>(-1, value);
+            int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_IndexOutOfBounds_NoDefault");
+            
+            Assert.That(value, Is.EqualTo(-1));
         }
 
-        [TestMethod]
-        public void OptionalInt_Negative_WithInput_Null_WithDefault()
+        [Test]
+        public void OptionalInt_Negative_WithInput_IndexOutOfBounds_WithDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_Null_WithDefault", -2);
-            Assert.AreEqual<int>(-2, value);
+            int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_IndexOutOfBounds_WithDefault", -2);
+            
+            Assert.That(value, Is.EqualTo(-2));
         }
 
-        [TestMethod]
-        public void OptionalInt_Negative_WithInput_EmptyString_NoDefault()
+        [TestCase("", -1)]
+        [TestCase("   ", -1)]
+        public void OptionalInt_Negative_EmptyStringInputs_NoDefault(string input, int expected)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_EmptyString_NoDefault");
-            Assert.AreEqual<int>(-1, value);
+            int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_EmptyStringInputs_NoDefault");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void OptionalInt_Negative_WithInput_EmptyString_WithDefault()
+        [TestCase("", -2)]
+        [TestCase("   ", -2)]
+        public void OptionalInt_Negative_EmptyStringInputs_WithDefault(string input, int expectedDefault)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_EmptyString_WithDefault", -2);
-            Assert.AreEqual<int>(-2, value);
+            int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_EmptyStringInputs_WithDefault", expectedDefault);
+            
+            Assert.That(value, Is.EqualTo(expectedDefault));
         }
 
-        [TestMethod]
-        public void OptionalInt_Negative_WithInput_Whitespace_NoDefault()
+        [TestCase("test")]
+        [TestCase("0")]
+        [TestCase("1")]
+        [TestCase("1.5")]
+        public void OptionalInt_Negative_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_Whitespace_NoDefault");
-            Assert.AreEqual<int>(-1, value);
+            Assert.Throws<NegativeIntegerException>(() => DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void OptionalInt_Negative_WithInput_Whitespace_WithDefault()
+        [TestCase("-1", -1)]
+        public void OptionalInt_Negative_ValidInputs(string input, int expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_Whitespace_WithDefault", -2);
-            Assert.AreEqual<int>(-2, value);
-        }
-
-        [TestMethod]
-        public void OptionalInt_Negative_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            Assert.ThrowsException<NegativeIntegerException>(() => DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_0"));
-        }
-
-        [TestMethod]
-        public void OptionalInt_Negative_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            Assert.ThrowsException<NegativeIntegerException>(() => DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_1"));
-        }
-
-        [TestMethod]
-        public void OptionalInt_Negative_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_WithInput_Neg1");
-            Assert.AreEqual<int>(-1, value);
+            int value = DataParser.OptionalInt_Negative(data, index, "OptionalInt_Negative_ValidInputs");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion OptionalInt_Negative
 
         #region Decimal_Any
 
-        [TestMethod]
-        public void Decimal_Any_WithInput_Null()
+        [Test]
+        public void Decimal_Any_WithInput_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            Assert.ThrowsException<AnyDecimalException>(() => DataParser.Decimal_Any(data, index, "Decimal_Any_WithInput_Null"));
+            Assert.Throws<AnyDecimalException>(() => DataParser.Decimal_Any(data, index, "Decimal_Any_WithInput_IndexOutOfBounds"));
         }
 
-        [TestMethod]
-        public void Decimal_Any_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        [TestCase("test")]
+        public void Decimal_Any_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<AnyDecimalException>(() => DataParser.Decimal_Any(data, index, "Decimal_Any_WithInput_EmptyString"));
+            Assert.Throws<AnyDecimalException>(() => DataParser.Decimal_Any(data, index, "Decimal_Any_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void Decimal_Any_WithInput_Whitespace()
+        [TestCase("-1.5", -1.5)]
+        [TestCase("-0.5", -0.5)]
+        [TestCase("-1", -1)]
+        [TestCase("0", 0)]
+        [TestCase("1", 1)]
+        [TestCase("1.", 1)]
+        [TestCase("0.5", 0.5)]
+        [TestCase("1.5", 1.5)]
+        public void Decimal_Any_ValidInputs(string input, decimal expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<AnyDecimalException>(() => DataParser.Decimal_Any(data, index, "Decimal_Any_WithInput_Whitespace"));
-        }
-
-        [TestMethod]
-        public void Decimal_Any_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            Assert.ThrowsException<AnyDecimalException>(() => DataParser.Decimal_Any(data, index, "Decimal_Any_WithInput_Alphabetical"));
-        }
-
-        [TestMethod]
-        public void Decimal_Any_WithInput_Decimal()
-        {
-            List<string> data = new List<string>() { "1.5" };
-            int index = 0;
-
-            decimal value = DataParser.Decimal_Any(data, index, "Decimal_Any_WithInput_Decimal");
-            Assert.AreEqual<decimal>(1.5m, value);
-        }
-
-        [TestMethod]
-        public void Decimal_Any_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            decimal value = DataParser.Decimal_Any(data, index, "Decimal_Any_WithInput_0");
-            Assert.AreEqual<decimal>(0.0m, value);
-        }
-
-        [TestMethod]
-        public void Decimal_Any_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            decimal value = DataParser.Decimal_Any(data, index, "Decimal_Any_WithInput_1");
-            Assert.AreEqual<decimal>(1.0m, value);
-        }
-
-        [TestMethod]
-        public void Decimal_Any_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            decimal value = DataParser.Decimal_Any(data, index, "Decimal_Any_WithInput_Neg1");
-            Assert.AreEqual<decimal>(-1.0m, value);
+            decimal value = DataParser.Decimal_Any(data, index, "Decimal_Any_ValidInputs");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion Int_Any
 
         #region OptionalDecimal_Any
 
-        [TestMethod]
-        public void OptionalDecimal_Any_WithInput_Null_NoDefault()
+        [Test]
+        public void OptionalDecimal_Any_IndexOutOfBounds_NoDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_WithInput_Null_NoDefault");
-            Assert.AreEqual<decimal>(0.0m, value);
+            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_IndexOutOfBounds_NoDefault");
+            
+            Assert.That(value, Is.EqualTo(0.0m));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Any_WithInput_Null_WithDefault()
+        [Test]
+        public void OptionalDecimal_Any_IndexOutOfBounds_WithDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_WithInput_Null_WithDefault", 1.0m);
-            Assert.AreEqual<decimal>(1.0m, value);
+            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_IndexOutOfBounds_WithDefault", 1.0m);
+            
+            Assert.That(value, Is.EqualTo(1.0m));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Any_WithInput_EmptyString_NoDefault()
+        [TestCase("", 0)]
+        [TestCase("   ", 0)]
+        public void OptionalDecimal_Any_EmptyStringInputs_NoDefault(string input, decimal expected)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_WithInput_EmptyString_NoDefault");
-            Assert.AreEqual<decimal>(0.0m, value);
+            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_EmptyStringInputs_NoDefault");
+
+            Assert.That(value, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Any_WithInput_EmptyString_WithDefault()
+        [TestCase("", 1)]
+        [TestCase("   ", 1)]
+        public void OptionalDecimal_Any_EmptyStringInputs_WithDefault(string input, decimal expectedDefault)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_WithInput_EmptyString_WithDefault", 1.0m);
-            Assert.AreEqual<decimal>(1.0m, value);
+            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_EmptyStringInputs_WithDefault", expectedDefault);
+            
+            Assert.That(value, Is.EqualTo(expectedDefault));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Any_WithInput_Whitespace_NoDefault()
+        [TestCase("test")]
+        public void OptionalDecimal_Any_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_WithInput_Whitespace_NoDefault");
-            Assert.AreEqual<decimal>(0.0m, value);
+            Assert.Throws<AnyDecimalException>(() => DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Any_WithInput_Whitespace_WithDefault()
+        [TestCase("-1.5", -1.5)]
+        [TestCase("-0.5", -0.5)]
+        [TestCase("-1", -1)]
+        [TestCase("0", 0)]
+        [TestCase("1", 1)]
+        [TestCase("1.", 1)]
+        [TestCase("0.5", 0.5)]
+        [TestCase("1.5", 1.5)]
+        public void OptionalDecimal_Any_ValidInputs(string input, decimal expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_WithInput_Whitespace_WithDefault", 1.0m);
-            Assert.AreEqual<decimal>(1.0m, value);
-        }
+            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_ValidInputs");
 
-        [TestMethod]
-        public void OptionalDecimal_Any_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_WithInput_0");
-            Assert.AreEqual<decimal>(0.0m, value);
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_Any_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_WithInput_1");
-            Assert.AreEqual<decimal>(1.0m, value);
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_Any_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            decimal value = DataParser.OptionalDecimal_Any(data, index, "OptionalDecimal_Any_WithInput_Neg1");
-            Assert.AreEqual<decimal>(-1.0m, value);
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion OptionalDecimal_Any
 
         #region Decimal_Positive
 
-        [TestMethod]
-        public void Decimal_Positive_WithInput_Null()
+        [Test]
+        public void Decimal_Positive_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            Assert.ThrowsException<PositiveDecimalException>(() => DataParser.Decimal_Positive(data, index, "Decimal_Positive_WithInput_Null"));
+            Assert.Throws<PositiveDecimalException>(() => DataParser.Decimal_Positive(data, index, "Decimal_Positive_IndexOutOfBounds"));
         }
 
-        [TestMethod]
-        public void Decimal_Positive_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        [TestCase("test")]
+        [TestCase("-1.5")]
+        [TestCase("-1")]
+        [TestCase("-0.5")]
+        public void Decimal_Positive_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<PositiveDecimalException>(() => DataParser.Decimal_Positive(data, index, "Decimal_Positive_WithInput_EmptyString"));
+            Assert.Throws<PositiveDecimalException>(() => DataParser.Decimal_Positive(data, index, "Decimal_Positive_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void Decimal_Positive_WithInput_Whitespace()
+        [TestCase("0", 0)]
+        [TestCase("0.5", 0.5)]
+        [TestCase("1", 1)]
+        [TestCase("1.", 1)]
+        [TestCase("1.5", 1.5)]
+        public void Decimal_Positive_ValidInputs(string input, decimal expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
-            int index = 0;
-
-            Assert.ThrowsException<PositiveDecimalException>(() => DataParser.Decimal_Positive(data, index, "Decimal_Positive_WithInput_Whitespace"));
-        }
-
-        [TestMethod]
-        public void Decimal_Positive_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            Assert.ThrowsException<PositiveDecimalException>(() => DataParser.Decimal_Positive(data, index, "Decimal_Positive_WithInput_Alphabetical"));
-        }
-
-        [TestMethod]
-        public void Decimal_Positive_WithInput_Decimal()
-        {
-            List<string> data = new List<string>() { "1.5" };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
             decimal value = DataParser.Decimal_Positive(data, index, "Decimal_Positive_WithInput_Decimal");
-            Assert.AreEqual<decimal>(1.5m, value);
-        }
-
-        [TestMethod]
-        public void Decimal_Positive_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            decimal value = DataParser.Decimal_Positive(data, index, "Decimal_Positive_WithInput_0");
-            Assert.AreEqual<decimal>(0.0m, value);
-        }
-
-        [TestMethod]
-        public void Decimal_Positive_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            decimal value = DataParser.Decimal_Positive(data, index, "Decimal_Positive_WithInput_1");
-            Assert.AreEqual<decimal>(1.0m, value);
-        }
-
-        [TestMethod]
-        public void Decimal_Positive_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            Assert.ThrowsException<PositiveDecimalException>(() => DataParser.Decimal_Positive(data, index, "Decimal_Positive_WithInput_Neg1"));
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion Decimal_Positive
 
         #region OptionalDecimal_Positive
 
-        [TestMethod]
-        public void OptionalDecimal_Positive_WithInput_Null_NoDefault()
+        [Test]
+        public void OptionalDecimal_Positive_IndexOutOfBounds_NoDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_WithInput_Null_NoDefault");
-            Assert.AreEqual<decimal>(0.0m, value);
+            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_IndexOutOfBounds_NoDefault");
+
+            Assert.That(value, Is.Zero);
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Positive_WithInput_Null_WithDefault()
+        [Test]
+        public void OptionalDecimal_Positive_IndexOutOfBounds_WithDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_WithInput_Null_WithDefault", 1.0m);
-            Assert.AreEqual<decimal>(1.0m, value);
+            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_IndexOutOfBounds_WithDefault", 1.0m);
+            
+            Assert.That(value, Is.EqualTo(1.0m));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Positive_WithInput_EmptyString_NoDefault()
+        [TestCase("", 0)]
+        [TestCase("   ", 0)]
+        public void OptionalDecimal_Positive_EmptyStringInputs_NoDefault(string input, decimal expected)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_WithInput_EmptyString_NoDefault");
-            Assert.AreEqual<decimal>(0.0m, value);
+            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_EmptyStringInputs_NoDefault");
+            Assert.That(value, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Positive_WithInput_EmptyString_WithDefault()
+        [TestCase("", 1)]
+        [TestCase("   ", 1)]
+        public void OptionalDecimal_Positive_EmptyStringInputs_WithDefault(string input, decimal expectedDefault)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_WithInput_EmptyString_WithDefault", 1.0m);
-            Assert.AreEqual<decimal>(1.0m, value);
+            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_EmptyStringInputs_WithDefault", expectedDefault);
+
+            Assert.That(value, Is.EqualTo(expectedDefault));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Positive_WithInput_Whitespace_NoDefault()
+        [TestCase("test")]
+        [TestCase("-1.5")]
+        [TestCase("-1")]
+        [TestCase("-0.5")]
+        public void OptionalDecimal_Positive_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_WithInput_Whitespace_NoDefault");
-            Assert.AreEqual<decimal>(0.0m, value);
+            Assert.Throws<PositiveDecimalException>(() => DataParser.OptionalDecimal_Positive(data, index, "Decimal_Positive_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Positive_WithInput_Whitespace_WithDefault()
+        [TestCase("0", 0)]
+        [TestCase("0.5", 0.5)]
+        [TestCase("1", 1)]
+        [TestCase("1.", 1)]
+        [TestCase("1.5", 1.5)]
+        public void OptionalDecimal_Positive_ValidInputs(string input, decimal expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_WithInput_Whitespace_WithDefault", 1.0m);
-            Assert.AreEqual<decimal>(1.0m, value);
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_Positive_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_WithInput_0");
-            Assert.AreEqual<decimal>(0.0m, value);
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_Positive_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_WithInput_1");
-            Assert.AreEqual<decimal>(1.0m, value);
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_Positive_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            Assert.ThrowsException<PositiveDecimalException>(() => DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_WithInput_Neg1"));
+            decimal value = DataParser.OptionalDecimal_Positive(data, index, "OptionalDecimal_Positive_ValidInputs");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion OptionalDecimal_Positive
 
         #region Decimal_NonZeroPositive
 
-        [TestMethod]
-        public void Decimal_NonZeroPositive_WithInput_Null()
+        [Test]
+        public void Decimal_NonZeroPositive_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            Assert.ThrowsException<NonZeroPositiveDecimalException>(() => DataParser.Decimal_NonZeroPositive(data, index, "Decimal_NonZeroPositive_WithInput_Null"));
+            Assert.Throws<NonZeroPositiveDecimalException>(() => DataParser.Decimal_NonZeroPositive(data, index, "Decimal_NonZeroPositive_IndexOutOfBounds"));
         }
 
-        [TestMethod]
-        public void Decimal_NonZeroPositive_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        [TestCase("test")]
+        [TestCase("-1.5")]
+        [TestCase("-0.5")]
+        [TestCase("0")]
+        public void Decimal_NonZeroPositive_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<NonZeroPositiveDecimalException>(() => DataParser.Decimal_NonZeroPositive(data, index, "Decimal_NonZeroPositive_WithInput_EmptyString"));
+            Assert.Throws<NonZeroPositiveDecimalException>(() => DataParser.Decimal_NonZeroPositive(data, index, "Decimal_NonZeroPositive_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void Decimal_NonZeroPositive_WithInput_Whitespace()
+        [TestCase("0.5", 0.5)]
+        [TestCase("1", 1)]
+        [TestCase("1.", 1)]
+        [TestCase("1.5", 1.5)]
+        public void Decimal_NonZeroPositive_ValidInputs(string input, decimal expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<NonZeroPositiveDecimalException>(() => DataParser.Decimal_NonZeroPositive(data, index, "Decimal_NonZeroPositive_WithInput_Whitespace"));
-        }
-
-        [TestMethod]
-        public void Decimal_NonZeroPositive_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            Assert.ThrowsException<NonZeroPositiveDecimalException>(() => DataParser.Decimal_NonZeroPositive(data, index, "Decimal_NonZeroPositive_WithInput_Alphabetical"));
-        }
-
-        [TestMethod]
-        public void Decimal_NonZeroPositive_WithInput_Decimal()
-        {
-            List<string> data = new List<string>() { "0.5" };
-            int index = 0;
-
-            decimal value = DataParser.Decimal_NonZeroPositive(data, index, "Decimal_NonZeroPositive_WithInput_Decimal");
-            Assert.AreEqual<decimal>(0.5m, value);
-        }
-
-        [TestMethod]
-        public void Decimal_NonZeroPositive_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            Assert.ThrowsException<NonZeroPositiveDecimalException>(() => DataParser.Decimal_NonZeroPositive(data, index, "Decimal_NonZeroPositive_WithInput_0"));
-        }
-
-        [TestMethod]
-        public void Decimal_NonZeroPositive_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            decimal value = DataParser.Decimal_NonZeroPositive(data, index, "Decimal_NonZeroPositive_WithInput_1");
-            Assert.AreEqual<decimal>(1.0m, value);
-        }
-
-        [TestMethod]
-        public void Decimal_NonZeroPositive_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            Assert.ThrowsException<NonZeroPositiveDecimalException>(() => DataParser.Decimal_NonZeroPositive(data, index, "Decimal_NonZeroPositive_WithInput_Neg1"));
+            decimal value = DataParser.Decimal_NonZeroPositive(data, index, "Decimal_NonZeroPositive_ValidInputs");
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion Decimal_NonZeroPositive
 
         #region OptionalDecimal_NonZeroPositive
 
-        [TestMethod]
-        public void OptionalDecimal_NonZeroPositive_WithInput_Null_NoDefault()
+        [Test]
+        public void OptionalDecimal_NonZeroPositive_IndexOutOfBounds_NoDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_WithInput_Null_NoDefault");
-            Assert.AreEqual<decimal>(1.0m, value);
+            decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_IndexOutOfBounds_NoDefault");
+            
+            Assert.That(value, Is.EqualTo(1.0m));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_NonZeroPositive_WithInput_Null_WithDefault()
+        [Test]
+        public void OptionalDecimal_NonZeroPositive_IndexOutOfBounds_WithDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_WithInput_Null_WithDefault", 0.5m);
-            Assert.AreEqual<decimal>(0.5m, value);
+            decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_IndexOutOfBounds_WithDefault", 0.5m);
+            
+            Assert.That(value, Is.EqualTo(0.5m));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_NonZeroPositive_WithInput_EmptyString_NoDefault()
+        [TestCase("", 1)]
+        [TestCase("   ", 1)]
+        public void OptionalDecimal_NonZeroPositive_EmptyStringInputs_NoDefault(string input, decimal expected)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_WithInput_EmptyString_NoDefault");
-            Assert.AreEqual<decimal>(1.0m, value);
+            decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_EmptyStringInputs_NoDefault");
+            Assert.That(value, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_NonZeroPositive_WithInput_EmptyString_WithDefault()
+        [TestCase("", 0.5)]
+        [TestCase("   ", 0.5)]
+        public void OptionalDecimal_NonZeroPositive_EmptyStringInputs_WithDefault(string input, decimal expectedDefault)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_WithInput_EmptyString_WithDefault", 0.5m);
-            Assert.AreEqual<decimal>(0.5m, value);
+            decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_WithInput_EmptyString_WithDefault", expectedDefault);
+            Assert.That(value, Is.EqualTo(expectedDefault));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_NonZeroPositive_WithInput_Whitespace_NoDefault()
+        [TestCase("test")]
+        [TestCase("-1.5")]
+        [TestCase("-1")]
+        [TestCase("-0.5")]
+        [TestCase("0")]
+        public void OptionalDecimal_NonZeroPositive_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_WithInput_Whitespace_NoDefault");
-            Assert.AreEqual<decimal>(1.0m, value);
+            Assert.Throws<NonZeroPositiveDecimalException>(() => DataParser.Decimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_NonZeroPositive_WithInput_Whitespace_WithDefault()
+        [TestCase("0.5", 0.5)]
+        [TestCase("1", 1)]
+        [TestCase("1.", 1)]
+        [TestCase("1.5", 1.5)]
+        public void OptionalDecimal_NonZeroPositive_ValidInputs(string input, decimal expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_WithInput_Whitespace_WithDefault", 0.5m);
-            Assert.AreEqual<decimal>(0.5m, value);
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_NonZeroPositive_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            Assert.ThrowsException<NonZeroPositiveDecimalException>(() => DataParser.Decimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_WithInput_0"));
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_NonZeroPositive_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_WithInput_1");
-            Assert.AreEqual<decimal>(1.0m, value);
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_NonZeroPositive_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            Assert.ThrowsException<NonZeroPositiveDecimalException>(() => DataParser.Decimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_WithInput_Neg1"));
+            decimal value = DataParser.OptionalDecimal_NonZeroPositive(data, index, "OptionalDecimal_NonZeroPositive_ValidInputs");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion OptionalDecimal_NonZeroPositive
 
         #region Decimal_OneOrGreater
 
-        [TestMethod]
-        public void Decimal_OneOrGreater_WithInput_Null()
+        [Test]
+        public void Decimal_OneOrGreater_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            Assert.ThrowsException<OneOrGreaterDecimalException>(() => DataParser.Decimal_OneOrGreater(data, index, "Decimal_OneOrGreater_WithInput_Null"));
+            Assert.Throws<OneOrGreaterDecimalException>(() => DataParser.Decimal_OneOrGreater(data, index, "Decimal_OneOrGreater_IndexOutOfBounds"));
         }
 
-        [TestMethod]
-        public void Decimal_OneOrGreater_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        [TestCase("test")]
+        [TestCase("-1.5")]
+        [TestCase("-1")]
+        [TestCase("-0.5")]
+        [TestCase("0")]
+        [TestCase("0.5")]
+        public void Decimal_OneOrGreater_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<OneOrGreaterDecimalException>(() => DataParser.Decimal_OneOrGreater(data, index, "Decimal_OneOrGreater_WithInput_EmptyString"));
+            Assert.Throws<OneOrGreaterDecimalException>(() => DataParser.Decimal_OneOrGreater(data, index, "Decimal_OneOrGreater_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void Decimal_OneOrGreater_WithInput_Whitespace()
+        [TestCase("1", 1)]
+        [TestCase("1.5", 1.5)]
+        public void Decimal_OneOrGreater_ValidInputs(string input, decimal expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<OneOrGreaterDecimalException>(() => DataParser.Decimal_OneOrGreater(data, index, "Decimal_OneOrGreater_WithInput_Whitespace"));
-        }
-
-        [TestMethod]
-        public void Decimal_OneOrGreater_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            Assert.ThrowsException<OneOrGreaterDecimalException>(() => DataParser.Decimal_OneOrGreater(data, index, "Decimal_OneOrGreater_WithInput_Alphabetical"));
-        }
-
-        [TestMethod]
-        public void Decimal_OneOrGreater_WithInput_Decimal()
-        {
-            List<string> data = new List<string>() { "0.5" };
-            int index = 0;
-
-            Assert.ThrowsException<OneOrGreaterDecimalException>(() => DataParser.Decimal_OneOrGreater(data, index, "Decimal_OneOrGreater_WithInput_Decimal"));
-        }
-
-        [TestMethod]
-        public void Decimal_OneOrGreater_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            Assert.ThrowsException<OneOrGreaterDecimalException>(() => DataParser.Decimal_OneOrGreater(data, index, "Decimal_OneOrGreater_WithInput_0"));
-        }
-
-        [TestMethod]
-        public void Decimal_OneOrGreater_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            decimal value = DataParser.Decimal_OneOrGreater(data, index, "Decimal_OneOrGreater_WithInput_1");
-            Assert.AreEqual<decimal>(1.0m, value);
-        }
-
-        [TestMethod]
-        public void Decimal_OneOrGreater_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            Assert.ThrowsException<OneOrGreaterDecimalException>(() => DataParser.Decimal_OneOrGreater(data, index, "Decimal_OneOrGreater_WithInput_Neg1"));
+            decimal value = DataParser.Decimal_OneOrGreater(data, index, "Decimal_OneOrGreater_ValidInputs");
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion Decimal_OneOrGreater
 
         #region OptionalDecimal_OneOrGreater
 
-        [TestMethod]
-        public void OptionalDecimal_OneOrGreater_WithInput_Null_NoDefault()
+        [Test]
+        public void OptionalDecimal_OneOrGreater_IndexOutOfBounds_NoDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_WithInput_Null_NoDefault");
-            Assert.AreEqual<decimal>(1.0m, value);
+            decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_IndexOutOfBounds_NoDefault");
+
+            Assert.That(value, Is.EqualTo(1.0m));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_OneOrGreater_WithInput_Null_WithDefault()
+        [Test]
+        public void OptionalDecimal_OneOrGreater_IndexOutOfBounds_WithDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_WithInput_Null_WithDefault", 1.5m);
-            Assert.AreEqual<decimal>(1.5m, value);
+            decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_IndexOutOfBounds_WithDefault", 1.5m);
+
+            Assert.That(value, Is.EqualTo(1.5m));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_OneOrGreater_WithInput_EmptyString_NoDefault()
+        [TestCase("", 1)]
+        [TestCase("   ", 1)]
+        public void OptionalDecimal_OneOrGreater_EmptyStringInputs_NoDefault(string input, decimal expected)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_WithInput_EmptyString_NoDefault");
-            Assert.AreEqual<decimal>(1.0m, value);
+            decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_EmptyStringInputs_NoDefault");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_OneOrGreater_WithInput_EmptyString_WithDefault()
+        [TestCase("", 1.5)]
+        [TestCase("   ", 1.5)]
+        public void OptionalDecimal_OneOrGreater_EmptyStringInputs_WithDefault(string input, decimal expectedDefault)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_WithInput_EmptyString_WithDefault", 1.5m);
-            Assert.AreEqual<decimal>(1.5m, value);
+            decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_EmptyStringInputs_WithDefault", expectedDefault);
+            
+            Assert.That(value, Is.EqualTo(expectedDefault));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_OneOrGreater_WithInput_Whitespace_NoDefault()
+        [TestCase("test")]
+        [TestCase("-1.5")]
+        [TestCase("-1")]
+        [TestCase("-0.5")]
+        [TestCase("0")]
+        [TestCase("0.5")]
+        public void OptionalDecimal_OneOrGreater_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_WithInput_Whitespace_NoDefault");
-            Assert.AreEqual<decimal>(1.0m, value);
+            Assert.Throws<OneOrGreaterDecimalException>(() => DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_OneOrGreater_WithInput_Whitespace_WithDefault()
+        [TestCase("1", 1)]
+        [TestCase("1.5", 1.5)]
+        public void OptionalDecimal_OneOrGreater_ValidInputs(string input, decimal expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_WithInput_Whitespace_WithDefault", 1.5m);
-            Assert.AreEqual<decimal>(1.5m, value);
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_OneOrGreater_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            Assert.ThrowsException<OneOrGreaterDecimalException>(() => DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_WithInput_0"));
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_OneOrGreater_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_WithInput_1");
-            Assert.AreEqual<decimal>(1.0m, value);
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_OneOrGreater_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            Assert.ThrowsException<OneOrGreaterDecimalException>(() => DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_WithInput_Neg1"));
+            decimal value = DataParser.OptionalDecimal_OneOrGreater(data, index, "OptionalDecimal_OneOrGreater_ValidInputs");
+            
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion OptionalDecimal_OneOrGreater
 
         #region Decimal_Negative
 
-        [TestMethod]
-        public void Decimal_Negative_WithInput_Null()
+        [Test]
+        public void Decimal_Negative_IndexOutOfBounds()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            Assert.ThrowsException<NegativeDecimalException>(() => DataParser.Decimal_Negative(data, index, "Decimal_Negative_WithInput_Null"));
+            Assert.Throws<NegativeDecimalException>(() => DataParser.Decimal_Negative(data, index, "Decimal_Negative_IndexOutOfBounds"));
         }
 
-        [TestMethod]
-        public void Decimal_Negative_WithInput_EmptyString()
+        [TestCase("")]
+        [TestCase("   ")]
+        [TestCase("test")]
+        [TestCase("1.5")]
+        [TestCase("1")]
+        [TestCase("0.5")]
+        [TestCase("0")]
+        public void Decimal_Negative_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<NegativeDecimalException>(() => DataParser.Decimal_Negative(data, index, "Decimal_Negative_WithInput_EmptyString"));
+            Assert.Throws<NegativeDecimalException>(() => DataParser.Decimal_Negative(data, index, "Decimal_Negative_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void Decimal_Negative_WithInput_Whitespace()
+        [TestCase("-0.5", -0.5)]
+        [TestCase("-1", -1)]
+        [TestCase("-1.5", -1.5)]
+        public void Decimal_Negative_ValidInputs(string input, decimal expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            Assert.ThrowsException<NegativeDecimalException>(() => DataParser.Decimal_Negative(data, index, "Decimal_Negative_WithInput_Whitespace"));
-        }
+            decimal value = DataParser.Decimal_Negative(data, index, "Decimal_Negative_ValidInputs");
 
-        [TestMethod]
-        public void Decimal_Negative_WithInput_Alphabetical()
-        {
-            List<string> data = new List<string>() { "test" };
-            int index = 0;
-
-            Assert.ThrowsException<NegativeDecimalException>(() => DataParser.Decimal_Negative(data, index, "Decimal_Negative_WithInput_Alphabetical"));
-        }
-
-        [TestMethod]
-        public void Decimal_Negative_WithInput_Decimal()
-        {
-            List<string> data = new List<string>() { "0.5" };
-            int index = 0;
-
-            Assert.ThrowsException<NegativeDecimalException>(() => DataParser.Decimal_Negative(data, index, "Decimal_OneOrGreater_WithInput_Decimal"));
-        }
-
-        [TestMethod]
-        public void Decimal_Negative_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            Assert.ThrowsException<NegativeDecimalException>(() => DataParser.Decimal_Negative(data, index, "Decimal_Negative_WithInput_0"));
-        }
-
-        [TestMethod]
-        public void Decimal_Negative_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            Assert.ThrowsException<NegativeDecimalException>(() => DataParser.Decimal_Negative(data, index, "Decimal_Negative_WithInput_1"));
-        }
-
-        [TestMethod]
-        public void Decimal_Negative_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            decimal value = DataParser.Decimal_Negative(data, index, "Decimal_Negative_WithInput_Neg1");
-            Assert.AreEqual<decimal>(-1.0m, value);
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion Decimal_Negative
 
         #region OptionalDecimal_Negative
 
-        [TestMethod]
-        public void OptionalDecimal_Negative_WithInput_Null_NoDefault()
+        [Test]
+        public void OptionalDecimal_Negative_IndexOutOfBounds_NoDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_WithInput_Null_NoDefault");
-            Assert.AreEqual<decimal>(-1.0m, value);
+            decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_IndexOutOfBounds_NoDefault");
+            
+            Assert.That(value, Is.EqualTo(-1.0m));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Negative_WithInput_Null_WithDefault()
+        [Test]
+        public void OptionalDecimal_Negative_IndexOutOfBounds_WithDefault()
         {
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>();
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_WithInput_Null_WithDefault", -0.5m);
-            Assert.AreEqual<decimal>(-0.5m, value);
+            decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_IndexOutOfBounds_WithDefault", -0.5m);
+
+            Assert.That(value, Is.EqualTo(-0.5m));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Negative_WithInput_EmptyString_NoDefault()
+        [TestCase("", -1.0)]
+        [TestCase("   ", -1.0)]
+        public void OptionalDecimal_Negative_EmptyStringInputs_NoDefault(string input, decimal expected)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_WithInput_EmptyString_NoDefault");
-            Assert.AreEqual<decimal>(-1.0m, value);
+            decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_EmptyStringInputs_NoDefault");
+
+            Assert.That(value, Is.EqualTo(expected));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Negative_WithInput_EmptyString_WithDefault()
+        [TestCase("", -0.5)]
+        [TestCase("   ", -0.5)]
+        public void OptionalDecimal_Negative_EmptyStringInputs_WithDefault(string input, decimal expectedDefault)
         {
-            List<string> data = new List<string>() { string.Empty };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_WithInput_EmptyString_WithDefault", -0.5m);
-            Assert.AreEqual<decimal>(-0.5m, value);
+            decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_EmptyStringInputs_WithDefault", expectedDefault);
+            
+            Assert.That(value, Is.EqualTo(expectedDefault));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Negative_WithInput_Whitespace_NoDefault()
+        [TestCase("test")]
+        [TestCase("1.5")]
+        [TestCase("1")]
+        [TestCase("0.5")]
+        [TestCase("0")]
+        public void OptionalDecimal_Negative_InvalidInputs(string input)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_WithInput_Whitespace_NoDefault");
-            Assert.AreEqual<decimal>(-1.0m, value);
+            Assert.Throws<NegativeDecimalException>(() => DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_InvalidInputs"));
         }
 
-        [TestMethod]
-        public void OptionalDecimal_Negative_WithInput_Whitespace_WithDefault()
+        [TestCase("-0.5", -0.5)]
+        [TestCase("-1", -1)]
+        [TestCase("-1.5", -1.5)]
+        public void OptionalDecimal_Negative_ValidInputs(string input, decimal expected)
         {
-            List<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<string> data = new List<string>() { input };
             int index = 0;
 
-            decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_WithInput_Whitespace_WithDefault", -0.5m);
-            Assert.AreEqual<decimal>(-0.5m, value);
-        }
+            decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_ValidInputs");
 
-        [TestMethod]
-        public void OptionalDecimal_Negative_WithInput_0()
-        {
-            List<string> data = new List<string>() { "0" };
-            int index = 0;
-
-            Assert.ThrowsException<NegativeDecimalException>(() => DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_WithInput_0"));
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_Negative_WithInput_1()
-        {
-            List<string> data = new List<string>() { "1" };
-            int index = 0;
-
-            Assert.ThrowsException<NegativeDecimalException>(() => DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_WithInput_1"));
-        }
-
-        [TestMethod]
-        public void OptionalDecimal_Negative_WithInput_Neg1()
-        {
-            List<string> data = new List<string>() { "-1" };
-            int index = 0;
-
-            decimal value = DataParser.OptionalDecimal_Negative(data, index, "OptionalDecimal_Negative_WithInput_Neg1");
-            Assert.AreEqual<decimal>(-1.0m, value);
+            Assert.That(value, Is.EqualTo(expected));
         }
 
         #endregion OptionalDecimal_Negative

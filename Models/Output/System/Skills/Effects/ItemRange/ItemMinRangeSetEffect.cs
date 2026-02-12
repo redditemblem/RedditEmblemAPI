@@ -46,7 +46,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Finds all items in <paramref name="unit"/>'s inventory with a category in <c>Categories</c> and sets their minimum range to <c>Value</c>.
         /// </summary>
-        public override void Apply(Unit unit, Skill skill, MapObj map, List<Unit> units)
+        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
         {
             foreach (UnitInventoryItem item in unit.Inventory.GetAllItems())
             {

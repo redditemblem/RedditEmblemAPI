@@ -293,7 +293,7 @@ namespace RedditEmblemAPI.Services.Helpers
                )
                 return 99;
 
-            TerrainTypeStats terrainStats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(parms.Unit.AffiliationObj);
+            ITerrainTypeStats terrainStats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(parms.Unit.AffiliationObj);
 
             //Test that the unit can move to this tile
             int moveCost;
@@ -638,7 +638,7 @@ namespace RedditEmblemAPI.Services.Helpers
         public UnitRangeParameters(Unit unit)
         {
             this.Unit = unit;
-            IEnumerable<Skill> skillList = unit.GetFullSkillsList();
+            IEnumerable<ISkill> skillList = unit.GetFullSkillsList();
 
             this.IgnoresAffiliations = skillList.SelectMany(s => s.Effects).OfType<IIgnoreUnitAffiliations>().Any(e => e.IsActive(unit));
             this.MoveCostModifiers = skillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostModifierEffect>();

@@ -11,20 +11,29 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class Class : IMatchable
+    #region Interface
+
+    /// <inheritdoc cref="Class"/>
+    public interface IClass : IMatchable
+    {
+        /// <inheritdoc cref="Class.MovementType"/>
+        string MovementType { get; set; }
+
+        /// <inheritdoc cref="Class.BattleStyle"/>
+        IBattleStyle BattleStyle { get; set; }
+
+        /// <inheritdoc cref="Class.Tags"/>
+        List<string> Tags { get; set; }
+
+        /// <inheritdoc cref="Class.TextFields"/>
+        List<string> TextFields { get; set; }
+    }
+
+    #endregion Interface
+
+    public class Class : Matchable, IClass
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this class was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The class's name.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The class's movement type. (i.e. Foot/Mounted/etc.)
@@ -35,7 +44,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// The class's battle style.
         /// </summary>
         [JsonIgnore]
-        public BattleStyle BattleStyle { get; set; }
+        public IBattleStyle BattleStyle { get; set; }
 
         /// <summary>
         /// List of the class's tags.
@@ -48,14 +57,13 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public List<string> TextFields { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Class(ClassesConfig config, IEnumerable<string> data, bool isUnitMovementTypeConfigured, IDictionary<string, BattleStyle> battleStyles)
+        public Class(ClassesConfig config, IEnumerable<string> data, bool isUnitMovementTypeConfigured, IDictionary<string, IBattleStyle> battleStyles)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             
             //The movement type field value on the Units sheet is required if the field is configured
@@ -65,36 +73,30 @@ namespace RedditEmblemAPI.Models.Output.System
 
             string battleStyle = DataParser.OptionalString(data, config.BattleStyle, "Battle Style");
             if(!string.IsNullOrEmpty(battleStyle))
-                this.BattleStyle = BattleStyle.MatchName(battleStyles, battleStyle, true);
+                this.BattleStyle = System.BattleStyle.MatchName(battleStyles, battleStyle, false);
 
             this.Tags = DataParser.List_StringCSV(data, config.Tags).Distinct().ToList();
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>Class</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
+        public override void FlagAsMatched()
         {
             this.Matched = true;
-
-            if(this.BattleStyle != null)
-                this.BattleStyle.FlagAsMatched();
+            this.BattleStyle?.FlagAsMatched();
         }
 
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Class</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>IClass</c> from each valid row.
         /// </summary>
         /// <exception cref="ClassProcessingException"></exception>
-        public static IDictionary<string, Class> BuildDictionary(ClassesConfig config, bool isUnitMovementTypeConfigured, IDictionary<string, BattleStyle> battleStyles)
+        public static IDictionary<string, IClass> BuildDictionary(ClassesConfig config, bool isUnitMovementTypeConfigured, IDictionary<string, IBattleStyle> battleStyles)
         {
-            IDictionary<string, Class> classes = new Dictionary<string, Class>();
-            if (config == null || config.Queries == null)
-                return classes;
+            IDictionary<string, IClass> classes = new Dictionary<string, IClass>();
+            if (config?.Queries is null) return classes;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -116,31 +118,31 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to a <c>Class</c> in <paramref name="classes"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>IClass</c> in <paramref name="classes"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Class> MatchNames(IDictionary<string, Class> classes, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<IClass> MatchNames(IDictionary<string, IClass> classes, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(classes, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(classes, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>Class</c> in <paramref name="classes"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>IClass</c> in <paramref name="classes"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedClassException"></exception>
-        public static Class MatchName(IDictionary<string, Class> classes, string name, bool skipMatchedStatusSet = false)
+        public static IClass MatchName(IDictionary<string, IClass> classes, string name, bool flagAsMatched = true)
         {
-            Class match;
+            IClass match;
             if (!classes.TryGetValue(name, out match))
                 throw new UnmatchedClassException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
 
-        #endregion
+        #endregion Static Functions
 
     }
 }

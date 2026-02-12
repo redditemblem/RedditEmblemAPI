@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Common;
+﻿using RedditEmblemAPI.Models.Configuration.Common;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Statuses
@@ -7,21 +6,8 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
     /// <summary>
     /// Container class for deserialized JSON <c>"StatusConditions"</c> object data.
     /// </summary>
-    public class StatusConditionConfig : IMultiQueryable
+    public class StatusConditionConfig : MultiQueryable
     {
-        #region Required Fields
-
-        [JsonRequired]
-        public IEnumerable<Query> Queries { get; set; }
-
-        /// <summary>
-        /// Required. Cell index for a status condition's name value.
-        /// </summary>
-        [JsonRequired]
-        public int Name { get; set; }
-
-        #endregion
-
         #region Optional Fields
 
         /// <summary>

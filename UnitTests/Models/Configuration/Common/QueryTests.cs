@@ -3,22 +3,22 @@ using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource.BatchGetR
 
 namespace UnitTests.Models.Configuration.Common
 {
-    [TestClass]
     public class QueryTests
     {
         #region ToString
 
-        [TestMethod]
+        [Test]
         public void Query_ToString()
         {
-            Query query = new Query()
+            IQuery query = new Query()
             {
                 Sheet = "Sheet",
                 Selection = "Selection",
                 Orientation = MajorDimensionEnum.ROWS
             };
 
-            Assert.AreEqual<string>("Sheet!Selection", query.ToString());
+            string expected = "Sheet!Selection";
+            Assert.That(query.ToString(), Is.EqualTo(expected));
         }
 
         #endregion ToString

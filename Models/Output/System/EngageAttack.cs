@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.System.Emblems;
+﻿using RedditEmblemAPI.Models.Configuration.System.Emblems;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
@@ -11,20 +10,23 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
-    public class EngageAttack : IMatchable
+    #region Interface
+
+    /// <inheritdoc cref="EngageAttack"/>
+    public interface IEngageAttack : IMatchable
+    {
+        /// <inheritdoc cref="EngageAttack.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="EngageAttack.TextFields"/>
+        List<string> TextFields { get; set; }
+    }
+
+    #endregion Interface
+
+    public class EngageAttack : Matchable, IEngageAttack
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this engage attack was found on a unit. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The engage attack's name. 
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The sprite image URL for the engage attack.
@@ -40,33 +42,23 @@ namespace RedditEmblemAPI.Models.Output.System
 
         public EngageAttack(EngageAttacksConfig config, IEnumerable<string> data) 
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>EngageAttack</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
-        {
-            this.Matched = true;
-        }
-
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>EngageAttack</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>IEngageAttack</c> from each valid row.
         /// </summary>
         /// <exception cref="EngageAttackProcessingException"></exception>
-        public static IDictionary<string, EngageAttack> BuildDictionary(EngageAttacksConfig config)
+        public static IDictionary<string, IEngageAttack> BuildDictionary(EngageAttacksConfig config)
         {
-            IDictionary<string, EngageAttack> engageAttacks = new Dictionary<string, EngageAttack>();
-            if (config == null || config.Queries == null)
-                return engageAttacks;
+            IDictionary<string, IEngageAttack> engageAttacks = new Dictionary<string, IEngageAttack>();
+            if (config?.Queries is null) return engageAttacks;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -88,26 +80,26 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>EngageAttack</c> in <paramref name="engageAttacks"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>IEngageAttack</c> in <paramref name="engageAttacks"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<EngageAttack> MatchNames(IDictionary<string, EngageAttack> engageAttacks, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<IEngageAttack> MatchNames(IDictionary<string, IEngageAttack> engageAttacks, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(engageAttacks, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(engageAttacks, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to an <c>EngageAttack</c> in <paramref name="engageAttacks"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>IEngageAttack</c> in <paramref name="engageAttacks"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedEngageAttackException"></exception>
-        public static EngageAttack MatchName(IDictionary<string, EngageAttack> engageAttacks, string name, bool skipMatchedStatusSet = false)
+        public static IEngageAttack MatchName(IDictionary<string, IEngageAttack> engageAttacks, string name, bool flagAsMatched = true)
         {
-            EngageAttack match;
+            IEngageAttack match;
             if (!engageAttacks.TryGetValue(name, out match))
                 throw new UnmatchedEngageAttackException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }

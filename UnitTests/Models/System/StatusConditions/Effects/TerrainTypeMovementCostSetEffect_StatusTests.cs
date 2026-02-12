@@ -3,90 +3,89 @@ using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
 
 namespace UnitTests.Models.System.StatusConditions.Effects
 {
-    [TestClass]
     public class TerrainTypeMovementCostSetEffect_StatusTests
     {
         #region Constructor
 
-        [TestMethod]
-        public void TerrainTypeMovementCostSetEffect_Status_Constructor_Null()
+        [Test]
+        public void Constructor_Null()
         {
             List<string> parameters = new List<string>();
 
-            Assert.ThrowsException<StatusConditionEffectMissingParameterException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
+            Assert.Throws<StatusConditionEffectMissingParameterException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
         }
 
-        [TestMethod]
-        public void TerrainTypeMovementCostSetEffect_Status_Constructor_1EmptyString()
+        [Test]
+        public void Constructor_1EmptyString()
         {
             List<string> parameters = new List<string>() { string.Empty };
 
-            Assert.ThrowsException<StatusConditionEffectMissingParameterException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
+            Assert.Throws<StatusConditionEffectMissingParameterException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
         }
 
-        [TestMethod]
-        public void TerrainTypeMovementCostSetEffect_Status_Constructor_2EmptyStrings()
+        [Test]
+        public void Constructor_2EmptyStrings()
         {
             List<string> parameters = new List<string>() { string.Empty, string.Empty };
 
-            Assert.ThrowsException<StatusConditionEffectMissingParameterException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
+            Assert.Throws<StatusConditionEffectMissingParameterException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
         }
 
-        [TestMethod]
-        public void TerrainTypeMovementCostSetEffect_Status_Constructor_3EmptyStrings()
+        [Test]
+        public void Constructor_3EmptyStrings()
         {
             List<string> parameters = new List<string>() { string.Empty, string.Empty, string.Empty };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
+            Assert.Throws<PositiveIntegerException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
         }
 
-        [TestMethod]
-        public void TerrainTypeMovementCostSetEffect_Status_Constructor_TerrainTypeGrouping_Neg1()
+        [Test]
+        public void Constructor_TerrainTypeGrouping_Neg1()
         {
             List<string> parameters = new List<string>() { "-1", string.Empty, string.Empty };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
+            Assert.Throws<PositiveIntegerException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
         }
 
-        [TestMethod]
-        public void TerrainTypeMovementCostSetEffect_Status_Constructor_Value_Neg1()
+        [Test]
+        public void Constructor_Value_Neg1()
         {
             List<string> parameters = new List<string>() { "0", "-1", string.Empty };
 
-            Assert.ThrowsException<PositiveIntegerException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
+            Assert.Throws<PositiveIntegerException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
         }
 
-        [TestMethod]
-        public void TerrainTypeMovementCostSetEffect_Status_Constructor_EmptyCanOverride99MoveCost()
+        [Test]
+        public void Constructor_EmptyCanOverride99MoveCost()
         {
             List<string> parameters = new List<string>() { "0", "0", string.Empty };
 
             TerrainTypeMovementCostSetEffect_Status effect = new TerrainTypeMovementCostSetEffect_Status(parameters);
-            Assert.AreEqual<int>(0, effect.TerrainTypeGrouping);
-            Assert.AreEqual<int>(0, effect.Value);
-            Assert.IsFalse(effect.CanOverride99MoveCost);
+            Assert.That(effect.TerrainTypeGrouping, Is.EqualTo(0));
+            Assert.That(effect.Value, Is.EqualTo(0));
+            Assert.That(effect.CanOverride99MoveCost, Is.False);
         }
 
-        [TestMethod]
-        public void TerrainTypeMovementCostSetEffect_Status_Constructor_CanOverride99MoveCost_No()
+        [Test]
+        public void Constructor_CanOverride99MoveCost_No()
         {
             List<string> parameters = new List<string>() { "0", "0", "No" };
 
             TerrainTypeMovementCostSetEffect_Status effect = new TerrainTypeMovementCostSetEffect_Status(parameters);
-            Assert.AreEqual<int>(0, effect.TerrainTypeGrouping);
-            Assert.AreEqual<int>(0, effect.Value);
-            Assert.IsFalse(effect.CanOverride99MoveCost);
+            Assert.That(effect.TerrainTypeGrouping, Is.EqualTo(0));
+            Assert.That(effect.Value, Is.EqualTo(0));
+            Assert.That(effect.CanOverride99MoveCost, Is.False);
         }
 
-        [TestMethod]
-        public void TerrainTypeMovementCostSetEffect_Status_Constructor_CanOverride99MoveCost_Yes()
+        [Test]
+        public void Constructor_CanOverride99MoveCost_Yes()
         {
             List<string> parameters = new List<string>() { "1", "1", "Yes" };
 
             TerrainTypeMovementCostSetEffect_Status effect = new TerrainTypeMovementCostSetEffect_Status(parameters);
-            Assert.AreEqual<int>(1, effect.TerrainTypeGrouping);
-            Assert.AreEqual<int>(1, effect.Value);
-            Assert.IsTrue(effect.CanOverride99MoveCost);
+            Assert.That(effect.TerrainTypeGrouping, Is.EqualTo(1));
+            Assert.That(effect.Value, Is.EqualTo(1));
+            Assert.That(effect.CanOverride99MoveCost, Is.True);
         }
 
         #endregion Constructor

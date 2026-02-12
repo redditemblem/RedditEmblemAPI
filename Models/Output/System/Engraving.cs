@@ -11,23 +11,41 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
+    #region Interface
+
+    /// <inheritdoc cref="Engraving"/>
+    public interface IEngraving : IMatchable
+    {
+        /// <inheritdoc cref="Engraving.SpriteURL"/>
+        string SpriteURL { get; set; }
+
+        /// <inheritdoc cref="Engraving.ItemStatModifiers"/>
+        IDictionary<string, int> ItemStatModifiers { get; set; }
+
+        /// <inheritdoc cref="Engraving.ItemRangeOverrides"/>
+        IItemRange ItemRangeOverrides { get; set; }
+
+        /// <inheritdoc cref="Engraving.CombatStatModifiers"/>
+        IDictionary<string, int> CombatStatModifiers { get; set; }
+
+        /// <inheritdoc cref="Engraving.StatModifiers"/>
+        IDictionary<string, int> StatModifiers { get; set; }
+
+        /// <inheritdoc cref="Engraving.Tags"/>
+        List<ITag> Tags { get; set; }
+
+        /// <inheritdoc cref="Engraving.TextFields"/>
+        List<string> TextFields { get; set; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing an item engraving definition in the team's system.
     /// </summary>
-    public class Engraving : IMatchable
+    public class Engraving : Matchable, IEngraving
     {
         #region Attributes
-
-        /// <summary>
-        /// Flag indicating whether or not this engraving was found on an item. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The engraving's name. 
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The sprite image URL for the engraving.
@@ -44,7 +62,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// The engraving's item range overrides.
         /// </summary>
         [JsonIgnore]
-        public ItemRange ItemRangeOverrides { get; set; }
+        public IItemRange ItemRangeOverrides { get; set; }
 
         /// <summary>
         /// Dictionary of the combat stat modifiers this engraving applies to units.
@@ -62,7 +80,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// The engraving's tags.
         /// </summary>
         [JsonIgnore]
-        public List<Tag> Tags { get; set; }
+        public List<ITag> Tags { get; set; }
 
         /// <summary>
         /// List of the engraving's text fields.
@@ -74,15 +92,14 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Engraving(EngravingsConfig config, IEnumerable<string> data, IDictionary<string, Tag> tags)
+        public Engraving(EngravingsConfig config, IEnumerable<string> data, IDictionary<string, ITag> tags)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
             IEnumerable<string> engravingTags = DataParser.List_StringCSV(data, config.Tags).Distinct();
-            this.Tags = Tag.MatchNames(tags, engravingTags, true);
+            this.Tags = Tag.MatchNames(tags, engravingTags, false);
 
             this.ItemStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.ItemStatModifiers, data, false, "{0} Modifier");
             this.ItemRangeOverrides = new ItemRange(config.ItemRangeOverrides, data);
@@ -90,10 +107,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.StatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.StatModifiers, data, false, "{0} Modifier");
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>Engraving</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
+        public override void FlagAsMatched()
         {
             this.Matched = true;
             this.Tags.ForEach(t => t.FlagAsMatched());
@@ -102,16 +116,15 @@ namespace RedditEmblemAPI.Models.Output.System
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds an <c>Engraving</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>IEngraving</c> from each valid row.
         /// </summary>
         /// <exception cref="EngravingProcessingException"></exception>
-        public static IDictionary<string, Engraving> BuildDictionary(EngravingsConfig config, IDictionary<string, Tag> tags)
+        public static IDictionary<string, IEngraving> BuildDictionary(EngravingsConfig config, IDictionary<string, ITag> tags)
         {
-            IDictionary<string, Engraving> engravings = new Dictionary<string, Engraving>();
-            if (config == null || config.Queries == null)
-                return engravings;
+            IDictionary<string, IEngraving> engravings = new Dictionary<string, IEngraving>();
+            if (config?.Queries is null) return engravings;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -133,26 +146,26 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to an <c>Engraving</c> in <paramref name="engravings"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>IEngraving</c> in <paramref name="engravings"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<Engraving> MatchNames(IDictionary<string, Engraving> engravings, IEnumerable<string> names, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<IEngraving> MatchNames(IDictionary<string, IEngraving> engravings, IEnumerable<string> names, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(engravings, n, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(engravings, n, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to an <c>Engraving</c> in <paramref name="engravings"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>IEngraving</c> in <paramref name="engravings"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedEngravingException"></exception>
-        public static Engraving MatchName(IDictionary<string, Engraving> engravings, string name, bool skipMatchedStatusSet = false)
+        public static IEngraving MatchName(IDictionary<string, IEngraving> engravings, string name, bool flagAsMatched = true)
         {
-            Engraving match;
+            IEngraving match;
             if (!engravings.TryGetValue(name, out match))
                 throw new UnmatchedEngravingException(name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }

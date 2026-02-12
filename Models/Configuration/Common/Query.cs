@@ -4,11 +4,34 @@ using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource.BatchGetR
 
 namespace RedditEmblemAPI.Models.Configuration.Common
 {
+    #region Interface
+
+    /// <inheritdoc cref="Query"/>
+    public interface IQuery
+    {
+        /// <inheritdoc cref="Query.Sheet"/>
+        string Sheet { get; set; }
+
+        /// <inheritdoc cref="Query.Selection"/>
+        string Selection { get; set; }
+
+        /// <inheritdoc cref="Query.Orientation"/>
+        MajorDimensionEnum Orientation { get; set; }
+
+        /// <inheritdoc cref="Query.AllowNullData"/>
+        bool AllowNullData { get; set; }
+
+        /// <inheritdoc cref="Query.Data"/>
+        IList<IList<object>> Data { get; set; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Container class for deserialized JSON <c>"Query"</c> object data. Represents required fields for Google Sheets API queries.
     /// </summary>
     /// <see cref="https://developers.google.com/sheets/api/guides/concepts"/>
-    public class Query
+    public class Query : IQuery
     {
         #region Required Fields
 

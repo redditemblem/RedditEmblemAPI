@@ -58,16 +58,16 @@ namespace RedditEmblemAPI.Models.Configuration
 
         #endregion
 
-        #region Batch Query Requests
+        #region Get Query Sets
 
         /// <summary>
-        /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
+        /// Returns a list containing all the queries required to load a team's map.
         /// </summary>
-        /// <returns></returns>
-        public List<Query> GetMapBatchQueries()
+        public List<IQuery> GetMapLoadQueries()
         {
+            List<IQuery> queries = new List<IQuery>();
+
             //Essential queries
-            List<Query> queries = new List<Query>();
             queries.AddQueryable(this.Map.MapControls);
             queries.AddQueryable(this.Map.MapTiles);
             queries.AddQueryable(this.System.TerrainTypes);
@@ -95,14 +95,14 @@ namespace RedditEmblemAPI.Models.Configuration
             return queries;
         }
 
-
         /// <summary>
-        /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
+        /// Returns a list containing all the queries required to load a team's map analysis tool.
         /// </summary>
-        public List<Query> GetMapAnalysisBatchQueries()
+        public List<IQuery> GetMapAnalysisToolQueries()
         {
+            List<IQuery> queries = new List<IQuery>();
+
             //Essential queries
-            List<Query> queries = new List<Query>();
             queries.AddQueryable(this.Map.MapControls);
             queries.AddQueryable(this.Map.MapTiles);
             queries.AddQueryable(this.System.TerrainTypes);
@@ -112,13 +112,13 @@ namespace RedditEmblemAPI.Models.Configuration
         }
 
         /// <summary>
-        /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
+        /// Returns a list containing all the queries required to load a team's convoy.
         /// </summary>
-        /// <returns></returns>
-        public List<Query> GetConvoyBatchQueries()
+        public List<IQuery> GetConvoyLoadQueries()
         {
+            List<IQuery> queries = new List<IQuery>();
+
             //Essential queries
-            List<Query> queries = new List<Query>();
             queries.AddQueryable(this.System.Items);
             queries.AddQueryable(this.Convoy);
 
@@ -136,13 +136,13 @@ namespace RedditEmblemAPI.Models.Configuration
         }
 
         /// <summary>
-        /// Returns a <c>List</c> containing all the <c>Query</c> objects to be batch queried.
+        /// Returns a list containing all the queries required to load a team's shop.
         /// </summary>
-        /// <returns></returns>
-        public List<Query> GetShopBatchQueries()
+        public List<IQuery> GetShopLoadQueries()
         {
+            List<IQuery> queries = new List<IQuery>();
+
             //Essential queries
-            List<Query> queries = new List<Query>();
             queries.AddQueryable(this.System.Items);
             queries.AddQueryable(this.Shop);
 
@@ -159,6 +159,6 @@ namespace RedditEmblemAPI.Models.Configuration
             return queries;
         }
 
-        #endregion
+        #endregion Get Query Sets
     }
 }

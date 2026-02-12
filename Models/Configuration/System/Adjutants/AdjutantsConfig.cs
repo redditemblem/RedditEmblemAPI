@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Common;
+﻿using RedditEmblemAPI.Models.Configuration.Common;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Adjutants
@@ -7,21 +6,8 @@ namespace RedditEmblemAPI.Models.Configuration.System.Adjutants
     /// <summary>
     /// Container class for deserialized JSON <c>"Adjutants"</c> object data.
     /// </summary>
-    public class AdjutantsConfig : IMultiQueryable
+    public class AdjutantsConfig : MultiQueryable
     {
-        #region Required Fields
-
-        [JsonRequired]
-        public IEnumerable<Query> Queries { get; set; }
-
-        /// <summary>
-        /// Required. Cell index of an adjutant's name value.
-        /// </summary>
-        [JsonRequired]
-        public int Name { get; set; }
-
-        #endregion Required Fields
-
         #region Optional Fields
 
         /// <summary>

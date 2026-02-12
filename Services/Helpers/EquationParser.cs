@@ -205,7 +205,7 @@ namespace RedditEmblemAPI.Services.Helpers
             MatchCollection battalionStatMatches = battalionStatRegex.Matches(equation);
             if (!battalionStatMatches.Any()) return;
 
-            Battalion battalion = unit.Battalion?.BattalionObj;
+            IBattalion battalion = unit.Battalion?.BattalionObj;
 
             foreach (Match match in battalionStatMatches)
             {

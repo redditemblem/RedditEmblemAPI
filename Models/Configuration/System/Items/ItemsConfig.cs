@@ -8,18 +8,9 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
     /// <summary>
     /// Container class for deserialized JSON <c>"Items"</c> object data.
     /// </summary>
-    public class ItemsConfig : IMultiQueryable
+    public class ItemsConfig : MultiQueryable
     {
         #region Required Fields
-
-        [JsonRequired]
-        public IEnumerable<Query> Queries { get; set; }
-
-        /// <summary>
-        /// Required. Cell index of an item's name value.
-        /// </summary>
-        [JsonRequired]
-        public int Name { get; set; }
 
         /// <summary>
         /// Required. Cell index of an item's category value.

@@ -9,11 +9,45 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
+    #region Interface
+
+    /// <inheritdoc cref="ItemRange"/>
+    public interface IItemRange
+    {
+        /// <inheritdoc cref="ItemRange.Minimum"/>
+        int Minimum { get; }
+
+        /// <inheritdoc cref="ItemRange.MinimumRaw"/>
+        string MinimumRaw { get; }
+
+        /// <inheritdoc cref="ItemRange.MinimumRequiresCalculation"/>
+        bool MinimumRequiresCalculation { get; }
+
+        /// <inheritdoc cref="ItemRange.Maximum"/>
+        int Maximum { get; }
+
+        /// <inheritdoc cref="ItemRange.MaximumRaw"/>
+        string MaximumRaw { get; }
+
+        /// <inheritdoc cref="ItemRange.MaximumRequiresCalculation"/>
+        bool MaximumRequiresCalculation { get; }
+
+        /// <inheritdoc cref="ItemRange.Shape"/>
+        ItemRangeShape Shape { get; }
+
+        /// <inheritdoc cref="ItemRange.CanOnlyUseBeforeMovement"/>
+        bool CanOnlyUseBeforeMovement { get; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing an <c>Item</c>'s range.
     /// </summary>
-    public class ItemRange
+    public class ItemRange : IItemRange
     {
+        #region Attributes
+
         /// <summary>
         /// The minimum number of tiles an item can reach.
         /// </summary>
@@ -57,11 +91,12 @@ namespace RedditEmblemAPI.Models.Output.System
         [JsonIgnore]
         public bool CanOnlyUseBeforeMovement { get; private set; }
 
+        #endregion Attributes
+
         /// <summary>
-        /// Initializes the class with the passed in <paramref name="minimum"/> and <paramref name="maximum"/> values.
+        /// Constructor.
         /// </summary>
-        /// <param name="minimum">A numerical string value.</param>
-        /// <param name="maximum">A numerical string value.</param>
+        /// <exception cref="ItemRangeMinimumNotSetException"></exception>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
         public ItemRange(ItemRangeConfig config, IEnumerable<string> data)
         {

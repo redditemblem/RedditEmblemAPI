@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.BattleStyles;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -7,7 +8,6 @@ using RedditEmblemAPI.Models.Output.System;
 
 namespace UnitTests.Models.System
 {
-    [TestClass]
     public class BattleStyleTests
     {
         #region Constants
@@ -16,40 +16,40 @@ namespace UnitTests.Models.System
 
         #endregion Constants
 
-        [TestMethod]
-        public void BattleStyleConstructor_RequiredFields_WithInputNull()
+        [Test]
+        public void Constructor_RequiredFields_WithInputNull()
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>() { };
+            IEnumerable<string> data = new List<string>() { };
 
-            Assert.ThrowsException<RequiredValueNotProvidedException>(() => new BattleStyle(config, data));
+            Assert.Throws<RequiredValueNotProvidedException>(() => new BattleStyle(config, data));
         }
 
-        [TestMethod]
-        public void BattleStyleConstructor_RequiredFields()
+        [Test]
+        public void Constructor_RequiredFields()
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME
             };
 
-            BattleStyle style = new BattleStyle(config, data);
+            IBattleStyle style = new BattleStyle(config, data);
 
-            Assert.AreEqual<string>(INPUT_NAME, style.Name);
+            Assert.That(style.Name, Is.EqualTo(INPUT_NAME));
         }
 
         #region OptionalField_SpriteURL
 
-        public void BattleStyleConstructor_OptionalField_SpriteURL_EmptyString()
+        public void Constructor_OptionalField_SpriteURL_EmptyString()
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
@@ -57,19 +57,19 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty
             };
 
-            BattleStyle style = new BattleStyle(config, data);
+            IBattleStyle style = new BattleStyle(config, data);
 
-            Assert.AreEqual<string>(string.Empty, style.SpriteURL);
+            Assert.That(style.SpriteURL, Is.Empty);
         }
 
-        [TestMethod]
-        public void BattleStyleConstructor_OptionalField_SpriteURL()
+        [Test]
+        public void Constructor_OptionalField_SpriteURL()
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
@@ -77,23 +77,23 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 UnitTestConsts.IMAGE_URL
             };
 
-            BattleStyle style = new BattleStyle(config, data);
+            IBattleStyle style = new BattleStyle(config, data);
 
-            Assert.AreEqual<string>(UnitTestConsts.IMAGE_URL, style.SpriteURL);
+            Assert.That(style.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
         }
 
         #endregion OptionalField_SpriteURL
 
         #region OptionalField_TextFields
 
-        [TestMethod]
-        public void BattleStyleConstructor_OptionalField_TextFields_EmptyString()
+        [Test]
+        public void Constructor_OptionalField_TextFields_EmptyString()
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
@@ -101,76 +101,82 @@ namespace UnitTests.Models.System
                 TextFields = new List<int>() { 1, 2 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
                 string.Empty,
                 string.Empty
             };
 
-            BattleStyle style = new BattleStyle(config, data);
+            IBattleStyle style = new BattleStyle(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { }, style.TextFields);
+            Assert.That(style.TextFields, Is.Empty);
         }
 
-        [TestMethod]
-        public void BattleStyleConstructor_OptionalField_TextFields()
+        [Test]
+        public void Constructor_OptionalField_TextFields()
         {
+            string textField1 = "Text Field 1";
+            string textField2 = "Text Field 2";
+
             BattleStylesConfig config = new BattleStylesConfig()
             {
                 Name = 0,
                 TextFields = new List<int>() { 1, 2 }
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME,
-                "Text Field 1",
-                "Text Field 2"
+                textField1,
+                textField2
             };
 
-            BattleStyle style = new BattleStyle(config, data);
+            IBattleStyle style = new BattleStyle(config, data);
 
-            CollectionAssert.AreEqual(new List<string>() { "Text Field 1", "Text Field 2" }, style.TextFields);
+            IEnumerable<string> expected = new List<string>() { textField1, textField2 };
+            Assert.That(style.TextFields, Is.EqualTo(expected));
         }
 
         #endregion OptionalField_TextFields
 
         #region FlagAsMatched
 
-        [TestMethod]
-        public void BattleStyle_FlagAsMatched()
+        [Test]
+        public void FlagAsMatched()
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
                 Name = 0
             };
 
-            List<string> data = new List<string>()
+            IEnumerable<string> data = new List<string>()
             {
                 INPUT_NAME
             };
 
-            BattleStyle style = new BattleStyle(config, data);
+            IBattleStyle style = new BattleStyle(config, data);
 
-            Assert.IsFalse(style.Matched);
+            Assert.That(style.Matched, Is.False);
+
             style.FlagAsMatched();
-            Assert.IsTrue(style.Matched);
+
+            Assert.That(style.Matched, Is.True);
         }
 
         #endregion FlagAsMatched
 
         #region BuildDictionary
 
-        [TestMethod]
-        public void BattleStyle_BuildDictionary_WithInput_Null()
+        [Test]
+        public void BuildDictionary_WithInput_Null()
         {
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(null);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(null);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void BattleStyle_BuildDictionary_WithInput_NullQuery()
+        [Test]
+        public void BuildDictionary_WithInput_NullQuery()
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
@@ -178,12 +184,12 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void BattleStyle_BuildDictionary_WithInput_EmptyQuery()
+        [Test]
+        public void BuildDictionary_WithInput_EmptyQuery()
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
@@ -200,12 +206,12 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
-            Assert.AreEqual(0, dict.Count);
+            IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
+            Assert.That(dict, Is.Empty);
         }
 
-        [TestMethod]
-        public void BattleStyle_BuildDictionary_WithInput_DuplicateName()
+        [Test]
+        public void BuildDictionary_WithInput_DuplicateName()
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
@@ -223,11 +229,11 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            Assert.ThrowsException<BattleStyleProcessingException>(() => BattleStyle.BuildDictionary(config));
+            Assert.Throws<BattleStyleProcessingException>(() => BattleStyle.BuildDictionary(config));
         }
 
-        [TestMethod]
-        public void BattleStyle_BuildDictionary_WithInput_Invalid()
+        [Test]
+        public void BuildDictionary_WithInput_Invalid()
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
@@ -245,11 +251,11 @@ namespace UnitTests.Models.System
                 SpriteURL = 1
             };
 
-            Assert.ThrowsException<BattleStyleProcessingException>(() => BattleStyle.BuildDictionary(config));
+            Assert.Throws<BattleStyleProcessingException>(() => BattleStyle.BuildDictionary(config));
         }
 
-        [TestMethod]
-        public void BattleStyle_BuildDictionary()
+        [Test]
+        public void BuildDictionary()
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
@@ -266,12 +272,12 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
-            Assert.AreEqual<int>(1, dict.Count);
+            IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
+            Assert.That(dict.Count, Is.EqualTo(1));
         }
 
-        [TestMethod]
-        public void BattleStyle_BuildDictionary_MultiQuery()
+        [Test]
+        public void BuildDictionary_MultiQuery()
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
@@ -297,122 +303,165 @@ namespace UnitTests.Models.System
                 Name = 0
             };
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
-            Assert.AreEqual<int>(4, dict.Count);
+            IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
+            Assert.That(dict.Count, Is.EqualTo(4));
         }
 
         #endregion BuildDictionary
 
         #region MatchNames
 
-        [TestMethod]
-        public void BattleStyle_MatchNames_UnmatchedName()
+        [Test]
+        public void MatchNames_UnmatchedName()
         {
-            BattleStylesConfig config = new BattleStylesConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Battle Style 1" },
-                            new List<object>(){ "Battle Style 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string style1Name = "Battle Style 1";
+            string style2Name = "Battle Style 2";
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Battle Style 3" };
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
 
-            Assert.ThrowsException<UnmatchedBattleStyleException>(() => BattleStyle.MatchNames(dict, names));
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+
+            IEnumerable<string> names = new List<string>() { style2Name };
+
+            Assert.Throws<UnmatchedBattleStyleException>(() => BattleStyle.MatchNames(dict, names));
         }
 
-        [TestMethod]
-        public void BattleStyle_MatchNames_SingleMatch()
+        [Test]
+        public void MatchNames_SingleMatch()
         {
-            BattleStylesConfig config = new BattleStylesConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Battle Style 1" },
-                            new List<object>(){ "Battle Style 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string style1Name = "Battle Style 1";
+            string style2Name = "Battle Style 2";
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Battle Style 1" };
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
 
-            List<BattleStyle> matches = BattleStyle.MatchNames(dict, names);
-            Assert.AreEqual(1, matches.Count);
-            Assert.IsTrue(matches.First().Matched);
+            IBattleStyle style2 = Substitute.For<IBattleStyle>();
+            style2.Name.Returns(style2Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+            dict.Add(style2Name, style2);
+
+            IEnumerable<string> names = new List<string>() { style1Name };
+            List<IBattleStyle> matches = BattleStyle.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(1));
+            Assert.That(matches.Contains(style1), Is.True);
+            matches.First().Received(1).FlagAsMatched();
         }
 
-        [TestMethod]
-        public void BattleStyle_MatchNames_MultipleMatches()
+        [Test]
+        public void MatchNames_MultipleMatches()
         {
-            BattleStylesConfig config = new BattleStylesConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Battle Style 1" },
-                            new List<object>(){ "Battle Style 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string style1Name = "Battle Style 1";
+            string style2Name = "Battle Style 2";
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Battle Style 1", "Battle Style 2" };
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
 
-            List<BattleStyle> matches = BattleStyle.MatchNames(dict, names);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsTrue(matches[0].Matched);
-            Assert.IsTrue(matches[1].Matched);
+            IBattleStyle style2 = Substitute.For<IBattleStyle>();
+            style2.Name.Returns(style2Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+            dict.Add(style2Name, style2);
+
+            IEnumerable<string> names = new List<string>() { style1Name, style2Name };
+            List<IBattleStyle> matches = BattleStyle.MatchNames(dict, names);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches.Contains(style1), Is.True);
+            Assert.That(matches.Contains(style2), Is.True);
+
+            matches[0].Received(1).FlagAsMatched();
+            matches[1].Received(1).FlagAsMatched();
         }
 
-        [TestMethod]
-        public void BattleStyle_MatchNames_MultipleMatches_SetMatchedStatus()
+        [Test]
+        public void MatchNames_MultipleMatches_DoNotSetMatchedStatus()
         {
-            BattleStylesConfig config = new BattleStylesConfig()
-            {
-                Queries = new List<Query>()
-                {
-                    new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ "Battle Style 1" },
-                            new List<object>(){ "Battle Style 2" }
-                        }
-                    }
-                },
-                Name = 0
-            };
+            string style1Name = "Battle Style 1";
+            string style2Name = "Battle Style 2";
 
-            IDictionary<string, BattleStyle> dict = BattleStyle.BuildDictionary(config);
-            IEnumerable<string> names = new List<string>() { "Battle Style 1", "Battle Style 2" };
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
 
-            List<BattleStyle> matches = BattleStyle.MatchNames(dict, names, true);
-            Assert.AreEqual(2, matches.Count);
-            Assert.IsFalse(matches[0].Matched);
-            Assert.IsFalse(matches[1].Matched);
+            IBattleStyle style2 = Substitute.For<IBattleStyle>();
+            style2.Name.Returns(style2Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+            dict.Add(style2Name, style2);
+
+            IEnumerable<string> names = new List<string>() { style1Name, style2Name };
+            List<IBattleStyle> matches = BattleStyle.MatchNames(dict, names, false);
+
+            Assert.That(matches.Count, Is.EqualTo(2));
+            Assert.That(matches.Contains(style1), Is.True);
+            Assert.That(matches.Contains(style2), Is.True);
+
+            matches[0].DidNotReceive().FlagAsMatched();
+            matches[1].DidNotReceive().FlagAsMatched();
         }
 
         #endregion MatchNames
+
+        #region MatchName
+
+        [Test]
+        public void MatchName_UnmatchedName()
+        {
+            string style1Name = "Battle Style 1";
+
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+
+            string name = "Battle Style 2";
+
+            Assert.Throws<UnmatchedBattleStyleException>(() => BattleStyle.MatchName(dict, name));
+        }
+
+        [Test]
+        public void MatchName()
+        {
+            string style1Name = "Battle Style 1";
+
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+
+            IBattleStyle match = BattleStyle.MatchName(dict, style1Name);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(style1));
+            match.Received(1).FlagAsMatched();
+        }
+
+        [Test]
+        public void MatchName_DoNotSetMatchedStatus()
+        {
+            string style1Name = "Battle Style 1";
+
+            IBattleStyle style1 = Substitute.For<IBattleStyle>();
+            style1.Name.Returns(style1Name);
+
+            IDictionary<string, IBattleStyle> dict = new Dictionary<string, IBattleStyle>();
+            dict.Add(style1Name, style1);
+
+            IBattleStyle match = BattleStyle.MatchName(dict, style1Name, false);
+
+            Assert.That(match, Is.Not.Null);
+            Assert.That(match, Is.EqualTo(style1));
+            match.DidNotReceive().FlagAsMatched();
+        }
+
+        #endregion MatchName
     }
 }

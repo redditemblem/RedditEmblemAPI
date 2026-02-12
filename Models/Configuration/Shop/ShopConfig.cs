@@ -7,12 +7,9 @@ namespace RedditEmblemAPI.Models.Configuration.Shop
     /// <summary>
     /// Container class for deserialized JSON <c>"Shop"</c> object data.
     /// </summary>
-    public class ShopConfig : IQueryable
+    public class ShopConfig : Queryable
     {
         #region Required Fields
-
-        [JsonRequired]
-        public Query Query { get; set; }
 
         /// <summary>
         /// Required. Cell index for a shop item's name value.

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Common;
+﻿using RedditEmblemAPI.Models.Configuration.Common;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Classes
@@ -7,21 +6,8 @@ namespace RedditEmblemAPI.Models.Configuration.System.Classes
     /// <summary>
     /// Container class for deserialized JSON <c>"Classes"</c> object data.
     /// </summary>
-    public class ClassesConfig : IMultiQueryable
+    public class ClassesConfig : MultiQueryable
     {
-        #region Required Fields
-
-        [JsonRequired]
-        public IEnumerable<Query> Queries { get; set; }
-
-        /// <summary>
-        /// Required. Cell index of a class's name value.
-        /// </summary>
-        [JsonRequired]
-        public int Name { get; set; }
-
-        #endregion Required Fields
-
         #region Optional Fields
 
         /// <summary>

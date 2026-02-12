@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.Common;
+﻿using RedditEmblemAPI.Models.Configuration.Common;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Emblems
@@ -7,21 +6,8 @@ namespace RedditEmblemAPI.Models.Configuration.System.Emblems
     /// <summary>
     /// Container class for deserialized JSON <c>"EngageAttacks"</c> object data.
     /// </summary>
-    public class EngageAttacksConfig : IMultiQueryable
+    public class EngageAttacksConfig : MultiQueryable
     {
-        #region Required Fields
-
-        [JsonRequired]
-        public IEnumerable<Query> Queries { get; set; }
-
-        /// <summary>
-        /// Required. Cell index of an engage attack's name value.
-        /// </summary>
-        [JsonRequired]
-        public int Name { get; set; }
-
-        #endregion Required Fields
-
         #region Optional Fields
 
         /// <summary>

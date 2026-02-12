@@ -4,7 +4,18 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 {
-    public abstract class StatusConditionEffect
+    #region Interface
+
+    /// <inheritdoc cref="StatusConditionEffect"/>
+    public interface IStatusConditionEffect
+    {
+        /// <inheritdoc cref="StatusConditionEffect.Apply(Unit, UnitStatus, IDictionary{string, ITag})"/>
+        void Apply(Unit unit, UnitStatus status, IDictionary<string, ITag> tags);
+    }
+
+    #endregion Interface
+
+    public abstract class StatusConditionEffect : IStatusConditionEffect
     {
         #region Constants
 
@@ -36,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
                 throw new StatusConditionEffectMissingParameterException(this.Name, this.ParameterCount, parameters.Count);
         }
 
-        public virtual void Apply(Unit unit, UnitStatus status, IDictionary<string, Tag> tags)
+        public virtual void Apply(Unit unit, UnitStatus status, IDictionary<string, ITag> tags)
         {
             //By default, the effect applies nothing
         }

@@ -1,6 +1,5 @@
 ﻿namespace UnitTests.Models.System.Skills.Effects.MovementRange
 {
-    [TestClass]
     public class IgnoreUnitAffiliationsEffectTests
     {
         #region Constructor

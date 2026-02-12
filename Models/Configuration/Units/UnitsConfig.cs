@@ -8,18 +8,9 @@ namespace RedditEmblemAPI.Models.Configuration.Units
     /// <summary>
     /// Container class for deserialized JSON <c>"Units"</c> object data.
     /// </summary>
-    public class UnitsConfig : IMultiQueryable
+    public class UnitsConfig : MultiQueryable
     {
         #region Required Fields
-
-        [JsonRequired]
-        public IEnumerable<Query> Queries { get; set; }
-
-        /// <summary>
-        /// Required. Cell index of a unit's name value.
-        /// </summary>
-        [JsonRequired]
-        public int Name { get; set; }
 
         /// <summary>
         /// Required. Cell index of a unit's sprite image URL value.

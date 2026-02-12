@@ -12,28 +12,55 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
+    #region Interface
+
+    /// <inheritdoc cref="TerrainType"/>
+    public interface ITerrainType : IMatchable
+    {
+        /// <inheritdoc cref="TerrainType.StatGroups"/>
+        List<ITerrainTypeStats> StatGroups { get; set; }
+
+        /// <inheritdoc cref="TerrainType.WarpType"/>
+        WarpType WarpType { get; set; }
+
+        /// <inheritdoc cref="TerrainType.WarpCost"/>
+        int WarpCost { get; set; }
+
+        /// <inheritdoc cref="TerrainType.CannotStopOn"/>
+        bool CannotStopOn { get; set; }
+
+        /// <inheritdoc cref="TerrainType.BlocksItems"/>
+        bool BlocksItems { get; set; }
+
+        /// <inheritdoc cref="TerrainType.RestrictAffiliations"/>
+        List<int> RestrictAffiliations { get; set; }
+
+        /// <inheritdoc cref="TerrainType.Groupings"/>
+        List<int> Groupings { get; set; }
+
+        /// <inheritdoc cref="TerrainType.TextFields"/>
+        List<string> TextFields { get; set; }
+
+        /// <inheritdoc cref="TerrainType.GetTerrainTypeStatsByAffiliation(IAffiliation)"/>
+        ITerrainTypeStats GetTerrainTypeStatsByAffiliation(IAffiliation affiliation);
+
+        /// <inheritdoc cref="TerrainType.GetTerrainTypeStatsByAffiliation(int)"/>
+        ITerrainTypeStats GetTerrainTypeStatsByAffiliation(int affiliationGrouping);
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing a TerrainType definition in the team's system.
     /// </summary>
-    public class TerrainType : IMatchable
+    public class TerrainType : Matchable, ITerrainType
     {
         #region Attributes
 
         /// <summary>
-        /// Flag indicating whether or not this terrain type was found on a tile. Used to minify the output JSON.
-        /// </summary>
-        [JsonIgnore]
-        public bool Matched { get; private set; }
-
-        /// <summary>
-        /// The name of the terrain type.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
         /// List of stat groups.
         /// </summary>
-        public List<TerrainTypeStats> StatGroups { get; set; }
+        public List<ITerrainTypeStats> StatGroups { get; set; }
 
         /// <summary>
         /// The warp type of the terrain type.
@@ -87,9 +114,8 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public TerrainType(TerrainTypesConfig config, IEnumerable<string> data, IDictionary<string, Affiliation> affiliations)
+        public TerrainType(TerrainTypesConfig config, IEnumerable<string> data, IDictionary<string, IAffiliation> affiliations)
         {
-            this.Matched = false;
             this.Name = DataParser.String(data, config.Name, "Name");
             this.CannotStopOn = DataParser.OptionalBoolean_YesNo(data, config.CannotStopOn, "Cannot Stop On");
             this.BlocksItems = DataParser.OptionalBoolean_YesNo(data, config.BlocksItems, "Blocks Items");
@@ -110,9 +136,9 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through <paramref name="configs"/> and builds a list of <c>TerrainTypeStats</c>.
         /// </summary>
         /// <exception cref="DuplicateTerrainTypeStatsException"></exception>
-        private List<TerrainTypeStats> BuildTerrainTypeStats(IEnumerable<string> data, List<TerrainTypeStatsConfig> configs, IDictionary<string, Affiliation> affiliations)
+        private List<ITerrainTypeStats> BuildTerrainTypeStats(IEnumerable<string> data, List<TerrainTypeStatsConfig> configs, IDictionary<string, IAffiliation> affiliations)
         {
-            List<TerrainTypeStats> groups = new List<TerrainTypeStats>();
+            List<ITerrainTypeStats> groups = new List<ITerrainTypeStats>();
             foreach (TerrainTypeStatsConfig config in configs)
             {
                 //We want to include the group only if it's the default group or if it has at least one grouping value included.
@@ -150,7 +176,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Returns the <c>TerrainTypeStats</c> that matches <paramref name="affiliation"/>. If one is not found, returns the default group instead.
         /// </summary>
-        public TerrainTypeStats GetTerrainTypeStatsByAffiliation(Affiliation affiliation)
+        public ITerrainTypeStats GetTerrainTypeStatsByAffiliation(IAffiliation affiliation)
         {
             return GetTerrainTypeStatsByAffiliation(affiliation.Grouping);
         }
@@ -158,35 +184,26 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Returns the <c>TerrainTypeStats</c> that matches <paramref name="affiliationGrouping"/>. If one is not found, returns the default group instead.
         /// </summary>
-        public TerrainTypeStats GetTerrainTypeStatsByAffiliation(int affiliationGrouping)
+        public ITerrainTypeStats GetTerrainTypeStatsByAffiliation(int affiliationGrouping)
         {
-            TerrainTypeStats match = this.StatGroups.FirstOrDefault(g => g.AffiliationGroupings.Contains(affiliationGrouping));
+            ITerrainTypeStats match = this.StatGroups.FirstOrDefault(g => g.AffiliationGroupings.Contains(affiliationGrouping));
             if (match != null) return match;
 
             return this.StatGroups.First(g => g.IsDefaultGroup);
         }
 
-        /// <summary>
-        /// Sets the <c>Matched</c> flag for this <c>TerrainType</c> to true. Additionally, calls <c>FlagAsMatched()</c> for all of its <c>IMatchable</c> child attributes.
-        /// </summary>
-        public void FlagAsMatched()
-        {
-            this.Matched = true;
-        }
-
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>TerrainType</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>ITerrainType</c> from each valid row.
         /// </summary>
         /// <exception cref="TerrainTypeProcessingException"></exception>
-        public static IDictionary<string, TerrainType> BuildDictionary(TerrainTypesConfig config, IDictionary<string, Affiliation> affiliations)
+        public static IDictionary<string, ITerrainType> BuildDictionary(TerrainTypesConfig config, IDictionary<string, IAffiliation> affiliations)
         {
-            IDictionary<string, TerrainType> terrainTypes = new Dictionary<string, TerrainType>();
-            if (config == null || config.Queries == null)
-                return terrainTypes;
+            IDictionary<string, ITerrainType> terrainTypes = new Dictionary<string, ITerrainType>();
+            if (config?.Queries is null) return terrainTypes;
 
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
             {
                 string name = string.Empty;
                 try
@@ -208,26 +225,26 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Matches each of the strings in <paramref name="names"/> to a <c>TerrainType</c> in <paramref name="terrainTypes"/> and returns the matches as a list.
+        /// Matches each string in <paramref name="names"/> to an <c>ITerrainType</c> in <paramref name="terrainTypes"/> and returns the matches as a list.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned objects to true.</param>
-        public static List<TerrainType> MatchNames(IDictionary<string, TerrainType> terrainTypes, IEnumerable<string> names, Coordinate coord, bool skipMatchedStatusSet = false)
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for all returned objects.</param>
+        public static List<ITerrainType> MatchNames(IDictionary<string, ITerrainType> terrainTypes, IEnumerable<string> names, ICoordinate coord, bool flagAsMatched = true)
         {
-            return names.Select(n => MatchName(terrainTypes, n, coord, skipMatchedStatusSet)).ToList();
+            return names.Select(n => MatchName(terrainTypes, n, coord, flagAsMatched)).ToList();
         }
 
         /// <summary>
-        /// Matches <paramref name="name"/> to a <c>TerrainType</c> in <paramref name="terrainTypes"/> and returns it.
+        /// Matches <paramref name="name"/> to an <c>ITerrainType</c> in <paramref name="terrainTypes"/> and returns it.
         /// </summary>
-        /// <param name="skipMatchedStatusSet">If true, will not set the <c>Matched</c> flag on the returned object to true.</param>
+        /// <param name="flagAsMatched">If true, calls <c>IMatchable.FlagAsMatched()</c> for the returned object.</param>
         /// <exception cref="UnmatchedTileTerrainTypeException"></exception>
-        public static TerrainType MatchName(IDictionary<string, TerrainType> terrainTypes, string name, Coordinate coord, bool skipMatchedStatusSet = false)
+        public static ITerrainType MatchName(IDictionary<string, ITerrainType> terrainTypes, string name, ICoordinate coord, bool flagAsMatched = true)
         {
-            TerrainType match;
+            ITerrainType match;
             if (!terrainTypes.TryGetValue(name, out match))
                 throw new UnmatchedTileTerrainTypeException(coord, name);
 
-            if (!skipMatchedStatusSet) match.FlagAsMatched();
+            if (flagAsMatched) match.FlagAsMatched();
 
             return match;
         }
