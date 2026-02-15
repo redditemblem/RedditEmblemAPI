@@ -46,7 +46,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
 
             foreach(ITile tile in unit.Location.OriginTiles)
             {
-                ITerrainTypeStats stats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(unit.AffiliationObj);
+                ITerrainTypeStats stats = tile.TerrainType.GetTerrainTypeStatsByAffiliation(unit.Affiliation);
 
                 int modifier;
                 if (!stats.StatModifiers.TryGetValue(this.TerrainTypeStat, out modifier))

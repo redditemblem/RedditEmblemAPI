@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -64,11 +65,11 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #endregion Flags
 
-        /// <inheritdoc cref="UnitInventoryItem.TagsList"/>
-        List<ITag> TagsList { get; }
+        /// <inheritdoc cref="UnitInventoryItem.Tags"/>
+        List<ITag> Tags { get; }
 
-        /// <inheritdoc cref="UnitInventoryItem.EngravingsList"/>
-        List<IEngraving> EngravingsList { get; }
+        /// <inheritdoc cref="UnitInventoryItem.Engravings"/>
+        List<IEngraving> Engravings { get; }
 
         /// <inheritdoc cref="UnitInventoryItem.HasRangeThatRequiresCalculation"/>
         bool HasRangeThatRequiresCalculation { get; }
@@ -98,7 +99,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// The <c>IItem</c> object.
         /// </summary>
-        [JsonIgnore]
+        [JsonProperty("name")]
+        [JsonConverter(typeof(MatchableNameConverter))]
         public IItem Item { get; private set; }
 
         /// <summary>
@@ -173,14 +175,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// List of the item's tags.
         /// </summary>
-        [JsonIgnore]
-        public List<ITag> TagsList { get; private set; }
+        [JsonProperty(ItemConverterType = typeof(MatchableNameConverter))]
+        public List<ITag> Tags { get; private set; }
 
         /// <summary>
         /// List of the item's engravings.
         /// </summary>
-        [JsonIgnore]
-        public List<IEngraving> EngravingsList { get; private set; }
+        [JsonProperty(ItemConverterType = typeof(MatchableNameConverter))]
+        public List<IEngraving> Engravings { get; private set; }
 
         /// <summary>
         /// The engraving that overrides the item's default range values, if one exists.
@@ -201,29 +203,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
         }
 
-        #region JSON Serialization Only
-
-        /// <summary>
-        /// Only for JSON serialization. The name of the item.
-        /// </summary>
-        [JsonProperty]
-        private string Name { get { return this.Item.Name; } }
-
-        /// <summary>
-        /// For JSON serialization only. List of the item's tags.
-        /// </summary>
-        [JsonProperty]
-        private IEnumerable<string> Tags { get { return this.TagsList.Select(t => t.Name); } }
-
-        /// <summary>
-        /// For JSON Serialization ONLY. Complete list of the item's engravings.
-        /// </summary>
-        [JsonProperty]
-        private IEnumerable<string> Engravings { get { return this.EngravingsList.Select(e => e.Name); } }
-
-        #endregion JSON Serialization Only
-
-        #endregion
+        #endregion Attributes
 
         #region Constants
 
@@ -283,7 +263,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.MaxUses = this.Item.MaxUses;
             this.MinRange = new UnitInventoryItemStat(this.Item.Range.Minimum);
             this.MaxRange = new UnitInventoryItemStat(this.Item.Range.Maximum);
-            this.TagsList = this.Item.Tags.ToList();
+            this.Tags = this.Item.Tags.ToList();
 
             foreach (KeyValuePair<string, INamedStatValue> stat in this.Item.Stats)
                 this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
@@ -293,11 +273,11 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         private void MatchEngravings(IEnumerable<string> itemEngravings, IDictionary<string, IEngraving> engravings)
         {
-            this.EngravingsList = Engraving.MatchNames(engravings, itemEngravings);
-            this.EngravingsList = this.EngravingsList.Union(this.Item.Engravings).DistinctBy(e => e.Name).ToList();
+            this.Engravings = Engraving.MatchNames(engravings, itemEngravings);
+            this.Engravings = this.Engravings.Union(this.Item.Engravings).DistinctBy(e => e.Name).ToList();
             this.EngravingOverridesRanges = null;
 
-            foreach (IEngraving engraving in this.EngravingsList)
+            foreach (IEngraving engraving in this.Engravings)
             {
                 //Apply any modifiers to the item's stats
                 foreach (KeyValuePair<string, int> mod in engraving.ItemStatModifiers)
@@ -318,7 +298,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                         this.MaxRange.BaseValue = engraving.ItemRangeOverrides.Maximum;
                 }
 
-                this.TagsList = this.TagsList.Union(engraving.Tags).ToList();
+                this.Tags = this.Tags.Union(engraving.Tags).ToList();
             }
         }
 

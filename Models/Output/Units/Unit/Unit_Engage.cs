@@ -37,7 +37,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         private string BattleStyle
         {
-            get { return this.ClassList.FirstOrDefault()?.BattleStyle?.Name; }
+            get { return this.Classes.FirstOrDefault()?.BattleStyle?.Name; }
         }
 
         #endregion JSON Serialization

@@ -151,7 +151,7 @@ namespace UnitTests.Models.Storage
 
             Assert.That(item.FullName, Is.EqualTo(INPUT_NAME));
             Assert.That(item.Item, Is.EqualTo(expectedMatch));
-            Assert.That(item.TagsList, Is.EqualTo(expectedMatch.Tags));
+            Assert.That(item.Tags, Is.EqualTo(expectedMatch.Tags));
             Assert.That(item.Price, Is.EqualTo(100));
             Assert.That(item.Stock, Is.EqualTo(1));
 
@@ -361,8 +361,8 @@ namespace UnitTests.Models.Storage
             item.EngravingsList.ForEach(e => e.Received(1).FlagAsMatched());
 
             //Both Engraving 1 and 2 have Tag 1 - this tests the tag lists Union()
-            Assert.That(item.TagsList.Count, Is.EqualTo(1));
-            Assert.That(item.TagsList.Contains(TAGS["Tag 1"]), Is.True);
+            Assert.That(item.Tags.Count, Is.EqualTo(1));
+            Assert.That(item.Tags.Contains(TAGS["Tag 1"]), Is.True);
         }
 
         [Test]

@@ -3,6 +3,7 @@ using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System;
@@ -50,15 +51,10 @@ namespace RedditEmblemAPI.Models.Output.Map
         public int ID { get; private set; }
 
         /// <summary>
-        /// Only for JSON serialization. The name of the tile object.
-        /// </summary>
-        [JsonProperty]
-        private string Name { get { return this.TileObject.Name; } }
-
-        /// <summary>
         /// The <c>ITileObject</c> located on the tile. 
         /// </summary>
-        [JsonIgnore]
+        [JsonProperty("name")]
+        [JsonConverter(typeof(MatchableNameConverter))]
         public ITileObject TileObject { get; set; }
 
         /// <summary>

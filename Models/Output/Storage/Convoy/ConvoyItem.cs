@@ -3,6 +3,7 @@ using RedditEmblemAPI.Models.Configuration.Convoy;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System;
@@ -38,8 +39,8 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// <inheritdoc cref="ConvoyItem.Value"/>
         int Value { get; set; }
 
-        /// <inheritdoc cref="ConvoyItem.TagsList"/>
-        List<ITag> TagsList { get; set; }
+        /// <inheritdoc cref="ConvoyItem.Tags"/>
+        List<ITag> Tags { get; set; }
 
         /// <inheritdoc cref="ConvoyItem.EngravingsList"/>
         List<IEngraving> EngravingsList { get; set; }
@@ -60,7 +61,8 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         [JsonIgnore]
         public string FullName { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty("name")]
+        [JsonConverter(typeof(MatchableNameConverter))]
         public IItem Item { get; set; }
 
         /// <summary>
@@ -91,8 +93,8 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// <summary>
         /// List of the item's tags.
         /// </summary>
-        [JsonIgnore]
-        public List<ITag> TagsList { get; set; }
+        [JsonProperty(ItemConverterType = typeof(MatchableNameConverter))]
+        public List<ITag> Tags { get; set; }
 
         /// <summary>
         /// List of the engravings applied to the item.
@@ -101,18 +103,6 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         public List<IEngraving> EngravingsList { get; set; }
 
         #region JSON Serialization Only
-
-        /// <summary>
-        /// Only for JSON serialization. The name of the item.
-        /// </summary>
-        [JsonProperty]
-        private string Name { get { return this.Item.Name; } }
-
-        /// <summary>
-        /// For JSON serialization only. Names of the item's tags.
-        /// </summary>
-        [JsonProperty]
-        private IEnumerable<string> Tags { get { return this.TagsList.Select(t => t.Name); } }
 
         /// <summary>
         /// For JSON serialization only. Complete list of the item's engravings.
@@ -160,7 +150,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             this.Stats = new Dictionary<string, IUnitInventoryItemStat>();
             foreach (KeyValuePair<string, INamedStatValue> stat in this.Item.Stats)
                 this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
-            this.TagsList = this.Item.Tags.ToList();
+            this.Tags = this.Item.Tags.ToList();
 
             this.Owner = DataParser.OptionalString(data, config.Owner, "Owner");
             this.Value = DataParser.OptionalInt_Positive(data, config.Value, "Value", -1);
@@ -184,7 +174,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
                 }
 
                 //Apply any tags
-                this.TagsList = this.TagsList.Union(engraving.Tags).ToList();
+                this.Tags = this.Tags.Union(engraving.Tags).ToList();
             }
         }
 

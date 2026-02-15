@@ -4,6 +4,7 @@ using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
 using RedditEmblemAPI.Models.Output.System.StatusConditions;
@@ -43,11 +44,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <inheritdoc cref="Unit.Location"/>
         IUnitLocationData Location { get; }
 
-        /// <inheritdoc cref="Unit.ClassList"/>
-        List<IClass> ClassList { get; }
+        /// <inheritdoc cref="Unit.Classes"/>
+        List<IClass> Classes { get; }
 
-        /// <inheritdoc cref="Unit.AffiliationObj"/>
-        IAffiliation AffiliationObj { get; }
+        /// <inheritdoc cref="Unit.Affiliation"/>
+        IAffiliation Affiliation { get; }
 
         /// <inheritdoc cref="Unit.Stats"/>
         IUnitStatsData Stats { get; }
@@ -121,8 +122,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// A list of the unit's classes.
         /// </summary>
-        [JsonIgnore]
-        public List<IClass> ClassList { get; private set; }
+        [JsonProperty(ItemConverterType = typeof(MatchableNameConverter))]
+        public List<IClass> Classes { get; private set; }
 
         /// <summary>
         /// The unit's movement type. Only used if classes are not provided.
@@ -132,8 +133,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// The unit's affiliation.
         /// </summary>
-        [JsonIgnore]
-        public IAffiliation AffiliationObj { get; private set; }
+        [JsonConverter(typeof(MatchableNameConverter))]
+        public IAffiliation Affiliation { get; private set; }
 
         /// <summary>
         /// Container for information about the unit's raw numbers.
@@ -180,18 +181,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         private string MovementType { get { return GetUnitMovementType(); } }
 
         /// <summary>
-        /// Only for JSON serialization. A list of the unit's classes.
-        /// </summary>
-        [JsonProperty]
-        private IEnumerable<string> Classes { get { return this.ClassList.Select(c => c.Name); } }
-
-        /// <summary>
-        /// Only for JSON serialization. The unit's affiliation name.
-        /// </summary>
-        [JsonProperty]
-        private string Affiliation { get { return AffiliationObj.Name; } }
-
-        /// <summary>
         /// Only for JSON serialization. True if the unit has any skill in any subsection. Used to control whether or not the skill section displays.
         /// </summary>
         [JsonProperty]
@@ -231,11 +220,11 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Ranges = new UnitRangeData();
 
             string affiliation = DataParser.String(data, config.Affiliation, "Affiliation");
-            this.AffiliationObj = System.Affiliation.MatchName(system.Affiliations, affiliation);
+            this.Affiliation = System.Affiliation.MatchName(system.Affiliations, affiliation);
 
             //Classes and movement types
             //The unit movement type field itself is optional, but if it is present it must be populated
-            this.ClassList = BuildClasses(data, config.Classes, system.Classes);
+            this.Classes = BuildClasses(data, config.Classes, system.Classes);
             if (config.MovementType > -1) this.UnitMovementType = DataParser.String(data, config.MovementType, "Movement Type");
             else this.UnitMovementType = string.Empty;
 
@@ -331,7 +320,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public string GetUnitMovementType()
         {
-            OverrideMovementTypeEffect_Status statusOverride = this.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<OverrideMovementTypeEffect_Status>().FirstOrDefault();
+            OverrideMovementTypeEffect_Status statusOverride = this.StatusConditions.SelectMany(s => s.Status.Effects).OfType<OverrideMovementTypeEffect_Status>().FirstOrDefault();
             if (statusOverride != null)
                 return statusOverride.MovementType;
 
@@ -341,7 +330,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             // Try to retrieve the first class's movement type first.
             // If there is none, then we fall back on trying to grab from the unit's movement type field instead.
-            string movementType = this.ClassList.FirstOrDefault()?.MovementType;
+            string movementType = this.Classes.FirstOrDefault()?.MovementType;
             if (string.IsNullOrEmpty(movementType)) movementType = this.UnitMovementType;
 
             return movementType;
@@ -352,19 +341,19 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public IEnumerable<ISkill> GetFullSkillsList()
         {
-            IEnumerable<ISkill> skills = this.SkillSubsections.SelectMany(s => s.Skills.Select(s => s.SkillObj));
+            IEnumerable<ISkill> skills = this.SkillSubsections.SelectMany(s => s.Skills.Select(s => s.Skill));
 
             //Union w/ equipped item skills
             IList<IUnitInventoryItem> equipped = this.Inventory.GetAllEquippedItems();
             foreach(IUnitInventoryItem unitItem in equipped)
-                skills = skills.Union(unitItem.Item.EquippedSkills.Select(s => s.SkillObj));
+                skills = skills.Union(unitItem.Item.EquippedSkills.Select(s => s.Skill));
             
             //Union w/ emblem skills
             if(this.Emblem != null)
             {
-                skills = skills.Union(this.Emblem.SyncSkills.Select(s => s.SkillObj));
+                skills = skills.Union(this.Emblem.SyncSkills.Select(s => s.Skill));
                 if (this.Emblem.IsEngaged)
-                    skills = skills.Union(this.Emblem.EngageSkills.Select(s => s.SkillObj));
+                    skills = skills.Union(this.Emblem.EngageSkills.Select(s => s.Skill));
             }
 
             return skills;

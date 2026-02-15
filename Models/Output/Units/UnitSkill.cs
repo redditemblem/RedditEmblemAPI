@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Units;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
@@ -14,8 +15,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <inheritdoc cref="UnitSkill.FullName"/>
         string FullName { get; }
 
-        /// <inheritdoc cref="UnitSkill.SkillObj"/>
-        ISkill SkillObj { get; }
+        /// <inheritdoc cref="UnitSkill.Skill"/>
+        ISkill Skill { get; }
 
         /// <inheritdoc cref="UnitSkill.AdditionalStats"/>
         IDictionary<string, int> AdditionalStats { get; }
@@ -39,24 +40,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// The <c>Skill</c> object.
         /// </summary>
-        [JsonIgnore]
-        public ISkill SkillObj { get; private set; }
+        [JsonProperty("name")]
+        [JsonConverter(typeof(MatchableNameConverter))]
+        public ISkill Skill { get; private set; }
 
         /// <summary>
         /// Dictionary of additional stat values for this skill.
         /// </summary>
         public IDictionary<string, int> AdditionalStats { get; private set; }
-
-        #region JSON Serialization
-
-        /// <summary>
-        /// Only for JSON serialization. The name of the skill. 
-        /// </summary>
-        [JsonProperty]
-        private string Name { get { return this.SkillObj.Name; } }
-
-
-        #endregion JSON Serialization
 
         #endregion Attributes
 
@@ -68,7 +59,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.FullName = DataParser.String(data, config.Name, "Skill Name");
             this.AdditionalStats = DataParser.NamedStatDictionary_OptionalInt_Any(config.AdditionalStats, data, false, this.FullName + " {0}");
 
-            this.SkillObj = Skill.MatchName(skills, this.FullName.Trim(), flagAsMatched);
+            this.Skill = System.Skills.Skill.MatchName(skills, this.FullName.Trim(), flagAsMatched);
         }
     }
 }

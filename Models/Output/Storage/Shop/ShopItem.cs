@@ -3,6 +3,7 @@ using RedditEmblemAPI.Models.Configuration.Shop;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
 using System;
@@ -37,8 +38,8 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// <inheritdoc cref="ShopItem.IsNew"/>
         bool IsNew { get; set; }
 
-        /// <inheritdoc cref="ShopItem.TagsList"/>
-        List<ITag> TagsList { get; set; }
+        /// <inheritdoc cref="ShopItem.Tags"/>
+        List<ITag> Tags { get; set; }
 
         /// <inheritdoc cref="ShopItem.Engravings"/>
         List<IEngraving> EngravingsList { get; set; }
@@ -62,7 +63,8 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// <summary>
         /// The <c>IItem</c> object.
         /// </summary>
-        [JsonIgnore]
+        [JsonProperty("name")]
+        [JsonConverter(typeof(MatchableNameConverter))]
         public IItem Item { get; set; }
 
         /// <summary>
@@ -93,8 +95,8 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// <summary>
         /// List of the item's tags.
         /// </summary>
-        [JsonIgnore]
-        public List<ITag> TagsList { get; set; }
+        [JsonProperty(ItemConverterType = typeof(MatchableNameConverter))]
+        public List<ITag> Tags { get; set; }
 
         /// <summary>
         /// List of engravings applied to the item.
@@ -103,18 +105,6 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         public List<IEngraving> EngravingsList { get; set; }
 
         #region JSON Serialization Only
-
-        /// <summary>
-        /// Only for JSON serialization. The name of the item.
-        /// </summary>
-        [JsonProperty]
-        private string Name { get { return this.Item.Name; } }
-
-        /// <summary>
-        /// For JSON serialization only. Names of the item's tags.
-        /// </summary>
-        [JsonProperty]
-        private IEnumerable<string> Tags { get { return this.TagsList.Select(t => t.Name); } }
 
         /// <summary>
         /// Only for JSON serialization. List of the engravings on the item.
@@ -139,7 +129,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             this.Stats = new Dictionary<string, IUnitInventoryItemStat>();
             foreach (KeyValuePair<string, INamedStatValue> stat in this.Item.Stats)
                 this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
-            this.TagsList = this.Item.Tags.ToList();
+            this.Tags = this.Item.Tags.ToList();
 
             this.Price = DataParser.Int_Positive(data, config.Price, "Price");
             this.SalePrice = DataParser.OptionalInt_Positive(data, config.SalePrice, "Sale Price", this.Price);
@@ -164,7 +154,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
                 }
 
                 //Apply any tags
-                this.TagsList = this.TagsList.Union(engraving.Tags).ToList();
+                this.Tags = this.Tags.Union(engraving.Tags).ToList();
             }
         }
 

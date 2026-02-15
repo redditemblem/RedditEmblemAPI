@@ -45,7 +45,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
                 return;
 
             //Apply modifiers to enemies in range
-            foreach (IUnit enemy in units.Where(u => u.AffiliationObj.Grouping != unit.AffiliationObj.Grouping //different affiliation grouping
+            foreach (IUnit enemy in units.Where(u => u.Affiliation.Grouping != unit.Affiliation.Grouping //different affiliation grouping
                                                  && u.Location.IsOnMap()
                                                  && u.Location.OriginTiles.Any(o1 => unit.Location.OriginTiles.Any(o2 => o2.Coordinate.DistanceFrom(o1.Coordinate) <= this.Radius))))
             {

@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
@@ -17,8 +18,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <inheritdoc cref="UnitStatus.FullName"/>
         string FullName { get; }
 
-        /// <inheritdoc cref="UnitStatus.StatusObj"/>
-        IStatusCondition StatusObj { get; }
+        /// <inheritdoc cref="UnitStatus.Status"/>
+        IStatusCondition Status { get; }
 
         /// <inheritdoc cref="UnitStatus.RemainingTurns"/>
         int RemainingTurns { get; }
@@ -43,16 +44,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         public string FullName { get; private set; }
 
         /// <summary>
-        /// Only for JSON serialization. The name of the status condition. 
-        /// </summary>
-        [JsonProperty]
-        private string Name { get { return this.StatusObj.Name; } }
-
-        /// <summary>
         /// The <c>IStatusCondition</c> object.
         /// </summary>
-        [JsonIgnore]
-        public IStatusCondition StatusObj { get; private set; }
+        [JsonProperty("name")]
+        [JsonConverter(typeof(MatchableNameConverter))]
+        public IStatusCondition Status { get; private set; }
 
         /// <summary>
         /// The number of turns this status has left.
@@ -106,7 +102,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             name = name.Trim();
-            this.StatusObj = StatusCondition.MatchName(statusConditions, name);
+            this.Status = StatusCondition.MatchName(statusConditions, name);
         }
 
         #region Static Functions

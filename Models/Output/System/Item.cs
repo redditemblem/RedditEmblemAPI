@@ -4,7 +4,7 @@ using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output.System.Interfaces;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.Units;
 using RedditEmblemAPI.Services.Helpers;
@@ -251,7 +251,7 @@ namespace RedditEmblemAPI.Models.Output.System
         public override void FlagAsMatched()
         {
             this.Matched = true;
-            this.EquippedSkills.ForEach(s => s.SkillObj.FlagAsMatched());
+            this.EquippedSkills.ForEach(s => s.Skill.FlagAsMatched());
             this.Tags.ForEach(t => t.FlagAsMatched());
             this.Engravings.ForEach(e => e.FlagAsMatched());
         }

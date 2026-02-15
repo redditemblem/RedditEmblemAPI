@@ -46,7 +46,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
 
             //If there are no allies in range, apply modifiers
             if (!units.Any(u => u.Name != unit.Name //different unit name
-                             && u.AffiliationObj.Grouping == unit.AffiliationObj.Grouping //same affiliation grouping
+                             && u.Affiliation.Grouping == unit.Affiliation.Grouping //same affiliation grouping
                              && u.Location.IsOnMap()
                              && u.Location.OriginTiles.Any(o1 => unit.Location.OriginTiles.Any(o2 => o2.Coordinate.DistanceFrom(o1.Coordinate) <= this.Radius))))
             {

@@ -303,8 +303,8 @@ namespace RedditEmblemAPI.Models.Output.Map
                 {
                     List<ITile> group = warpGroups[key];
 
-                    IEnumerable<ITile> entrances = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Entrance || w.TerrainTypeObj.WarpType == WarpType.Dual);
-                    IEnumerable<ITile> exits = group.Where(w => w.TerrainTypeObj.WarpType == WarpType.Exit || w.TerrainTypeObj.WarpType == WarpType.Dual);
+                    IEnumerable<ITile> entrances = group.Where(w => w.TerrainType.WarpType == WarpType.Entrance || w.TerrainType.WarpType == WarpType.Dual);
+                    IEnumerable<ITile> exits = group.Where(w => w.TerrainType.WarpType == WarpType.Exit || w.TerrainType.WarpType == WarpType.Dual);
 
                     //If we do not have at least one distinct entrance and exit
                     if (  !entrances.Any()

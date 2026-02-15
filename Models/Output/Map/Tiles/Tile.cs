@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Match;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,8 +15,8 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// <inheritdoc cref="Tile.Coordinate"/>
         ICoordinate Coordinate { get; set; }
 
-        /// <inheritdoc cref="Tile.TerrainTypeObj"/>
-        ITerrainType TerrainTypeObj { get; set; }
+        /// <inheritdoc cref="Tile.TerrainType"/>
+        ITerrainType TerrainType { get; set; }
 
         /// <inheritdoc cref="Tile.UnitData"/>
         ITileUnitData UnitData { get; set; }
@@ -44,8 +45,8 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// <summary>
         /// The terrain type of this tile.
         /// </summary>
-        [JsonIgnore]
-        public ITerrainType TerrainTypeObj { get; set; }
+        [JsonConverter(typeof(MatchableNameConverter))]
+        public ITerrainType TerrainType { get; set; }
 
         /// <summary>
         /// Container for information about this tile's unit properties.
@@ -64,12 +65,6 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         public List<ITileObjectInstance> TileObjects { get; set; }
 
         #region JSON Serialization Only
-
-        /// <summary>
-        /// Only for JSON serialization. Returns the name of the <c>TerrainType</c> of this tile.
-        /// </summary>
-        [JsonProperty]
-        private string TerrainType { get { return this.TerrainTypeObj.Name; } }
 
         /// <summary>
         /// Only for JSON serialization. Returns List of the IDs of tile object instances on this tile.
@@ -122,7 +117,7 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         public Tile(ICoordinate coord, ITerrainType terrainType)
         {
             this.Coordinate = coord;
-            this.TerrainTypeObj = terrainType;
+            this.TerrainType = terrainType;
 
             this.UnitData = new TileUnitData();
             this.WarpData = new TileWarpData();

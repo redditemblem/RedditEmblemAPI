@@ -1,7 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Output.System;
-using RedditEmblemAPI.Models.Output.System.Interfaces;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using System.Collections.Generic;
 using System.Linq;

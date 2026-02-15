@@ -407,7 +407,7 @@ namespace UnitTests.Models.System
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
-            Assert.That(art.TagsList, Is.Empty);
+            Assert.That(art.Tags, Is.Empty);
         }
 
         [Test]
@@ -453,8 +453,8 @@ namespace UnitTests.Models.System
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
-            Assert.That(art.TagsList.Count, Is.EqualTo(1));
-            art.TagsList.First().DidNotReceive().FlagAsMatched();
+            Assert.That(art.Tags.Count, Is.EqualTo(1));
+            art.Tags.First().DidNotReceive().FlagAsMatched();
         }
 
         [Test]
@@ -477,8 +477,8 @@ namespace UnitTests.Models.System
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
-            Assert.That(art.TagsList.Count, Is.EqualTo(2));
-            art.TagsList.ForEach(t => t.DidNotReceive().FlagAsMatched());
+            Assert.That(art.Tags.Count, Is.EqualTo(2));
+            art.Tags.ForEach(t => t.DidNotReceive().FlagAsMatched());
         }
 
         [Test]
@@ -501,8 +501,8 @@ namespace UnitTests.Models.System
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
-            Assert.That(art.TagsList.Count, Is.EqualTo(2));
-            art.TagsList.ForEach(t => t.DidNotReceive().FlagAsMatched());
+            Assert.That(art.Tags.Count, Is.EqualTo(2));
+            art.Tags.ForEach(t => t.DidNotReceive().FlagAsMatched());
         }
 
         #endregion OptionalField_Tags
@@ -610,13 +610,13 @@ namespace UnitTests.Models.System
             ICombatArt art = new CombatArt(config, data, TAGS);
 
             Assert.That(art.Matched, Is.False);
-            Assert.That(art.TagsList.Count, Is.EqualTo(2));
-            art.TagsList.ForEach(t => t.DidNotReceive().FlagAsMatched());
+            Assert.That(art.Tags.Count, Is.EqualTo(2));
+            art.Tags.ForEach(t => t.DidNotReceive().FlagAsMatched());
 
             art.FlagAsMatched();
 
             Assert.That(art.Matched, Is.True);
-            art.TagsList.ForEach(t => t.Received(1).FlagAsMatched());
+            art.Tags.ForEach(t => t.Received(1).FlagAsMatched());
         }
 
         #endregion FlagAsMatched

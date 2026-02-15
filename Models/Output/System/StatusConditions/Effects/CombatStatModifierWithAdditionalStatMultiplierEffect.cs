@@ -46,7 +46,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
             foreach(KeyValuePair<string, int> modifier in modifiers)
                 modifiers[modifier.Key] = modifier.Value * multiplier;
 
-            unit.Stats.ApplyCombatStatModifiers(modifiers, status.StatusObj.Name, true);
+            unit.Stats.ApplyCombatStatModifiers(modifiers, status.Status.Name, true);
         }
     }
 }

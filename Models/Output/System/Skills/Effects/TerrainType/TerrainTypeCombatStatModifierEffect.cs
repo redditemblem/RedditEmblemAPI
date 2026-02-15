@@ -45,7 +45,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
                 return;
 
             //The terrain type must be in the defined grouping
-            if (!unit.Location.OriginTiles.Any(o => o.TerrainTypeObj.Groupings.Contains(this.TerrainTypeGrouping)))
+            if (!unit.Location.OriginTiles.Any(o => o.TerrainType.Groupings.Contains(this.TerrainTypeGrouping)))
                 return;
 
             unit.Stats.ApplyCombatStatModifiers(this.Modifiers, skill.Name);

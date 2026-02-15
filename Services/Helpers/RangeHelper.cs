@@ -92,7 +92,7 @@ namespace RedditEmblemAPI.Services.Helpers
         private void CalculateUnitMovementRange(IUnit unit)
         {
             int movementVal = unit.Stats.General[this.Map.Constants.UnitMovementStatName].FinalValue;
-            OverrideMovementEffect overrideMovEffect = unit.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<OverrideMovementEffect>().FirstOrDefault();
+            OverrideMovementEffect overrideMovEffect = unit.StatusConditions.SelectMany(s => s.Status.Effects).OfType<OverrideMovementEffect>().FirstOrDefault();
             if (overrideMovEffect != null) movementVal = overrideMovEffect.MovementValue;
 
             UnitRangeParameters unitParms = new UnitRangeParameters(unit);
@@ -155,7 +155,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             //Document tile movement
             List<ITile> tiles = currCoords.Select(c => this.Map.GetTileByCoord(c.Coordinate)).ToList();
-            if (!tiles.Any(t => t.TerrainTypeObj.CannotStopOn))
+            if (!tiles.Any(t => t.TerrainType.CannotStopOn))
             {
                 foreach (ITile tile in tiles)
                     if (!parms.Unit.Ranges.Movement.Contains(tile.Coordinate))
@@ -192,13 +192,13 @@ namespace RedditEmblemAPI.Services.Helpers
 
 
             //If any tile is a warp entrance, calculate the remaining range from each warp exit too.
-            IEnumerable<ITile> warps = tiles.Where(t => t.TerrainTypeObj.WarpType == WarpType.Entrance || t.TerrainTypeObj.WarpType == WarpType.Dual
+            IEnumerable<ITile> warps = tiles.Where(t => t.TerrainType.WarpType == WarpType.Entrance || t.TerrainType.WarpType == WarpType.Dual
                                               && (lastWarpUsed == null || t.Coordinate != lastWarpUsed));
             foreach (ITile warp in warps)
             {
                 int warpCost = CalculateTileWarpMovementCost(parms, warp);
 
-                foreach (ITile warpExit in warp.WarpData.WarpGroup.Where(t => warp.Coordinate != t.Coordinate && (t.TerrainTypeObj.WarpType == WarpType.Exit || t.TerrainTypeObj.WarpType == WarpType.Dual)))
+                foreach (ITile warpExit in warp.WarpData.WarpGroup.Where(t => warp.Coordinate != t.Coordinate && (t.TerrainType.WarpType == WarpType.Exit || t.TerrainType.WarpType == WarpType.Dual)))
                 {
                     //Calculate range from warp exit in all possible unit orientations, starting with the anchor tile
                     ICoordinate currAnchor = currCoords.First().Coordinate;
@@ -224,7 +224,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 ITile tile = this.Map.GetTileByCoord(coord.Coordinate);
                 coord.PathCost = CalculateTileMovementCost(parms, tile);
 
-                if (tile.TerrainTypeObj.CannotStopOn)
+                if (tile.TerrainType.CannotStopOn)
                     coord.TraversableOnly = true;
 
                 //Units may move onto obstructed tiles, but no further.
@@ -257,13 +257,13 @@ namespace RedditEmblemAPI.Services.Helpers
 
                 //If the tile is a warp entrance, find the costs from its exit too.
                 ITile tile = this.Map.GetTileByCoord(currCoord.Coordinate);
-                if ((tile.TerrainTypeObj.WarpType == WarpType.Entrance || tile.TerrainTypeObj.WarpType == WarpType.Dual) && !warpsUsed.Contains(tile.Coordinate))
+                if ((tile.TerrainType.WarpType == WarpType.Entrance || tile.TerrainType.WarpType == WarpType.Dual) && !warpsUsed.Contains(tile.Coordinate))
                 {
                     warpsUsed.Add(tile.Coordinate);
                     int warpCost = CalculateTileWarpMovementCost(parms, tile);
 
                     bool warpUpdated = false;
-                    foreach (ITile warpExit in tile.WarpData.WarpGroup.Where(t => tile.Coordinate != t.Coordinate && (t.TerrainTypeObj.WarpType == WarpType.Exit || t.TerrainTypeObj.WarpType == WarpType.Dual)))
+                    foreach (ITile warpExit in tile.WarpData.WarpGroup.Where(t => tile.Coordinate != t.Coordinate && (t.TerrainType.WarpType == WarpType.Exit || t.TerrainType.WarpType == WarpType.Dual)))
                     {
                         CoordMapVertex currWarp = coordinateMap.First(c => c.Coordinate == warpExit.Coordinate);
 
@@ -289,11 +289,11 @@ namespace RedditEmblemAPI.Services.Helpers
             // If there is a Unit occupying this tile, check for affiliation collisions
             // Check if this tile blocks units of a certain affiliation
             if (UnitIsBlocked(parms.Unit, tile.UnitData.Unit, parms.IgnoresAffiliations, parms.Unit.Location.OriginTiles.Contains(tile)) ||
-                (tile.TerrainTypeObj.RestrictAffiliations.Any() && !tile.TerrainTypeObj.RestrictAffiliations.Contains(parms.Unit.AffiliationObj.Grouping))
+                (tile.TerrainType.RestrictAffiliations.Any() && !tile.TerrainType.RestrictAffiliations.Contains(parms.Unit.Affiliation.Grouping))
                )
                 return 99;
 
-            ITerrainTypeStats terrainStats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(parms.Unit.AffiliationObj);
+            ITerrainTypeStats terrainStats = tile.TerrainType.GetTerrainTypeStatsByAffiliation(parms.Unit.Affiliation);
 
             //Test that the unit can move to this tile
             int moveCost;
@@ -301,9 +301,9 @@ namespace RedditEmblemAPI.Services.Helpers
                 throw new UnmatchedMovementTypeException(parms.Unit.GetUnitMovementType(), terrainStats.MovementCosts.Keys);
 
             //Apply movement cost modifiers
-            TerrainTypeMovementCostSetEffect_Skill movCostSet_Skill = parms.MoveCostSets_Skills.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-            TerrainTypeMovementCostSetEffect_Status movCostSet_Status = parms.MoveCostSets_Statuses.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-            TerrainTypeMovementCostModifierEffect moveCostMod = parms.MoveCostModifiers.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+            TerrainTypeMovementCostSetEffect_Skill movCostSet_Skill = parms.MoveCostSets_Skills.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
+            TerrainTypeMovementCostSetEffect_Status movCostSet_Status = parms.MoveCostSets_Statuses.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
+            TerrainTypeMovementCostModifierEffect moveCostMod = parms.MoveCostModifiers.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
             if (movCostSet_Status != null && (movCostSet_Status.CanOverride99MoveCost || moveCost < 99))
                 moveCost = movCostSet_Status.Value;
             else if (movCostSet_Skill != null && (movCostSet_Skill.CanOverride99MoveCost || moveCost < 99))
@@ -332,10 +332,10 @@ namespace RedditEmblemAPI.Services.Helpers
 
         private int CalculateTileWarpMovementCost(UnitRangeParameters parms, ITile warp)
         {
-            WarpMovementCostSetEffect warpCostSet = parms.WarpCostSets.FirstOrDefault(s => warp.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-            WarpMovementCostModifierEffect warpCostMod = parms.WarpCostModifiers.FirstOrDefault(s => warp.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+            WarpMovementCostSetEffect warpCostSet = parms.WarpCostSets.FirstOrDefault(s => warp.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
+            WarpMovementCostModifierEffect warpCostMod = parms.WarpCostModifiers.FirstOrDefault(s => warp.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
 
-            int warpCost = warp.TerrainTypeObj.WarpCost;
+            int warpCost = warp.TerrainType.WarpCost;
             if (warpCostSet != null) warpCost = warpCostSet.Value;
             else if (warpCostMod != null) warpCost += warpCostMod.Value;
 
@@ -379,11 +379,11 @@ namespace RedditEmblemAPI.Services.Helpers
                 return false;
 
             //Check if the blocking unit is inflicted with a relevant status condition
-            if (blockingUnit.StatusConditions.SelectMany(sc => sc.StatusObj.Effects).OfType<DoesNotBlockEnemyAffiliationsEffect>().Any())
+            if (blockingUnit.StatusConditions.SelectMany(sc => sc.Status.Effects).OfType<DoesNotBlockEnemyAffiliationsEffect>().Any())
                 return false;
 
             //Finally, check if units are not in the same affiliation grouping
-            return movingUnit.AffiliationObj.Grouping != blockingUnit.AffiliationObj.Grouping;
+            return movingUnit.Affiliation.Grouping != blockingUnit.Affiliation.Grouping;
         }
 
         #endregion Movement Range Calculation
@@ -416,7 +416,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     foreach (ItemRangeDirection direction in RANGE_DIRECTIONS)
                     {
-                        ItemRangeParameters rangeParms = new ItemRangeParameters(coord, unit.Ranges.Movement, itemRanges, direction, unit.AffiliationObj.Grouping);
+                        ItemRangeParameters rangeParms = new ItemRangeParameters(coord, unit.Ranges.Movement, itemRanges, direction, unit.Affiliation.Grouping);
                         RecurseItemRange(rangeParms,
                                          coord,
                                          rangeParms.LargestRange,
@@ -455,7 +455,7 @@ namespace RedditEmblemAPI.Services.Helpers
             ITile tile = this.Map.GetTileByCoord(currCoord);
 
             //Check if ranges can pass through this tile
-            if (tile.TerrainTypeObj.BlocksItems)
+            if (tile.TerrainType.BlocksItems)
                 return;
 
             //Check for items that can reach this tile
@@ -515,7 +515,7 @@ namespace RedditEmblemAPI.Services.Helpers
             if (!string.IsNullOrEmpty(visitedCoords))
             {
                 //Check if range can continue past this point
-                if (tile.UnitData.UnitsObstructingItems.Any(u => u.AffiliationObj.Grouping != parms.AffiliationGrouping))
+                if (tile.UnitData.UnitsObstructingItems.Any(u => u.Affiliation.Grouping != parms.AffiliationGrouping))
                     return;
             }
 
@@ -570,7 +570,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 foreach (ITile tile in row)
                 {
                     //Only exclude tiles that the unit can move to or block items
-                    if (!unit.Ranges.Movement.Contains(tile.Coordinate) && !tile.TerrainTypeObj.BlocksItems)
+                    if (!unit.Ranges.Movement.Contains(tile.Coordinate) && !tile.TerrainType.BlocksItems)
                     {
                         if (applyAtk) atkRange.Add(tile.Coordinate);
                         if (applyUtil) utilRange.Add(tile.Coordinate);
@@ -600,7 +600,7 @@ namespace RedditEmblemAPI.Services.Helpers
             {
                 foreach (ItemRangeDirection direction in RANGE_DIRECTIONS)
                 {
-                    ItemRangeParameters rangeParms = new ItemRangeParameters(coord, unit.Ranges.Movement, noMovementItemRanges, direction, unit.AffiliationObj.Grouping);
+                    ItemRangeParameters rangeParms = new ItemRangeParameters(coord, unit.Ranges.Movement, noMovementItemRanges, direction, unit.Affiliation.Grouping);
                     RecurseItemRange(rangeParms,
                                      coord,
                                      rangeParms.LargestRange,
@@ -643,7 +643,7 @@ namespace RedditEmblemAPI.Services.Helpers
             this.IgnoresAffiliations = skillList.SelectMany(s => s.Effects).OfType<IIgnoreUnitAffiliations>().Any(e => e.IsActive(unit));
             this.MoveCostModifiers = skillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostModifierEffect>();
             this.MoveCostSets_Skills = skillList.SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect_Skill>();
-            this.MoveCostSets_Statuses = unit.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<TerrainTypeMovementCostSetEffect_Status>();
+            this.MoveCostSets_Statuses = unit.StatusConditions.SelectMany(s => s.Status.Effects).OfType<TerrainTypeMovementCostSetEffect_Status>();
             this.WarpCostModifiers = skillList.SelectMany(s => s.Effects).OfType<WarpMovementCostModifierEffect>();
             this.WarpCostSets = skillList.SelectMany(s => s.Effects).OfType<WarpMovementCostSetEffect>();
         }

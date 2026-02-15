@@ -93,12 +93,12 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     try
                     {
-                        foreach (IStatusConditionEffect effect in status.StatusObj.Effects)
+                        foreach (IStatusConditionEffect effect in status.Status.Effects)
                             effect.Apply(unit, status, system.Tags);
                     }
                     catch (Exception ex)
                     {
-                        throw new UnitStatusConditionEffectProcessingException(unit.Name, status.StatusObj.Name, ex);
+                        throw new UnitStatusConditionEffectProcessingException(unit.Name, status.Status.Name, ex);
                     }
                 }
             }
@@ -202,9 +202,9 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         private static void ApplyTileModifiersToUnit(IUnit unit, ITile tile)
         {
-            ITerrainTypeStats stats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(unit.AffiliationObj);
-            unit.Stats.ApplyCombatStatModifiers(stats.CombatStatModifiers, tile.TerrainTypeObj.Name);
-            unit.Stats.ApplyGeneralStatModifiers(stats.StatModifiers, tile.TerrainTypeObj.Name);
+            ITerrainTypeStats stats = tile.TerrainType.GetTerrainTypeStatsByAffiliation(unit.Affiliation);
+            unit.Stats.ApplyCombatStatModifiers(stats.CombatStatModifiers, tile.TerrainType.Name);
+            unit.Stats.ApplyGeneralStatModifiers(stats.StatModifiers, tile.TerrainType.Name);
             
             foreach (TileObjectInstance effect in tile.TileObjects)
             {

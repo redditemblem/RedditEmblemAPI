@@ -74,11 +74,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         protected void AddTeleportTargetsToUnitRange(IUnit unit, List<ITile> targetTiles)
         {
             IEnumerable<TerrainTypeMovementCostSetEffect_Skill> moveCostSets_Skill = unit.GetFullSkillsList().SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect_Skill>();
-            IEnumerable<TerrainTypeMovementCostSetEffect_Status> moveCostSets_Status = unit.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<TerrainTypeMovementCostSetEffect_Status>();
+            IEnumerable<TerrainTypeMovementCostSetEffect_Status> moveCostSets_Status = unit.StatusConditions.SelectMany(s => s.Status.Effects).OfType<TerrainTypeMovementCostSetEffect_Status>();
 
             foreach (ITile tile in targetTiles)
             {
-                ITerrainTypeStats terrainStats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(unit.AffiliationObj);
+                ITerrainTypeStats terrainStats = tile.TerrainType.GetTerrainTypeStatsByAffiliation(unit.Affiliation);
 
                 //Ensure that this unit can move to this tile
                 int moveCost;
@@ -88,14 +88,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                 //If unit is blocked from this tile, check for an effect that would allow it to access it
                 if (moveCost == 99)
                 {
-                    TerrainTypeMovementCostSetEffect_Skill movCostSet_Skill = moveCostSets_Skill.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-                    TerrainTypeMovementCostSetEffect_Status movCostSet_Status = moveCostSets_Status.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+                    TerrainTypeMovementCostSetEffect_Skill movCostSet_Skill = moveCostSets_Skill.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
+                    TerrainTypeMovementCostSetEffect_Status movCostSet_Status = moveCostSets_Status.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
                     if (!((movCostSet_Skill != null && movCostSet_Skill.CanOverride99MoveCost) || (movCostSet_Status != null && movCostSet_Status.CanOverride99MoveCost)))
                         continue;
                 }
 
                 //Check for an enemy unit already occupying this tile
-                if (tile.UnitData.Unit != null && tile.UnitData.Unit.AffiliationObj.Grouping != unit.AffiliationObj.Grouping)
+                if (tile.UnitData.Unit != null && tile.UnitData.Unit.Affiliation.Grouping != unit.Affiliation.Grouping)
                     continue;
 
                 //If no issues arose, add the tile to the unit's movement range

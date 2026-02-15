@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace RedditEmblemAPI.Models.Output.System.Interfaces
+namespace RedditEmblemAPI.Models.Output.System.Match
 {
     #region Interface
 

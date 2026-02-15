@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
@@ -33,7 +34,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// The <c>Battalion</c> object represented by this unit's instance.
         /// </summary>
-        [JsonIgnore]
+        [JsonProperty("name")]
+        [JsonConverter(typeof(MatchableNameConverter))]
         public IBattalion BattalionObj { get; }
 
         /// <summary>
@@ -49,10 +51,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         #region JSON Serialization Only
 
         [JsonProperty]
-        private string Name { get { return this.BattalionObj?.Name; } }
-
-        [JsonProperty]
-        private string GambitName { get { return this.BattalionObj?.GambitObj?.Name; } }
+        private string GambitName { get { return this.BattalionObj?.Gambit?.Name; } }
 
         #endregion JSON Serialization Only
 

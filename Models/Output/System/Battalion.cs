@@ -3,7 +3,7 @@ using RedditEmblemAPI.Models.Configuration.System.Battalions;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output.System.Interfaces;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
@@ -16,8 +16,8 @@ namespace RedditEmblemAPI.Models.Output.System
     /// <inheritdoc cref="Battalion"/>
     public interface IBattalion : IMatchable
     {
-        /// <inheritdoc cref="Battalion.GambitObj"/>
-        IGambit GambitObj { get; set; }
+        /// <inheritdoc cref="Battalion.Gambit"/>
+        IGambit Gambit { get; set; }
 
         /// <inheritdoc cref="Battalion.SpriteURL"/>
         string SpriteURL { get; set; }
@@ -53,8 +53,8 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// The battalion's gambit.
         /// </summary>
-        [JsonIgnore]
-        public IGambit GambitObj { get; set; }
+        [JsonConverter(typeof(MatchableNameConverter))]
+        public IGambit Gambit { get; set; }
 
         /// <summary>
         /// The battalion's icon sprite URL.
@@ -86,16 +86,6 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         public List<string> TextFields { get; set; }
 
-        #region JSON Serialization Only
-
-        /// <summary>
-        /// For JSON serialization only. The name of the <c>GambitObj</c>.
-        /// </summary>
-        [JsonProperty]
-        private string Gambit { get { return GambitObj?.Name; } }
-
-        #endregion JSON Serialization Only
-
         #endregion Attributes
 
         public Battalion(BattalionsConfig config, IEnumerable<string> data, IDictionary<string, IGambit> gambits)
@@ -103,7 +93,7 @@ namespace RedditEmblemAPI.Models.Output.System
             this.Name = DataParser.String(data, config.Name, "Name");
 
             string gambitName = DataParser.String(data, config.Gambit, "Gambit");
-            this.GambitObj = System.Gambit.MatchName(gambits, gambitName, false);
+            this.Gambit = System.Gambit.MatchName(gambits, gambitName, false);
 
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
             this.MaxEndurance = DataParser.Int_Positive(data, config.MaxEndurance, "Max Endurance");
@@ -130,7 +120,7 @@ namespace RedditEmblemAPI.Models.Output.System
         public override void FlagAsMatched()
         {
             this.Matched = true;
-            this.GambitObj.FlagAsMatched();
+            this.Gambit.FlagAsMatched();
         }
 
         #region Static Functions

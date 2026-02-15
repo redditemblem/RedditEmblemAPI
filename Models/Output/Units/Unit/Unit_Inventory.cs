@@ -161,7 +161,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 this.Stats.ApplyGeneralStatModifiers(equipped.Item.EquippedStatModifiers, modifierName);
 
                 //If the equipped item has an engraving, apply those modifiers too.
-                foreach (IEngraving engraving in equipped.EngravingsList)
+                foreach (IEngraving engraving in equipped.Engravings)
                 {
                     string engravingModifierName = $"{equipped.Item.Name} (Eqp) {engraving.Name}";
                     this.Stats.ApplyCombatStatModifiers(engraving.CombatStatModifiers, engravingModifierName);

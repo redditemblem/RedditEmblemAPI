@@ -58,7 +58,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
 
             //Locate valid ally units and select tiles near them
             List<ITile> tiles = units.Where(u => u.Name != unit.Name
-                                              && u.AffiliationObj.Grouping == unit.AffiliationObj.Grouping
+                                              && u.Affiliation.Grouping == unit.Affiliation.Grouping
                                               && u.Stats.HP.Percentage <= this.HPPercentage
                                               && u.Location.IsOnMap()
                                               && (u.Location.OriginTiles.Any(o1 => unit.Location.OriginTiles.Any(o2 => o1.Coordinate.DistanceFrom(o2.Coordinate) <= this.TeleportationRange)) || this.TeleportationRange == 99))

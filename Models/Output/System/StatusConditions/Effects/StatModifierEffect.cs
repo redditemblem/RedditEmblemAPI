@@ -29,7 +29,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// </summary>
         public override void Apply(IUnit unit, IUnitStatus status, IDictionary<string, ITag> tags)
         {
-            unit.Stats.ApplyGeneralStatModifiers(this.Modifiers, status.StatusObj.Name, true);
+            unit.Stats.ApplyGeneralStatModifiers(this.Modifiers, status.Status.Name, true);
         }
     }
 }

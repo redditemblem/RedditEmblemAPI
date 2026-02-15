@@ -58,7 +58,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
                 throw new SkillEffectMultitileUnitsNotSupportedException(this.Name);
 
             //Locate valid enemy units and select tiles near them
-            List<ITile> tiles = units.Where(u => u.AffiliationObj.Grouping != unit.AffiliationObj.Grouping
+            List<ITile> tiles = units.Where(u => u.Affiliation.Grouping != unit.Affiliation.Grouping
                                               && u.Location.IsOnMap()
                                               && (u.Location.OriginTiles.Any(o1 => unit.Location.OriginTiles.Any(o2 => o1.Coordinate.DistanceFrom(o2.Coordinate) <= this.TeleportationRange)) || this.TeleportationRange == 99))
                                      .SelectMany(u => map.GetTilesInRadius(u.Location.OriginTiles, this.Radius))

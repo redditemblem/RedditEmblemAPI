@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
@@ -34,8 +35,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <inheritdoc cref="UnitEmblem.EngageWeapons"/>
         List<IUnitInventoryItem> EngageWeapons { get; }
 
-        /// <inheritdoc cref="UnitEmblem.EngageAttacksList"/>
-        List<IEngageAttack> EngageAttacksList { get; }
+        /// <inheritdoc cref="UnitEmblem.EngageAttacks"/>
+        List<IEngageAttack> EngageAttacks { get; }
     }
 
     #endregion Interface
@@ -47,7 +48,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// The <c>Emblem</c> object.
         /// </summary>
-        [JsonIgnore]
+        [JsonProperty("name")]
+        [JsonConverter(typeof(MatchableNameConverter))]
         public IEmblem Emblem { get; set; }
 
         /// <summary>
@@ -82,24 +84,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// List of the emblem's engage attacks.
         /// </summary>
-        [JsonIgnore]
-        public List<IEngageAttack> EngageAttacksList { get; set; }
-
-        #region JSON Serialization ONLY
-
-        /// <summary>
-        /// Only for JSON serialization. The name of the emblem.
-        /// </summary>
-        [JsonProperty]
-        private string Name { get { return this.Emblem.Name; } }
-
-        /// <summary>
-        /// Only for JSON serialization. List of the emblem's engage attack names.
-        /// </summary>
-        [JsonProperty]
-        private IEnumerable<string> EngageAttacks { get { return this.EngageAttacksList.Select(a => a.Name); } }
-
-        #endregion JSON Serialization ONLY
+        [JsonProperty(ItemConverterType = typeof(MatchableNameConverter))]
+        public List<IEngageAttack> EngageAttacks { get; set; }
 
         #endregion Attributes
 
@@ -119,7 +105,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.EngageSkills = BuildUnitSkills(data, config.EngageSkills, systemData.Skills);
 
             List<string> engageAttacks = DataParser.List_Strings(data, config.EngageAttacks);
-            this.EngageAttacksList = EngageAttack.MatchNames(systemData.EngageAttacks, engageAttacks);
+            this.EngageAttacks = EngageAttack.MatchNames(systemData.EngageAttacks, engageAttacks);
 
             BuildItems(data, config, systemData.Items, systemData.Engravings);
         }

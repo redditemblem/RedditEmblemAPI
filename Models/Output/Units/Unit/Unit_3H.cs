@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +13,14 @@ namespace RedditEmblemAPI.Models.Output.Units
     /// <inheritdoc cref="Unit"/>
     public partial interface IUnit
     {
-        /// <inheritdoc cref="Unit.CombatArtsList"/>
-        List<ICombatArt> CombatArtsList { get; }
+        /// <inheritdoc cref="Unit.CombatArts"/>
+        List<ICombatArt> CombatArts { get; }
 
         /// <inheritdoc cref="Unit.Battalion"/>
         IUnitBattalion Battalion { get; }
 
-        /// <inheritdoc cref="Unit.AdjutantList"/>
-        List<IAdjutant> AdjutantList { get; }
+        /// <inheritdoc cref="Unit.Adjutants"/>
+        List<IAdjutant> Adjutants { get; }
     }
     
     #endregion Interface
@@ -32,8 +33,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// List of the combat arts the unit possesses.
         /// </summary>
-        [JsonIgnore]
-        public List<ICombatArt> CombatArtsList { get; private set; }
+        [JsonProperty(ItemConverterType = typeof(MatchableNameConverter))]
+        public List<ICombatArt> CombatArts { get; private set; }
 
         /// <summary>
         /// Container for information about a unit's battalion.
@@ -44,27 +45,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// The unit's adjutants.
         /// </summary>
-        [JsonIgnore]
-        public List<IAdjutant> AdjutantList { get; private set; }
-
-        #region JSON Serialization
-
-        /// <summary>
-        /// Only for JSON serialization. A list of the unit's combat arts.
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        private IEnumerable<string> CombatArts { get { return this.CombatArtsList.Any() ? this.CombatArtsList.Select(c => c.Name) : null; } }
-
-        /// <summary>
-        /// Only for JSON serialization. The unit's adjutants.
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        private IEnumerable<string> Adjutants
-        {
-            get { return this.AdjutantList.Any() ? this.AdjutantList.Select(a => a.Name) : null; }
-        }
-
-        #endregion JSON Serialization
+        [JsonProperty(ItemConverterType = typeof(MatchableNameConverter))]
+        public List<IAdjutant> Adjutants { get; private set; }
 
         #endregion Attributes
 
@@ -79,9 +61,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </remarks>
         public void Constructor_Unit_3H(UnitsConfig config, IEnumerable<string> data, SystemInfo system)
         {
-            this.CombatArtsList = BuildCombatArts(data, config.CombatArts, system.CombatArts);
+            this.CombatArts = BuildCombatArts(data, config.CombatArts, system.CombatArts);
             this.Battalion = BuildBattalion(data, config.Battalion, system.Battalions);
-            this.AdjutantList = BuildAdjutants(data, config.Adjutants, system.Adjutants);
+            this.Adjutants = BuildAdjutants(data, config.Adjutants, system.Adjutants);
         }
 
         #region Build Functions

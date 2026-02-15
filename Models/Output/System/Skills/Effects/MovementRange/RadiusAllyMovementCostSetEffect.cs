@@ -47,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         public bool IsActive(IUnit tileUnit, IUnit movingUnit)
         {
             //Return true when the units are in the same grouping
-            return tileUnit.AffiliationObj.Grouping == movingUnit.AffiliationObj.Grouping;
+            return tileUnit.Affiliation.Grouping == movingUnit.Affiliation.Grouping;
         }
 
         public int GetMovementCost()
