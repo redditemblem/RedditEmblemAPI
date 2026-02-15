@@ -11,53 +11,100 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+
+    /// <inheritdoc cref="UnitStatsData"/>
+    public interface IUnitStatsData
+    {
+        /// <inheritdoc cref="UnitStatsData.Level"/>
+        int Level { get; }
+
+        /// <inheritdoc cref="UnitStatsData.Experience"/>
+        int Experience { get; }
+
+        /// <inheritdoc cref="UnitStatsData.HeldCurrency"/>
+        int HeldCurrency { get; }
+
+        /// <inheritdoc cref="UnitStatsData.HP"/>
+        IHealthPoints HP { get; }
+
+        /// <inheritdoc cref="UnitStatsData.Combat"/>
+        IDictionary<string, IModifiedStatValue> Combat { get; }
+
+        /// <inheritdoc cref="UnitStatsData.System"/>
+        IDictionary<string, IModifiedStatValue> System { get; }
+
+        /// <inheritdoc cref="UnitStatsData.General"/>
+        IDictionary<string, IModifiedStatValue> General { get; }
+
+        /// <inheritdoc cref="UnitStatsData.CalculateCombatStats(List{CalculatedStatConfig}, IUnit)"/>
+        void CalculateCombatStats(List<CalculatedStatConfig> stats, IUnit unit);
+
+        /// <inheritdoc cref="UnitStatsData.MatchCombatStatName(string)"/>
+        IModifiedStatValue MatchCombatStatName(string name);
+
+        /// <inheritdoc cref="UnitStatsData.ApplyCombatStatModifiers(IDictionary{string, int}, string, bool)"/>
+        void ApplyCombatStatModifiers(IDictionary<string, int> modifiers, string modifierName, bool allowModifiersToStack = false);
+
+        /// <inheritdoc cref="UnitStatsData.MatchSystemStatName(string)"/>
+        IModifiedStatValue MatchSystemStatName(string name);
+
+        /// <inheritdoc cref="UnitStatsData.MatchGeneralStatName(string)"/>
+        IModifiedStatValue MatchGeneralStatName(string name);
+
+        /// <inheritdoc cref="UnitStatsData.ApplyGeneralStatModifiers(IDictionary{string, int}, string, bool)"/>
+        void ApplyGeneralStatModifiers(IDictionary<string, int> modifiers, string modifierName, bool allowModifiersToStack = false);
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Container object for storing stat (raw numbers) about a unit.
     /// </summary>
-    public class UnitStatsData
+    public class UnitStatsData : IUnitStatsData
     {
         #region Attributes
 
         /// <summary>
         /// The unit's current level.
         /// </summary>
-        public int Level { get; set; }
+        public int Level { get; private set; }
 
         /// <summary>
         /// The unit's earned experience.
         /// </summary>
-        public int Experience { get; set; }
+        public int Experience { get; private set; }
 
         /// <summary>
         /// The amount of currency the unit has in their wallet.
         /// </summary>
-        public int HeldCurrency { get; set; }
+        public int HeldCurrency { get; private set; }
 
         /// <summary>
         /// Container object for HP values.
         /// </summary>
-        public HP HP { get; set; }
+        public IHealthPoints HP { get; private set; }
 
         /// <summary>
         /// Collection of the unit's calculated combat stats. (ex. Atk/Hit)
         /// </summary>
-        public IDictionary<string, ModifiedStatValue> Combat { get; set; }
+        public IDictionary<string, IModifiedStatValue> Combat { get; private set; }
 
         /// <summary>
         /// Collection of the unit's system stats.
         /// </summary>
         [JsonIgnore]
-        public IDictionary<string, ModifiedStatValue> System { get; set; }
+        public IDictionary<string, IModifiedStatValue> System { get; private set; }
 
         /// <summary>
         /// Collection of the unit's stat values. (ex. Str/Mag)
         /// </summary>
-        public IDictionary<string, ModifiedStatValue> General { get; set; }
+        public IDictionary<string, IModifiedStatValue> General { get; private set; }
 
         #region JSON Serialization ONLY
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        private IDictionary<string, ModifiedStatValue> System_Prioritized 
+        private IDictionary<string, IModifiedStatValue> System_Prioritized 
         { 
             get
             {
@@ -67,7 +114,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        private IDictionary<string, ModifiedStatValue> System_NonPrioritized
+        private IDictionary<string, IModifiedStatValue> System_NonPrioritized
         {
             get
             {
@@ -92,7 +139,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.Experience = experience;
 
             this.HeldCurrency = DataParser.OptionalInt_Positive(data, config.HeldCurrency, "Currency");
-            this.HP = new HP(data, config.HP);
+            this.HP = new HealthPoints(data, config.HP);
 
             //Build stat dictionaries
             this.Combat = BuildCombatStats(data, config.CombatStats);
@@ -105,13 +152,13 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Iterates <paramref name="calculatedStats"/> and builds a dictionary of values. Does NOT calculate the stat's base value.
         /// </summary>
-        private IDictionary<string, ModifiedStatValue> BuildCombatStats(IEnumerable<string> data, List<CalculatedStatConfig> calculatedStats)
+        private IDictionary<string, IModifiedStatValue> BuildCombatStats(IEnumerable<string> data, List<CalculatedStatConfig> calculatedStats)
         {
-            IDictionary<string, ModifiedStatValue> stats = new Dictionary<string, ModifiedStatValue>();
+            IDictionary<string, IModifiedStatValue> stats = new Dictionary<string, IModifiedStatValue>();
 
             foreach (CalculatedStatConfig stat in calculatedStats)
             {
-                ModifiedStatValue temp = new ModifiedStatValue(stat.InvertModifiedDisplayColors, false);
+                IModifiedStatValue temp = new ModifiedStatValue(stat.InvertModifiedDisplayColors, false);
                 temp.Modifiers = DataParser.NamedStatDictionary_OptionalInt_Any(stat.Modifiers, data, false, "{1} {0}", stat.SourceName);
 
                 stats.Add(stat.SourceName, temp);
@@ -123,13 +170,13 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Iterates through the stats in <paramref name="config"/> and builds a dictionary of values.
         /// </summary>
-        private IDictionary<string, ModifiedStatValue> BuildModifiedStatDictionary(IEnumerable<string> data, List<ModifiedNamedStatConfig_Displayed> config, bool requireBaseValue = true)
+        private IDictionary<string, IModifiedStatValue> BuildModifiedStatDictionary(IEnumerable<string> data, List<ModifiedNamedStatConfig_Displayed> config, bool requireBaseValue = true)
         {
-            IDictionary<string, ModifiedStatValue> stats = new Dictionary<string, ModifiedStatValue>();
+            IDictionary<string, IModifiedStatValue> stats = new Dictionary<string, IModifiedStatValue>();
 
             foreach (ModifiedNamedStatConfig_Displayed stat in config)
             {
-                ModifiedStatValue temp = new ModifiedStatValue(stat.InvertModifiedDisplayColors, stat.UsePrioritizedDisplay);
+                IModifiedStatValue temp = new ModifiedStatValue(stat.InvertModifiedDisplayColors, stat.UsePrioritizedDisplay);
                 
                 if(requireBaseValue) temp.BaseValue = DataParser.Int_Any(data, stat.BaseValue, stat.SourceName);
                 else temp.BaseValue = DataParser.OptionalInt_Any(data, stat.BaseValue, stat.SourceName);
@@ -147,7 +194,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Assembles and executes the equations in <paramref name="stats"/>.
         /// </summary>
-        public void CalculateCombatStats(List<CalculatedStatConfig> stats, Unit unit)
+        public void CalculateCombatStats(List<CalculatedStatConfig> stats, IUnit unit)
         {
             List<ReplaceCombatStatFormulaVariableEffect> replacementEffects = unit.GetFullSkillsList().SelectMany(s => s.Effects).OfType<ReplaceCombatStatFormulaVariableEffect>().ToList();
             string equippedUtilStat = GetItemUtilizedStatName(unit.Inventory.GetPrimaryEquippedItem());
@@ -182,7 +229,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
         }
 
-        private string GetItemUtilizedStatName(UnitInventoryItem item)
+        private string GetItemUtilizedStatName(IUnitInventoryItem item)
         {
             string statName = string.Empty;
             int maxValue = int.MinValue;
@@ -191,7 +238,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             foreach (string utilStatName in item.Item.UtilizedStats)
             {
-                ModifiedStatValue weaponUtilStat = MatchGeneralStatName(utilStatName);
+                IModifiedStatValue weaponUtilStat = MatchGeneralStatName(utilStatName);
 
                 //Take the greatest stat value of all the utilized stats
                 if (weaponUtilStat.FinalValue > maxValue)
@@ -208,9 +255,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Returns the stat in <c>Combat</c> that matches <paramref name="name"/>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        public ModifiedStatValue MatchCombatStatName(string name)
+        public IModifiedStatValue MatchCombatStatName(string name)
         {
-            ModifiedStatValue stat;
+            IModifiedStatValue stat;
             if (!this.Combat.TryGetValue(name, out stat))
                 throw new UnmatchedStatException(name);
 
@@ -225,7 +272,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         {
             foreach (KeyValuePair<string, int> mod in modifiers)
             {
-                ModifiedStatValue stat = this.MatchCombatStatName(mod.Key);
+                IModifiedStatValue stat = this.MatchCombatStatName(mod.Key);
                 if (!stat.Modifiers.TryAdd(modifierName, mod.Value) && allowModifiersToStack)
                     stat.Modifiers[modifierName] += mod.Value;
             }
@@ -235,9 +282,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Returns the stat in <c>System</c> that matches <paramref name="name"/>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        public ModifiedStatValue MatchSystemStatName(string name)
+        public IModifiedStatValue MatchSystemStatName(string name)
         {
-            ModifiedStatValue stat;
+            IModifiedStatValue stat;
             if (!this.System.TryGetValue(name, out stat))
                 throw new UnmatchedStatException(name);
 
@@ -248,9 +295,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Returns the stat in <c>General</c> that matches <paramref name="name"/>.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        public ModifiedStatValue MatchGeneralStatName(string name)
+        public IModifiedStatValue MatchGeneralStatName(string name)
         {
-            ModifiedStatValue stat;
+            IModifiedStatValue stat;
             if (!this.General.TryGetValue(name, out stat))
                 throw new UnmatchedStatException(name);
 
@@ -265,7 +312,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         {
             foreach (KeyValuePair<string, int> mod in modifiers)
             {
-                ModifiedStatValue stat = this.MatchGeneralStatName(mod.Key);
+                IModifiedStatValue stat = this.MatchGeneralStatName(mod.Key);
                 if (!stat.Modifiers.TryAdd(modifierName, mod.Value) && allowModifiersToStack)
                     stat.Modifiers[modifierName] += mod.Value;
             }

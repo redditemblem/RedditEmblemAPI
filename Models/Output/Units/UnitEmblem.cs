@@ -8,7 +8,39 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
-    public class UnitEmblem
+    #region Interface
+
+    /// <inheritdoc cref="UnitEmblem"/>
+    public interface IUnitEmblem
+    {
+        /// <inheritdoc cref="UnitEmblem.Emblem"/>
+        IEmblem Emblem { get; }
+
+        /// <inheritdoc cref="UnitEmblem.BondLevel"/>
+        int BondLevel { get; }
+
+        /// <inheritdoc cref="UnitEmblem.EngageMeterCount"/>
+        int EngageMeterCount { get; }
+
+        /// <inheritdoc cref="UnitEmblem.IsEngaged"/>
+        bool IsEngaged { get; }
+
+        /// <inheritdoc cref="UnitEmblem.SyncSkills"/>
+        List<IUnitSkill> SyncSkills { get; }
+
+        /// <inheritdoc cref="UnitEmblem.EngageSkills"/>
+        List<IUnitSkill> EngageSkills { get; }
+
+        /// <inheritdoc cref="UnitEmblem.EngageWeapons"/>
+        List<IUnitInventoryItem> EngageWeapons { get; }
+
+        /// <inheritdoc cref="UnitEmblem.EngageAttacksList"/>
+        List<IEngageAttack> EngageAttacksList { get; }
+    }
+
+    #endregion Interface
+
+    public class UnitEmblem : IUnitEmblem
     {
         #region Attributes
 
@@ -35,17 +67,17 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         /// <summary>
         /// List of the emblem's sync skills.
-        public List<UnitSkill> SyncSkills { get; set; }
+        public List<IUnitSkill> SyncSkills { get; set; }
 
         /// <summary>
         /// List of the emblem's engage skills.
         /// </summary>
-        public List<UnitSkill> EngageSkills { get; set; }
+        public List<IUnitSkill> EngageSkills { get; set; }
 
         /// <summary>
         /// List of the emblem's engage weapons.
         /// </summary>
-        public List<UnitInventoryItem> EngageWeapons { get; set; }
+        public List<IUnitInventoryItem> EngageWeapons { get; set; }
 
         /// <summary>
         /// List of the emblem's engage attacks.
@@ -95,9 +127,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Builds and returns a list of the unit's skills.
         /// </summary>
-        private List<UnitSkill> BuildUnitSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, ISkill> skills)
+        private List<IUnitSkill> BuildUnitSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, ISkill> skills)
         {
-            List<UnitSkill> unitSkills = new List<UnitSkill>();
+            List<IUnitSkill> unitSkills = new List<IUnitSkill>();
             foreach (UnitSkillConfig config in configs)
             {
                 string name = DataParser.OptionalString(data, config.Name, "Skill Name");
@@ -111,12 +143,12 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         private void BuildItems(IEnumerable<string> data, UnitEmblemConfig config, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
         {
-            this.EngageWeapons = new List<UnitInventoryItem>();
+            this.EngageWeapons = new List<IUnitInventoryItem>();
             IEnumerable<string> weapons = DataParser.List_Strings(data, config.EngageWeapons);
 
             foreach (string weapon in weapons)
             {
-                UnitInventoryItem item = new UnitInventoryItem(weapon, 0, new List<string>(), items, engravings);
+                IUnitInventoryItem item = new UnitInventoryItem(weapon, 0, new List<string>(), items, engravings);
                 item.CanEquip = true; //can always equip engage items
 
                 this.EngageWeapons.Add(item);

@@ -4,10 +4,24 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Map.Tiles
 {
+    #region Interface
+
+    /// <inheritdoc cref="TileWarpData"/>
+    public interface ITileWarpData
+    {
+        /// <inheritdoc cref="TileWarpData.WarpGroup"/>
+        List<ITile> WarpGroup { get; set; }
+
+        /// <inheritdoc cref="TileWarpData.WarpGroupNumber"/>
+        int WarpGroupNumber { get; set; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Container object for storing data about a tile's warp properties.
     /// </summary>
-    public class TileWarpData
+    public class TileWarpData : ITileWarpData
     {
         #region Attributes
 
@@ -15,7 +29,7 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// List of warp tiles this tile is linked to.
         /// </summary>
         [JsonIgnore]
-        public List<Tile> WarpGroup { get; set; }
+        public List<ITile> WarpGroup { get; set; }
 
         /// <summary>
         /// Number associated with the warp group this tile is linked to.
@@ -46,7 +60,7 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// </summary>
         public TileWarpData()
         {
-            this.WarpGroup = new List<Tile>();
+            this.WarpGroup = new List<ITile>();
         }
     }
 }

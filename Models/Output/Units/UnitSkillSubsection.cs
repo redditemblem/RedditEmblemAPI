@@ -5,14 +5,25 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
-    public class UnitSkillSubsection
+    #region Interface
+
+    /// <inheritdoc cref="UnitSkillSubsection"/>
+    public interface IUnitSkillSubsection
+    {
+        /// <inheritdoc cref="UnitSkillSubsection.Skills"/>
+        List<IUnitSkill> Skills { get; set; }
+    }
+
+    #endregion Interface
+
+    public class UnitSkillSubsection : IUnitSkillSubsection
     {
         #region Attributes
 
         /// <summary>
         /// List of all unit skills that belong to this subsection.
         /// </summary>
-        public List<UnitSkill> Skills { get; set; }
+        public List<IUnitSkill> Skills { get; set; }
 
         #endregion Attributes
 
@@ -21,7 +32,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public UnitSkillSubsection() 
         {
-            this.Skills = new List<UnitSkill>();
+            this.Skills = new List<IUnitSkill>();
         }
 
         #region Static Methods
@@ -29,12 +40,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Builds a list of <c>UnitSkillSubsections</c> using <paramref name="data"/> and <paramref name="configs"/> and returns it.
         /// </summary>
-        public static List<UnitSkillSubsection> BuildList(IEnumerable<string> data, List<UnitSkillSubsectionConfig> configs, IDictionary<string, ISkill> skills)
+        public static List<IUnitSkillSubsection> BuildList(IEnumerable<string> data, List<UnitSkillSubsectionConfig> configs, IDictionary<string, ISkill> skills)
         {
-            List<UnitSkillSubsection> subsections = new List<UnitSkillSubsection>();
+            List<IUnitSkillSubsection> subsections = new List<IUnitSkillSubsection>();
             foreach (UnitSkillSubsectionConfig subsectionConfig in configs)
             {
-                UnitSkillSubsection subsection = new UnitSkillSubsection();
+                IUnitSkillSubsection subsection = new UnitSkillSubsection();
                 foreach (UnitSkillConfig config in subsectionConfig.Skills)
                 {
                     string name = DataParser.OptionalString(data, config.Name, "Skill Name");

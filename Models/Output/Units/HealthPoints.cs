@@ -6,20 +6,43 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+
+    /// <inheritdoc cref="HealthPoints"/>
+    public interface IHealthPoints
+    {
+        /// <inheritdoc cref="HealthPoints.Current"/>
+        int Current { get; }
+
+        /// <inheritdoc cref="HealthPoints.Maximum"/>
+        int Maximum { get; }
+
+        /// <inheritdoc cref="HealthPoints.Percentage"/>
+        decimal Percentage { get; }
+
+        /// <inheritdoc cref="HealthPoints.Difference"/>
+        int Difference { get; }
+
+        /// <inheritdoc cref="HealthPoints.RemainingBars"/>
+        int RemainingBars { get; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing a <c>Unit</c>'s HP stats. 
     /// </summary>
-    public class HP
+    public readonly struct HealthPoints : IHealthPoints
     {
         /// <summary>
         /// The current number of hit points a unit has.
         /// </summary>
-        public int Current { get; set; }
+        public int Current { get; }
 
         /// <summary>
         /// The maximum number of hit points a unit has.
         /// </summary>
-        public int Maximum { get; set; }
+        public int Maximum { get; }
 
         /// <summary>
         /// The percentage of hit points the unit has remaining.
@@ -36,14 +59,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The number of remaining bonus hit point bars the unit possesses.
         /// </summary>
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public int RemainingBars { get; set; }
+        public int RemainingBars { get; }
 
         #region Constructors
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public HP(IEnumerable<string> data, HPConfig config)
+        public HealthPoints(IEnumerable<string> data, HPConfig config)
         {
             this.Current = DataParser.Int_Positive(data, config.Current, "Current HP");
             this.Maximum = DataParser.Int_NonZeroPositive(data, config.Maximum, "Maximum HP");

@@ -8,10 +8,42 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+
+    /// <inheritdoc cref="UnitLocationData"/>
+    public interface IUnitLocationData
+    {
+        /// <inheritdoc cref="UnitLocationData.CoordinateString"/>
+        string CoordinateString { get; }
+
+        /// <inheritdoc cref="UnitLocationData.Coordinate"/>
+        ICoordinate Coordinate { get; set; }
+
+        /// <inheritdoc cref="UnitLocationData.UnitSize"/>
+        int UnitSize { get; }
+
+        /// <inheritdoc cref="UnitLocationData.AnchorTile"/>
+        ITile AnchorTile { get; set; }
+
+        /// <inheritdoc cref="UnitLocationData.OriginTiles"/>
+        List<ITile> OriginTiles { get; set; }
+
+        /// <inheritdoc cref="UnitLocationData.PairedUnitObj"/>
+        IUnit PairedUnitObj { get; set; }
+
+        /// <inheritdoc cref="UnitLocationData.IsBackOfPair"/>
+        bool IsBackOfPair { get; set; }
+
+        /// <inheritdoc cref="UnitLocationData.IsOnMap()"/>
+        bool IsOnMap();
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Container object for storing data about a unit's physical map location.
     /// </summary>
-    public class UnitLocationData
+    public class UnitLocationData : IUnitLocationData
     {
         #region Attributes
 
@@ -24,30 +56,30 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// The unit's location on the map.
         /// </summary>
-        public Coordinate Coordinate { get; set; }
+        public ICoordinate Coordinate { get; set; }
 
         /// <summary>
         /// The size of the unit in grid tiles. Defaults to 1.
         /// </summary>
-        public int UnitSize { get; set; }
+        public int UnitSize { get; private set; }
 
         /// <summary>
         /// The <c>Tile</c> that this unit is drawn at.
         /// </summary>
         [JsonIgnore]
-        public Tile AnchorTile { get; set; }
+        public ITile AnchorTile { get; set; }
 
         /// <summary>
         /// List of <c>Tile</c>s that this unit's range originates from.
         /// </summary>
         [JsonIgnore]
-        public List<Tile> OriginTiles { get; set; }
+        public List<ITile> OriginTiles { get; set; }
 
         /// <summary>
         /// The <c>Unit</c> paired with the unit, if any.
         /// </summary>
         [JsonIgnore]
-        public Unit PairedUnitObj { get; set; }
+        public IUnit PairedUnitObj { get; set; }
 
         /// <summary>
         /// Flag indicating if the unit is sitting in the back of a pair.
@@ -72,13 +104,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public UnitLocationData(UnitsConfig config, IEnumerable<string> data)
         {
-            this.OriginTiles = new List<Tile>();
+            this.OriginTiles = new List<ITile>();
 
             this.CoordinateString = DataParser.OptionalString(data, config.Coordinate, "Coordinate");
             this.UnitSize = DataParser.OptionalInt_NonZeroPositive(data, config.UnitSize, "Unit Size");
         }
-
-        #region Functions
 
         /// <summary>
         /// Returns true if the unit has origin tiles set and is not in the back of a pair-up.
@@ -88,7 +118,5 @@ namespace RedditEmblemAPI.Models.Output.Units
         {
             return this.OriginTiles.Any() && !this.IsBackOfPair;
         }
-
-        #endregion Functions
     }
 }

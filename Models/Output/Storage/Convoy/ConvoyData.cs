@@ -32,7 +32,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// <summary>
         /// Parameters for the Convoy page display.
         /// </summary>
-        public FilterParameters Parameters { get; set; }
+        public IFilterParameters Parameters { get; set; }
 
         /// <summary>
         /// Workbook ID number from the Google Sheets URL.
@@ -47,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// <summary>
         /// List of <c>ConvoyItem</c>s that will be presented on the Convoy page.
         /// </summary>
-        public List<ConvoyItem> ConvoyItems { get; set; }
+        public List<IConvoyItem> ConvoyItems { get; set; }
 
         /// <summary>
         /// List of <c>Item</c>s linked by the values in <c>ConvoyItems</c>.
@@ -89,7 +89,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             this.ConvoyItems = ConvoyItem.BuildList(config.Convoy, this.Items, this.Engravings);
 
             //Build page parameters
-            List<ItemSort> sorts = new List<ItemSort>() {
+            List<IItemSort> sorts = new List<IItemSort>() {
                 new ItemSort("Name", "name", false),
                 new ItemSort("Owner", "owner", false),
                 new ItemSort("Category", "category", true),

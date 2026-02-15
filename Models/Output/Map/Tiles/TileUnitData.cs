@@ -4,10 +4,36 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.Map.Tiles
 {
+    #region Interface
+
+    /// <inheritdoc cref="TileUnitData"/>
+    public interface ITileUnitData
+    {
+        /// <inheritdoc cref="TileUnitData.Unit"/>
+        IUnit Unit { get; set; }
+
+        /// <inheritdoc cref="TileUnitData.IsUnitAnchor"/>
+        bool IsUnitAnchor { get; set; }
+
+        /// <inheritdoc cref="TileUnitData.IsUnitOrigin"/>
+        bool IsUnitOrigin { get; set; }
+
+        /// <inheritdoc cref="TileUnitData.UnitsObstructingMovement"/>
+        List<IUnit> UnitsObstructingMovement { get; set; }
+
+        /// <inheritdoc cref="TileUnitData.UnitsObstructingItems"/>
+        List<IUnit> UnitsObstructingItems { get; set; }
+
+        /// <inheritdoc cref="TileUnitData.UnitsAffectingMovementCosts"/>
+        List<IUnit> UnitsAffectingMovementCosts { get; set; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Container object for storing data about a tile's unit properties.
     /// </summary>
-    public class TileUnitData
+    public class TileUnitData : ITileUnitData
     {
         #region Attributes 
 
@@ -15,7 +41,7 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// The unit occupying this tile, if any.
         /// </summary>
         [JsonIgnore]
-        public Unit Unit { get; set; }
+        public IUnit Unit { get; set; }
 
         /// <summary>
         /// Flag indicating if the <c>Unit</c> occupying this tile is anchored here. Units will be drawn at the anchor tile.
@@ -32,19 +58,19 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// The nearby <c>Unit</c>s obstructing movement through this tile, if any.
         /// </summary>
         [JsonIgnore]
-        public List<Unit> UnitsObstructingMovement { get; set; }
+        public List<IUnit> UnitsObstructingMovement { get; set; }
 
         /// <summary>
         /// The nearby <c>Unit</c>s obstructing item ranges through this tile, if any.
         /// </summary>
         [JsonIgnore]
-        public List<Unit> UnitsObstructingItems { get; set; }
+        public List<IUnit> UnitsObstructingItems { get; set; }
 
         /// <summary>
         /// The nearby <c>Unit</c>s adjusting the movement costs of this tile, if any.
         /// </summary>
         [JsonIgnore]
-        public List<Unit> UnitsAffectingMovementCosts { get; set; }
+        public List<IUnit> UnitsAffectingMovementCosts { get; set; }
 
         #region JSON Serialization Only
 
@@ -70,9 +96,9 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         public TileUnitData()
         {
             this.Unit = null;
-            this.UnitsObstructingMovement = new List<Unit>();
-            this.UnitsObstructingItems = new List<Unit>();
-            this.UnitsAffectingMovementCosts = new List<Unit>();
+            this.UnitsObstructingMovement = new List<IUnit>();
+            this.UnitsObstructingItems = new List<IUnit>();
+            this.UnitsAffectingMovementCosts = new List<IUnit>();
         }
     }
 }

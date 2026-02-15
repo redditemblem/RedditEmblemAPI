@@ -45,7 +45,7 @@ namespace RedditEmblemAPI.Models.Output.System
         int MaxUses { get; set; }
 
         /// <inheritdoc cref="Item.Stats"/>
-        IDictionary<string, NamedStatValue> Stats { get; set; }
+        IDictionary<string, INamedStatValue> Stats { get; set; }
 
         /// <inheritdoc cref="Item.EquippedCombatStatModifiers"/>
         IDictionary<string, int> EquippedCombatStatModifiers { get; set; }
@@ -54,7 +54,7 @@ namespace RedditEmblemAPI.Models.Output.System
         IDictionary<string, int> EquippedStatModifiers { get; set; }
 
         /// <inheritdoc cref="Item.EquippedSkills"/>
-        List<UnitSkill> EquippedSkills { get; set; }
+        List<IUnitSkill> EquippedSkills { get; set; }
 
         /// <inheritdoc cref="Item.InventoryCombatStatModifiers"/>
         IDictionary<string, int> InventoryCombatStatModifiers { get; set; }
@@ -131,7 +131,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Collection of stat values for the item. (ex. Hit)
         /// </summary>
         [JsonIgnore]
-        public IDictionary<string, NamedStatValue> Stats { get; set; }
+        public IDictionary<string, INamedStatValue> Stats { get; set; }
 
         /// <summary>
         /// Collection of combat stat modifiers that will be applied to the owning unit when this item is equipped.
@@ -148,7 +148,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Collection of skills active on the owning unit when this item is equipped.
         /// </summary>
-        public List<UnitSkill> EquippedSkills { get; set; }
+        public List<IUnitSkill> EquippedSkills { get; set; }
 
         /// <summary>
         /// Collection of combat stat modifiers that will be applied to the owning unit when this item is not equipped.
@@ -231,10 +231,10 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Builds and returns a list of the item's equipped skills.
         /// </summary>
-        private List<UnitSkill> BuildEquippedSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, ISkill> skills)
+        private List<IUnitSkill> BuildEquippedSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, ISkill> skills)
         {
             //Note: I'm using UnitSkill here because that's what input structure the skill display is expecting
-            List<UnitSkill> equippedSkills = new List<UnitSkill>();
+            List<IUnitSkill> equippedSkills = new List<IUnitSkill>();
             foreach (UnitSkillConfig config in configs)
             {
                 string name = DataParser.OptionalString(data, config.Name, "Skill Name");

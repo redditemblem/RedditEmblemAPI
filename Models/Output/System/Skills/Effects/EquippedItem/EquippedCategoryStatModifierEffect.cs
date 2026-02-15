@@ -43,9 +43,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
         /// <summary>
         /// Applies <c>Modifiers</c> to <paramref name="unit"/> if <paramref name="unit"/> has an item equipped with a category in <c>Categories</c>.
         /// </summary>
-        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
+        public override void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
-            UnitInventoryItem equipped = unit.Inventory.GetPrimaryEquippedItem();
+            IUnitInventoryItem equipped = unit.Inventory.GetPrimaryEquippedItem();
             if (equipped == null)
                 return;
 

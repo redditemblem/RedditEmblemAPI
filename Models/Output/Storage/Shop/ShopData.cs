@@ -32,7 +32,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// <summary>
         /// Parameters for the Shop page display.
         /// </summary>
-        public FilterParameters Parameters { get; set; }
+        public IFilterParameters Parameters { get; set; }
 
         /// <summary>
         /// Workbook ID number from the Google Sheets URL.
@@ -47,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// <summary>
         /// List of <c>ShopItem</c>s that will be presented on the Shop page.
         /// </summary>
-        public List<ShopItem> ShopItems { get; set; }
+        public List<IShopItem> ShopItems { get; set; }
 
         /// <summary>
         /// List of <c>IItem</c>s linked by the values in <c>ShopItems</c>.
@@ -89,7 +89,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             this.ShopItems = ShopItem.BuildList(config.Shop, this.Items, this.Engravings);
 
             //Build page parameters
-            List<ItemSort> sorts = new List<ItemSort>() {
+            List<IItemSort> sorts = new List<IItemSort>() {
                 new ItemSort("Name", "name", false),
                 new ItemSort("Price", "price", false),
                 new ItemSort("Category", "category", true)

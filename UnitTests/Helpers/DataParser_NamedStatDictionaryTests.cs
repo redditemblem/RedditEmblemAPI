@@ -798,7 +798,7 @@ namespace UnitTests.Helpers
             IEnumerable<NamedStatConfig_Displayed> configs = new List<NamedStatConfig_Displayed>();
             IEnumerable<string> data = new List<string>();
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
             
             Assert.That(output, Is.Empty);
         }
@@ -816,7 +816,7 @@ namespace UnitTests.Helpers
             };
             IEnumerable<string> data = new List<string>();
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
 
             Assert.That(output, Is.Empty);
         }
@@ -834,7 +834,7 @@ namespace UnitTests.Helpers
             };
             IEnumerable<string> data = new List<string>();
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
             
             Assert.That(output.Count, Is.EqualTo(1));
             Assert.That(output.ContainsKey("Stat 1"), Is.True);
@@ -854,7 +854,7 @@ namespace UnitTests.Helpers
             };
             IEnumerable<string> data = new List<string>() { string.Empty };
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
 
             Assert.That(output, Is.Empty);
         }
@@ -872,7 +872,7 @@ namespace UnitTests.Helpers
             };
             IEnumerable<string> data = new List<string>() { string.Empty };
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
             
             Assert.That(output.Count, Is.EqualTo(1));
             Assert.That(output.ContainsKey("Stat 1"), Is.True);
@@ -892,7 +892,7 @@ namespace UnitTests.Helpers
             };
             IEnumerable<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
 
             Assert.That(output, Is.Empty);
         }
@@ -910,7 +910,7 @@ namespace UnitTests.Helpers
             };
             IEnumerable<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
             
             Assert.That(output.Count, Is.EqualTo(1));
             Assert.That(output.ContainsKey("Stat 1"), Is.True);
@@ -962,7 +962,7 @@ namespace UnitTests.Helpers
             };
             IEnumerable<string> data = new List<string>() { "0" };
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
             
             Assert.That(output, Is.Empty);
         }
@@ -980,7 +980,7 @@ namespace UnitTests.Helpers
             };
             IEnumerable<string> data = new List<string>() { "0" };
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
             
             Assert.That(output.Count, Is.EqualTo(1));
             Assert.That(output.ContainsKey("Stat 1"), Is.True);
@@ -1003,7 +1003,7 @@ namespace UnitTests.Helpers
             };
             IEnumerable<string> data = new List<string>() { input };
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
             
             Assert.That(output.Count, Is.EqualTo(1));
             Assert.That(output.ContainsKey("Stat 1"), Is.True);
@@ -1028,7 +1028,7 @@ namespace UnitTests.Helpers
             };
             IEnumerable<string> data = new List<string>() { "1", "2" };
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
             
             Assert.That(output.Count, Is.EqualTo(2));
             Assert.That(output.ContainsKey("Stat 1"), Is.True);
@@ -1055,7 +1055,7 @@ namespace UnitTests.Helpers
             };
             IEnumerable<string> data = new List<string>() { "0", "1" };
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
             
             Assert.That(output.Count, Is.EqualTo(1));
             Assert.That(output.ContainsKey("Stat 1"), Is.False);
@@ -1081,7 +1081,7 @@ namespace UnitTests.Helpers
             };
             IEnumerable<string> data = new List<string>() { "0", "1" };
 
-            IDictionary<string, NamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
+            IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
             
             Assert.That(output.Count, Is.EqualTo(2));
             Assert.That(output.ContainsKey("Stat 1"), Is.True);

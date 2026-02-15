@@ -32,13 +32,13 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Marks all tiles within <c>this.Radius</c> tiles of <paramref name="unit"/>'s origin as obstructed.
         /// </summary>
-        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
+        public override void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
             //If unit is not on the map, don't apply
             if (!unit.Location.IsOnMap())
                 return;
 
-            List<Tile> radius = map.GetTilesInRadius(unit.Location.OriginTiles, this.Radius);
+            List<ITile> radius = map.GetTilesInRadius(unit.Location.OriginTiles, this.Radius);
             radius.ForEach(t => t.UnitData.UnitsObstructingMovement.Add(unit));
         }
     }

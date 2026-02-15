@@ -6,10 +6,27 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+
+    /// <inheritdoc cref="UnitSkill"/>
+    public interface IUnitSkill
+    {
+        /// <inheritdoc cref="UnitSkill.FullName"/>
+        string FullName { get; }
+
+        /// <inheritdoc cref="UnitSkill.SkillObj"/>
+        ISkill SkillObj { get; }
+
+        /// <inheritdoc cref="UnitSkill.AdditionalStats"/>
+        IDictionary<string, int> AdditionalStats { get; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing a <c>Skill</c> present on a <c>Unit</c>.
     /// </summary>
-    public class UnitSkill
+    public class UnitSkill : IUnitSkill
     {
         #region Attributes
 
@@ -17,18 +34,18 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The full name of the skill pulled from raw <c>Unit</c> data.
         /// </summary>
         [JsonIgnore]
-        public string FullName { get; set; }
+        public string FullName { get; private set; }
 
         /// <summary>
         /// The <c>Skill</c> object.
         /// </summary>
         [JsonIgnore]
-        public ISkill SkillObj { get; set; }
+        public ISkill SkillObj { get; private set; }
 
         /// <summary>
         /// Dictionary of additional stat values for this skill.
         /// </summary>
-        public IDictionary<string, int> AdditionalStats { get; set; }
+        public IDictionary<string, int> AdditionalStats { get; private set; }
 
         #region JSON Serialization
 

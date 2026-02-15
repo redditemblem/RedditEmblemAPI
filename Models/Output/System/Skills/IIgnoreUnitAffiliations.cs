@@ -4,6 +4,6 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
 {
     public interface IIgnoreUnitAffiliations
     {
-        bool IsActive(Unit unit);
+        bool IsActive(IUnit unit);
     }
 }

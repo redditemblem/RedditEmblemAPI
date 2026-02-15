@@ -27,7 +27,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
             this.HPPercentage = DataParser.Int_Positive(parameters, INDEX_PARAM_1, NAME_PARAM_1);
         }
 
-        public bool IsActive(Unit unit)
+        public bool IsActive(IUnit unit)
         {
             //HP percentage must be equal to or less than unit HP percentage
             return this.HPPercentage <= unit.Stats.HP.Percentage;

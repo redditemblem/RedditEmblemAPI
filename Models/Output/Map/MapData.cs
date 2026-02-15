@@ -14,7 +14,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Container object for data about the map.
         /// </summary>
-        public MapObj Map { get; set; }
+        public IMapObj Map { get; set; }
 
         /// <summary>
         /// Container object for data about the system.
@@ -24,7 +24,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Container list for data about units.
         /// </summary>
-        public List<Unit> Units { get; set; }
+        public List<IUnit> Units { get; set; }
 
         /// <summary>
         /// Workbook ID number from the Google Sheets URL.

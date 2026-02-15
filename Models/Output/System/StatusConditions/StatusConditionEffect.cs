@@ -9,8 +9,8 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
     /// <inheritdoc cref="StatusConditionEffect"/>
     public interface IStatusConditionEffect
     {
-        /// <inheritdoc cref="StatusConditionEffect.Apply(Unit, UnitStatus, IDictionary{string, ITag})"/>
-        void Apply(Unit unit, UnitStatus status, IDictionary<string, ITag> tags);
+        /// <inheritdoc cref="StatusConditionEffect.Apply(IUnit, IUnitStatus, IDictionary{string, ITag})"/>
+        void Apply(IUnit unit, IUnitStatus status, IDictionary<string, ITag> tags);
     }
 
     #endregion Interface
@@ -47,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
                 throw new StatusConditionEffectMissingParameterException(this.Name, this.ParameterCount, parameters.Count);
         }
 
-        public virtual void Apply(Unit unit, UnitStatus status, IDictionary<string, ITag> tags)
+        public virtual void Apply(IUnit unit, IUnitStatus status, IDictionary<string, ITag> tags)
         {
             //By default, the effect applies nothing
         }

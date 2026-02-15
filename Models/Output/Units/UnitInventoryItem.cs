@@ -10,10 +10,82 @@ using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+
+    /// <inheritdoc cref="UnitInventoryItem"/>
+    public interface IUnitInventoryItem
+    {
+        /// <inheritdoc cref="UnitInventoryItem.FullName"/>
+        string FullName { get; }
+
+        /// <inheritdoc cref="UnitInventoryItem.Item"/>
+        IItem Item { get; }
+
+        /// <inheritdoc cref="UnitInventoryItem.Uses"/>
+        int Uses { get; }
+
+        /// <inheritdoc cref="UnitInventoryItem.MaxUses"/>
+        int MaxUses { get; set; }
+
+        /// <inheritdoc cref="UnitInventoryItem.Stats"/>
+        Dictionary<string, IUnitInventoryItemStat> Stats { get; }
+
+        /// <inheritdoc cref="UnitInventoryItem.MinRange"/>
+        IUnitInventoryItemStat MinRange { get; }
+
+        /// <inheritdoc cref="UnitInventoryItem.MaxRange"/>
+        IUnitInventoryItemStat MaxRange { get; }
+
+        #region Flags
+
+        /// <inheritdoc cref="UnitInventoryItem.CanEquip"/>
+        bool CanEquip { get; set; }
+
+        /// <inheritdoc cref="UnitInventoryItem.IsPrimaryEquipped"/>
+        bool IsPrimaryEquipped { get; set; }
+
+        /// <inheritdoc cref="UnitInventoryItem.IsSecondaryEquipped"/>
+        bool IsSecondaryEquipped { get; set; }
+
+        /// <inheritdoc cref="UnitInventoryItem.IsDroppable"/>
+        bool IsDroppable { get; set; }
+
+        /// <inheritdoc cref="UnitInventoryItem.IsUsePrevented"/>
+        bool IsUsePrevented { get; set; }
+
+        /// <inheritdoc cref="UnitInventoryItem.IsNotInInventory"/>
+        bool IsNotInInventory { get; set; }
+
+        /// <inheritdoc cref="UnitInventoryItem.MaxRangeExceedsCalculationLimit"/>
+        bool MaxRangeExceedsCalculationLimit { get; set; }
+
+        /// <inheritdoc cref="UnitInventoryItem.AllowMeleeRange"/>
+        bool AllowMeleeRange { get; set; }
+
+        #endregion Flags
+
+        /// <inheritdoc cref="UnitInventoryItem.TagsList"/>
+        List<ITag> TagsList { get; }
+
+        /// <inheritdoc cref="UnitInventoryItem.EngravingsList"/>
+        List<IEngraving> EngravingsList { get; }
+
+        /// <inheritdoc cref="UnitInventoryItem.HasRangeThatRequiresCalculation"/>
+        bool HasRangeThatRequiresCalculation { get; }
+
+        /// <inheritdoc cref="UnitInventoryItem.CalculateItemRanges(IUnit)"/>
+        void CalculateItemRanges(IUnit unit);
+
+        /// <inheritdoc cref="UnitInventoryItem.MatchStatName(string)"/>
+        IUnitInventoryItemStat MatchStatName(string name);
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing an <c>Item</c> present in a <c>Unit</c>'s inventory slots.
     /// </summary>
-    public class UnitInventoryItem
+    public class UnitInventoryItem : IUnitInventoryItem
     {
         #region Attributes
 
@@ -21,13 +93,40 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The full name of the item pulled from raw <c>Unit</c> data.
         /// </summary>
         [JsonIgnore]
-        public string FullName { get; set; }
+        public string FullName { get; private set; }
 
         /// <summary>
         /// The <c>IItem</c> object.
         /// </summary>
         [JsonIgnore]
-        public IItem Item { get; set; }
+        public IItem Item { get; private set; }
+
+        /// <summary>
+        /// The number of uses the item currently has remaining.
+        /// </summary>
+        public int Uses { get; private set; }
+
+        /// <summary>
+        /// The maximum number of uses the item has. For items with single or infinite uses, this value is 0. (Copied from <c>this.Item</c> on initialization & match)
+        /// </summary>
+        public int MaxUses { get; set; }
+
+        /// <summary>
+        /// Dictionary of the item's stats.
+        /// </summary>
+        public Dictionary<string, IUnitInventoryItemStat> Stats { get; private set; }
+
+        /// <summary>
+        /// The item's minimum range data.
+        /// </summary>
+        public IUnitInventoryItemStat MinRange { get; private set; }
+
+        /// <summary>
+        /// Thie item's maximum range data.
+        /// </summary>
+        public IUnitInventoryItemStat MaxRange { get; private set; }
+
+        #region Flags
 
         /// <summary>
         /// Flag indicating if this item can be equipped by the unit.
@@ -60,31 +159,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         public bool IsNotInInventory { get; set; }
 
         /// <summary>
-        /// The number of uses the item currently has remaining.
-        /// </summary>
-        public int Uses { get; set; }
-
-        /// <summary>
-        /// The maximum number of uses the item has. For items with single or infinite uses, this value is 0. (Copied from <c>this.Item</c> on initialization & match)
-        /// </summary>
-        public int MaxUses { get; set; }
-
-        /// <summary>
-        /// Dictionary of the item's stats.
-        /// </summary>
-        public Dictionary<string, UnitInventoryItemStat> Stats { get; set; }
-
-        /// <summary>
-        /// The item's minimum range data.
-        /// </summary>
-        public UnitInventoryItemStat MinRange { get; set; }
-
-        /// <summary>
-        /// Thie item's maximum range data.
-        /// </summary>
-        public UnitInventoryItemStat MaxRange { get; set; }
-
-        /// <summary>
         /// Flag indicating whether or not this item's max range value exceeds the maximum allowed.
         /// </summary>
         public bool MaxRangeExceedsCalculationLimit { get; set; }
@@ -94,17 +168,19 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public bool AllowMeleeRange { get; set; }
 
+        #endregion Flags
+
         /// <summary>
         /// List of the item's tags.
         /// </summary>
         [JsonIgnore]
-        public List<ITag> TagsList { get; set; }
+        public List<ITag> TagsList { get; private set; }
 
         /// <summary>
         /// List of the item's engravings.
         /// </summary>
         [JsonIgnore]
-        public List<IEngraving> EngravingsList { get; set; }
+        public List<IEngraving> EngravingsList { get; private set; }
 
         /// <summary>
         /// The engraving that overrides the item's default range values, if one exists.
@@ -171,7 +247,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.IsUsePrevented = false;
             this.IsNotInInventory = false;
             this.Uses = 0;
-            this.Stats = new Dictionary<string, UnitInventoryItemStat>();
+            this.Stats = new Dictionary<string, IUnitInventoryItemStat>();
             this.AllowMeleeRange = false;
 
             string name = this.FullName;
@@ -209,7 +285,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.MaxRange = new UnitInventoryItemStat(this.Item.Range.Maximum);
             this.TagsList = this.Item.Tags.ToList();
 
-            foreach (KeyValuePair<string, NamedStatValue> stat in this.Item.Stats)
+            foreach (KeyValuePair<string, INamedStatValue> stat in this.Item.Stats)
                 this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
 
             MatchEngravings(itemEngravings, engravings);   
@@ -226,7 +302,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 //Apply any modifiers to the item's stats
                 foreach (KeyValuePair<string, int> mod in engraving.ItemStatModifiers)
                 {
-                    UnitInventoryItemStat stat = MatchStatName(mod.Key);
+                    IUnitInventoryItemStat stat = MatchStatName(mod.Key);
                     stat.Modifiers.TryAdd(engraving.Name, mod.Value);
                 }
 
@@ -250,7 +326,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Checks to see if either the item's minimum or maximum ranges needs to be calculated. If yes, executes on the formula.
         /// </summary>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
-        public void CalculateItemRanges(Unit unit)
+        public void CalculateItemRanges(IUnit unit)
         {
             string minRangeLabel = "Minimum Range";
             string maxRangeLabel = "Maximum Range";
@@ -278,7 +354,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 throw new MinimumGreaterThanMaximumException(minRangeLabel, maxRangeLabel);
         }
 
-        private int CalculateItemRange(string equation, Unit unit)
+        private int CalculateItemRange(string equation, IUnit unit)
         {
             EquationParserOptions options = new EquationParserOptions()
             {
@@ -289,9 +365,9 @@ namespace RedditEmblemAPI.Models.Output.Units
             return Math.Max(1, Convert.ToInt32(Math.Floor(equationResult)));
         }
 
-        public UnitInventoryItemStat MatchStatName(string name)
+        public IUnitInventoryItemStat MatchStatName(string name)
         {
-            UnitInventoryItemStat stat;
+            IUnitInventoryItemStat stat;
             if (!this.Stats.TryGetValue(name, out stat))
                 throw new UnmatchedStatException(name);
 

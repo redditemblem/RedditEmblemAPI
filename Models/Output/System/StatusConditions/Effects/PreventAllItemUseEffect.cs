@@ -19,10 +19,10 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// <summary>
         /// Sets <c>IsUsePrevented</c> to true for every item in <paramref name="unit"/>'s inventory.
         /// </summary>
-        public override void Apply(Unit unit, UnitStatus status, IDictionary<string, ITag> tags)
+        public override void Apply(IUnit unit, IUnitStatus status, IDictionary<string, ITag> tags)
         {
             //Mark use as prevented for all items in unit's inventory
-            foreach (UnitInventoryItem item in unit.Inventory.GetAllItems())
+            foreach (IUnitInventoryItem item in unit.Inventory.GetAllItems())
                 item.IsUsePrevented = true;
         }
     }

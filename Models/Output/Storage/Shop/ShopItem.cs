@@ -11,7 +11,45 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Storage.Shop
 {
-    public class ShopItem
+    #region Interface
+
+    /// <inheritdoc cref="ShopItem"/>
+    public interface IShopItem
+    {
+        /// <inheritdoc cref="ShopItem.FullName"/>
+        string FullName { get; set; }
+
+        /// <inheritdoc cref="ShopItem.Item"/>
+        IItem Item { get; set; }
+
+        /// <inheritdoc cref="ShopItem.Stats"/>
+        IDictionary<string, IUnitInventoryItemStat> Stats { get; set; }
+
+        /// <inheritdoc cref="ShopItem.Price"/>
+        int Price { get; set; }
+
+        /// <inheritdoc cref="ShopItem.SalePrice"/>
+        int SalePrice { get; set; }
+
+        /// <inheritdoc cref="ShopItem.Stock"/>
+        int Stock { get; set; }
+
+        /// <inheritdoc cref="ShopItem.IsNew"/>
+        bool IsNew { get; set; }
+
+        /// <inheritdoc cref="ShopItem.TagsList"/>
+        List<ITag> TagsList { get; set; }
+
+        /// <inheritdoc cref="ShopItem.Engravings"/>
+        List<IEngraving> EngravingsList { get; set; }
+
+        /// <inheritdoc cref="ShopItem.MatchStatName(string)"/>
+        IUnitInventoryItemStat MatchStatName(string name);
+    }
+
+    #endregion Interface
+
+    public class ShopItem : IShopItem
     {
         #region Attributes
 
@@ -30,7 +68,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         /// <summary>
         /// Dictionary of the item's stats. Copied over from <c>Item</c> on match.
         /// </summary>
-        public IDictionary<string, UnitInventoryItemStat> Stats { get; set; }
+        public IDictionary<string, IUnitInventoryItemStat> Stats { get; set; }
 
         /// <summary>
         /// The purchase price of the item.
@@ -98,8 +136,8 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             this.Item = System.Item.MatchName(items, this.FullName);
 
             //Copy data from parent item
-            this.Stats = new Dictionary<string, UnitInventoryItemStat>();
-            foreach (KeyValuePair<string, NamedStatValue> stat in this.Item.Stats)
+            this.Stats = new Dictionary<string, IUnitInventoryItemStat>();
+            foreach (KeyValuePair<string, INamedStatValue> stat in this.Item.Stats)
                 this.Stats.Add(stat.Key, new UnitInventoryItemStat(stat.Value));
             this.TagsList = this.Item.Tags.ToList();
 
@@ -121,7 +159,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
                 //Apply any modifiers to the item's stats
                 foreach (KeyValuePair<string, int> mod in engraving.ItemStatModifiers)
                 {
-                    UnitInventoryItemStat stat = MatchStatName(mod.Key);
+                    IUnitInventoryItemStat stat = MatchStatName(mod.Key);
                     stat.Modifiers.TryAdd(engraving.Name, mod.Value);
                 }
 
@@ -130,9 +168,9 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
             }
         }
 
-        public UnitInventoryItemStat MatchStatName(string name)
+        public IUnitInventoryItemStat MatchStatName(string name)
         {
-            UnitInventoryItemStat stat;
+            IUnitInventoryItemStat stat;
             if (!this.Stats.TryGetValue(name, out stat))
                 throw new UnmatchedStatException(name);
 
@@ -142,16 +180,15 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
         #region Static Functions
 
         /// <summary>
-        /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>ShopItem</c> from each valid row.
+        /// Iterates through <paramref name="config"/>'s queried data and builds an <c>IShopItem</c> from each valid row.
         /// </summary>
         /// <exception cref="ShopItemProcessingException"></exception>
-        public static List<ShopItem> BuildList(ShopConfig config, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
+        public static List<IShopItem> BuildList(ShopConfig config, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
         {
-            List<ShopItem> shopItems = new List<ShopItem>();
-            if (config == null || config.Query == null)
-                return shopItems;
+            List<IShopItem> shopItems = new List<IShopItem>();
+            if (config?.Query is null) return shopItems;
 
-            foreach (List<object> row in config.Query.Data)
+            foreach (IList<object> row in config.Query.Data)
             {
                 string name = string.Empty;
                 try

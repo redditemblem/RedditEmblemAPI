@@ -38,14 +38,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.Radius
         /// <summary>
         /// Applies <c>Modifiers</c> to all friendly, allied units within <c>Radius</c> tiles of <paramref name="unit"/>.
         /// </summary>
-        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
+        public override void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
             //If unit is not on the map, don't apply
             if (!unit.Location.IsOnMap())
                 return;
 
             //Apply modifiers to allies in range
-            foreach (Unit ally in units.Where(u => u.Name != unit.Name //different names
+            foreach (IUnit ally in units.Where(u => u.Name != unit.Name //different names
                                                 && u.AffiliationObj.Grouping == unit.AffiliationObj.Grouping //same affiliation grouping
                                                 && u.Location.IsOnMap()
                                                 && u.Location.OriginTiles.Any(o1 => unit.Location.OriginTiles.Any(o2 => o2.Coordinate.DistanceFrom(o1.Coordinate) <= this.Radius))))

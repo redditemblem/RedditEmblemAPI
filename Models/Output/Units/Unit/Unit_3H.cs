@@ -7,8 +7,25 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+    
+    /// <inheritdoc cref="Unit"/>
+    public partial interface IUnit
+    {
+        /// <inheritdoc cref="Unit.CombatArtsList"/>
+        List<ICombatArt> CombatArtsList { get; }
+
+        /// <inheritdoc cref="Unit.Battalion"/>
+        IUnitBattalion Battalion { get; }
+
+        /// <inheritdoc cref="Unit.AdjutantList"/>
+        List<IAdjutant> AdjutantList { get; }
+    }
+    
+    #endregion Interface
+
     //Partial class for handling mechanics from Fire Emblem: Three Houses.
-    public partial class Unit
+    public partial class Unit : IUnit
     {
         #region Attributes
 
@@ -16,19 +33,19 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// List of the combat arts the unit possesses.
         /// </summary>
         [JsonIgnore]
-        public List<ICombatArt> CombatArtsList { get; set; }
+        public List<ICombatArt> CombatArtsList { get; private set; }
 
         /// <summary>
         /// Container for information about a unit's battalion.
         /// </summary>
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public UnitBattalion Battalion { get; set; }
+        public IUnitBattalion Battalion { get; private set; }
 
         /// <summary>
         /// The unit's adjutants.
         /// </summary>
         [JsonIgnore]
-        public List<IAdjutant> AdjutantList { get; set; }
+        public List<IAdjutant> AdjutantList { get; private set; }
 
         #region JSON Serialization
 
@@ -87,14 +104,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <item>Stats</item>
         /// </list>
         /// </remarks>
-        private UnitBattalion BuildBattalion(IEnumerable<string> data, UnitBattalionConfig config, IDictionary<string, IBattalion> battalions)
+        private IUnitBattalion BuildBattalion(IEnumerable<string> data, UnitBattalionConfig config, IDictionary<string, IBattalion> battalions)
         {
             if (config == null) return null;
 
             string name = DataParser.OptionalString(data, config.Battalion, "Battalion");
             if (string.IsNullOrEmpty(name)) return null;
 
-            UnitBattalion battalion = new UnitBattalion(config, data, battalions);
+            IUnitBattalion battalion = new UnitBattalion(config, data, battalions);
             this.Stats.ApplyGeneralStatModifiers(battalion.BattalionObj.StatModifiers, battalion.BattalionObj.Name);
 
             return battalion;

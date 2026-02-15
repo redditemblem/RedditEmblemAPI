@@ -6,10 +6,27 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+
+    /// <inheritdoc cref="UnitBattalion"/>
+    public interface IUnitBattalion
+    {
+        /// <inheritdoc cref="UnitBattalion.BattalionObj"/>
+        IBattalion BattalionObj { get; }
+
+        /// <inheritdoc cref="UnitBattalion.Endurance"/>
+        int Endurance { get; }
+
+        /// <inheritdoc cref="UnitBattalion.GambitUses"/>
+        int GambitUses { get; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Container object for storing data about a unit's battalion.
     /// </summary>
-    public class UnitBattalion
+    public class UnitBattalion : IUnitBattalion
     {
         #region Attributes
 
@@ -17,17 +34,17 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The <c>Battalion</c> object represented by this unit's instance.
         /// </summary>
         [JsonIgnore]
-        public IBattalion BattalionObj { get; set; }
+        public IBattalion BattalionObj { get; }
 
         /// <summary>
         /// The endurance the battalion has remaining.
         /// </summary>
-        public int Endurance { get; set; }
+        public int Endurance { get; }
 
         /// <summary>
         /// The number of remaining uses the battalion's gambit has remaining.
         /// </summary>
-        public int GambitUses { get; set; }
+        public int GambitUses { get; }
 
         #region JSON Serialization Only
 

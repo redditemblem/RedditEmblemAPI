@@ -31,7 +31,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Applies <c>Modifiers</c> to <paramref name="unit"/>.
         /// </summary>
-        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
+        public override void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
             unit.Stats.ApplyGeneralStatModifiers(this.Modifiers, skill.Name, true);
         }

@@ -17,53 +17,112 @@ using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+
+    /// <inheritdoc cref="Unit"/>
+    public partial interface IUnit
+    {
+        /// <inheritdoc cref="Unit.Name"/>
+        string Name { get; }
+
+        /// <inheritdoc cref="Unit.UnitNumber"/>
+        string UnitNumber { get; }
+
+        /// <inheritdoc cref="Unit.Player"/>
+        string Player { get; }
+
+        /// <inheritdoc cref="Unit.CharacterApplicationURL"/>
+        string CharacterApplicationURL { get; }
+
+        /// <inheritdoc cref="Unit.TextFields"/>
+        List<string> TextFields { get; }
+
+        /// <inheritdoc cref="Unit.Sprite"/>
+        IUnitSpriteData Sprite { get; }
+
+        /// <inheritdoc cref="Unit.Location"/>
+        IUnitLocationData Location { get; }
+
+        /// <inheritdoc cref="Unit.ClassList"/>
+        List<IClass> ClassList { get; }
+
+        /// <inheritdoc cref="Unit.AffiliationObj"/>
+        IAffiliation AffiliationObj { get; }
+
+        /// <inheritdoc cref="Unit.Stats"/>
+        IUnitStatsData Stats { get; }
+
+        /// <inheritdoc cref="Unit.Tags"/>
+        List<string> Tags { get; }
+
+        /// <inheritdoc cref="Unit.Behavior"/>
+        string Behavior { get; }
+
+        /// <inheritdoc cref="Unit.StatusConditions"/>
+        List<IUnitStatus> StatusConditions { get; }
+
+        /// <inheritdoc cref="Unit.SkillSubsections"/>
+        List<IUnitSkillSubsection> SkillSubsections { get; }
+
+        /// <inheritdoc cref="Unit.Ranges"/>
+        IUnitRangeData Ranges { get; }
+
+        /// <inheritdoc cref="Unit.GetUnitMovementType()"/>
+        string GetUnitMovementType();
+
+        /// <inheritdoc cref="Unit.GetFullSkillsList()"/>
+        IEnumerable<ISkill> GetFullSkillsList();
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing a single Unit.
     /// </summary>
-    public partial class Unit
+    public partial class Unit : IUnit
     {
         #region Attributes
 
         /// <summary>
         /// The unit's name.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
         /// <summary>
         /// The set of digits present at the end of the unit's <c>Name</c>, if any.
         /// </summary>
-        public string UnitNumber { get; set; }
+        public string UnitNumber { get; private set; }
 
         /// <summary>
         /// The player that controls the unit.
         /// </summary>
-        public string Player { get; set; }
+        public string Player { get; private set; }
 
         /// <summary>
         /// The unit's character application URL link.
         /// </summary>
-        public string CharacterApplicationURL { get; set; }
+        public string CharacterApplicationURL { get; private set; }
 
         /// <summary>
         /// List of the unit's text fields.
         /// </summary>
-        public List<string> TextFields { get; set; }
+        public List<string> TextFields { get; private set; }
 
         /// <summary>
         /// Container for information about rendering a unit.
         /// </summary>
-        public UnitSpriteData Sprite { get; set; }
+        public IUnitSpriteData Sprite { get; private set; }
 
         /// <summary>
         /// Container for information about the unit's location on the map.
         /// </summary>
-        public UnitLocationData Location { get; set; }
+        public IUnitLocationData Location { get; private set; }
 
         /// <summary>
         /// A list of the unit's classes.
         /// </summary>
         [JsonIgnore]
-        public List<IClass> ClassList { get; set; }
+        public List<IClass> ClassList { get; private set; }
 
         /// <summary>
         /// The unit's movement type. Only used if classes are not provided.
@@ -74,37 +133,37 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The unit's affiliation.
         /// </summary>
         [JsonIgnore]
-        public IAffiliation AffiliationObj { get; set; }
+        public IAffiliation AffiliationObj { get; private set; }
 
         /// <summary>
         /// Container for information about the unit's raw numbers.
         /// </summary>
-        public UnitStatsData Stats { get; set; }
+        public IUnitStatsData Stats { get; private set; }
 
         /// <summary>
         /// List of the unit's tags.
         /// </summary>
-        public List<string> Tags { get; set; }
+        public List<string> Tags { get; private set; }
 
         /// <summary>
         /// Description of how the unit behaves.
         /// </summary>
-        public string Behavior { get; set; }
+        public string Behavior { get; private set; }
 
         /// <summary>
         /// List of the status conditions the unit possesses.
         /// </summary>
-        public List<UnitStatus> StatusConditions { get; set; }
+        public List<IUnitStatus> StatusConditions { get; private set; }
 
         /// <summary>
         /// List of the skill subsections the unit possesses.
         /// </summary>
-        public List<UnitSkillSubsection> SkillSubsections { get; set; }
+        public List<IUnitSkillSubsection> SkillSubsections { get; private set; }
 
         /// <summary>
         /// Container for information about a unit's movement/item ranges.
         /// </summary>
-        public UnitRangeData Ranges { get; set; }
+        public IUnitRangeData Ranges { get; private set; }
 
         #region JSON Serialization Only
 
@@ -183,7 +242,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             MatchTags(system.Tags);
 
             this.SkillSubsections =  UnitSkillSubsection.BuildList(data, config.SkillSubsections, system.Skills);
-            this.StatusConditions = BuildUnitStatusConditions(data, config.StatusConditions, system.StatusConditions);
+            this.StatusConditions = UnitStatus.BuildList(data, config.StatusConditions, system.StatusConditions);
 
             Constructor_Unit_3H(config, data, system);
             Constructor_Unit_Engage(config, data, system);
@@ -191,23 +250,6 @@ namespace RedditEmblemAPI.Models.Output.Units
         }
 
         #region Build Functions
-
-        /// <summary>
-        /// Builds and returns a list of the unit's status conditions.
-        /// </summary>
-        private List<UnitStatus> BuildUnitStatusConditions(IEnumerable<string> data, List<UnitStatusConditionConfig> configs, IDictionary<string, IStatusCondition> statuses)
-        {
-            List<UnitStatus> statusConditions = new List<UnitStatus>();
-            foreach (UnitStatusConditionConfig config in configs)
-            {
-                string name = DataParser.OptionalString(data, config.Name, "Status Condition Name");
-                if (string.IsNullOrEmpty(name)) continue;
-
-                statusConditions.Add(new UnitStatus(data, config, statuses));
-            }
-
-            return statusConditions;
-        }
 
         /// <summary>
         /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>IClass</c> from <paramref name="classes"/>.
@@ -313,8 +355,8 @@ namespace RedditEmblemAPI.Models.Output.Units
             IEnumerable<ISkill> skills = this.SkillSubsections.SelectMany(s => s.Skills.Select(s => s.SkillObj));
 
             //Union w/ equipped item skills
-            List<UnitInventoryItem> equipped = this.Inventory.GetAllEquippedItems();
-            foreach(UnitInventoryItem unitItem in equipped)
+            IList<IUnitInventoryItem> equipped = this.Inventory.GetAllEquippedItems();
+            foreach(IUnitInventoryItem unitItem in equipped)
                 skills = skills.Union(unitItem.Item.EquippedSkills.Select(s => s.SkillObj));
             
             //Union w/ emblem skills
@@ -334,11 +376,10 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Iterates through the data in <paramref name="config"/>'s <c>Query</c> and builds a <c>Unit</c> from each valid row.
         /// </summary>
         /// <exception cref="UnitProcessingException"></exception>
-        public static List<Unit> BuildList(UnitsConfig config, SystemInfo system)
+        public static List<IUnit> BuildList(UnitsConfig config, SystemInfo system)
         {
-            List<Unit> units = new List<Unit>();
-            if (config == null || config.Queries == null)
-                return units;
+            List<IUnit> units = new List<IUnit>();
+            if (config?.Queries is null) return units;
 
             //Create units
             foreach (List<object> row in config.Queries.SelectMany(q => q.Data))

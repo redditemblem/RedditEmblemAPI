@@ -20,12 +20,12 @@ namespace RedditEmblemAPI.Services.Helpers
         /// Parses Google Sheets data matrix to return a list of Unit output objects.
         /// </summary>
         /// <param name="config">Parsed JSON configuration mapping Values to output</param>
-        public static List<Unit> Process(UnitsConfig config, SystemInfo system, MapObj map)
+        public static List<IUnit> Process(UnitsConfig config, SystemInfo system, IMapObj map)
         {
-            List<Unit> units = Unit.BuildList(config, system);
+            List<IUnit> units = Unit.BuildList(config, system);
 
             //Add units to the map
-            foreach (Unit unit in units)
+            foreach (IUnit unit in units)
             {
                 try
                 {
@@ -36,7 +36,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 when (ex is XYCoordinateFormattingException || ex is AlphanumericCoordinateFormattingException)
                 {
                     //If the coordinates aren't in a known format, check if it's the name of another unit.
-                    Unit pair = units.FirstOrDefault(u => u.Name == unit.Location.CoordinateString);
+                    IUnit pair = units.FirstOrDefault(u => u.Name == unit.Location.CoordinateString);
 
                     if (pair == null)
                         throw new UnitProcessingException(unit.Name, ex);
@@ -62,7 +62,7 @@ namespace RedditEmblemAPI.Services.Helpers
             }
 
 
-            foreach (Unit unit in units.Where(u => u.Location.IsBackOfPair))
+            foreach (IUnit unit in units.Where(u => u.Location.IsBackOfPair))
             {
                 //Replace back unit coordinate with front unit coord
                 unit.Location.Coordinate = unit.Location.PairedUnitObj.Location.Coordinate;
@@ -76,7 +76,7 @@ namespace RedditEmblemAPI.Services.Helpers
             }
 
             //Apply skill and status condition effects
-            foreach (Unit unit in units)
+            foreach (IUnit unit in units)
             {
                 //Skill effects
                 foreach (ISkill skill in unit.GetFullSkillsList().Where(s => s.Effects.Any(e => e.ExecutionOrder == SkillEffectExecutionOrder.Standard)))
@@ -105,7 +105,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             //Calculate combat stats and item ranges
             //Always do this last
-            foreach (Unit unit in units)
+            foreach (IUnit unit in units)
             {
                 //Combat stats
                 try
@@ -118,11 +118,11 @@ namespace RedditEmblemAPI.Services.Helpers
                 }
 
                 //Item ranges
-                List<UnitInventoryItem> inventoryItems = unit.Inventory.GetAllItems();
+                IList<IUnitInventoryItem> inventoryItems = unit.Inventory.GetAllItems();
                 if (unit.Emblem != null && unit.Emblem.IsEngaged)
                     inventoryItems = inventoryItems.Union(unit.Emblem.EngageWeapons).ToList();
 
-                foreach (UnitInventoryItem item in inventoryItems)
+                foreach (IUnitInventoryItem item in inventoryItems)
                 {
                     try
                     {
@@ -159,7 +159,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// Calculates the anchor and origin tiles for <paramref name="unit"/>.
         /// </summary>
         /// <param name="applyTileBinding">Should be true for any unit that's not in pair-up.</param>
-        private static void AddUnitToMap(Unit unit, MapObj map, bool applyTileBinding)
+        private static void AddUnitToMap(IUnit unit, IMapObj map, bool applyTileBinding)
         {
             //Ignore hidden units
             if (unit.Location.Coordinate.X < 1 || unit.Location.Coordinate.Y < 1)
@@ -169,7 +169,7 @@ namespace RedditEmblemAPI.Services.Helpers
             {
                 for (int x = 0; x < unit.Location.UnitSize; x++)
                 {
-                    Tile tile = map.GetTileByCoord(unit.Location.Coordinate.X + x, unit.Location.Coordinate.Y + y);
+                    ITile tile = map.GetTileByCoord(unit.Location.Coordinate.X + x, unit.Location.Coordinate.Y + y);
 
                     //Make sure this unit is not placed overlapping another
                     if (tile.UnitData.Unit != null && unit.Name != tile.UnitData.Unit.Name && applyTileBinding)
@@ -200,7 +200,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Applies modifiers from the <paramref name="tile"/>'s terrain type and tile effects to <paramref name="unit"/>.
         /// </summary>
-        private static void ApplyTileModifiersToUnit(Unit unit, Tile tile)
+        private static void ApplyTileModifiersToUnit(IUnit unit, ITile tile)
         {
             ITerrainTypeStats stats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(unit.AffiliationObj);
             unit.Stats.ApplyCombatStatModifiers(stats.CombatStatModifiers, tile.TerrainTypeObj.Name);
