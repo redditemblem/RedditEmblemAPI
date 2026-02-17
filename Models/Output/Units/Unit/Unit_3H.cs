@@ -1,53 +1,52 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+    
+    /// <inheritdoc cref="Unit"/>
+    public partial interface IUnit
+    {
+        /// <inheritdoc cref="Unit.CombatArts"/>
+        List<ICombatArt> CombatArts { get; }
+
+        /// <inheritdoc cref="Unit.Battalion"/>
+        IUnitBattalion Battalion { get; }
+
+        /// <inheritdoc cref="Unit.Adjutants"/>
+        List<IAdjutant> Adjutants { get; }
+    }
+    
+    #endregion Interface
+
     //Partial class for handling mechanics from Fire Emblem: Three Houses.
-    public partial class Unit
+    public partial class Unit : IUnit
     {
         #region Attributes
 
         /// <summary>
         /// List of the combat arts the unit possesses.
         /// </summary>
-        [JsonIgnore]
-        public List<ICombatArt> CombatArtsList { get; set; }
+        [JsonProperty(ItemConverterType = typeof(MatchableNameConverter))]
+        public List<ICombatArt> CombatArts { get; private set; }
 
         /// <summary>
         /// Container for information about a unit's battalion.
         /// </summary>
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public UnitBattalion Battalion { get; set; }
+        public IUnitBattalion Battalion { get; private set; }
 
         /// <summary>
         /// The unit's adjutants.
         /// </summary>
-        [JsonIgnore]
-        public List<IAdjutant> AdjutantList { get; set; }
-
-        #region JSON Serialization
-
-        /// <summary>
-        /// Only for JSON serialization. A list of the unit's combat arts.
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        private IEnumerable<string> CombatArts { get { return this.CombatArtsList.Any() ? this.CombatArtsList.Select(c => c.Name) : null; } }
-
-        /// <summary>
-        /// Only for JSON serialization. The unit's adjutants.
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        private IEnumerable<string> Adjutants
-        {
-            get { return this.AdjutantList.Any() ? this.AdjutantList.Select(a => a.Name) : null; }
-        }
-
-        #endregion JSON Serialization
+        [JsonProperty(ItemConverterType = typeof(MatchableNameConverter))]
+        public List<IAdjutant> Adjutants { get; private set; }
 
         #endregion Attributes
 
@@ -62,9 +61,9 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </remarks>
         public void Constructor_Unit_3H(UnitsConfig config, IEnumerable<string> data, SystemInfo system)
         {
-            this.CombatArtsList = BuildCombatArts(data, config.CombatArts, system.CombatArts);
+            this.CombatArts = BuildCombatArts(data, config.CombatArts, system.CombatArts);
             this.Battalion = BuildBattalion(data, config.Battalion, system.Battalions);
-            this.AdjutantList = BuildAdjutants(data, config.Adjutants, system.Adjutants);
+            this.Adjutants = BuildAdjutants(data, config.Adjutants, system.Adjutants);
         }
 
         #region Build Functions
@@ -87,14 +86,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <item>Stats</item>
         /// </list>
         /// </remarks>
-        private UnitBattalion BuildBattalion(IEnumerable<string> data, UnitBattalionConfig config, IDictionary<string, IBattalion> battalions)
+        private IUnitBattalion BuildBattalion(IEnumerable<string> data, UnitBattalionConfig config, IDictionary<string, IBattalion> battalions)
         {
             if (config == null) return null;
 
             string name = DataParser.OptionalString(data, config.Battalion, "Battalion");
             if (string.IsNullOrEmpty(name)) return null;
 
-            UnitBattalion battalion = new UnitBattalion(config, data, battalions);
+            IUnitBattalion battalion = new UnitBattalion(config, data, battalions);
             this.Stats.ApplyGeneralStatModifiers(battalion.BattalionObj.StatModifiers, battalion.BattalionObj.Name);
 
             return battalion;

@@ -4,7 +4,27 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
-    public class UnitInventoryItemStat
+    #region Interface
+
+    /// <inheritdoc cref="UnitInventoryItemStat"/>
+    public interface IUnitInventoryItemStat
+    {
+        /// <inheritdoc cref="UnitInventoryItemStat.BaseValue"/>
+        decimal BaseValue { get; set; }
+
+        /// <inheritdoc cref="UnitInventoryItemStat.FinalValue"/>
+        decimal FinalValue { get; }
+
+        /// <inheritdoc cref="UnitInventoryItemStat.Modifiers"/>
+        IDictionary<string, int> Modifiers { get; set; }
+
+        /// <inheritdoc cref="UnitInventoryItemStat.ForcedModifier"/>
+        int ForcedModifier { get; set; }
+    }
+
+    #endregion Interface
+
+    public class UnitInventoryItemStat : IUnitInventoryItemStat
     {
         #region Attributes
 
@@ -22,7 +42,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Collection of all values that modify this stat. (ex. "Debuff",-2)
         /// </summary>
         [JsonIgnore]
-        public Dictionary<string, int> Modifiers { get; set; }
+        public IDictionary<string, int> Modifiers { get; set; }
 
         /// <summary>
         /// For use with logic that forces a final value for the stat, like skill effects. If used, the normal <c>this.Modifiers</c> list will be ignored.
@@ -69,7 +89,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Constructor.
         /// </summary>
-        public UnitInventoryItemStat(NamedStatValue stat)
+        public UnitInventoryItemStat(INamedStatValue stat)
         {
             this.BaseValue = stat.Value;
             this.InvertModifiedDisplayColors = stat.InvertModifiedDisplayColors;

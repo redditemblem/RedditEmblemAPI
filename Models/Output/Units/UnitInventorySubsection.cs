@@ -6,19 +6,39 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
-    public class UnitInventorySubsection
+    #region Interface
+
+    /// <inheritdoc cref="UnitInventorySubsection"/>
+    public interface IUnitInventorySubsection
+    {
+        /// <inheritdoc cref="UnitInventorySubsection.Items"/>
+        List<IUnitInventoryItem> Items { get; }
+
+        /// <inheritdoc cref="UnitInventorySubsection.EmptySlotCount"/>
+        int EmptySlotCount { get; }
+
+        /// <inheritdoc cref="UnitInventorySubsection.AddUnitInventoryItem(UnitInventoryItemConfig, IEnumerable{string}, IDictionary{string, IItem}, IDictionary{string, IEngraving})"/>
+        void AddUnitInventoryItem(UnitInventoryItemConfig config, IEnumerable<string> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings);
+
+        /// <inheritdoc cref="UnitInventorySubsection.InsertUnitInventoryItem(IUnitInventoryItem)"/>
+        void InsertUnitInventoryItem(IUnitInventoryItem item);
+    }
+
+    #endregion Interface
+
+    public class UnitInventorySubsection : IUnitInventorySubsection
     {
         #region Attributes
 
         /// <summary>
         /// List of the items the unit is carrying.
         /// </summary>
-        public List<UnitInventoryItem> Items { get; set; }
+        public List<IUnitInventoryItem> Items { get; private set; }
 
         /// <summary>
         /// Counter indicating the number of empty slots in the inventory.
         /// </summary>
-        public int EmptySlotCount { get; set; }
+        public int EmptySlotCount { get; private set; }
 
         #endregion Attributes
 
@@ -27,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public UnitInventorySubsection() 
         {
-            this.Items = new List<UnitInventoryItem>();
+            this.Items = new List<IUnitInventoryItem>();
             this.EmptySlotCount = 0;
         }
 
@@ -51,9 +71,30 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Inserts <paramref name="item"/> at the FRONT of <c>this.Items</c>.
         /// </summary>
-        public void InsertUnitInventoryItem(UnitInventoryItem item)
+        public void InsertUnitInventoryItem(IUnitInventoryItem item)
         {
             this.Items.Insert(0, item);
         }
+
+        #region Static Functions
+
+        public static List<IUnitInventorySubsection> BuildList(IEnumerable<InventorySubsectionConfig> configs, IEnumerable<string> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
+        {
+            List<IUnitInventorySubsection> subsections = new List<IUnitInventorySubsection>();
+
+            foreach (InventorySubsectionConfig config in configs)
+            {
+                IUnitInventorySubsection subsection = new UnitInventorySubsection();
+
+                foreach (UnitInventoryItemConfig item in config.Slots)
+                    subsection.AddUnitInventoryItem(item, data, items, engravings);
+
+                subsections.Add(subsection);
+            }
+
+            return subsections;
+        }
+
+        #endregion Static Functions
     }
 }

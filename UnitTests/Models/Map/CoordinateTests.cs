@@ -71,7 +71,7 @@ namespace UnitTests.Models.Map
         [TestCase("1,")]
         [TestCase("1,1,1")]
         public void Constructor_StringInput_XY_InvalidInputs(string input)
-        { 
+        {
             CoordinateFormat format = CoordinateFormat.XY;
             Assert.Throws<XYCoordinateFormattingException>(() => new Coordinate(format, input));
         }
@@ -176,7 +176,7 @@ namespace UnitTests.Models.Map
         [Test]
         public void Equals_Self()
         {
-            Coordinate coord = new Coordinate(CoordinateFormat.XY, 0, 0);
+            ICoordinate coord = new Coordinate(CoordinateFormat.XY, 0, 0);
 
             Assert.That(coord.Equals(coord), Is.True);
         }
@@ -184,8 +184,8 @@ namespace UnitTests.Models.Map
         [Test]
         public void Equals_SameX()
         {
-            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 0, 0);
-            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 0, 1);
+            ICoordinate coord1 = new Coordinate(CoordinateFormat.XY, 0, 0);
+            ICoordinate coord2 = new Coordinate(CoordinateFormat.XY, 0, 1);
 
             Assert.That(coord1.Equals(coord2), Is.False);
         }
@@ -193,8 +193,8 @@ namespace UnitTests.Models.Map
         [Test]
         public void Equals_SameY()
         {
-            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 0, 0);
-            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 1, 0);
+            ICoordinate coord1 = new Coordinate(CoordinateFormat.XY, 0, 0);
+            ICoordinate coord2 = new Coordinate(CoordinateFormat.XY, 1, 0);
 
             Assert.That(coord1.Equals(coord2), Is.False);
         }
@@ -202,8 +202,8 @@ namespace UnitTests.Models.Map
         [Test]
         public void Equals_Different()
         {
-            Coordinate coord1 = new Coordinate(CoordinateFormat.XY, 0, 0);
-            Coordinate coord2 = new Coordinate(CoordinateFormat.XY, 1, 1);
+            ICoordinate coord1 = new Coordinate(CoordinateFormat.XY, 0, 0);
+            ICoordinate coord2 = new Coordinate(CoordinateFormat.XY, 1, 1);
 
             Assert.That(coord1.Equals(coord2), Is.False);
         }

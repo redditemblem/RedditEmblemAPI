@@ -34,7 +34,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// <summary>
         /// Applies <c>Modifiers</c> to <paramref name="unit"/>.
         /// </summary>
-        public override void Apply(Unit unit, UnitStatus status, IDictionary<string, ITag> tags)
+        public override void Apply(IUnit unit, IUnitStatus status, IDictionary<string, ITag> tags)
         {
             //Search for the additional stat on the status condition
             int multiplier;
@@ -46,7 +46,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
             foreach(KeyValuePair<string, int> modifier in modifiers)
                 modifiers[modifier.Key] = modifier.Value * multiplier;
 
-            unit.Stats.ApplyGeneralStatModifiers(modifiers, status.StatusObj.Name, true);
+            unit.Stats.ApplyGeneralStatModifiers(modifiers, status.Status.Name, true);
         }
     }
 }

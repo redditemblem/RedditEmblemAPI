@@ -7,8 +7,19 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+
+    /// <inheritdoc cref="Unit"/>
+    public partial interface IUnit
+    {
+        /// <inheritdoc cref="Unit.Emblem"/>
+        IUnitEmblem Emblem { get; }
+    }
+
+    #endregion Interface
+
     //Partial class for handling mechanics from Fire Emblem: Engage.
-    public partial class Unit
+    public partial class Unit : IUnit
     {
         #region Attributes
 
@@ -16,7 +27,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Container for information about a unit's emblem.
         /// </summary>
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public UnitEmblem Emblem { get; set; }
+        public IUnitEmblem Emblem { get; private set; }
 
         #region JSON Serialization
 
@@ -26,7 +37,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         private string BattleStyle
         {
-            get { return this.ClassList.FirstOrDefault()?.BattleStyle?.Name; }
+            get { return this.Classes.FirstOrDefault()?.BattleStyle?.Name; }
         }
 
         #endregion JSON Serialization
@@ -58,14 +69,14 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <item>Sprite</item>
         /// </list>
         /// </remarks>
-        private UnitEmblem BuildUnitEmblem(IEnumerable<string> data, UnitEmblemConfig config, SystemInfo systemData)
+        private IUnitEmblem BuildUnitEmblem(IEnumerable<string> data, UnitEmblemConfig config, SystemInfo systemData)
         {
             if (config == null) return null;
 
             string name = DataParser.OptionalString(data, config.Name, "Emblem");
             if (string.IsNullOrEmpty(name)) return null;
 
-            UnitEmblem emblem = new UnitEmblem(config, data, systemData);
+            IUnitEmblem emblem = new UnitEmblem(config, data, systemData);
 
             //Set unit aura
             if (emblem.IsEngaged && !string.IsNullOrEmpty(emblem.Emblem.EngagedUnitAura))

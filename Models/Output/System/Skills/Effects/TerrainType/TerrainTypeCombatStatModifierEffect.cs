@@ -38,14 +38,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.TerrainType
         /// <summary>
         /// Applies <c>Modifiers</c> to <paramref name="unit"/> if <paramref name="unit"/> originates on a tile with a terrain type in <c>TerrainTypeGrouping</c>.
         /// </summary>
-        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
+        public override void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
             //If unit is not on the map, don't apply
             if (!unit.Location.IsOnMap())
                 return;
 
             //The terrain type must be in the defined grouping
-            if (!unit.Location.OriginTiles.Any(o => o.TerrainTypeObj.Groupings.Contains(this.TerrainTypeGrouping)))
+            if (!unit.Location.OriginTiles.Any(o => o.TerrainType.Groupings.Contains(this.TerrainTypeGrouping)))
                 return;
 
             unit.Stats.ApplyCombatStatModifiers(this.Modifiers, skill.Name);

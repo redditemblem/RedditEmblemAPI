@@ -34,20 +34,20 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
             this.MovementCost = DataParser.Int_Positive(parameters, INDEX_PARAM_2, NAME_PARAM_2);
         }
 
-        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
+        public override void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
             //Ignore units not on map
             if (!unit.Location.IsOnMap())
                 return;
 
-            List<Tile> radius = map.GetTilesInRadius(unit.Location.OriginTiles, this.Radius).Union(unit.Location.OriginTiles).ToList();
+            List<ITile> radius = map.GetTilesInRadius(unit.Location.OriginTiles, this.Radius).Union(unit.Location.OriginTiles).ToList();
             radius.ForEach(t => t.UnitData.UnitsAffectingMovementCosts.Add(unit));
         }
 
-        public bool IsActive(Unit tileUnit, Unit movingUnit)
+        public bool IsActive(IUnit tileUnit, IUnit movingUnit)
         {
             //Return true when the units are in the same grouping
-            return tileUnit.AffiliationObj.Grouping == movingUnit.AffiliationObj.Grouping;
+            return tileUnit.Affiliation.Grouping == movingUnit.Affiliation.Grouping;
         }
 
         public int GetMovementCost()

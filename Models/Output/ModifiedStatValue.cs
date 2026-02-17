@@ -4,10 +4,33 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output
 {
+    #region Interface
+
+    /// <inheritdoc cref="ModifiedStatValue"/>
+    public interface IModifiedStatValue
+    {
+        /// <inheritdoc cref="ModifiedStatValue.BaseValue"/>
+        int BaseValue { get; set; }
+
+        /// <inheritdoc cref="ModifiedStatValue.FinalValue"/>
+        int FinalValue { get; }
+
+        /// <inheritdoc cref="ModifiedStatValue.Modifiers"/>
+        IDictionary<string, int> Modifiers { get; set; }
+
+        /// <inheritdoc cref="ModifiedStatValue.InvertModifiedDisplayColors"/>
+        bool InvertModifiedDisplayColors { get; }
+
+        /// <inheritdoc cref="ModifiedStatValue.UsePrioritizedDisplay"/>
+        bool UsePrioritizedDisplay { get; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing a stat value that can be modified.
     /// </summary>
-    public class ModifiedStatValue
+    public class ModifiedStatValue : IModifiedStatValue
     {
         #region Attributes
 

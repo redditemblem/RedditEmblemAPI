@@ -33,13 +33,13 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// ddfdf
         /// </summary>
-        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
+        public override void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
             //Ignore units not on the map
             if (!unit.Location.IsOnMap())
                 return;
 
-            List<Tile> radius = map.GetTilesInRadius(unit.Location.OriginTiles, this.Radius).Union(unit.Location.OriginTiles).ToList();
+            List<ITile> radius = map.GetTilesInRadius(unit.Location.OriginTiles, this.Radius).Union(unit.Location.OriginTiles).ToList();
             radius.ForEach(t => t.UnitData.UnitsObstructingItems.Add(unit));
         }
     }

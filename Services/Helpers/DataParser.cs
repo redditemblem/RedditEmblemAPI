@@ -634,9 +634,9 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         /// <param name="errorFieldNameFormat">Passed into <c>string.Format</c> to create the field name thrown with any parsing errors. The <c>NamedStatConfig</c>'s source name is always {0}.</param>
         ///<param name="errorFieldNameArgs">Any additional values that will be formatted with <paramref name="errorFieldNameFormat"/>.</param>
-        public static IDictionary<string, NamedStatValue> NamedStatValueDictionary_OptionalDecimal_Any(IEnumerable<NamedStatConfig_Displayed> configs, IEnumerable<string> data, bool includeZeroValues = false, string errorFieldNameFormat = "{0}", params string[] errorFieldNameArgs)
+        public static IDictionary<string, INamedStatValue> NamedStatValueDictionary_OptionalDecimal_Any(IEnumerable<NamedStatConfig_Displayed> configs, IEnumerable<string> data, bool includeZeroValues = false, string errorFieldNameFormat = "{0}", params string[] errorFieldNameArgs)
         {
-            IDictionary<string, NamedStatValue> stats = new Dictionary<string, NamedStatValue>();
+            IDictionary<string, INamedStatValue> stats = new Dictionary<string, INamedStatValue>();
 
             foreach (NamedStatConfig_Displayed stat in configs)
             {

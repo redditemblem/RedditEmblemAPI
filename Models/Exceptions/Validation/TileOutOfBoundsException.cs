@@ -9,7 +9,7 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
         /// Thrown when attempting to access a map tile that not exist. 
         /// </summary>
         /// <param name="coord"></param>
-        public TileOutOfBoundsException(Coordinate coord)
+        public TileOutOfBoundsException(ICoordinate coord)
             : base($"Attempted to access map tile \"{coord.AsText}\" but it could not be found. Is there a multi-tile entity overlapping the map boundaries?")
         { }
     }

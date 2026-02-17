@@ -31,7 +31,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.PairUp
         /// <summary>
         /// Applies <c>Modifiers</c> to <paramref name="unit"/> if <paramref name="unit"/> has a paired partner.
         /// </summary>
-        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
+        public override void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
             //Validate that the unit is in the front of a pairup
             if (unit.Location.PairedUnitObj == null || unit.Location.IsBackOfPair)

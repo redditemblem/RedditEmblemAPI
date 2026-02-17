@@ -638,12 +638,12 @@ namespace UnitTests.Models.System
 
             Assert.That(item.Matched, Is.False);
             Assert.That(item.EquippedSkills.Count, Is.EqualTo(1));
-            item.EquippedSkills.ForEach(s => s.SkillObj.DidNotReceive().FlagAsMatched());
+            item.EquippedSkills.ForEach(s => s.Skill.DidNotReceive().FlagAsMatched());
 
             item.FlagAsMatched();
 
             Assert.That(item.Matched, Is.True);
-            item.EquippedSkills.ForEach(s => s.SkillObj.Received(1).FlagAsMatched());
+            item.EquippedSkills.ForEach(s => s.Skill.Received(1).FlagAsMatched());
         }
 
         [Test]

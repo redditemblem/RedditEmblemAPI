@@ -47,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Locates ally units and adds tiles within <c>Radius</c> tiles of their origin to <paramref name="unit"/>'s movement range.
         /// </summary>
-        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
+        public override void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
             //If unit is not on the map, don't apply
             if (!unit.Location.IsOnMap())
@@ -57,8 +57,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
                 throw new SkillEffectMultitileUnitsNotSupportedException(this.Name);
 
             //Locate valid ally units and select tiles near them
-            List<Tile> tiles = units.Where(u => u.Name != unit.Name
-                                              && u.AffiliationObj.Grouping == unit.AffiliationObj.Grouping
+            List<ITile> tiles = units.Where(u => u.Name != unit.Name
+                                              && u.Affiliation.Grouping == unit.Affiliation.Grouping
                                               && u.Stats.HP.Percentage >= this.HPPercentage
                                               && u.Location.IsOnMap()
                                               && (u.Location.OriginTiles.Any(o1 => unit.Location.OriginTiles.Any(o2 => o1.Coordinate.DistanceFrom(o2.Coordinate) <= this.TeleportationRange)) || this.TeleportationRange == 99))

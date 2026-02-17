@@ -1,52 +1,70 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Output.System;
+using RedditEmblemAPI.Models.Output.System.Match;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Map.Tiles
 {
+    #region Interface
+
+    /// <inheritdoc cref="Tile"/>
+    public interface ITile
+    {
+        /// <inheritdoc cref="Tile.Coordinate"/>
+        ICoordinate Coordinate { get; set; }
+
+        /// <inheritdoc cref="Tile.TerrainType"/>
+        ITerrainType TerrainType { get; set; }
+
+        /// <inheritdoc cref="Tile.UnitData"/>
+        ITileUnitData UnitData { get; set; }
+
+        /// <inheritdoc cref="Tile.WarpData"/>
+        ITileWarpData WarpData { get; set; }
+
+        /// <inheritdoc cref="Tile.TileObjects"/>
+        List<ITileObjectInstance> TileObjects { get; set; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing a single tile on the <c>Map</c>.
     /// </summary>
-    public class Tile
+    public class Tile : ITile
     {
         #region Attributes
 
         /// <summary>
         /// The tile's horizontal/vertical location on the map.
         /// </summary>
-        public Coordinate Coordinate { get; set; }
+        public ICoordinate Coordinate { get; set; }
 
         /// <summary>
         /// The terrain type of this tile.
         /// </summary>
-        [JsonIgnore]
-        public ITerrainType TerrainTypeObj { get; set; }
+        [JsonConverter(typeof(MatchableNameConverter))]
+        public ITerrainType TerrainType { get; set; }
 
         /// <summary>
         /// Container for information about this tile's unit properties.
         /// </summary>
-        public TileUnitData UnitData { get; set; }
+        public ITileUnitData UnitData { get; set; }
 
         /// <summary>
         /// Container for information about this tile's warp properties.
         /// </summary>
-        public TileWarpData WarpData { get; set; }
+        public ITileWarpData WarpData { get; set; }
 
         /// <summary>
         /// List of the tile objects on this tile.
         /// </summary>
         [JsonIgnore]
-        public List<TileObjectInstance> TileObjects { get; set; }
+        public List<ITileObjectInstance> TileObjects { get; set; }
 
         #region JSON Serialization Only
-
-        /// <summary>
-        /// Only for JSON serialization. Returns the name of the <c>TerrainType</c> of this tile.
-        /// </summary>
-        [JsonProperty]
-        private string TerrainType { get { return this.TerrainTypeObj.Name; } }
 
         /// <summary>
         /// Only for JSON serialization. Returns List of the IDs of tile object instances on this tile.
@@ -96,14 +114,14 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// <summary>
         /// Constructor. Initializes the tile's coordinate using <paramref name="coord"/>.
         /// </summary>
-        public Tile(Coordinate coord, ITerrainType terrainType)
+        public Tile(ICoordinate coord, ITerrainType terrainType)
         {
             this.Coordinate = coord;
-            this.TerrainTypeObj = terrainType;
+            this.TerrainType = terrainType;
 
             this.UnitData = new TileUnitData();
             this.WarpData = new TileWarpData();
-            this.TileObjects = new List<TileObjectInstance>();
+            this.TileObjects = new List<ITileObjectInstance>();
         }
 
         #endregion

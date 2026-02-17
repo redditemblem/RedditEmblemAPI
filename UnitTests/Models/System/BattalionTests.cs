@@ -153,8 +153,8 @@ namespace UnitTests.Models.System
             IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.Name, Is.EqualTo(INPUT_NAME));
-            Assert.That(batt.GambitObj, Is.EqualTo(GAMBITS[INPUT_GAMBIT]));
-            Assert.That(batt.GambitObj.Matched, Is.False);
+            Assert.That(batt.Gambit, Is.EqualTo(GAMBITS[INPUT_GAMBIT]));
+            Assert.That(batt.Gambit.Matched, Is.False);
             Assert.That(batt.MaxEndurance, Is.EqualTo(1));
         }
 
@@ -592,12 +592,12 @@ namespace UnitTests.Models.System
             IBattalion batt = new Battalion(config, data, GAMBITS);
 
             Assert.That(batt.Matched, Is.False);
-            batt.GambitObj.DidNotReceive().FlagAsMatched();
+            batt.Gambit.DidNotReceive().FlagAsMatched();
 
             batt.FlagAsMatched();
 
             Assert.That(batt.Matched, Is.True);
-            batt.GambitObj.Received(1).FlagAsMatched();
+            batt.Gambit.Received(1).FlagAsMatched();
         }
 
         #endregion FlagAsMatched

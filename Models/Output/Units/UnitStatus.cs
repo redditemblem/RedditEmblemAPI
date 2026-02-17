@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
@@ -9,10 +10,30 @@ using System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+
+    /// <inheritdoc cref="UnitStatus"/>
+    public interface IUnitStatus
+    {
+        /// <inheritdoc cref="UnitStatus.FullName"/>
+        string FullName { get; }
+
+        /// <inheritdoc cref="UnitStatus.Status"/>
+        IStatusCondition Status { get; }
+
+        /// <inheritdoc cref="UnitStatus.RemainingTurns"/>
+        int RemainingTurns { get; }
+
+        /// <inheritdoc cref="UnitStatus.AdditionalStats"/>
+        IDictionary<string, int> AdditionalStats { get; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing a <c>StatusCondition</c> present on a <c>Unit</c>.
     /// </summary>
-    public class UnitStatus
+    public class UnitStatus : IUnitStatus
     {
         #region Attributes
 
@@ -20,31 +41,26 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The full name of the status condition pulled from raw <c>Unit</c> data.
         /// </summary>
         [JsonIgnore]
-        public string FullName { get; set; }
-
-        /// <summary>
-        /// Only for JSON serialization. The name of the status condition. 
-        /// </summary>
-        [JsonProperty]
-        private string Name { get { return this.StatusObj.Name; } }
+        public string FullName { get; private set; }
 
         /// <summary>
         /// The <c>IStatusCondition</c> object.
         /// </summary>
-        [JsonIgnore]
-        public IStatusCondition StatusObj { get; set; }
+        [JsonProperty("name")]
+        [JsonConverter(typeof(MatchableNameConverter))]
+        public IStatusCondition Status { get; private set; }
 
         /// <summary>
         /// The number of turns this status has left.
         /// </summary>
-        public int RemainingTurns { get; set; }
+        public int RemainingTurns { get; private set; }
 
         /// <summary>
         /// Dictionary of additional stat values for this status.
         /// </summary>
-        public IDictionary<string, int> AdditionalStats { get; set; }
+        public IDictionary<string, int> AdditionalStats { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         private static Regex turnsRegex = new Regex(@"\([0-9]+\)"); //match status turns (ex. "(5)")
 
@@ -86,7 +102,29 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             name = name.Trim();
-            this.StatusObj = StatusCondition.MatchName(statusConditions, name);
+            this.Status = StatusCondition.MatchName(statusConditions, name);
         }
+
+        #region Static Functions
+
+        /// <summary>
+        /// Builds and returns a list of the unit's status conditions.
+        /// </summary>
+        public static List<IUnitStatus> BuildList(IEnumerable<string> data, List<UnitStatusConditionConfig> configs, IDictionary<string, IStatusCondition> statuses)
+        {
+            List<IUnitStatus> statusConditions = new List<IUnitStatus>();
+
+            foreach (UnitStatusConditionConfig config in configs)
+            {
+                string name = DataParser.OptionalString(data, config.Name, "Status Condition Name");
+                if (string.IsNullOrEmpty(name)) continue;
+
+                statusConditions.Add(new UnitStatus(data, config, statuses));
+            }
+
+            return statusConditions;
+        }
+
+        #endregion Static Functions
     }
 }

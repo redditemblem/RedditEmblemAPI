@@ -28,7 +28,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Evaluates the dynamic equation contained in <paramref name="equation"/> and returns its unrounded result as a decimal.
         /// </summary>
-        public static decimal Evaluate(string equation, Unit unit, EquationParserOptions options)
+        public static decimal Evaluate(string equation, IUnit unit, EquationParserOptions options)
         {
             if (options.EvalUnitCombatStat) ReplaceUnitCombatStatVariables(ref equation, unit);
             if (options.EvalUnitStat) ReplaceUnitStatVariables(ref equation, unit);
@@ -62,7 +62,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// ORDER DEPENDENT. This will only work properly if <paramref name="equation"/> is being evaluated after the specified stat has been evaluated itself.
         /// Make sure the Combat Stats config list is ordered correctly if this is being used!
         /// </remarks>
-        private static void ReplaceUnitCombatStatVariables(ref string equation, Unit unit)
+        private static void ReplaceUnitCombatStatVariables(ref string equation, IUnit unit)
         {
             MatchCollection unitCombatStatMatches = unitCombatStatRegex.Matches(equation);
             if (!unitCombatStatMatches.Any()) return;
@@ -71,7 +71,7 @@ namespace RedditEmblemAPI.Services.Helpers
             {
                 string statName = match.Groups[1].Value.Trim();
 
-                ModifiedStatValue unitCombatStat = unit.Stats.MatchCombatStatName(statName);
+                IModifiedStatValue unitCombatStat = unit.Stats.MatchCombatStatName(statName);
                 equation = equation.Replace(match.Groups[0].Value, unitCombatStat.FinalValue.ToString());
             }
         }
@@ -80,7 +80,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// Replaces all instances of {UnitStat[...]} with values from the <paramref name="unit"/>'s General stats list.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        private static void ReplaceUnitStatVariables(ref string equation, Unit unit)
+        private static void ReplaceUnitStatVariables(ref string equation, IUnit unit)
         {
             MatchCollection unitStatMatches = unitStatRegex.Matches(equation);
             if (!unitStatMatches.Any()) return;
@@ -90,7 +90,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 int maximumStatValue = int.MinValue;
                 foreach (string statSplit in match.Groups[1].Value.Split(","))
                 {
-                    ModifiedStatValue unitStat = unit.Stats.MatchGeneralStatName(statSplit.Trim());
+                    IModifiedStatValue unitStat = unit.Stats.MatchGeneralStatName(statSplit.Trim());
                     if (maximumStatValue < unitStat.FinalValue)
                         maximumStatValue = unitStat.FinalValue;
                 }
@@ -102,7 +102,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Replaces all instances of <c>VAR_UNIT_LEVEL</c> with the <paramref name="unit"/>'s Level value.
         /// </summary>
-        private static void ReplaceUnitLevelVariables(ref string equation, Unit unit)
+        private static void ReplaceUnitLevelVariables(ref string equation, IUnit unit)
         {
             equation = equation.Replace(VAR_UNIT_LEVEL, unit.Stats.Level.ToString());
         }
@@ -110,20 +110,20 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Replaces all instances of <c>VAR_WEAPON_UTIL_STAT_GREATEST</c> with the unit stat value indicated by the <paramref name="unit"/>'s primary equipped item's utilized stat.
         /// </summary>
-        private static void ReplaceWeaponUtilStatGreatestVariables(ref string equation, Unit unit)
+        private static void ReplaceWeaponUtilStatGreatestVariables(ref string equation, IUnit unit)
         {
             if (!equation.Contains(VAR_WEAPON_UTIL_STAT_GREATEST))
                 return;
 
             int maxValue = int.MinValue;
-            UnitInventoryItem primaryEquipped = GetPrimaryEquippedItem(unit);
+            IUnitInventoryItem primaryEquipped = GetPrimaryEquippedItem(unit);
 
             //Take the greatest stat value of all the utilized stats
             if(primaryEquipped != null)
             {
                 foreach (string utilizedStat in primaryEquipped.Item.UtilizedStats)
                 {
-                    ModifiedStatValue unitStat = unit.Stats.MatchGeneralStatName(utilizedStat);
+                    IModifiedStatValue unitStat = unit.Stats.MatchGeneralStatName(utilizedStat);
                     if (unitStat.FinalValue > maxValue)
                         maxValue = unitStat.FinalValue;
                 }
@@ -140,13 +140,13 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <summary>
         /// Replaces all instances of <c>VAR_WEAPON_UTIL_STAT_SUM</c> with the sum of the unit stat value(s) indicated by the <paramref name="unit"/>'s primary equipped item's utilized stat(s).
         /// </summary>
-        private static void ReplaceWeaponUtilStatSumVariables(ref string equation, Unit unit)
+        private static void ReplaceWeaponUtilStatSumVariables(ref string equation, IUnit unit)
         {
             if (!equation.Contains(VAR_WEAPON_UTIL_STAT_SUM))
                 return;
 
             int value = 0;
-            UnitInventoryItem primaryEquipped = GetPrimaryEquippedItem(unit);
+            IUnitInventoryItem primaryEquipped = GetPrimaryEquippedItem(unit);
 
             if(primaryEquipped != null)
             {
@@ -161,12 +161,12 @@ namespace RedditEmblemAPI.Services.Helpers
         /// Replaces all instances of {WeaponStat[...]} with the matching stat value from the <paramref name="unit"/>'s primary equipped item. If there is no primary equipped weapon, uses 0.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        private static void ReplaceWeaponStatVariables(ref string equation, Unit unit)
+        private static void ReplaceWeaponStatVariables(ref string equation, IUnit unit)
         {
             MatchCollection weaponStatMatches = weaponStatRegex.Matches(equation);
             if (!weaponStatMatches.Any()) return;
 
-            UnitInventoryItem primaryEquipped = unit.Inventory.GetPrimaryEquippedItem();
+            IUnitInventoryItem primaryEquipped = unit.Inventory.GetPrimaryEquippedItem();
             if(primaryEquipped == null && unit.Emblem != null)
             {
                 //If the primary equipped item isn't in the unit's inventory, check emblem weapons
@@ -181,7 +181,7 @@ namespace RedditEmblemAPI.Services.Helpers
                 {
                     foreach (string statSplit in match.Groups[1].Value.Split(","))
                     {
-                        UnitInventoryItemStat stat = primaryEquipped.MatchStatName(statSplit.Trim());
+                        IUnitInventoryItemStat stat = primaryEquipped.MatchStatName(statSplit.Trim());
                         if (maximumStatValue < stat.FinalValue)
                             maximumStatValue = stat.FinalValue;
                     }
@@ -200,7 +200,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// Replaces all instances of {BattalionStat[...]} with the matching stat value from the <paramref name="unit"/>'s battalion. If there is no battalion, uses 0.
         /// </summary>
         /// <exception cref="UnmatchedStatException"></exception>
-        private static void ReplaceBattalionStatVariables(ref string equation, Unit unit)
+        private static void ReplaceBattalionStatVariables(ref string equation, IUnit unit)
         {
             MatchCollection battalionStatMatches = battalionStatRegex.Matches(equation);
             if (!battalionStatMatches.Any()) return;
@@ -232,9 +232,9 @@ namespace RedditEmblemAPI.Services.Helpers
 
         #endregion Variable Replacement Functions
 
-        private static UnitInventoryItem GetPrimaryEquippedItem(Unit unit)
+        private static IUnitInventoryItem GetPrimaryEquippedItem(IUnit unit)
         {
-            UnitInventoryItem primaryEquipped = unit.Inventory.GetPrimaryEquippedItem();
+            IUnitInventoryItem primaryEquipped = unit.Inventory.GetPrimaryEquippedItem();
             if (primaryEquipped == null && unit.Emblem != null)
             {
                 //If the primary equipped item isn't in the unit's inventory, check emblem weapons

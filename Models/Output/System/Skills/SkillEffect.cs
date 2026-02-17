@@ -18,8 +18,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <inheritdoc cref="SkillEffect.ExecutionOrder"/>
         SkillEffectExecutionOrder ExecutionOrder { get; }
 
-        /// <inheritdoc cref="SkillEffect.Apply(Unit, ISkill, MapObj, List{Unit})"/>
-        void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units);
+        /// <inheritdoc cref="SkillEffect.Apply(IUnit, ISkill, IMapObj, List{IUnit})"/>
+        void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units);
     }
 
     #endregion Interface
@@ -60,7 +60,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
             this.ExecutionOrder = SkillEffectExecutionOrder.Standard;
         }
 
-        public virtual void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
+        public virtual void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
             //By default, the effect applies nothing
         }
@@ -71,14 +71,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// Helper function used by the <c>...RadiusTeleportEffect</c>s. Tests each tile in <paramref name="targetTiles"/> to ensure that <paramref name="unit"/> is capable of teleporting there, then adds valid tiles to the <paramref name="unit"/>'s movement range.
         /// </summary>
         /// <exception cref="UnmatchedMovementTypeException"></exception>
-        protected void AddTeleportTargetsToUnitRange(Unit unit, List<Tile> targetTiles)
+        protected void AddTeleportTargetsToUnitRange(IUnit unit, List<ITile> targetTiles)
         {
             IEnumerable<TerrainTypeMovementCostSetEffect_Skill> moveCostSets_Skill = unit.GetFullSkillsList().SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect_Skill>();
-            IEnumerable<TerrainTypeMovementCostSetEffect_Status> moveCostSets_Status = unit.StatusConditions.SelectMany(s => s.StatusObj.Effects).OfType<TerrainTypeMovementCostSetEffect_Status>();
+            IEnumerable<TerrainTypeMovementCostSetEffect_Status> moveCostSets_Status = unit.StatusConditions.SelectMany(s => s.Status.Effects).OfType<TerrainTypeMovementCostSetEffect_Status>();
 
-            foreach (Tile tile in targetTiles)
+            foreach (ITile tile in targetTiles)
             {
-                ITerrainTypeStats terrainStats = tile.TerrainTypeObj.GetTerrainTypeStatsByAffiliation(unit.AffiliationObj);
+                ITerrainTypeStats terrainStats = tile.TerrainType.GetTerrainTypeStatsByAffiliation(unit.Affiliation);
 
                 //Ensure that this unit can move to this tile
                 int moveCost;
@@ -88,14 +88,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                 //If unit is blocked from this tile, check for an effect that would allow it to access it
                 if (moveCost == 99)
                 {
-                    TerrainTypeMovementCostSetEffect_Skill movCostSet_Skill = moveCostSets_Skill.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
-                    TerrainTypeMovementCostSetEffect_Status movCostSet_Status = moveCostSets_Status.FirstOrDefault(s => tile.TerrainTypeObj.Groupings.Contains(s.TerrainTypeGrouping));
+                    TerrainTypeMovementCostSetEffect_Skill movCostSet_Skill = moveCostSets_Skill.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
+                    TerrainTypeMovementCostSetEffect_Status movCostSet_Status = moveCostSets_Status.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
                     if (!((movCostSet_Skill != null && movCostSet_Skill.CanOverride99MoveCost) || (movCostSet_Status != null && movCostSet_Status.CanOverride99MoveCost)))
                         continue;
                 }
 
                 //Check for an enemy unit already occupying this tile
-                if (tile.UnitData.Unit != null && tile.UnitData.Unit.AffiliationObj.Grouping != unit.AffiliationObj.Grouping)
+                if (tile.UnitData.Unit != null && tile.UnitData.Unit.Affiliation.Grouping != unit.Affiliation.Grouping)
                     continue;
 
                 //If no issues arose, add the tile to the unit's movement range

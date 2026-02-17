@@ -21,7 +21,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
             //This effect has no parameters
         }
 
-        public bool IsActive(Unit unit)
+        public bool IsActive(IUnit unit)
         {
             //No conditional, always true
             return true;

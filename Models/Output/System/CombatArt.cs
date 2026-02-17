@@ -1,7 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Models.Output.System.Interfaces;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System;
@@ -37,8 +37,8 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <inheritdoc cref="CombatArt.DurabilityCost"/>
         int DurabilityCost { get; set; }
 
-        /// <inheritdoc cref="CombatArt.TagsList"/>
-        List<ITag> TagsList { get; set; }
+        /// <inheritdoc cref="CombatArt.Tags"/>
+        List<ITag> Tags { get; set; }
 
         /// <inheritdoc cref="CombatArt.TextFields"/>
         List<string> TextFields { get; set; }
@@ -88,23 +88,13 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// The combat art's tags.
         /// </summary>
-        [JsonIgnore]
-        public List<ITag> TagsList { get; set; }
+        [JsonProperty(ItemConverterType = typeof(MatchableNameConverter))]
+        public List<ITag> Tags { get; set; }
 
         /// <summary>
         /// List of the combat art's text fields.
         /// </summary>
         public List<string> TextFields { get; set; }
-
-        #region JSON Serialization Only
-
-        /// <summary>
-        /// For JSON serialization only. The combat art's tags.
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        private IEnumerable<string> Tags { get { return this.TagsList.Any() ? this.TagsList.Select(t => t.Name) : null; } }
-
-        #endregion JSON Serialization Only
 
         #endregion Attributes
 
@@ -121,13 +111,13 @@ namespace RedditEmblemAPI.Models.Output.System
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
             IEnumerable<string> tagList = DataParser.List_StringCSV(data, config.Tags).Distinct();
-            this.TagsList = Tag.MatchNames(tags, tagList, false);
+            this.Tags = Tag.MatchNames(tags, tagList, false);
         }
 
         public override void FlagAsMatched()
         {
             this.Matched = true;
-            this.TagsList.ForEach(t => t.FlagAsMatched());
+            this.Tags.ForEach(t => t.FlagAsMatched());
         }
 
         #region Static Functions

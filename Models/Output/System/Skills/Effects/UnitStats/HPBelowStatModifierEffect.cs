@@ -36,7 +36,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Applies <c>Modifiers</c> to <paramref name="unit"/> if <paramref name="unit"/>'s HP percentage is equal to or below the value of <c>HPPercentage</c>.
         /// </summary>
-        public override void Apply(Unit unit, ISkill skill, MapObj map, List<Unit> units)
+        public override void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
             //HP percentage must be equal to or below threshold
             if (unit.Stats.HP.Percentage > this.HPPercentage)

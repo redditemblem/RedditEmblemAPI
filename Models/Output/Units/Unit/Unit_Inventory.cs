@@ -7,20 +7,34 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+    
+    /// <inheritdoc cref="Unit"/>
+    public partial interface IUnit
+    {
+        /// <inheritdoc cref="Unit.WeaponRanks"/>
+        IDictionary<string, string> WeaponRanks { get; }
+
+        /// <inheritdoc cref="Unit.Inventory"/>
+        IUnitInventory Inventory { get; }
+    }
+    
+    #endregion Interface
+
     // Partial class for holding inventory attributes/functions.
-    public partial class Unit
+    public partial class Unit : IUnit
     {
         #region Attributes
 
         /// <summary>
         /// Collection of the unit's weapon ranks.
         /// </summary>
-        public IDictionary<string, string> WeaponRanks { get; set; }
+        public IDictionary<string, string> WeaponRanks { get; private set; }
 
         /// <summary>
         /// Container for information about the unit's inventory.
         /// </summary>
-        public UnitInventory Inventory { get; set; }
+        public IUnitInventory Inventory { get; private set; }
 
         #endregion Attributes
 
@@ -87,11 +101,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <item>Emblem</item>
         /// </list>
         /// </remarks>
-        private UnitInventory BuildUnitInventory(IEnumerable<string> data, InventoryConfig config, SystemInfo system)
+        private IUnitInventory BuildUnitInventory(IEnumerable<string> data, InventoryConfig config, SystemInfo system)
         {
-            UnitInventory inventory = new UnitInventory(config, system, data, this.Emblem);
+            IUnitInventory inventory = new UnitInventory(config, system, data, this.Emblem);
 
-            foreach (UnitInventoryItem item in inventory.GetAllItems())
+            foreach (IUnitInventoryItem item in inventory.GetAllItems())
             {
                 //Check if the item can be equipped
                 string unitRank;
@@ -113,7 +127,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             }
 
-            UnitInventoryItem primaryEquipped = inventory.GetPrimaryEquippedItem();
+            IUnitInventoryItem primaryEquipped = inventory.GetPrimaryEquippedItem();
             if (primaryEquipped != null)
             {
                 //Check if we need to apply weapon rank bonuses for the primary equipped item
@@ -133,21 +147,21 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             //Apply equipped stat modifiers
-            IEnumerable<UnitInventoryItem> equippedItems = inventory.GetAllEquippedItems();
+            IEnumerable<IUnitInventoryItem> equippedItems = inventory.GetAllEquippedItems();
             if (this.Emblem != null)
             {
-                UnitInventoryItem emblemEquipped = this.Emblem.EngageWeapons.SingleOrDefault(i => i.IsPrimaryEquipped);
+                IUnitInventoryItem emblemEquipped = this.Emblem.EngageWeapons.SingleOrDefault(i => i.IsPrimaryEquipped);
                 if (emblemEquipped != null) equippedItems = equippedItems.Append(emblemEquipped);
             }
 
-            foreach (UnitInventoryItem equipped in equippedItems)
+            foreach (IUnitInventoryItem equipped in equippedItems)
             {
                 string modifierName = $"{equipped.Item.Name} (Eqp)";
                 this.Stats.ApplyCombatStatModifiers(equipped.Item.EquippedCombatStatModifiers, modifierName);
                 this.Stats.ApplyGeneralStatModifiers(equipped.Item.EquippedStatModifiers, modifierName);
 
                 //If the equipped item has an engraving, apply those modifiers too.
-                foreach (IEngraving engraving in equipped.EngravingsList)
+                foreach (IEngraving engraving in equipped.Engravings)
                 {
                     string engravingModifierName = $"{equipped.Item.Name} (Eqp) {engraving.Name}";
                     this.Stats.ApplyCombatStatModifiers(engraving.CombatStatModifiers, engravingModifierName);
@@ -156,7 +170,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             //Apply inventory stat modifiers for all nonequipped items
-            foreach (UnitInventoryItem inv in inventory.GetAllUnequippedItems())
+            foreach (IUnitInventoryItem inv in inventory.GetAllUnequippedItems())
             {
                 string modifierName = $"{inv.Item.Name} (Inv)";
                 this.Stats.ApplyCombatStatModifiers(inv.Item.InventoryCombatStatModifiers, modifierName);

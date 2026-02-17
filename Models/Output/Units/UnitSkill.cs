@@ -1,15 +1,33 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Units;
+using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
+    #region Interface
+
+    /// <inheritdoc cref="UnitSkill"/>
+    public interface IUnitSkill
+    {
+        /// <inheritdoc cref="UnitSkill.FullName"/>
+        string FullName { get; }
+
+        /// <inheritdoc cref="UnitSkill.Skill"/>
+        ISkill Skill { get; }
+
+        /// <inheritdoc cref="UnitSkill.AdditionalStats"/>
+        IDictionary<string, int> AdditionalStats { get; }
+    }
+
+    #endregion Interface
+
     /// <summary>
     /// Object representing a <c>Skill</c> present on a <c>Unit</c>.
     /// </summary>
-    public class UnitSkill
+    public class UnitSkill : IUnitSkill
     {
         #region Attributes
 
@@ -17,29 +35,19 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// The full name of the skill pulled from raw <c>Unit</c> data.
         /// </summary>
         [JsonIgnore]
-        public string FullName { get; set; }
+        public string FullName { get; private set; }
 
         /// <summary>
         /// The <c>Skill</c> object.
         /// </summary>
-        [JsonIgnore]
-        public ISkill SkillObj { get; set; }
+        [JsonProperty("name")]
+        [JsonConverter(typeof(MatchableNameConverter))]
+        public ISkill Skill { get; private set; }
 
         /// <summary>
         /// Dictionary of additional stat values for this skill.
         /// </summary>
-        public IDictionary<string, int> AdditionalStats { get; set; }
-
-        #region JSON Serialization
-
-        /// <summary>
-        /// Only for JSON serialization. The name of the skill. 
-        /// </summary>
-        [JsonProperty]
-        private string Name { get { return this.SkillObj.Name; } }
-
-
-        #endregion JSON Serialization
+        public IDictionary<string, int> AdditionalStats { get; private set; }
 
         #endregion Attributes
 
@@ -51,7 +59,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             this.FullName = DataParser.String(data, config.Name, "Skill Name");
             this.AdditionalStats = DataParser.NamedStatDictionary_OptionalInt_Any(config.AdditionalStats, data, false, this.FullName + " {0}");
 
-            this.SkillObj = Skill.MatchName(skills, this.FullName.Trim(), flagAsMatched);
+            this.Skill = System.Skills.Skill.MatchName(skills, this.FullName.Trim(), flagAsMatched);
         }
     }
 }
