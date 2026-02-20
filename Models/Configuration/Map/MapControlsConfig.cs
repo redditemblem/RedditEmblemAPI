@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
+using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.Map
 {
@@ -17,10 +18,10 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         public int MapSwitch { get; set; }
 
         /// <summary>
-        /// Required. Cell index of the map image URL value.
+        /// Required. Cell indexes of the map image URL value.
         /// </summary>
         [JsonRequired]
-        public int MapImageURL { get; set; }
+        public List<int> MapImageURLs { get; set; }
 
         #endregion
 

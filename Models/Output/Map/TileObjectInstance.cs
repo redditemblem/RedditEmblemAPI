@@ -21,13 +21,13 @@ namespace RedditEmblemAPI.Models.Output.Map
         int ID { get; }
 
         /// <inheritdoc cref="TileObjectInstance.TileObject"/>
-        ITileObject TileObject { get; set; }
+        ITileObject TileObject { get; }
 
         /// <inheritdoc cref="TileObjectInstance.OriginTiles"/>
-        List<ITile> OriginTiles { get; set; }
+        ITile[] OriginTiles { get; }
 
-        /// <inheritdoc cref="TileObjectInstance.AnchorCoordinateObj"/>
-        ICoordinate AnchorCoordinateObj { get; }
+        /// <inheritdoc cref="TileObjectInstance.AnchorCoordinate"/>
+        ICoordinate AnchorCoordinate { get; }
 
         /// <inheritdoc cref="TileObjectInstance.HP"/>
         IHealthPoints HP { get; }
@@ -39,7 +39,7 @@ namespace RedditEmblemAPI.Models.Output.Map
     #endregion Interface
 
     /// <summary>
-    /// Object representing a <c>TileObject</c> instance located on a <c>Tile</c>.
+    /// Object representing an instance of a <c>ITileObject</c> located on a specific <c>ITile</c>.
     /// </summary>
     public class TileObjectInstance : ITileObjectInstance
     {
@@ -55,25 +55,18 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// </summary>
         [JsonProperty("name")]
         [JsonConverter(typeof(MatchableNameConverter))]
-        public ITileObject TileObject { get; set; }
+        public ITileObject TileObject { get; private set; }
 
         /// <summary>
         /// List of <c>Tile</c>s from which the tile object's range originates.
         /// </summary>
         [JsonIgnore]
-        public List<ITile> OriginTiles { get; set; }
+        public ITile[] OriginTiles { get; private set; }
 
         /// <summary>
-        /// The anchor coordinate for the tile object.
+        /// The anchor coordinate for the tile object. Assumes this is the always first tile in the OriginTiles list.
         /// </summary>
-        [JsonIgnore]
-        public ICoordinate AnchorCoordinateObj { get; private set; }
-
-        /// <summary>
-        /// Coordinate of the anchor tile. Assumes this is the always first tile in the OriginTiles list.
-        /// </summary>
-        [JsonProperty]
-        private string AnchorCoordinate { get { return this.OriginTiles.First()?.Coordinate.AsText; } }
+        public ICoordinate AnchorCoordinate { get { return this.OriginTiles.First()?.Coordinate; } }
 
         /// <summary>
         /// The tile object's current HP values.
@@ -91,38 +84,55 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Constructor.
         /// </summary>
-        [Obsolete("Leaving this constructor in until all teams using the old Tile Object placement method are finished.")]
-        public TileObjectInstance(int tileObjectID, ITileObject tileObject)
-        {
-            this.ID = tileObjectID;
-            this.TileObject = tileObject;
-            this.OriginTiles = new List<ITile>();
-            this.AttackRange = new List<ICoordinate>();
-        }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
         /// <param name="tileObjectID">ID for identifying this particular tile object instance. Should be unique.</param>
-        public TileObjectInstance(MapObjectsConfig config, MapConstantsConfig mapConstants, int tileObjectID, IEnumerable<string> data, IDictionary<string, ITileObject> tileObjects)
+        public TileObjectInstance(MapObjectsConfig config, int tileObjectID, IEnumerable<string> data, IMapObj map, IDictionary<string, ITileObject> tileObjects)
         {
             this.ID = tileObjectID;
-            this.OriginTiles = new List<ITile>();
-            this.AttackRange = new List<ICoordinate>();
 
             string name = DataParser.String(data, config.Name, "Name");
             string coordString = DataParser.String(data, config.Coordinate, "Coordinate");
+            ICoordinate anchor = new Coordinate(map.Constants.CoordinateFormat, coordString);
 
-            this.AnchorCoordinateObj = new Coordinate(mapConstants.CoordinateFormat, coordString);
-            this.TileObject = System.TileObject.MatchName(tileObjects, name, this.AnchorCoordinateObj);
+            this.TileObject = System.TileObject.MatchName(tileObjects, name, anchor);
 
-            if(config.HP != null)
+            if(config.HP is not null)
             {
                 //Only try to parse the HP if we have at least one value set
                 string currentHP = DataParser.OptionalString(data, config.HP.Current, "Current Durability");
                 if(!string.IsNullOrEmpty(currentHP))
                     this.HP = new HealthPoints(data, config.HP);
             }
+
+            this.OriginTiles = CalculateOriginTiles(map, anchor);
+            this.AttackRange = new List<ICoordinate>();
+        }
+
+        /// <summary>
+        /// Returns an array of the tile object instance's origin tiles, originating from <paramref name="anchorCoord"/>.
+        /// </summary>
+        private ITile[] CalculateOriginTiles(IMapObj map, ICoordinate anchorCoord)
+        {
+            int numberOfOriginTiles = (int)Math.Pow(this.TileObject.Size, 2);
+            ITile[] originTiles = new ITile[numberOfOriginTiles];
+
+            int index = 0;
+            for (int r = 0; r < this.TileObject.Size; r++)
+            {
+                for(int c = 0; c < this.TileObject.Size; c++)
+                {
+                    //Calculate the x and y values of the tile
+                    int x = anchorCoord.X + c;
+                    int y = anchorCoord.Y + r;
+
+                    ITile tile = map.GetTileByCoord(x, y);
+                    originTiles[index++] = tile;
+
+                    //Add this tile object inst to the tile objects list of each tile it occupies
+                    tile.TileObjects.Add(this);
+                }
+            }
+
+            return originTiles;
         }
 
         #region Static Functions
@@ -132,9 +142,9 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// </summary>
         /// <remarks>The returned dictionary's key is a unique ID for each tile object instance.</remarks>
         /// <exception cref="TileObjectInstanceProcessingException"></exception>
-        public static Dictionary<int, ITileObjectInstance> BuildDictionary(MapObjectsConfig config, MapConstantsConfig mapConstantsConfig, IDictionary<string, ITileObject> tileObjects)
+        public static IDictionary<int, ITileObjectInstance> BuildDictionary(MapObjectsConfig config, IMapObj map, IDictionary<string, ITileObject> tileObjects)
         {
-            Dictionary<int, ITileObjectInstance> tileObjectInsts = new Dictionary<int, ITileObjectInstance>();
+            IDictionary<int, ITileObjectInstance> tileObjectInsts = new Dictionary<int, ITileObjectInstance>();
             if (config?.Query is null) return tileObjectInsts;
 
             int idIterator = 1;
@@ -152,7 +162,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                     if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(coordinate))
                         continue;
 
-                    tileObjectInsts.Add(idIterator, new TileObjectInstance(config, mapConstantsConfig, idIterator, tileObj, tileObjects));
+                    tileObjectInsts.Add(idIterator, new TileObjectInstance(config, idIterator, tileObj, map, tileObjects));
                     idIterator++;
                 }
                 catch (Exception ex)

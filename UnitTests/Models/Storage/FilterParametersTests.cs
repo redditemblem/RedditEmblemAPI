@@ -1,5 +1,4 @@
-﻿using Amazon.S3.Model;
-using NSubstitute;
+﻿using NSubstitute;
 using RedditEmblemAPI.Models.Output.Storage;
 
 namespace UnitTests.Models.Storage

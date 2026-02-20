@@ -6,14 +6,10 @@ using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Services.Helpers;
-using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace RedditEmblemAPI.Models.Output.Map
 {
@@ -40,8 +36,14 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <inheritdoc cref="MapObj.Tiles"/>
         List<List<ITile>> Tiles { get; set; }
 
+        /// <inheritdoc cref="MapObj.Segments"/>
+        IMapSegment[] Segments { get; set; }
+
         /// <inheritdoc cref="MapObj.TileObjectInstances"/>
-        Dictionary<int, ITileObjectInstance> TileObjectInstances { get; set; }
+        IDictionary<int, ITileObjectInstance> TileObjectInstances { get; set; }
+
+        /// <inheritdoc cref="MapObj.GetSegmentByCoord(ICoordinate)"/>
+        IMapSegment GetSegmentByCoord(ICoordinate coord);
 
         /// <inheritdoc cref="MapObj.GetTileByCoord(ICoordinate)"/>
         ITile GetTileByCoord(ICoordinate coord);
@@ -49,14 +51,11 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <inheritdoc cref="MapObj.GetTileByCoord(int, int)"/>
         ITile GetTileByCoord(int x, int y);
 
-        /// <inheritdoc cref="MapObj.GetTilesInRadius(List{ITile}, int)"/>
-        List<ITile> GetTilesInRadius(List<ITile> centerTiles, int radius);
+        /// <inheritdoc cref="MapObj.GetTilesInRadius(IEnumerable{ITile}, int)"/>
+        IEnumerable<ITile> GetTilesInRadius(IEnumerable<ITile> centerTiles, int radius);
 
         /// <inheritdoc cref="MapObj.GetTilesInRadius(ITile, int)"/>
-        List<ITile> GetTilesInRadius(ITile centerTile, int radius);
-
-        /// <inheritdoc cref="MapObj.GetTilesInRadius(ICoordinate, int)"/>
-        List<ITile> GetTilesInRadius(ICoordinate center, int radius);
+        IEnumerable<ITile> GetTilesInRadius(ITile centerTile, int radius);
     }
 
     #endregion Interface
@@ -113,9 +112,14 @@ namespace RedditEmblemAPI.Models.Output.Map
         public List<List<ITile>> Tiles { get; set; }
 
         /// <summary>
+        /// Set of objects representing the different portions of the full map.
+        /// </summary>
+        public IMapSegment[] Segments { get; set; }
+
+        /// <summary>
         /// Dictionary of tile object instances present on the map.
         /// </summary>
-        public Dictionary<int, ITileObjectInstance> TileObjectInstances { get; set; }
+        public IDictionary<int, ITileObjectInstance> TileObjectInstances { get; set; }
 
         #endregion
 
@@ -123,197 +127,117 @@ namespace RedditEmblemAPI.Models.Output.Map
 
         private static Regex warpGroupRegex = new Regex(@"\(([0-9]+)\)"); //match warp group (ex. "(1)")
 
-        #endregion
+        #endregion Constants
 
         #region Constructors
 
         /// <summary>
-        /// Initializes all of the <c>Map</c>'s attributes and builds its <c>Tiles</c> matrix.
+        /// Creates an <c>IImageLoader</c> object and calls the main constructor with all parameters.
+        /// </summary>
+        public MapObj(MapConfig config, IDictionary<string, ITerrainType> terrainTypes, IDictionary<string, ITileObject> tileObjects)
+            : this(config, new ImageLoader(), terrainTypes, tileObjects)
+        { }
+
+        /// <summary>
+        /// Constructor.
         /// </summary>
         /// <exception cref="MapDataLockedException"></exception>
-        /// <exception cref="MapImageURLNotFoundException"></exception>
-        public MapObj(MapConfig config, IDictionary<string, ITerrainType> terrainTypes, IDictionary<string, ITileObject> tileObjects)
+        /// <exception cref="MapImageURLsNotFoundException"></exception>
+        public MapObj(MapConfig config, IImageLoader imageLoader, IDictionary<string, ITerrainType> terrainTypes, IDictionary<string, ITileObject> tileObjects)
         {
             this.Constants = config.Constants;
 
             //Grab the first matrix row from the MapControls query. Data here should only ever be in one row/column.
-            IList<object> values = config.MapControls.Query.Data.First();
+            IEnumerable<string> data = config.MapControls.Query.Data.First().Select(v => v.ToString());
 
             //Validate the map is turned on
-            if ((values.ElementAtOrDefault(config.MapControls.MapSwitch) ?? "Off").ToString() != "On")
-                throw new MapDataLockedException();
+            string state = DataParser.OptionalString(data, config.MapControls.MapSwitch, "Map Switch");
+            if (!state.Equals("On")) throw new MapDataLockedException();
 
-            //Validate we have a map image
-            string mapImageURL = (values.ElementAtOrDefault(config.MapControls.MapImageURL) ?? string.Empty).ToString();
-            if (string.IsNullOrEmpty(mapImageURL))
-                throw new MapImageURLNotFoundException(config.MapControls.Query.Sheet);
-            DataParser.String_URL(mapImageURL, "Map Image URL"); //validate URL
-            this.MapImageURL = mapImageURL;
+            string chapterPostURL = DataParser.OptionalString(data, config.MapControls.ChapterPostURL, "Chapter Post URL");
+            if (!string.IsNullOrEmpty(chapterPostURL))
+                this.ChapterPostURL = DataParser.OptionalString_URL(chapterPostURL, "Chapter Post URL"); //validate URL
 
-            this.ChapterPostURL = (values.ElementAtOrDefault(config.MapControls.ChapterPostURL) ?? string.Empty).ToString();
-            DataParser.OptionalString_URL(this.ChapterPostURL, "Chapter Post URL"); //validate URL
+            //Validate we have at least one map image
+            IEnumerable<string> mapImageURLs = DataParser.List_Strings(data, config.MapControls.MapImageURLs);
+            if (!mapImageURLs.Any())
+                throw new MapImageURLsNotFoundException(config.MapControls.Query.Sheet);
+            this.MapImageURL = mapImageURLs.First();
 
-            GetMapDimensionsFromImage();
+            this.Segments = MapSegment.BuildArray(config.Constants, imageLoader, mapImageURLs);
+            AddTilesToSegments(config.MapTiles, terrainTypes);
 
-            //Build tile matrix
-            this.Tiles = new List<List<ITile>>();
-            BuildTiles(config.MapTiles, terrainTypes);
-
-            //If we have tile objects configured, add those to the map
-            #warning Clean this up after old Tile Object config is no longer needed.
-            this.TileObjectInstances = new Dictionary<int, ITileObjectInstance>();
-            if (config.MapObjects != null)
-            {
-                //If we're using the new config, use the new config path. Else, fall back on the old config path.
-                if(config.MapObjects.Name > -1)
-                    AddTileObjectsToTiles(config.MapObjects, tileObjects);
-                else
-                    AddTileObjectsToTiles_Old(config.MapObjects, tileObjects);
-            }
+            this.TileObjectInstances = TileObjectInstance.BuildDictionary(config.MapObjects, this, tileObjects);
         }
 
-        #endregion
+        #region Segment Construction
 
         /// <summary>
-        /// Calculates the expected height/width of the map in # of tiles based on the dimensions the image loaded from <c>MapImageURL</c>.
+        /// Uses <paramref name="config"/>'s queried data to contruct tile matrices in each of the map segments.
         /// </summary>
-        private void GetMapDimensionsFromImage()
-        {
-            int tileHeight;
-            int tileWidth;
-
-
-            try
-            {
-                using (HttpClient httpClient = new HttpClient())
-                {
-                    Task<byte[]> imageData = httpClient.GetByteArrayAsync(this.MapImageURL);
-                    imageData.Wait();
-
-                    using (MemoryStream imgStream = new MemoryStream(imageData.Result))
-                    using (SKManagedStream inputStream = new SKManagedStream(imgStream))
-                    using (SKBitmap img = SKBitmap.Decode(inputStream))
-                    {
-                        this.ImageHeight = img.Height;
-                        this.ImageWidth = img.Width;
-                    }
-                }
-            }
-            catch (AggregateException ex)
-            {
-                if (ex.InnerException != null && ex.InnerException.Message.Contains("404"))
-                    throw new MapImageLoadFailedException();
-                throw new MapImageLoadFailedException(ex.InnerException != null ? ex.InnerException.Message : ex.Message);
-            }
-           
-            tileHeight = (int)Math.Floor((decimal)this.ImageHeight / (this.Constants.TileSize + this.Constants.TileSpacing));
-            tileWidth = (int)Math.Floor((decimal)this.ImageWidth / (this.Constants.TileSize + this.Constants.TileSpacing));
-
-            if (this.Constants.HasHeaderTopLeft)
-            {
-                tileHeight -= 1;
-                tileWidth -= 1;
-            }
-
-            if (this.Constants.HasHeaderBottomRight)
-            {
-                tileHeight -= 1;
-                tileWidth -= 1;
-            }
-
-            this.MapHeightInTiles = tileHeight;
-            this.MapWidthInTiles = tileWidth;
-        }
-
-        /// <summary>
-        /// Uses the data from <paramref name="config"/>'s query to contruct the <c>Tiles</c> matrix.
-        /// </summary>
-        /// <param name="config"></param>
-        /// <param name="terrainTypes"></param>
         /// <exception cref="MapProcessingException"></exception>
-        private void BuildTiles(MapTilesConfig config, IDictionary<string, ITerrainType> terrainTypes)
+        private void AddTilesToSegments(MapTilesConfig config, IDictionary<string, ITerrainType> terrainTypes)
         {
-            int x = 1;
-            int y = 1;
-
             try
             {
-                IList<IList<object>> tileData = config.Query.Data;
+                IList<IList<object>> rows = config.Query.Data;
                 IDictionary<int, List<ITile>> warpGroups = new Dictionary<int, List<ITile>>();
 
-                if (tileData.Count != this.MapHeightInTiles)
-                    throw new UnexpectedMapHeightException(tileData.Count, this.MapHeightInTiles, config.Query.Sheet);
+                //The total number of rows in the data set should be equal to the tallest map segment's vertical height
+                int maxSegmentHeight = this.Segments.Max(s => s.HeightInTiles);
+                if (rows.Count != maxSegmentHeight)
+                    throw new UnexpectedMapHeightException(rows.Count, maxSegmentHeight, config.Query.Sheet);
 
-                foreach (List<object> row in tileData)
+                for (int row = 0; row < rows.Count(); row++)
                 {
-                    if (row.Count != this.MapWidthInTiles)
-                        throw new UnexpectedMapWidthException(row.Count, this.MapWidthInTiles, config.Query.Sheet);
+                    //One row can contain terrain for multiple segments, separated by empty cells
+                    IEnumerable<string> totalColumns = rows[row].Select(c => c.ToString()).Where(c => !string.IsNullOrWhiteSpace(c));
 
-                    List<ITile> currentRow = new List<ITile>();
-                    foreach (object tile in row)
+                    int columnsTaken = 0;
+                    foreach (IMapSegment segment in this.Segments)
                     {
-                        string t = tile.ToString().Trim();
+                        //Segments can have varying heights
+                        //If we've passed the expected max height of this segment already, skip it
+                        if (row >= segment.HeightInTiles) continue;
 
-                        //Search for warp group number
-                        int warpGroupNum = 0;
-                        Match match = warpGroupRegex.Match(t);
-                        if (match.Success)
+                        //Grab the range of cells that represent the tiles for the current segment
+                        //The start of the range is inclusive, the end is not
+                        Range range = new Range(columnsTaken, columnsTaken + segment.WidthInTiles);
+                        IEnumerable<string> segmentColumns = totalColumns.Take(range);
+
+                        //Move the start of the range for the next segment
+                        columnsTaken += segment.WidthInTiles;
+
+                        //If we reach the end of the populated cells in this row and don't have enough
+                        //to match the expected combined segment width, error.
+                        if (segmentColumns.Count() != segment.WidthInTiles)
+                            throw new UnexpectedMapWidthException(segmentColumns.Count(), segment.WidthInTiles, config.Query.Sheet);
+
+                        segment.Tiles[row] = new ITile[segment.WidthInTiles];
+                        for (int column = 0; column < segmentColumns.Count(); column++)
                         {
-                            t = t.Replace(match.Groups[0].Value, string.Empty).Trim();
-                            warpGroupNum = int.Parse(match.Groups[1].Value);
+                            string cell = segmentColumns.ElementAt(column);
+                            int? warpGroupNum = GetWarpGroupNumber(ref cell);
+
+                            //Calculate the tile's x and y coordinates
+                            int x = segment.HorizontalTileRangeWithinMap.Start.Value + column;
+                            int y = row + 1;
+
+                            //Create the tile
+                            ICoordinate coord = new Coordinate(this.Constants.CoordinateFormat, x, y);
+                            ITerrainType terrainType = TerrainType.MatchName(terrainTypes, cell, coord);
+                            ITile tile = new Tile(coord, terrainType);
+
+                            segment.Tiles[row][column] = tile;
+
+                            //If we found a warp group number, add the new tile to a warp group.
+                            if (warpGroupNum.HasValue)
+                                AddTileToWarpGroups(warpGroups, tile, warpGroupNum.Value);
                         }
-
-                        //Match on tile's terrain type
-                        ICoordinate coord = new Coordinate(this.Constants.CoordinateFormat, x, y);
-                        ITerrainType type = TerrainType.MatchName(terrainTypes, t, coord);
-                        ITile temp = new Tile(coord, type);
-
-                        //If we found a warp group number, add the new tile to a warp group.
-                        if (warpGroupNum > 0)
-                        {
-                            //If the terrain type isn't configured as a warp, error.
-                            if (type.WarpType == WarpType.None)
-                                throw new TerrainTypeNotConfiguredAsWarpException(t, tile.ToString());
-
-                            List<ITile> warpGroup;
-                            if (!warpGroups.TryGetValue(warpGroupNum, out warpGroup))
-                            {
-                                warpGroup = new List<ITile>();
-                                warpGroups.Add(warpGroupNum, warpGroup);
-                            }
-
-                            //Two-way bind warp group data
-                            warpGroup.Add(temp);
-                            temp.WarpData.WarpGroup = warpGroup;
-                            temp.WarpData.WarpGroupNumber = warpGroupNum;
-                        }
-
-                        currentRow.Add(temp);
-                        x++;
                     }
-
-                    this.Tiles.Add(currentRow);
-
-                    x = 1;
-                    y++;
                 }
 
-                //Validate all warp groups for entrances/exits
-                foreach (int key in warpGroups.Keys)
-                {
-                    List<ITile> group = warpGroups[key];
-
-                    IEnumerable<ITile> entrances = group.Where(w => w.TerrainType.WarpType == WarpType.Entrance || w.TerrainType.WarpType == WarpType.Dual);
-                    IEnumerable<ITile> exits = group.Where(w => w.TerrainType.WarpType == WarpType.Exit || w.TerrainType.WarpType == WarpType.Dual);
-
-                    //If we do not have at least one distinct entrance and exit
-                    if (  !entrances.Any()
-                       || !exits.Any()
-                       || entrances.Select(e => e.Coordinate).Union(exits.Select(e => e.Coordinate)).Distinct().Count() < 2
-                        )
-                        throw new InvalidWarpGroupException(key.ToString());
-                }
-
+                ValidateWarpGroups(warpGroups);
             }
             catch (Exception ex)
             {
@@ -322,188 +246,120 @@ namespace RedditEmblemAPI.Models.Output.Map
         }
 
         /// <summary>
-        /// Uses the data from <paramref name="config"/> to build a dictionary of <c>TileObjectInstance</c>s and place them on the map.
+        /// Searches <paramref name="terrainTypeText"/> for a warp group number and, if found, returns it as an integer. <paramref name="terrainTypeText"/> will be modified to remove all warp group number syntax.
         /// </summary>
-        private void AddTileObjectsToTiles(MapObjectsConfig config, IDictionary<string, ITileObject> tileObjects)
+        private int? GetWarpGroupNumber(ref string terrainTypeText)
         {
-            this.TileObjectInstances = TileObjectInstance.BuildDictionary(config, this.Constants, tileObjects);
-            foreach (ITileObjectInstance tileObjInst in this.TileObjectInstances.Values)
+            int? warpGroupNumber = null;
+
+            Match match = warpGroupRegex.Match(terrainTypeText);
+            if (match.Success)
             {
-                ITile originTile;
-
-                try
-                {
-                    originTile = GetTileByCoord(tileObjInst.AnchorCoordinateObj);
-                }
-                catch (Exception ex)
-                {
-                    throw new TileObjectInstanceProcessingException(tileObjInst.TileObject.Name, ex);
-                }
-
-                try
-                {
-                    BindTileObjectToTiles(tileObjInst, originTile);
-                }
-                catch(Exception ex) 
-                {
-                    throw new MapProcessingException(ex);
-                }
+                terrainTypeText = terrainTypeText.Replace(match.Groups[0].Value, string.Empty);
+                warpGroupNumber = int.Parse(match.Groups[1].Value);
             }
+
+            terrainTypeText = terrainTypeText.Trim();
+            return warpGroupNumber;
         }
 
         /// <summary>
-        /// Uses the data from <paramref name="config"/>'s query to apply <c>ITileObject</c>s to the map.
+        /// Adds <paramref name="tile"/> to <paramref name="warpGroupNumber"/> from <paramref name="warpGroups"/>.
         /// </summary>
-        [Obsolete("Leaving this function in until all teams using the old Tile Object placement method are finished.")]
-        private void AddTileObjectsToTiles_Old(MapObjectsConfig config, IDictionary<string, ITileObject> tileObjects)
+        /// <exception cref="TerrainTypeNotConfiguredAsWarpException"></exception>
+        private void AddTileToWarpGroups(IDictionary<int, List<ITile>> warpGroups, ITile tile, int warpGroupNumber)
         {
-            try
+            //If the terrain type isn't configured as a warp, error.
+            if (tile.TerrainType.WarpType == WarpType.None)
+                throw new TerrainTypeNotConfiguredAsWarpException(tile.TerrainType.Name, tile.Coordinate.ToString());
+
+            List<ITile> warpGroup;
+            if (!warpGroups.TryGetValue(warpGroupNumber, out warpGroup))
             {
-                IList<IList<object>> tileData = config.Query.Data;
-
-                //Not every tile has to be mapped on this page, so just ensure we don't exceed the existing map size.
-                if (tileData.Count > this.Tiles.Count)
-                    throw new UnexpectedMapHeightException(tileData.Count, this.Tiles.Count, config.Query.Sheet);
-
-                int idIterator = 1;
-                for (int r = 0; r < tileData.Count; r++)
-                {
-                    IList<object> row = tileData[r];
-                    IList<ITile> tiles = this.Tiles[r];
-
-                    if (row.Count > tiles.Count)
-                        throw new UnexpectedMapWidthException(row.Count, tiles.Count, config.Query.Sheet);
-
-                    for (int c = 0; c < row.Count; c++)
-                    {
-                        string cell = row[c].ToString();
-
-                        //Skip empty cells
-                        if (string.IsNullOrEmpty(cell))
-                            continue;
-
-                        foreach (string value in cell.Split(","))
-                        {
-                            //Skip any empty strings
-                            if (string.IsNullOrWhiteSpace(value)) continue;
-
-                            ITileObject tileObj = TileObject.MatchName(tileObjects, value.Trim(), tiles[c].Coordinate);
-                            TileObjectInstance tileObjInst = new TileObjectInstance(idIterator++, tileObj);
-
-                            this.TileObjectInstances.Add(tileObjInst.ID, tileObjInst);
-                            BindTileObjectToTiles(tileObjInst, tiles[c]);
-
-                        }
-                    }
-                }
+                warpGroup = new List<ITile>();
+                warpGroups.Add(warpGroupNumber, warpGroup);
             }
-            catch (Exception ex)
+
+            //Add tile into the group, then link the group to the tile
+            warpGroup.Add(tile);
+
+            tile.WarpData.WarpGroup = warpGroup;
+            tile.WarpData.WarpGroupNumber = warpGroupNumber;
+        }
+
+        ///<summary>
+        /// Validates that all <paramref name="warpGroups"/> have at least one valid entrance and exit coordinate each.
+        /// </summary>
+        /// <exception cref="InvalidWarpGroupException"></exception>
+        private void ValidateWarpGroups(IDictionary<int, List<ITile>> warpGroups)
+        {
+            //All warp groups must have an entrance and an exit
+            foreach (int key in warpGroups.Keys)
             {
-                throw new MapProcessingException(ex);
+                List<ITile> group = warpGroups[key];
+
+                IEnumerable<ITile> entrances = group.Where(w => w.TerrainType.WarpType == WarpType.Entrance || w.TerrainType.WarpType == WarpType.Dual);
+                IEnumerable<ITile> exits = group.Where(w => w.TerrainType.WarpType == WarpType.Exit || w.TerrainType.WarpType == WarpType.Dual);
+
+                //If we do not have at least one distinct entrance and exit, error
+                if (!entrances.Any()
+                 || !exits.Any()
+                 || entrances.Select(e => e.Coordinate).Union(exits.Select(e => e.Coordinate)).Distinct().Count() < 2)
+                    throw new InvalidWarpGroupException(key.ToString());
             }
         }
 
-        private void BindTileObjectToTiles(ITileObjectInstance tileObjInst, ITile originTile)
-        {
-            //2-way bind the anchor tile
-            originTile.TileObjects.Add(tileObjInst);
-            tileObjInst.OriginTiles.Add(originTile);
+        #endregion Segment Construction
 
-            //2-way bind all origin tiles for multi-tile effects
-            if (tileObjInst.TileObject.Size > 1)
-            {
-                int r = originTile.Coordinate.Y - 1; //row
-                int c = originTile.Coordinate.X - 1; //column
-                for (int r2 = r; r2 < r + tileObjInst.TileObject.Size; r2++)
-                {
-                    for (int c2 = c; c2 < c + tileObjInst.TileObject.Size; c2++)
-                    {
-                        //Skip the starting tile
-                        if (r2 == r && c2 == c)
-                            continue;
-
-                        if (r2 >= this.Tiles.Count)
-                            throw new TileOutOfBoundsException(new Coordinate(this.Constants.CoordinateFormat, r2, c2));
-
-                        List<ITile> tiles2 = this.Tiles[r2];
-
-                        if (c2 >= tiles2.Count)
-                            throw new TileOutOfBoundsException(new Coordinate(this.Constants.CoordinateFormat, r2, c2));
-
-                        //2-way bind
-                        tiles2[c2].TileObjects.Add(tileObjInst);
-                        tileObjInst.OriginTiles.Add(tiles2[c2]);
-                    }
-                }
-            }
-        }
-
+        #endregion Constructors
 
         #region Tile Functions
 
         /// <summary>
-        /// Fetches the tile with matching coordinates to <paramref name="coord"/>.
+        /// Finds and returns the map segment that contains <paramref name="coord"/>.
         /// </summary>
         /// <exception cref="TileOutOfBoundsException"></exception>
-        public ITile GetTileByCoord(ICoordinate coord)
+        public IMapSegment GetSegmentByCoord(ICoordinate coord)
         {
-            return GetTileByCoord(coord.X, coord.Y);
+            IMapSegment? segment = this.Segments.FirstOrDefault(s => s.CoordinateFallsWithinRange(coord));
+            if (segment is null) throw new TileOutOfBoundsException(coord);
+
+            return segment;
         }
 
         /// <summary>
-        /// Fetches the tile with matching coordinates to <paramref name="x"/>,<paramref name="y"/>.
+        /// Finds and returns the tile with matching coordinates to <paramref name="coord"/>.
         /// </summary>
-        /// <exception cref="TileOutOfBoundsException"></exception>
+        public ITile GetTileByCoord(ICoordinate coord)
+        {
+            return GetSegmentByCoord(coord).GetTileByCoord(coord);
+        }
+
+        /// <summary>
+        /// Finds and returns the tile with matching coordinates to {<paramref name="x"/>, <paramref name="y"/>}.
+        /// </summary>
         public ITile GetTileByCoord(int x, int y)
         {
-            List<ITile> row = this.Tiles.ElementAtOrDefault<List<ITile>>(y - 1) ?? throw new TileOutOfBoundsException(new Coordinate(this.Constants.CoordinateFormat, x, y));
-            ITile column = row.ElementAtOrDefault<ITile>(x - 1) ?? throw new TileOutOfBoundsException(new Coordinate(this.Constants.CoordinateFormat, x, y));
-
-            return column;
+            ICoordinate coord = new Coordinate(this.Constants.CoordinateFormat, x, y);
+            return GetTileByCoord(coord);
         }
 
         /// <summary>
         /// Returns a list of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="centerTiles"/>.
         /// </summary>
-        public List<ITile> GetTilesInRadius(List<ITile> centerTiles, int radius)
+        public IEnumerable<ITile> GetTilesInRadius(IEnumerable<ITile> centerTiles, int radius)
         {
-            return centerTiles.SelectMany(t => GetTilesInRadius(t.Coordinate, radius)).Except(centerTiles).ToList();
+            return centerTiles.SelectMany(t => GetTilesInRadius(t, radius)).Except(centerTiles);
         }
 
         /// <summary>
         /// Returns a list of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="centerTile"/>.
         /// </summary>
-        public List<ITile> GetTilesInRadius(ITile centerTile, int radius)
+        public IEnumerable<ITile> GetTilesInRadius(ITile centerTile, int radius)
         {
-            return GetTilesInRadius(centerTile.Coordinate, radius);
+            return GetSegmentByCoord(centerTile.Coordinate).GetTilesInRadius(centerTile.Coordinate, radius);
         }
 
-        /// <summary>
-        /// Returns a list of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="center"/>.
-        /// </summary>
-        public List<ITile> GetTilesInRadius(ICoordinate center, int radius)
-        {
-            List<ITile> temp = new List<ITile>();
-
-            for (int x = 0; x <= radius; x++)
-            {
-                for (int y = 0; y <= radius; y++)
-                {
-                    if (x == 0 && y == 0) continue; //ignore origin
-                    if (x + y > radius) continue; //if the total displacement is greater than the radius, stop
-
-                    //If fetching any tile fails, we still want to continue execution
-                    try { temp.Add(GetTileByCoord(center.X + x, center.Y + y)); } catch (TileOutOfBoundsException) { }
-                    try { temp.Add(GetTileByCoord(center.X - x, center.Y + y)); } catch (TileOutOfBoundsException) { }
-                    try { temp.Add(GetTileByCoord(center.X + x, center.Y - y)); } catch (TileOutOfBoundsException) { }
-                    try { temp.Add(GetTileByCoord(center.X - x, center.Y - y)); } catch (TileOutOfBoundsException) { }
-                }
-            }
-
-            //Return distinct list of tiles
-            return temp.Distinct().ToList();
-        }
-
-        #endregion
+        #endregion Tile Functions
     }
 }
