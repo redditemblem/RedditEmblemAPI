@@ -1,11 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using RedditEmblemAPI.Helpers;
 using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Query;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
-using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,29 +17,17 @@ namespace RedditEmblemAPI.Models.Output.Map
     /// <inheritdoc cref="MapObj"/>
     public interface IMapObj
     {
-        /// <inheritdoc cref="MapObj.MapImageURL"/>
-        string MapImageURL { get; set; }
+        /// <inheritdoc cref="MapObj.Constants"/>
+        MapConstantsConfig Constants { get; }
 
         /// <inheritdoc cref="MapObj.ChapterPostURL"/>
-        string ChapterPostURL { get; set; }
-
-        /// <inheritdoc cref="MapObj.MapHeightInTiles"/>
-        int MapHeightInTiles { get; }
-
-        /// <inheritdoc cref="MapObj.MapWidthInTiles"/>
-        int MapWidthInTiles { get; }
-
-        /// <inheritdoc cref="MapObj.Constants"/>
-        MapConstantsConfig Constants { get; set; }
-
-        /// <inheritdoc cref="MapObj.Tiles"/>
-        List<List<ITile>> Tiles { get; set; }
+        string ChapterPostURL { get; }
 
         /// <inheritdoc cref="MapObj.Segments"/>
-        IMapSegment[] Segments { get; set; }
+        IMapSegment[] Segments { get; }
 
         /// <inheritdoc cref="MapObj.TileObjectInstances"/>
-        IDictionary<int, ITileObjectInstance> TileObjectInstances { get; set; }
+        IDictionary<int, ITileObjectInstance> TileObjectInstances { get; }
 
         /// <inheritdoc cref="MapObj.GetSegmentByCoord(ICoordinate)"/>
         IMapSegment GetSegmentByCoord(ICoordinate coord);
@@ -68,60 +55,26 @@ namespace RedditEmblemAPI.Models.Output.Map
         #region Attributes
 
         /// <summary>
-        /// The map's image URL.
+        /// Collection of constant values related to the map.
         /// </summary>
-        public string MapImageURL { get; set; }
+        public MapConstantsConfig Constants { get; private set; }
 
         /// <summary>
         /// The chapter post's URL.
         /// </summary>
-        public string ChapterPostURL { get; set; }
+        public string ChapterPostURL { get; private set; }
 
         /// <summary>
-        /// The height of the map image in pixels.
+        /// Collection of subsections that make up the complete map.
         /// </summary>
-        [JsonProperty]
-        private int ImageHeight { get; set; }
-
-        /// <summary>
-        /// The width of the map image in pixels.
-        /// </summary>
-        [JsonProperty]
-        private int ImageWidth { get; set; }
-
-        /// <summary>
-        /// The height of the map in number of tiles.
-        /// </summary>
-        [JsonIgnore]
-        public int MapHeightInTiles { get; private set; }
-
-        /// <summary>
-        /// The width of the map in number of tiles.
-        /// </summary>
-        [JsonIgnore]
-        public int MapWidthInTiles { get; private set; }
-
-        /// <summary>
-        /// Collection of constant values for doing calculations.
-        /// </summary>
-        public MapConstantsConfig Constants { get; set; }
-
-        /// <summary>
-        /// Matrix of map tiles.
-        /// </summary>
-        public List<List<ITile>> Tiles { get; set; }
-
-        /// <summary>
-        /// Set of objects representing the different portions of the full map.
-        /// </summary>
-        public IMapSegment[] Segments { get; set; }
+        public IMapSegment[] Segments { get; private set; }
 
         /// <summary>
         /// Dictionary of tile object instances present on the map.
         /// </summary>
-        public IDictionary<int, ITileObjectInstance> TileObjectInstances { get; set; }
+        public IDictionary<int, ITileObjectInstance> TileObjectInstances { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         #region Constants
 
@@ -132,7 +85,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         #region Constructors
 
         /// <summary>
-        /// Creates an <c>IImageLoader</c> object and calls the main constructor with all parameters.
+        /// Initializes an <c>IImageLoader</c> object and calls the main constructor with all parameters.
         /// </summary>
         public MapObj(MapConfig config, IDictionary<string, ITerrainType> terrainTypes, IDictionary<string, ITileObject> tileObjects)
             : this(config, new ImageLoader(), terrainTypes, tileObjects)
@@ -162,7 +115,6 @@ namespace RedditEmblemAPI.Models.Output.Map
             IEnumerable<string> mapImageURLs = DataParser.List_Strings(data, config.MapControls.MapImageURLs);
             if (!mapImageURLs.Any())
                 throw new MapImageURLsNotFoundException(config.MapControls.Query.Sheet);
-            this.MapImageURL = mapImageURLs.First();
 
             this.Segments = MapSegment.BuildArray(config.Constants, imageLoader, mapImageURLs);
             AddTilesToSegments(config.MapTiles, terrainTypes);
@@ -345,7 +297,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         }
 
         /// <summary>
-        /// Returns a list of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="centerTiles"/>.
+        /// Returns a set of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="centerTiles"/>.
         /// </summary>
         public IEnumerable<ITile> GetTilesInRadius(IEnumerable<ITile> centerTiles, int radius)
         {
@@ -353,7 +305,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         }
 
         /// <summary>
-        /// Returns a list of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="centerTile"/>.
+        /// Returns a set of distinct tiles that are within <paramref name="radius"/> tiles of the <paramref name="centerTile"/>.
         /// </summary>
         public IEnumerable<ITile> GetTilesInRadius(ITile centerTile, int radius)
         {

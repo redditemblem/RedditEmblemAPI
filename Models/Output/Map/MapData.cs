@@ -1,7 +1,8 @@
-﻿using RedditEmblemAPI.Models.Configuration;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Helpers.Ranges;
+using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.Map
@@ -56,14 +57,18 @@ namespace RedditEmblemAPI.Models.Output.Map
             //Calculate map ranges
             if (config.Map.Constants.CalculateRanges)
             {
-                RangeHelper rangeHelper = new RangeHelper(this.Units, this.Map);
-                rangeHelper.CalculateTileObjectRanges();
-                rangeHelper.CalculateUnitRanges();
+                MovementRangeCalculator movement = new MovementRangeCalculator(this.Map, this.Units);
+                movement.CalculateUnitMovementRanges();
+
+                ItemRangeCalculator item = new ItemRangeCalculator(this.Map, this.Units);
+
+                //MovementRangeHelper rangeHelper = new MovementRangeHelper(this.Units, this.Map);
+                //rangeHelper.CalculateTileObjectRanges();
+                //rangeHelper.CalculateUnitRanges();
             }
 
             //Clean up
             this.System.RemoveUnusedObjects();
         }
-
     }
 }

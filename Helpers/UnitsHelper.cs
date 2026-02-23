@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RedditEmblemAPI.Services.Helpers
+namespace RedditEmblemAPI.Helpers
 {
     public static class UnitsHelper
     {
