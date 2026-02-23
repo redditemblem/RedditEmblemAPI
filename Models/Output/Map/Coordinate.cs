@@ -7,7 +7,7 @@ namespace RedditEmblemAPI.Models.Output.Map
 {
     #region Interface
 
-    /// <inheritdoc cref="Coordinate"
+    /// <inheritdoc cref="Coordinate"/>
     public interface ICoordinate
     {
         /// <inheritdoc cref="Coordinate.X"/>

@@ -15,7 +15,7 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         [JsonRequired]
         public int TileSize { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
@@ -64,7 +64,7 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         /// </summary>
         public string UnitMovementStatName { get; set; } = "Mov";
 
-        #endregion
+        #endregion Optional Fields
     }
 
     public enum CoordinateFormat

@@ -1,6 +1,6 @@
-﻿using RedditEmblemAPI.Models.Configuration.System.TileObjects;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.System.TileObjects;
 using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System

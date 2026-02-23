@@ -60,7 +60,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         {
             List<string> parameters = new List<string>() { "0", "0", string.Empty };
 
-            TerrainTypeMovementCostSetEffect_Status effect = new TerrainTypeMovementCostSetEffect_Status(parameters);
+            ITerrainTypeMovementCostSetEffect_Status effect = new TerrainTypeMovementCostSetEffect_Status(parameters);
             Assert.That(effect.TerrainTypeGrouping, Is.EqualTo(0));
             Assert.That(effect.Value, Is.EqualTo(0));
             Assert.That(effect.CanOverride99MoveCost, Is.False);
@@ -71,7 +71,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         {
             List<string> parameters = new List<string>() { "0", "0", "No" };
 
-            TerrainTypeMovementCostSetEffect_Status effect = new TerrainTypeMovementCostSetEffect_Status(parameters);
+            ITerrainTypeMovementCostSetEffect_Status effect = new TerrainTypeMovementCostSetEffect_Status(parameters);
             Assert.That(effect.TerrainTypeGrouping, Is.EqualTo(0));
             Assert.That(effect.Value, Is.EqualTo(0));
             Assert.That(effect.CanOverride99MoveCost, Is.False);
@@ -82,7 +82,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         {
             List<string> parameters = new List<string>() { "1", "1", "Yes" };
 
-            TerrainTypeMovementCostSetEffect_Status effect = new TerrainTypeMovementCostSetEffect_Status(parameters);
+            ITerrainTypeMovementCostSetEffect_Status effect = new TerrainTypeMovementCostSetEffect_Status(parameters);
             Assert.That(effect.TerrainTypeGrouping, Is.EqualTo(1));
             Assert.That(effect.Value, Is.EqualTo(1));
             Assert.That(effect.CanOverride99MoveCost, Is.True);

@@ -1,4 +1,4 @@
-﻿using RedditEmblemAPI.Services.Helpers;
+﻿using RedditEmblemAPI.Helpers;
 
 namespace UnitTests.Helpers
 {

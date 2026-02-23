@@ -1,9 +1,23 @@
-﻿using RedditEmblemAPI.Services.Helpers;
+﻿using RedditEmblemAPI.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
 {
-    public class WarpMovementCostModifierEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="WarpMovementCostModifierEffect"/>
+    public interface IWarpMovementCostModifierEffect
+    {
+        /// <inheritdoc cref="WarpMovementCostModifierEffect.TerrainTypeGrouping"/>
+        int TerrainTypeGrouping { get; }
+
+        /// <inheritdoc cref="WarpMovementCostModifierEffect.Value"/>
+        int Value { get; }
+    }
+
+    #endregion Interface
+
+    public class WarpMovementCostModifierEffect : SkillEffect, IWarpMovementCostModifierEffect
     {
         #region Attributes
 
@@ -25,7 +39,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Constructor.
         /// </summary>
-        public WarpMovementCostModifierEffect(List<string> parameters)
+        public WarpMovementCostModifierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.TerrainTypeGrouping = DataParser.Int_Positive(parameters, INDEX_PARAM_1, NAME_PARAM_1);

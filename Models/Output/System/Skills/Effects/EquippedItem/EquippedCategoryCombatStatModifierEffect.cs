@@ -1,13 +1,27 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
 {
-    public class EquippedCategoryCombatStatModifierEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="EquippedCategoryCombatStatModifierEffect"/>
+    public interface IEquippedCategoryCombatStatModifierEffect
+    {
+        /// <inheritdoc cref="EquippedCategoryCombatStatModifierEffect.Categories"/>
+        IEnumerable<string> Categories { get; }
+
+        /// <inheritdoc cref="EquippedCategoryCombatStatModifierEffect.Modifiers"/>
+        IDictionary<string, int> Modifiers { get; }
+    }
+
+    #endregion Interface
+
+    public class EquippedCategoryCombatStatModifierEffect : SkillEffect, IEquippedCategoryCombatStatModifierEffect
     {
         #region Attributes
 
@@ -17,12 +31,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
         /// <summary>
         /// Param1. List of <c>Item</c> categories to check for.
         /// </summary>
-        private List<string> Categories { get; set; }
+        public IEnumerable<string> Categories { get; private set; }
 
         /// <summary>
         /// Param2/Param3. The unit combat stat modifiers to apply.
         /// </summary>
-        private IDictionary<string, int> Modifiers { get; set; }
+        public IDictionary<string, int> Modifiers { get; private set; }
 
         #endregion
 
@@ -30,7 +44,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
         /// Constructor.
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
-        public EquippedCategoryCombatStatModifierEffect(List<string> parameters)
+        public EquippedCategoryCombatStatModifierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Categories = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);
@@ -46,8 +60,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
         public override void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
             IUnitInventoryItem equipped = unit.Inventory.GetPrimaryEquippedItem();
-            if (equipped == null)
-                return;
+            if (equipped is null) return;
 
             //The equipped item's category must be in the category list
             if (!this.Categories.Contains(equipped.Item.Category))

@@ -1,13 +1,24 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
 {
-    public class ItemAllowMeleeRangeEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="ItemAllowMeleeRangeEffect"/>
+    public interface IItemAllowMeleeRangeEffect
+    {
+        /// <inheritdoc cref="ItemAllowMeleeRangeEffect.Categories"/>
+        IEnumerable<string> Categories { get; }
+    }
+
+    #endregion Interface
+
+    public class ItemAllowMeleeRangeEffect : SkillEffect, IItemAllowMeleeRangeEffect
     {
         #region Attributes
 
@@ -18,7 +29,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Param1. The list of <c>Item</c> categories to affect.
         /// </summary>
-        private List<string> Categories { get; set; }
+        public IEnumerable<string> Categories { get; private set; }
 
         #endregion
 
@@ -26,7 +37,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// Constructor.
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
-        public ItemAllowMeleeRangeEffect(List<string> parameters)
+        public ItemAllowMeleeRangeEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Categories = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);

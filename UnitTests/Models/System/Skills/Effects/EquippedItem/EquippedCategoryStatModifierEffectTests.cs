@@ -1,4 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem;
 
 namespace UnitTests.Models.System.Skills.Effects.EquippedItem
@@ -10,7 +11,7 @@ namespace UnitTests.Models.System.Skills.Effects.EquippedItem
         [Test]
         public void Constructor_Null()
         {
-            List<string> parameters = new List<string>();
+            IEnumerable<string> parameters = new List<string>();
 
             Assert.Throws<SkillEffectMissingParameterException>(() => new EquippedCategoryStatModifierEffect(parameters));
         }
@@ -18,7 +19,7 @@ namespace UnitTests.Models.System.Skills.Effects.EquippedItem
         [Test]
         public void Constructor_1EmptyString()
         {
-            List<string> parameters = new List<string>() { string.Empty };
+            IEnumerable<string> parameters = new List<string>() { string.Empty };
 
             Assert.Throws<SkillEffectMissingParameterException>(() => new EquippedCategoryStatModifierEffect(parameters));
         }
@@ -26,7 +27,7 @@ namespace UnitTests.Models.System.Skills.Effects.EquippedItem
         [Test]
         public void Constructor_2EmptyString()
         {
-            List<string> parameters = new List<string>() { string.Empty, string.Empty };
+            IEnumerable<string> parameters = new List<string>() { string.Empty, string.Empty };
 
             Assert.Throws<SkillEffectMissingParameterException>(() => new EquippedCategoryStatModifierEffect(parameters));
         }
@@ -34,7 +35,7 @@ namespace UnitTests.Models.System.Skills.Effects.EquippedItem
         [Test]
         public void Constructor_3EmptyString()
         {
-            List<string> parameters = new List<string>() { string.Empty, string.Empty, string.Empty };
+            IEnumerable<string> parameters = new List<string>() { string.Empty, string.Empty, string.Empty };
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new EquippedCategoryStatModifierEffect(parameters));
         }
@@ -42,7 +43,7 @@ namespace UnitTests.Models.System.Skills.Effects.EquippedItem
         [Test]
         public void Constructor_NoCategories()
         {
-            List<string> parameters = new List<string>() { string.Empty, "Stat1", "0" };
+            IEnumerable<string> parameters = new List<string>() { string.Empty, "Stat1", "0" };
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new EquippedCategoryStatModifierEffect(parameters));
         }
@@ -50,7 +51,7 @@ namespace UnitTests.Models.System.Skills.Effects.EquippedItem
         [Test]
         public void Constructor_NoStats()
         {
-            List<string> parameters = new List<string>() { "Category", string.Empty, "0" };
+            IEnumerable<string> parameters = new List<string>() { "Category", string.Empty, "0" };
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new EquippedCategoryStatModifierEffect(parameters));
         }
@@ -58,9 +59,26 @@ namespace UnitTests.Models.System.Skills.Effects.EquippedItem
         [Test]
         public void Constructor_NoValues()
         {
-            List<string> parameters = new List<string>() { "Category", "Stat1", string.Empty };
+            IEnumerable<string> parameters = new List<string>() { "Category", "Stat1", string.Empty };
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new EquippedCategoryStatModifierEffect(parameters));
+        }
+
+        [Test]
+        public void Constructor()
+        {
+            string category = "Category";
+            string stats = "Stat1";
+            string values = "1";
+
+            IEnumerable<string> parameters = new List<string>() { category, stats, values };
+
+            EquippedCategoryStatModifierEffect effect = new EquippedCategoryStatModifierEffect(parameters);
+
+            Assert.That(effect.Categories, Is.EqualTo(new List<string>() { category }));
+            Assert.That(effect.Modifiers.ContainsKey(stats));
+            Assert.That(effect.Modifiers[stats], Is.EqualTo(1));
+            Assert.That(effect.ExecutionOrder, Is.EqualTo(SkillEffectExecutionOrder.Standard));
         }
 
         #endregion Constructor

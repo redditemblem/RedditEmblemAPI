@@ -9,13 +9,13 @@ namespace RedditEmblemAPI.Models.Output.Units
     public interface IUnitRangeData
     {
         /// <inheritdoc cref="UnitRangeData.Movement"/>
-        List<ICoordinate> Movement { get; set; }
+        IList<ICoordinate> Movement { get; set; }
 
         /// <inheritdoc cref="UnitRangeData.Attack"/>
-        List<ICoordinate> Attack { get; set; }
+        IList<ICoordinate> Attack { get; set; }
 
         /// <inheritdoc cref="UnitRangeData.Utility"/>
-        List<ICoordinate> Utility { get; set; }
+        IList<ICoordinate> Utility { get; set; }
     }
 
     #endregion Interface
@@ -30,17 +30,17 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// List of tiles that the unit is capable of moving to.
         /// </summary>
-        public List<ICoordinate> Movement { get; set; }
+        public IList<ICoordinate> Movement { get; set; }
 
         /// <summary>
         /// List of tiles that the unit is capable of attacking.
         /// </summary>
-        public List<ICoordinate> Attack { get; set; }
+        public IList<ICoordinate> Attack { get; set; }
 
         /// <summary>
         /// List of tiles that the unit is capable of using a utility item on.
         /// </summary>
-        public List<ICoordinate> Utility { get; set; }
+        public IList<ICoordinate> Utility { get; set; }
 
         #endregion Attributes
 

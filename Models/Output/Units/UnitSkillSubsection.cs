@@ -1,6 +1,6 @@
-﻿using RedditEmblemAPI.Models.Configuration.Units;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Output.System.Skills;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.Units

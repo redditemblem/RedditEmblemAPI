@@ -1,6 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Units;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions
 {
@@ -40,11 +41,11 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// Base constructor.
         /// </summary>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
-        public StatusConditionEffect(List<string> parameters)
+        public StatusConditionEffect(IEnumerable<string> parameters)
         {
             //Make sure enough parameters were passed in
-            if (parameters.Count < this.ParameterCount)
-                throw new StatusConditionEffectMissingParameterException(this.Name, this.ParameterCount, parameters.Count);
+            if (parameters.Count() < this.ParameterCount)
+                throw new StatusConditionEffectMissingParameterException(this.Name, this.ParameterCount, parameters.Count());
         }
 
         public virtual void Apply(IUnit unit, IUnitStatus status, IDictionary<string, ITag> tags)

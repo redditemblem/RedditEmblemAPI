@@ -2,12 +2,12 @@
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Match;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System;
 using System.Linq;
 using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.System.Adjutants;
+using RedditEmblemAPI.Helpers;
 
 namespace RedditEmblemAPI.Models.Output.System
 {

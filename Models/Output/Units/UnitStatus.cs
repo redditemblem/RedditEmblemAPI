@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Helpers;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.System.StatusConditions;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
