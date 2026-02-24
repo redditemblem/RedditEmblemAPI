@@ -405,7 +405,7 @@
         "SourceName": "Hit",
         "Equations": [
           {
-            "Equation": "({UnitStat[Dex]}*1.5) + ({UnitStat[Lck]}*0.5) + {WeaponStat[Hit]}",
+            "Equation": "({UnitStat[Dex]}*2.5) + ({UnitStat[Lck]}*0.5) + {WeaponStat[Hit]}",
             "ParserOptions": {
               "EvalUnitStat": true,
               "EvalWeaponStat": true
@@ -423,7 +423,7 @@
         "SourceName": "Crit",
         "Equations": [
           {
-            "Equation": "((({UnitStat[Dex]} - 4)*0.5) + {WeaponStat[Crit]}) * {WeaponStat[CRate]}",
+            "Equation": "(({UnitStat[Dex]} - 6) + {WeaponStat[Crit]}) * {WeaponStat[CRate]}",
             "ParserOptions": {
               "EvalUnitStat": true,
               "EvalWeaponStat": true
@@ -459,7 +459,7 @@
         "SourceName": "Ddg",
         "Equations": [
           {
-            "Equation": "({UnitStat[Lck]}*0.5) + {WeaponStat[Ddg]}",
+            "Equation": "{UnitStat[Lck]} + {WeaponStat[Ddg]}",
             "ParserOptions": {
               "EvalUnitStat": true,
               "EvalWeaponStat": true
