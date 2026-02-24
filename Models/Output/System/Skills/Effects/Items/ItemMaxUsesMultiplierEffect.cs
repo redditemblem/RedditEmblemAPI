@@ -8,7 +8,21 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
 {
-    public class ItemMaxUsesMultiplierEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="ItemMaxUsesMultiplierEffect"/>
+    public interface IItemMaxUsesMultiplierEffect
+    {
+        /// <inheritdoc cref="ItemMaxUsesMultiplierEffect.Categories"/>
+        IEnumerable<string> Categories { get; }
+
+        /// <inheritdoc cref="ItemMaxUsesMultiplierEffect.Multiplier"/>
+        decimal Multiplier { get; }
+    }
+
+    #endregion Interface
+
+    public class ItemMaxUsesMultiplierEffect : SkillEffect, IItemMaxUsesMultiplierEffect
     {
         #region Attributes
 
@@ -18,20 +32,20 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Param1. The list of <c>Item</c> categories to affect.
         /// </summary>
-        private List<string> Categories { get; set; }
+        public IEnumerable<string> Categories { get; private set; }
 
         /// <summary>
         /// Param2. The value by which to multiply the <c>UnitInventoryItem</c>'s max uses.
         /// </summary>
-        private decimal Multiplier { get; set; }
+        public decimal Multiplier { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
-        public ItemMaxUsesMultiplierEffect(List<string> parameters)
+        public ItemMaxUsesMultiplierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Categories = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);

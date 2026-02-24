@@ -7,7 +7,21 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
 {
-    public class ItemMinRangeModifierEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="ItemMinRangeModifierEffect"/>
+    public interface IItemMinRangeModifierEffect
+    {
+        /// <inheritdoc cref="ItemMinRangeModifierEffect.Categories"/>
+        IEnumerable<string> Categories { get; }
+
+        /// <inheritdoc cref="ItemMinRangeModifierEffect.Value"/>
+        int Value { get; }
+    }
+
+    #endregion Interface
+
+    public class ItemMinRangeModifierEffect : SkillEffect, IItemMinRangeModifierEffect
     {
         #region Attributes
 
@@ -17,12 +31,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Param1. The list of <c>Item</c> categories to affect.
         /// </summary>
-        private List<string> Categories { get; set; }
+        public IEnumerable<string> Categories { get; private set; }
 
         /// <summary>
         /// Param2. The value by which to modifiy the <c>UnitInventoryItem</c>'s min range.
         /// </summary>
-        private int Value { get; set; }
+        public int Value { get; private set; }
 
         #endregion
 
@@ -30,7 +44,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// Constructor.
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
-        public ItemMinRangeModifierEffect(List<string> parameters)
+        public ItemMinRangeModifierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             //This needs to be executed last due to items w/ calculated ranges

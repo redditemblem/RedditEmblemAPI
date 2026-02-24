@@ -7,7 +7,18 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
 {
-    public class ObstructItemRangesEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="ObstructItemRangesEffect"/>
+    public interface IObstructItemRangesEffect
+    {
+        /// <inheritdoc cref="ObstructItemRangesEffect.Radius"/>
+        int Radius { get; }
+    }
+
+    #endregion Interface
+
+    public class ObstructItemRangesEffect : SkillEffect, IObstructItemRangesEffect
     {
         #region Attributes
 
@@ -17,22 +28,19 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Param1. The range within this skill affects item ranges.
         /// </summary>
-        private int Radius { get; set; }
+        public int Radius { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ObstructItemRangesEffect(List<string> parameters)
+        public ObstructItemRangesEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Radius = DataParser.Int_Positive(parameters, INDEX_PARAM_1, NAME_PARAM_1);
         }
 
-        /// <summary>
-        /// ddfdf
-        /// </summary>
         public override void Apply(IUnit unit, ISkill skill, IMapObj map, List<IUnit> units)
         {
             //Ignore units not on the map

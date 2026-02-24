@@ -7,29 +7,44 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
 {
-    public class ItemMaxRangeSetEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="ItemMaxRangeSetEffect"/>
+    public interface IItemMaxRangeSetEffect
+    {
+        /// <inheritdoc cref="ItemMaxRangeSetEffect.Categories"/>
+        IEnumerable<string> Categories { get; }
+
+        /// <inheritdoc cref="ItemMaxRangeSetEffect.Value"/>
+        public int Value { get; }
+    }
+
+    #endregion Interface
+
+    public class ItemMaxRangeSetEffect : SkillEffect, IItemMaxRangeSetEffect
     {
         #region Attributes
+
         protected override string Name { get { return "ItemMaxRangeSet"; } }
         protected override int ParameterCount { get { return 2; } }
 
         /// <summary>
         /// Param1. The list of <c>Item</c> categories to affect.
         /// </summary>
-        private List<string> Categories { get; set; }
+        public IEnumerable<string> Categories { get; private set; }
 
         /// <summary>
         /// Param2. The value by which to modifiy the <c>UnitInventoryItem</c>'s max range.
         /// </summary>
-        private int Value { get; set; }
+        public int Value { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
-        public ItemMaxRangeSetEffect(List<string> parameters)
+        public ItemMaxRangeSetEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             //This needs to be executed last due to items w/ calculated ranges

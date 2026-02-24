@@ -8,7 +8,24 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
 {
-    public class AllyHPBelowAllyRadiusTeleportEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="AllyHPBelowAllyRadiusTeleportEffect"/>
+    public interface IAllyHPBelowAllyRadiusTeleportEffect
+    {
+        /// <inheritdoc cref="AllyHPBelowAllyRadiusTeleportEffect.TeleportationRange"/>
+        int TeleportationRange { get; }
+
+        /// <inheritdoc cref="AllyHPBelowAllyRadiusTeleportEffect.Radius"/>
+        int Radius { get; }
+
+        /// <inheritdoc cref="AllyHPBelowAllyRadiusTeleportEffect.HPPercentage"/>
+        int HPPercentage { get; }
+    }
+
+    #endregion Interface
+
+    public class AllyHPBelowAllyRadiusTeleportEffect : SkillEffect, IAllyHPBelowAllyRadiusTeleportEffect
     {
         #region Attributes
 
@@ -19,19 +36,19 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Param1. The distance within to search for allied units.
         /// </summary>
-        private int TeleportationRange { get; set; }
+        public int TeleportationRange { get; private set; }
 
         /// <summary>
         /// Param2. The range within the unit can teleport adjacent to the ally unit.
         /// </summary>
-        private int Radius { get; set; }
+        public int Radius { get; private set; }
 
         /// <summary>
         /// Param3. The minimum HP percentage the unit can have.
         /// </summary>
-        private int HPPercentage { get; set; }
+        public int HPPercentage { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
