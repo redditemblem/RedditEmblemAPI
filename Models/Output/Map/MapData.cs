@@ -57,14 +57,12 @@ namespace RedditEmblemAPI.Models.Output.Map
             //Calculate map ranges
             if (config.Map.Constants.CalculateRanges)
             {
-                MovementRangeCalculator movement = new MovementRangeCalculator(this.Map, this.Units);
-                movement.CalculateUnitMovementRanges();
+                MovementRangeCalculator movementCalc = new MovementRangeCalculator(this.Map, this.Units);
+                movementCalc.CalculateUnitMovementRanges();
 
-                ItemRangeCalculator item = new ItemRangeCalculator(this.Map, this.Units);
-
-                //MovementRangeHelper rangeHelper = new MovementRangeHelper(this.Units, this.Map);
-                //rangeHelper.CalculateTileObjectRanges();
-                //rangeHelper.CalculateUnitRanges();
+                ItemRangeCalculator itemCalc = new ItemRangeCalculator(this.Map, this.Units);
+                //itemCalc.CalculateTileObjectRanges();
+                //itemCalc.CalculateUnitItemRanges();
             }
 
             //Clean up

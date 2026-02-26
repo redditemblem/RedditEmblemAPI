@@ -8,7 +8,7 @@ namespace RedditEmblemAPI.Helpers.Ranges
     {
         #region Attributes
 
-        private readonly CompassDirection[] RANGE_DIRECTIONS = new CompassDirection[] { CompassDirection.Northeast, CompassDirection.Southeast, CompassDirection.Northwest, CompassDirection.Southwest };
+        private readonly OrdinalDirection[] RANGE_DIRECTIONS = new OrdinalDirection[] { OrdinalDirection.Northeast, OrdinalDirection.Southeast, OrdinalDirection.Northwest, OrdinalDirection.Southwest };
 
         private IEnumerable<IUnit> Units;
         private IMapObj Map;

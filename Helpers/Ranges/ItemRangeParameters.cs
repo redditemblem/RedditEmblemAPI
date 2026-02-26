@@ -12,10 +12,10 @@ namespace RedditEmblemAPI.Helpers.Ranges
         public IEnumerable<ICoordinate> IgnoreTiles { get; }
         public IEnumerable<UnitItemRange> Ranges { get; }
         public int LargestRange { get; }
-        public CompassDirection RangeDirection { get; }
+        public CardinalDirection RangeDirection { get; }
         public int AffiliationGrouping { get; }
 
-        public ItemRangeParameters(ICoordinate startCoord, IEnumerable<ICoordinate> ignoreTiles, IEnumerable<UnitItemRange> ranges, CompassDirection direction, int affiliationGrouping)
+        public ItemRangeParameters(ICoordinate startCoord, IEnumerable<ICoordinate> ignoreTiles, IEnumerable<UnitItemRange> ranges, CardinalDirection direction, int affiliationGrouping)
         {
             IgnoreTiles = ignoreTiles;
             StartCoord = startCoord;

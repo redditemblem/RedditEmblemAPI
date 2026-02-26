@@ -300,13 +300,13 @@ namespace RedditEmblemAPI.Helpers.Ranges
                         //Link the vertex to its cardinal direction neighbors
                         if (r > 0)
                         {
-                            vert.Neighbors[(int)CompassDirection.North] = priorRow[c];
-                            priorRow[c].Neighbors[(int)CompassDirection.South] = vert;
+                            vert.Neighbors[(int)CardinalDirection.North] = priorRow[c];
+                            priorRow[c].Neighbors[(int)CardinalDirection.South] = vert;
                         }
                         if (c > 0)
                         {
-                            vert.Neighbors[(int)CompassDirection.West] = currentRow[c - 1];
-                            currentRow[c - 1].Neighbors[(int)CompassDirection.East] = vert;
+                            vert.Neighbors[(int)CardinalDirection.West] = currentRow[c - 1];
+                            currentRow[c - 1].Neighbors[(int)CardinalDirection.East] = vert;
                         }
                     }
 

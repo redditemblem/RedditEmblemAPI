@@ -10,7 +10,7 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
     public interface ITileUnitData
     {
         /// <inheritdoc cref="TileUnitData.Unit"/>
-        IUnit Unit { get; set; }
+        IUnit? Unit { get; set; }
 
         /// <inheritdoc cref="TileUnitData.IsUnitAnchor"/>
         bool IsUnitAnchor { get; set; }
@@ -41,7 +41,7 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// The unit occupying this tile, if any.
         /// </summary>
         [JsonIgnore]
-        public IUnit Unit { get; set; }
+        public IUnit? Unit { get; set; }
 
         /// <summary>
         /// Flag indicating if the <c>Unit</c> occupying this tile is anchored here. Units will be drawn at the anchor tile.
