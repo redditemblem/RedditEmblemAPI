@@ -22,8 +22,12 @@
         "Orientation": 2
       },
       "MapSwitch": 0,
-      "MapImageURL": 2,
-      "ChapterPostURL": 1
+      "ChapterPostURL": 1,
+      "Segments": [
+        {
+          "ImageURL": 2
+        }
+      ]
     },
     "MapTiles": {
       "Query": {

@@ -1,5 +1,6 @@
 ﻿using RedditEmblemAPI.Helpers;
-using RedditEmblemAPI.Helpers.Ranges;
+using RedditEmblemAPI.Helpers.Ranges.Items;
+using RedditEmblemAPI.Helpers.Ranges.Movement;
 using RedditEmblemAPI.Models.Configuration;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.Units;
@@ -61,8 +62,8 @@ namespace RedditEmblemAPI.Models.Output.Map
                 movementCalc.CalculateUnitMovementRanges();
 
                 ItemRangeCalculator itemCalc = new ItemRangeCalculator(this.Map, this.Units);
-                //itemCalc.CalculateTileObjectRanges();
-                //itemCalc.CalculateUnitItemRanges();
+                itemCalc.CalculateTileObjectRanges();
+                itemCalc.CalculateUnitItemRanges();
             }
 
             //Clean up

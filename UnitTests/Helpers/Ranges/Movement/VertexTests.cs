@@ -1,10 +1,10 @@
 ﻿using NSubstitute;
-using RedditEmblemAPI.Helpers.Ranges;
+using RedditEmblemAPI.Helpers.Ranges.Movement;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
 
-namespace UnitTests.Helpers.Ranges
+namespace UnitTests.Helpers.Ranges.Movement
 {
     public class VertexTests
     {

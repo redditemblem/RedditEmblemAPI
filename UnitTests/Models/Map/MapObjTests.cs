@@ -141,28 +141,6 @@ namespace UnitTests.Models.Map
         }
 
         [Test]
-        public void Constructor_MapImageURLsNotFound()
-        {
-            MapConfig config = new MapConfig()
-            {
-                MapControls = new MapControlsConfig()
-                {
-                    Query = new Query()
-                    {
-                        Data = new List<IList<object>>()
-                        {
-                            new List<object>(){ INPUT_MAP_SWITCH_ON }
-                        }
-                    },
-                    MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1 }
-                }
-            };
-
-            Assert.Throws<MapImageURLsNotFoundException>(() => new MapObj(config, this.ImageLoader, TERRAIN_TYPES, TILE_OBJECTS));
-        }
-
-        [Test]
         public void Constructor_EmptyMapTileData()
         {
             MapConfig config = new MapConfig()
@@ -178,7 +156,13 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -222,7 +206,13 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -271,7 +261,13 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -325,7 +321,13 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -351,7 +353,11 @@ namespace UnitTests.Models.Map
 
             Assert.That(map.Segments.Count(), Is.EqualTo(1));
 
-            ITile[][] tiles = map.Segments[0].Tiles;
+            IMapSegment segment = map.Segments[0];
+            Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
+            Assert.That(segment.Title, Is.Empty);
+
+            ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(rowCount), "The segment should contain 3 rows.");
 
             //Validate each tile individually
@@ -392,7 +398,13 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -420,7 +432,11 @@ namespace UnitTests.Models.Map
 
             Assert.That(map.Segments.Count(), Is.EqualTo(1));
 
-            ITile[][] tiles = map.Segments[0].Tiles;
+            IMapSegment segment = map.Segments[0];
+            Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
+            Assert.That(segment.Title, Is.Empty);
+
+            ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(rowCount), "The segment should contain 5 rows.");
 
             //Validate each tile individually
@@ -461,7 +477,13 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -486,7 +508,11 @@ namespace UnitTests.Models.Map
 
             Assert.That(map.Segments.Count(), Is.EqualTo(1));
 
-            ITile[][] tiles = map.Segments[0].Tiles;
+            IMapSegment segment = map.Segments[0];
+            Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
+            Assert.That(segment.Title, Is.Empty);
+
+            ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(rowCount), "The segment should contain 2 rows.");
 
             //Validate each tile individually
@@ -527,7 +553,17 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1, 2 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        },
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 2
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -552,8 +588,12 @@ namespace UnitTests.Models.Map
 
             Assert.That(map.Segments.Count(), Is.EqualTo(2));
 
+            IMapSegment segment = map.Segments[0];
+            Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
+            Assert.That(segment.Title, Is.Empty);
+
             //Validate segment 1
-            ITile[][] tiles = map.Segments[0].Tiles;
+            ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(rowCount), "Segment 1 should contain 2 rows.");
 
             for (int r = 0; r < rowCount; r++)
@@ -572,7 +612,11 @@ namespace UnitTests.Models.Map
             }
 
             //Validate segment 2
-            tiles = map.Segments[1].Tiles;
+            segment = map.Segments[1];
+            Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_2));
+            Assert.That(segment.Title, Is.Empty);
+
+            tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(rowCount), "Segment 2 should contain 2 rows.");
 
             for (int r = 0; r < rowCount; r++)
@@ -616,7 +660,17 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1, 2 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        },
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 2
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -648,7 +702,11 @@ namespace UnitTests.Models.Map
             Assert.That(map.Segments.Count(), Is.EqualTo(2));
 
             //Validate segment 1
-            ITile[][] tiles = map.Segments[0].Tiles;
+            IMapSegment segment = map.Segments[0];
+            Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
+            Assert.That(segment.Title, Is.Empty);
+
+            ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg1RowCount), "Segment 1 should contain 3 rows.");
 
             for (int r = 0; r < seg1RowCount; r++)
@@ -667,7 +725,11 @@ namespace UnitTests.Models.Map
             }
 
             //Validate segment 2
-            tiles = map.Segments[1].Tiles;
+            segment = map.Segments[1];
+            Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_2));
+            Assert.That(segment.Title, Is.Empty);
+
+            tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg2RowCount), "Segment 2 should contain 2 rows.");
 
             for (int r = 0; r < seg2RowCount; r++)
@@ -711,7 +773,17 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1, 2 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        },
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 2
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -743,7 +815,11 @@ namespace UnitTests.Models.Map
             Assert.That(map.Segments.Count(), Is.EqualTo(2));
 
             //Validate segment 1
-            ITile[][] tiles = map.Segments[0].Tiles;
+            IMapSegment segment = map.Segments[0];
+            Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
+            Assert.That(segment.Title, Is.Empty);
+
+            ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg1RowCount), "Segment 1 should contain 2 rows.");
 
             for (int r = 0; r < seg1RowCount; r++)
@@ -762,7 +838,11 @@ namespace UnitTests.Models.Map
             }
 
             //Validate segment 2
-            tiles = map.Segments[1].Tiles;
+            segment = map.Segments[1];
+            Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_2));
+            Assert.That(segment.Title, Is.Empty);
+
+            tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg2RowCount), "Segment 2 should contain 3 rows.");
 
             for (int r = 0; r < seg2RowCount; r++)
@@ -810,7 +890,21 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1, 2, 3 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        },
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 2
+                        },
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 3
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -849,7 +943,11 @@ namespace UnitTests.Models.Map
             Assert.That(map.Segments.Count(), Is.EqualTo(3));
 
             //Validate segment 1
-            ITile[][] tiles = map.Segments[0].Tiles;
+            IMapSegment segment = map.Segments[0];
+            Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
+            Assert.That(segment.Title, Is.Empty);
+
+            ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg1RowCount), "Segment 1 should contain 2 rows.");
 
             for (int r = 0; r < seg1RowCount; r++)
@@ -868,7 +966,11 @@ namespace UnitTests.Models.Map
             }
 
             //Validate segment 2
-            tiles = map.Segments[1].Tiles;
+            segment = map.Segments[1];
+            Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_2));
+            Assert.That(segment.Title, Is.Empty);
+
+            tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg2RowCount), "Segment 2 should contain 3 rows.");
 
             for (int r = 0; r < seg2RowCount; r++)
@@ -887,7 +989,11 @@ namespace UnitTests.Models.Map
             }
 
             //Validate segment 3
-            tiles = map.Segments[2].Tiles;
+            segment = map.Segments[2];
+            Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_3));
+            Assert.That(segment.Title, Is.Empty);
+
+            tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg3RowCount), "Segment 3 should contain 5 rows.");
 
             for (int r = 0; r < seg3RowCount; r++)
@@ -926,7 +1032,13 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -963,7 +1075,10 @@ namespace UnitTests.Models.Map
 
             Assert.That(map.Segments.Count(), Is.EqualTo(1));
 
-            ITile[][] tiles = map.Segments[0].Tiles;
+            IMapSegment segment = map.Segments[0];
+            Assert.That(segment.TileObjectInstances.Count(), Is.EqualTo(1));
+
+            ITile[][] tiles = segment.Tiles;
 
             ITile tile1 = tiles[0][0];
             ITile tile2 = tiles[0][1];
@@ -1001,7 +1116,13 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -1047,7 +1168,13 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -1094,7 +1221,13 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -1153,7 +1286,13 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {
@@ -1229,7 +1368,17 @@ namespace UnitTests.Models.Map
                         }
                     },
                     MapSwitch = 0,
-                    MapImageURLs = new List<int> { 1, 2 }
+                    Segments = new MapSegmentConfig[]
+                    {
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 1
+                        },
+                        new MapSegmentConfig()
+                        {
+                            ImageURL = 2
+                        }
+                    }
                 },
                 MapTiles = new MapTilesConfig()
                 {

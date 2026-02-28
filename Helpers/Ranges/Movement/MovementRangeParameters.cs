@@ -7,9 +7,9 @@ using RedditEmblemAPI.Models.Output.Units;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RedditEmblemAPI.Helpers.Ranges
+namespace RedditEmblemAPI.Helpers.Ranges.Movement
 {
-    public readonly struct UnitRangeParameters
+    public readonly struct MovementRangeParameters
     {
         public IUnit Unit { get; }
 
@@ -20,9 +20,9 @@ namespace RedditEmblemAPI.Helpers.Ranges
         public IEnumerable<IWarpMovementCostModifierEffect> WarpCostModifiers { get; }
         public IEnumerable<IWarpMovementCostSetEffect> WarpCostSets { get; }
 
-        public UnitRangeParameters(IUnit unit)
+        public MovementRangeParameters(IUnit unit)
         {
-            this.Unit = unit;
+            Unit = unit;
 
             IEnumerable<ISkill> skills = unit.GetFullSkillsList();
             IEnumerable<ISkillEffect> skillEffects = skills.SelectMany(s => s.Effects);

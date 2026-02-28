@@ -1,7 +1,7 @@
-﻿using RedditEmblemAPI.Helpers.Ranges;
+﻿using RedditEmblemAPI.Helpers.Ranges.Items;
 using RedditEmblemAPI.Models.Output.System;
 
-namespace UnitTests.Helpers.Ranges
+namespace UnitTests.Helpers.Ranges.Items
 {
     public class UnitItemRangeTests
     {

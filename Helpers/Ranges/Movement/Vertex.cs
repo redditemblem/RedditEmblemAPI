@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RedditEmblemAPI.Helpers.Ranges
+namespace RedditEmblemAPI.Helpers.Ranges.Movement
 {
     #region Interface
 
@@ -44,8 +44,8 @@ namespace RedditEmblemAPI.Helpers.Ranges
         /// <inheritdoc cref="Vertex.Reset"/>
         void Reset();
 
-        /// <inheritdoc cref="Vertex.UpdateVertexForUnit(UnitRangeParameters, IDictionary{ITile, int})"/>
-        void UpdateVertexForUnit(UnitRangeParameters parms, IDictionary<ITile, int> moveCostHistory = null);
+        /// <inheritdoc cref="Vertex.UpdateVertexForUnit(MovementRangeParameters, IDictionary{ITile, int})"/>
+        void UpdateVertexForUnit(MovementRangeParameters parms, IDictionary<ITile, int> moveCostHistory = null);
     }
 
     #endregion Interface
@@ -98,10 +98,10 @@ namespace RedditEmblemAPI.Helpers.Ranges
         /// </summary>
         public Vertex(IEnumerable<ITile> tiles)
         {
-            this.Neighbors = new IVertex[4];
-            this.Tiles = tiles;
-            this.WarpEntrances = tiles.Where(t => t.TerrainType.WarpType == WarpType.Entrance || t.TerrainType.WarpType == WarpType.Dual);
-            this.IsTraversableOnly = tiles.Any(t => t.TerrainType.CannotStopOn);
+            Neighbors = new IVertex[4];
+            Tiles = tiles;
+            WarpEntrances = tiles.Where(t => t.TerrainType.WarpType == WarpType.Entrance || t.TerrainType.WarpType == WarpType.Dual);
+            IsTraversableOnly = tiles.Any(t => t.TerrainType.CannotStopOn);
 
             Reset();
         }
@@ -111,29 +111,29 @@ namespace RedditEmblemAPI.Helpers.Ranges
         /// </summary>
         public void Reset()
         {
-            this.MinDistanceTo = int.MaxValue;
-            this.PathCost = int.MaxValue;
-            this.IsVisited = false;
-            this.IsTerminus = false;
+            MinDistanceTo = int.MaxValue;
+            PathCost = int.MaxValue;
+            IsVisited = false;
+            IsTerminus = false;
         }
 
         /// <summary>
         /// Updates unit-manipulated values on the vertex based on <paramref name="parms"/>.
         /// </summary>
-        public void UpdateVertexForUnit(UnitRangeParameters parms, IDictionary<ITile, int> moveCostHistory)
+        public void UpdateVertexForUnit(MovementRangeParameters parms, IDictionary<ITile, int> moveCostHistory)
         {
-            this.PathCost = CalculatePathCostForUnit(parms, moveCostHistory);
-            this.IsTerminus = IsTerminusForUnit(parms);
+            PathCost = CalculatePathCostForUnit(parms, moveCostHistory);
+            IsTerminus = IsTerminusForUnit(parms);
         }
 
         /// <summary>
         /// Calculates and returns the path cost for the <paramref name="parms"/> unit to traverse to this vertex.
         /// </summary>
-        private int CalculatePathCostForUnit(UnitRangeParameters parms, IDictionary<ITile, int> moveCostHistory)
+        private int CalculatePathCostForUnit(MovementRangeParameters parms, IDictionary<ITile, int> moveCostHistory)
         {
             int maxMovCost = int.MinValue;
 
-            foreach(ITile tile in this.Tiles)
+            foreach(ITile tile in Tiles)
             {
                 //Multi-tile unit calculations have the same tile appear in multiple vertices
                 //Check if we've already calculated this tile's movement cost elsewhere to save time
@@ -163,7 +163,7 @@ namespace RedditEmblemAPI.Helpers.Ranges
         /// Calculates and returns the cost for the <paramref name="parms"/> unit to traverse to the <paramref name="tile"/>.
         /// </summary>
         /// <exception cref="UnmatchedMovementTypeException"></exception>
-        private int CalculateMovementCostForTile(UnitRangeParameters parms, ITile tile)
+        private int CalculateMovementCostForTile(MovementRangeParameters parms, ITile tile)
         {
             if (IsUnitBlockedFromTile(parms, tile))
             {
@@ -196,7 +196,7 @@ namespace RedditEmblemAPI.Helpers.Ranges
         /// <summary>
         /// Evaluates multiple effect scenarios and returns a movement cost based on any that apply. Separated out from the other logic to allow for early returns.
         /// </summary>
-        private int ApplyEffectsToMovementCost(UnitRangeParameters parms, ITile tile, int startingMovementCost)
+        private int ApplyEffectsToMovementCost(MovementRangeParameters parms, ITile tile, int startingMovementCost)
         {
             ITerrainTypeMovementCostSetEffect_Status movCostSet_Status = parms.MoveCostSets_Statuses.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
             if (movCostSet_Status is not null && (movCostSet_Status.CanOverride99MoveCost || startingMovementCost < 99))
@@ -217,26 +217,26 @@ namespace RedditEmblemAPI.Helpers.Ranges
         /// <summary>
         /// Returns true if the <paramref name="parms"/> unit is incapable of pathing through this vertex to any of its neighbors.
         /// </summary>
-        public bool IsTerminusForUnit(UnitRangeParameters parms)
+        public bool IsTerminusForUnit(MovementRangeParameters parms)
         {
             //Tile is considered a terminus if the unit does not ignore affilations, there are no origin tiles in the
             //vertex, and a unit is obstructing (not occupying) one of the vertex tiles.
             return !parms.IgnoresAffiliations
-                 && this.Tiles.Any(t => !parms.Unit.Location.OriginTiles.Contains(t)
+                 && Tiles.Any(t => !parms.Unit.Location.OriginTiles.Contains(t)
                                      && IsMovementPreventedByOtherUnit(parms.Unit, t.UnitData.UnitsObstructingMovement));
         }
 
         /// <summary>
         /// Returns true if the <paramref name="parms"/> unit is incapable of pathing to this tile in all scenarios.
         /// </summary>
-        private bool IsUnitBlockedFromTile(UnitRangeParameters parms, ITile tile)
+        private bool IsUnitBlockedFromTile(MovementRangeParameters parms, ITile tile)
         {
             bool isTileUnitOrigin = parms.Unit.Location.OriginTiles.Contains(tile);
 
             return tile.TerrainType.RestrictAffiliations.Contains(parms.Unit.Affiliation.Grouping)
                    //The unit can potentially be blocked by other units on this tile if it does not ignore affiliations
                    ////and this isn't one of its origin tiles.
-                   || (!parms.IgnoresAffiliations && !isTileUnitOrigin && IsMovementPreventedByOtherUnit(parms.Unit, tile.UnitData.Unit));
+                   || !parms.IgnoresAffiliations && !isTileUnitOrigin && IsMovementPreventedByOtherUnit(parms.Unit, tile.UnitData.Unit);
         }
 
         /// <summary>

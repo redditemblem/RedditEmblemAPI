@@ -1,5 +1,5 @@
 ﻿using NSubstitute;
-using RedditEmblemAPI.Helpers.Ranges;
+using RedditEmblemAPI.Helpers.Ranges.Movement;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
@@ -7,7 +7,7 @@ using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
 using RedditEmblemAPI.Models.Output.Units;
 
-namespace UnitTests.Helpers.Ranges
+namespace UnitTests.Helpers.Ranges.Movement
 {
     public class UnitRangeParametersTests
     {
@@ -18,7 +18,7 @@ namespace UnitTests.Helpers.Ranges
             unit.GetFullSkillsList().Returns(new List<ISkill>());
             unit.StatusConditions.Returns(new List<IUnitStatus>());
 
-            UnitRangeParameters parms = new UnitRangeParameters(unit);
+            MovementRangeParameters parms = new MovementRangeParameters(unit);
 
             Assert.That(parms.Unit, Is.EqualTo(unit));
             Assert.That(parms.IgnoresAffiliations, Is.False);
@@ -43,7 +43,7 @@ namespace UnitTests.Helpers.Ranges
             unit.GetFullSkillsList().Returns(new List<ISkill>() { skill });
             unit.StatusConditions.Returns(new List<IUnitStatus>());
 
-            UnitRangeParameters parms = new UnitRangeParameters(unit);
+            MovementRangeParameters parms = new MovementRangeParameters(unit);
 
             Assert.That(parms.Unit, Is.EqualTo(unit));
             Assert.That(parms.IgnoresAffiliations, Is.EqualTo(expected));
@@ -66,7 +66,7 @@ namespace UnitTests.Helpers.Ranges
             unit.GetFullSkillsList().Returns(new List<ISkill>() { skill });
             unit.StatusConditions.Returns(new List<IUnitStatus>());
 
-            UnitRangeParameters parms = new UnitRangeParameters(unit);
+            MovementRangeParameters parms = new MovementRangeParameters(unit);
 
             Assert.That(parms.Unit, Is.EqualTo(unit));
             Assert.That(parms.IgnoresAffiliations, Is.False);
@@ -89,7 +89,7 @@ namespace UnitTests.Helpers.Ranges
             unit.GetFullSkillsList().Returns(new List<ISkill>() { skill });
             unit.StatusConditions.Returns(new List<IUnitStatus>());
 
-            UnitRangeParameters parms = new UnitRangeParameters(unit);
+            MovementRangeParameters parms = new MovementRangeParameters(unit);
 
             Assert.That(parms.Unit, Is.EqualTo(unit));
             Assert.That(parms.IgnoresAffiliations, Is.False);
@@ -114,7 +114,7 @@ namespace UnitTests.Helpers.Ranges
             unit.GetFullSkillsList().Returns(new List<ISkill>());
             unit.StatusConditions.Returns(new List<IUnitStatus>() { unitStatus });
 
-            UnitRangeParameters parms = new UnitRangeParameters(unit);
+            MovementRangeParameters parms = new MovementRangeParameters(unit);
 
             Assert.That(parms.Unit, Is.EqualTo(unit));
             Assert.That(parms.IgnoresAffiliations, Is.False);
@@ -137,7 +137,7 @@ namespace UnitTests.Helpers.Ranges
             unit.GetFullSkillsList().Returns(new List<ISkill>() { skill });
             unit.StatusConditions.Returns(new List<IUnitStatus>());
 
-            UnitRangeParameters parms = new UnitRangeParameters(unit);
+            MovementRangeParameters parms = new MovementRangeParameters(unit);
 
             Assert.That(parms.Unit, Is.EqualTo(unit));
             Assert.That(parms.IgnoresAffiliations, Is.False);
@@ -160,7 +160,7 @@ namespace UnitTests.Helpers.Ranges
             unit.GetFullSkillsList().Returns(new List<ISkill>() { skill });
             unit.StatusConditions.Returns(new List<IUnitStatus>());
 
-            UnitRangeParameters parms = new UnitRangeParameters(unit);
+            MovementRangeParameters parms = new MovementRangeParameters(unit);
 
             Assert.That(parms.Unit, Is.EqualTo(unit));
             Assert.That(parms.IgnoresAffiliations, Is.False);

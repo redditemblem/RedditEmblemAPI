@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RedditEmblemAPI.Helpers.Ranges
+namespace RedditEmblemAPI.Helpers.Ranges.Movement
 {
     public class MovementRangeCalculator
     {
@@ -22,10 +22,10 @@ namespace RedditEmblemAPI.Helpers.Ranges
 
         public MovementRangeCalculator(IMapObj map, IEnumerable<IUnit> units)
         {
-            this.Map = map;
-            this.Units = units;
+            Map = map;
+            Units = units;
 
-            this.VertexMaps = new Dictionary<int, IList<IVertex>>();
+            VertexMaps = new Dictionary<int, IList<IVertex>>();
         }
 
         #endregion Attributes
@@ -45,7 +45,7 @@ namespace RedditEmblemAPI.Helpers.Ranges
                         continue;
 
                     int movement = CalculateUnitMovement(unit);
-                    UnitRangeParameters unitParms = new UnitRangeParameters(unit);
+                    MovementRangeParameters unitParms = new MovementRangeParameters(unit);
 
                     IEnumerable<ICoordinate> movementRange = CalculateUnitMovementRange(unitParms, movement);
 
@@ -70,7 +70,7 @@ namespace RedditEmblemAPI.Helpers.Ranges
             return movementVal;
         }
 
-        private IEnumerable<ICoordinate> CalculateUnitMovementRange(UnitRangeParameters unitParms, int movementVal)
+        private IEnumerable<ICoordinate> CalculateUnitMovementRange(MovementRangeParameters unitParms, int movementVal)
         {
             int unitSize = unitParms.Unit.Location.UnitSize;
 
@@ -110,7 +110,7 @@ namespace RedditEmblemAPI.Helpers.Ranges
                             .SelectMany(c => c.Tiles.Select(t => t.Coordinate));
         }
 
-        private void TraverseVertexMap(UnitRangeParameters parms, IList<IVertex> vertexMap)
+        private void TraverseVertexMap(MovementRangeParameters parms, IList<IVertex> vertexMap)
         {
             //Calculate minimum possible distance to every tile based on path values
             List<ITile> warpsUsed = new List<ITile>();
@@ -163,7 +163,7 @@ namespace RedditEmblemAPI.Helpers.Ranges
         }
 
  
-        private int CalculateTileWarpMovementCost(UnitRangeParameters parms, ITile warp)
+        private int CalculateTileWarpMovementCost(MovementRangeParameters parms, ITile warp)
         {
             IWarpMovementCostSetEffect warpCostSet = parms.WarpCostSets.FirstOrDefault(s => warp.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
             IWarpMovementCostModifierEffect warpCostMod = parms.WarpCostModifiers.FirstOrDefault(s => warp.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));

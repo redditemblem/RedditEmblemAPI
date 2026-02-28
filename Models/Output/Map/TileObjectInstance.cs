@@ -2,6 +2,8 @@
 using RedditEmblemAPI.Helpers;
 using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Exceptions.Processing;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Match;
@@ -33,7 +35,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         IHealthPoints HP { get; }
 
         /// <inheritdoc cref="TileObjectInstance.AttackRange"/>
-        List<ICoordinate> AttackRange { get; set; }
+        IList<ICoordinate> AttackRange { get; set; }
     }
 
     #endregion Interface
@@ -77,9 +79,11 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// List of the coordinates this tile object is capable of attacking.
         /// </summary>
-        public List<ICoordinate> AttackRange { get; set; }
+        public IList<ICoordinate> AttackRange { get; set; }
 
         #endregion Attributes
+
+        #region Constructor
 
         /// <summary>
         /// Constructor.
@@ -95,17 +99,33 @@ namespace RedditEmblemAPI.Models.Output.Map
 
             this.TileObject = System.TileObject.MatchName(tileObjects, name, anchor);
 
-            if(config.HP is not null)
+            if (config.HP is not null)
             {
                 //Only try to parse the HP if we have at least one value set
                 string currentHP = DataParser.OptionalString(data, config.HP.Current, "Current Durability");
-                if(!string.IsNullOrEmpty(currentHP))
+                if (!string.IsNullOrEmpty(currentHP))
                     this.HP = new HealthPoints(data, config.HP);
             }
 
             this.OriginTiles = CalculateOriginTiles(map, anchor);
             this.AttackRange = new List<ICoordinate>();
         }
+
+        /// <summary>
+        /// Constructor. Copies values from <paramref name="copyFrom"/> into a new tile object instance located at <paramref name="anchor"/>.
+        /// </summary>
+        public TileObjectInstance(int tileObjectID, ICoordinate anchor, ITileObjectInstance copyFrom, IMapObj map)
+        {
+            this.ID = tileObjectID;
+
+            this.TileObject = copyFrom.TileObject;
+            this.HP = copyFrom.HP;
+
+            this.OriginTiles = CalculateOriginTiles(map, anchor);
+            this.AttackRange = new List<ICoordinate>();
+        }
+
+        #endregion Constructor
 
         /// <summary>
         /// Returns an array of the tile object instance's origin tiles, originating from <paramref name="anchorCoord"/>.
@@ -118,7 +138,7 @@ namespace RedditEmblemAPI.Models.Output.Map
             int index = 0;
             for (int r = 0; r < this.TileObject.Size; r++)
             {
-                for(int c = 0; c < this.TileObject.Size; c++)
+                for (int c = 0; c < this.TileObject.Size; c++)
                 {
                     //Calculate the x and y values of the tile
                     int x = anchorCoord.X + c;
@@ -151,10 +171,12 @@ namespace RedditEmblemAPI.Models.Output.Map
             foreach (IList<object> row in config.Query.Data)
             {
                 string name = string.Empty;
+                IEnumerable<string> tileObj;
+                ITileObjectInstance tileObjectInst;
 
                 try
                 {
-                    IEnumerable<string> tileObj = row.Select(r => r.ToString());
+                    tileObj = row.Select(r => r.ToString());
                     name = DataParser.OptionalString(tileObj, config.Name, "Name");
                     string coordinate = DataParser.OptionalString(tileObj, config.Coordinate, "Coordinate");
 
@@ -162,18 +184,124 @@ namespace RedditEmblemAPI.Models.Output.Map
                     if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(coordinate))
                         continue;
 
-                    tileObjectInsts.Add(idIterator, new TileObjectInstance(config, idIterator, tileObj, map, tileObjects));
-                    idIterator++;
+                    tileObjectInst = new TileObjectInstance(config, idIterator, tileObj, map, tileObjects);
+                    tileObjectInsts.Add(idIterator++, tileObjectInst);
                 }
                 catch (Exception ex)
                 {
                     throw new TileObjectInstanceProcessingException(name, ex);
+                }
+
+                //Check if the newly created tile object instance is setup to repeat itself
+                if (config.RepeaterTool is not null)
+                {
+                    try
+                    {
+                        string shapeVal = DataParser.OptionalString(tileObj, config.RepeaterTool.Shape, "Repeater Tool Shape");
+                        if (!string.IsNullOrEmpty(shapeVal))
+                        {
+                            TileObjectInstanceRepeaterShape shape = GetTileObjectInstanceRepeaterShape(shapeVal);
+                            int height = DataParser.Int_Positive(tileObj, config.RepeaterTool.Height, "Repeater Tool Height");
+                            int width = DataParser.Int_Positive(tileObj, config.RepeaterTool.Width, "Repeater Tool Width");
+
+                            if(shape == TileObjectInstanceRepeaterShape.Plus && (height % 2 == 0 || height < 3 || width % 2 == 0 || width < 3))
+                                    throw new Exception("Bad shape parms");
+
+                            RepeatTileObjectInstance(map, tileObjectInst, ref idIterator, shape, height, width);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
                 }
             }
 
             return tileObjectInsts;
         }
 
+        /// <summary>
+        /// Matches <paramref name="shape"/> to a TileObjectInstanceRepeaterShape value and returns it.
+        /// </summary>
+        /// <exception cref="UnmatchedTileObjectInstanceRepeaterShapeException"></exception>
+        private static TileObjectInstanceRepeaterShape GetTileObjectInstanceRepeaterShape(string shape)
+        {
+            object shapeEnum;
+            if (!Enum.TryParse(typeof(TileObjectInstanceRepeaterShape), shape, out shapeEnum))
+                throw new UnmatchedTileObjectInstanceRepeaterShapeException(shape, Enum.GetNames<TileObjectInstanceRepeaterShape>());
+
+            return (TileObjectInstanceRepeaterShape)shapeEnum;
+        }
+
+        private static IEnumerable<ITileObjectInstance> RepeatTileObjectInstance(IMapObj map, ITileObjectInstance copyFrom, ref int idIterator, TileObjectInstanceRepeaterShape shape, int height, int width)
+        {
+            switch (shape)
+            {
+                case TileObjectInstanceRepeaterShape.Plus:
+                    return RepeatTileObjectInstanceInPlus(map, copyFrom, ref idIterator, height, width);
+
+                case TileObjectInstanceRepeaterShape.Rectangle:
+                    return RepeatTileObjectInstanceInRectangle(map, copyFrom, ref idIterator, height, width);
+
+                default:
+                    return new List<ITileObjectInstance>();
+            }
+        }
+
+        private static IEnumerable<ITileObjectInstance> RepeatTileObjectInstanceInPlus(IMapObj map, ITileObjectInstance copyFrom, ref int idIterator, int height, int width)
+        {
+            List<ITileObjectInstance> copies = new List<ITileObjectInstance>();
+
+            ICoordinate copyFromAnchor = copyFrom.AnchorCoordinate;
+            IMapSegment segment = map.GetSegmentByCoord(copyFromAnchor);
+
+            int size = copyFrom.OriginTiles.Length;
+            int verticalRadius = (int)Math.Floor(height / 2m);
+            int horizontalRadius = (int)Math.Floor(width / 2m);
+
+            for (int x = 0; x <= horizontalRadius; x++)
+            {
+                for (int y = 0; y <= verticalRadius; y++)
+                {
+                    if (x == 0 && y == 0) continue; //ignore center
+                    if (x + y > verticalRadius || x + y > horizontalRadius) continue; //ignore corners
+
+                    int xMod = x * size;
+                    int yMod = y * size;
+
+                    //Attempt to grab the anchor tiles for this round of repeats
+                    ITile[] anchors = new ITile[4];
+                    try { anchors[0] = segment.GetTileByCoord(copyFromAnchor.X + xMod, copyFromAnchor.Y + yMod); } catch (TileOutOfBoundsException) { }
+                    try { anchors[1] = segment.GetTileByCoord(copyFromAnchor.X - xMod, copyFromAnchor.Y + yMod); } catch (TileOutOfBoundsException) { }
+                    try { anchors[2] = segment.GetTileByCoord(copyFromAnchor.X + xMod, copyFromAnchor.Y - yMod); } catch (TileOutOfBoundsException) { }
+                    try { anchors[3] = segment.GetTileByCoord(copyFromAnchor.X - xMod, copyFromAnchor.Y - yMod); } catch (TileOutOfBoundsException) { }
+
+                    //Attempt to generate tile object instances for each distinct anchor found
+                    //Ignore any exceptions thrown
+                    foreach(ITile anchor in anchors.Distinct())
+                    {
+                        if (anchor is null) continue;
+                            
+                        try { copies.Add(new TileObjectInstance(idIterator++, anchor.Coordinate, copyFrom, map)); } 
+                        catch { }
+                    }
+                }
+            }
+
+            return copies;
+        }
+
+        private static IEnumerable<ITileObjectInstance> RepeatTileObjectInstanceInRectangle(IMapObj map, ITileObjectInstance copyFrom, ref int idIterator, int height, int width)
+        {
+            return null;
+        }
+
         #endregion Static Functions
+    }
+
+    public enum TileObjectInstanceRepeaterShape
+    {
+        Plus,
+        Rectangle
     }
 }

@@ -1,6 +1,6 @@
 ﻿using RedditEmblemAPI.Models.Output.System;
 
-namespace RedditEmblemAPI.Helpers.Ranges
+namespace RedditEmblemAPI.Helpers.Ranges.Items
 {
     /// <summary>
     /// Represents the range parameters of a specific <c>UnitInventoryItem</c>.

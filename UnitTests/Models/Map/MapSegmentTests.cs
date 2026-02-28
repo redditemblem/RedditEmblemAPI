@@ -32,6 +32,7 @@ namespace UnitTests.Models.Map
                 HasHeaderTopLeft = hasHeaderTopLeft,
                 HasHeaderBottomRight = hasHeaderBottomRight
             };
+            string title = "Unit Tests";
             int beginningOfHorizontalRange = 1;
 
             this.ImageLoader.When(s => s.GetImageDimensionsByUrl(UnitTestConsts.IMAGE_URL, out Arg.Any<int>(), out Arg.Any<int>())).Do(s =>
@@ -40,9 +41,10 @@ namespace UnitTests.Models.Map
                 s[2] = imageWidthInPixels;
             });
 
-            IMapSegment segment = new MapSegment(config, this.ImageLoader, UnitTestConsts.IMAGE_URL, beginningOfHorizontalRange);
+            IMapSegment segment = new MapSegment(config, this.ImageLoader, UnitTestConsts.IMAGE_URL, title, beginningOfHorizontalRange);
 
             Assert.That(segment.ImageURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
+            Assert.That(segment.Title, Is.EqualTo(title));
             Assert.That(segment.HeightInPixels, Is.EqualTo(imageHeightInPixels));
             Assert.That(segment.WidthInPixels, Is.EqualTo(imageWidthInPixels));
             Assert.That(segment.HeightInTiles, Is.EqualTo(expectedHeightInTiles));
@@ -62,6 +64,7 @@ namespace UnitTests.Models.Map
                 HasHeaderTopLeft = hasHeaderTopLeft,
                 HasHeaderBottomRight = hasHeaderBottomRight
             };
+            string title = "Unit Tests";
             int beginningOfHorizontalRange = 1;
 
             this.ImageLoader.When(s => s.GetImageDimensionsByUrl(UnitTestConsts.IMAGE_URL, out Arg.Any<int>(), out Arg.Any<int>())).Do(s =>
@@ -70,9 +73,10 @@ namespace UnitTests.Models.Map
                 s[2] = imageWidthInPixels;
             });
 
-            IMapSegment segment = new MapSegment(config, this.ImageLoader, UnitTestConsts.IMAGE_URL, beginningOfHorizontalRange);
+            IMapSegment segment = new MapSegment(config, this.ImageLoader, UnitTestConsts.IMAGE_URL, title, beginningOfHorizontalRange);
 
             Assert.That(segment.ImageURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
+            Assert.That(segment.Title, Is.EqualTo(title));
             Assert.That(segment.HeightInPixels, Is.EqualTo(imageHeightInPixels));
             Assert.That(segment.WidthInPixels, Is.EqualTo(imageWidthInPixels));
             Assert.That(segment.HeightInTiles, Is.EqualTo(expectedHeightInTiles));

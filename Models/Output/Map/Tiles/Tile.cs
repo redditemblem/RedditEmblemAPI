@@ -15,6 +15,9 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// <inheritdoc cref="Tile.Coordinate"/>
         ICoordinate Coordinate { get; set; }
 
+        /// <inheritdoc cref="Tile.Neighbors"/>
+        ITile[] Neighbors { get; }
+
         /// <inheritdoc cref="Tile.TerrainType"/>
         ITerrainType TerrainType { get; set; }
 
@@ -41,6 +44,9 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// The tile's horizontal/vertical location on the map.
         /// </summary>
         public ICoordinate Coordinate { get; set; }
+
+        [JsonIgnore]
+        public ITile[] Neighbors { get; private set; }
 
         /// <summary>
         /// The terrain type of this tile.
@@ -103,20 +109,12 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         #region Constructors
 
         /// <summary>
-        /// Constructor. Initializes the tile's coordinate with the passed in <paramref name="x"/> and <paramref name="y"/> values.
-        /// </summary>
-        /// <param name="x">Used to initialize the Tile's coordinate in combination with <paramref name="y"/>.</param>
-        /// <param name="y">Used to initialize the Tile's coordinate in combination with <paramref name="x"/>.</param>
-        public Tile(CoordinateFormat coordinateFormat, int x, int y, ITerrainType terrainType)
-            : this(new Coordinate(coordinateFormat, x, y), terrainType)
-        { }
-
-        /// <summary>
         /// Constructor. Initializes the tile's coordinate using <paramref name="coord"/>.
         /// </summary>
         public Tile(ICoordinate coord, ITerrainType terrainType)
         {
             this.Coordinate = coord;
+            this.Neighbors = new ITile[4];
             this.TerrainType = terrainType;
 
             this.UnitData = new TileUnitData();

@@ -14,12 +14,21 @@
     "MapControls": {
       "Query": {
         "Sheet": "System Control",
-        "Selection": "B1:B",
+        "Selection": "C1:C",
         "Orientation": 2
       },
       "MapSwitch": 0,
-      "MapImageURLs": [ 2 ],
-      "ChapterPostURL": 1
+      "ChapterPostURL": 1,
+      "Segments": [
+        {
+          "Title": 2,
+          "ImageURL": 3
+        },
+        {
+          "Title": 4,
+          "ImageURL": 5
+        }
+      ]
     },
     "MapTiles": {
       "Query": {

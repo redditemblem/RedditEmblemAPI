@@ -17,6 +17,9 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <inheritdoc cref="MapSegment.ImageURL"/>
         string ImageURL { get; }
 
+        /// <inheritdoc cref="MapSegment.Title"/>
+        string Title { get; }
+
         /// <inheritdoc cref="MapSegment.HeightInPixels"/>
         int HeightInPixels { get; }
 
@@ -34,6 +37,11 @@ namespace RedditEmblemAPI.Models.Output.Map
 
         /// <inheritdoc cref="MapSegment.Tiles"/>
         ITile[][] Tiles { get; }
+
+        /// <inheritdoc cref="MapSegment.TileObjectInstances"/>
+        IDictionary<int, ITileObjectInstance> TileObjectInstances { get; set; }
+
+
 
         /// <inheritdoc cref="MapSegment.CoordinateFallsWithinRange(ICoordinate)"/>
         bool CoordinateFallsWithinRange(ICoordinate coord);
@@ -61,6 +69,11 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// The map segment's background image URL.
         /// </summary>
         public string ImageURL { get; private set; }
+
+        /// <summary>
+        /// The map segment's title.
+        /// </summary>
+        public string Title { get; private set; }
 
         /// <summary>
         /// The height of the segment image in pixels.
@@ -93,6 +106,11 @@ namespace RedditEmblemAPI.Models.Output.Map
         public ITile[][] Tiles { get; private set; }
 
         /// <summary>
+        /// Dictionary of tile object instances present on this map segment.
+        /// </summary>
+        public IDictionary<int, ITileObjectInstance> TileObjectInstances { get; set; }
+
+        /// <summary>
         /// The coordinate format from the map constants.
         /// </summary>
         /// <remarks>
@@ -104,10 +122,11 @@ namespace RedditEmblemAPI.Models.Output.Map
 
         #region Constructor
 
-        public MapSegment(MapConstantsConfig config, IImageLoader loader, string imageUrl, int beginningOfHorizontalRange)
+        public MapSegment(MapConstantsConfig config, IImageLoader loader, string imageUrl, string title, int beginningOfHorizontalRange)
         {
             this.CoordinateFormat = config.CoordinateFormat;
             this.ImageURL = DataParser.String_URL(imageUrl, "Map Image URL"); //validate URL
+            this.Title = title;
 
             int heightInPixels, widthInPixels, heightInTiles, widthInTiles;
             GetImageDimensions(loader, this.ImageURL, out heightInPixels, out widthInPixels);
@@ -120,6 +139,7 @@ namespace RedditEmblemAPI.Models.Output.Map
 
             this.HorizontalTileRangeWithinMap = new Range(beginningOfHorizontalRange, beginningOfHorizontalRange + widthInTiles - 1);
             this.Tiles = new ITile[heightInTiles][];
+            this.TileObjectInstances = new Dictionary<int, ITileObjectInstance>();
         }
 
         /// <summary>
@@ -177,7 +197,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <exception cref="TileOutOfBoundsException"></exception>
         public ITile GetTileByCoord(ICoordinate coord)
         {
-            try { return this.Tiles[coord.Y - 1][coord.X - 1]; }
+            try { return this.Tiles[coord.Y - 1][coord.X - HorizontalTileRangeWithinMap.Start.Value]; }
             catch { throw new TileOutOfBoundsException(coord); }
         }
 
@@ -219,20 +239,28 @@ namespace RedditEmblemAPI.Models.Output.Map
 
         #region Static Functions
 
-        public static IMapSegment[] BuildArray(MapConstantsConfig config, IImageLoader imageLoader, IEnumerable<string> mapImageURLs)
+        public static IMapSegment[] BuildArray(MapSegmentConfig[] configs, MapConstantsConfig constants, IEnumerable<string> data, IImageLoader imageLoader)
         {
-            IMapSegment[] segments = new IMapSegment[mapImageURLs.Count()];
+            List<IMapSegment> segments = new List<IMapSegment>();
 
             int index = 0;
-            foreach (string url in mapImageURLs)
+            foreach (MapSegmentConfig config in configs)
             {
-                int beginningOfHorizontalRange = 1;
-                if (index > 0) beginningOfHorizontalRange += segments.Take(index).Sum(s => s.WidthInTiles);
+                string imageUrl = DataParser.OptionalString_URL(data, config.ImageURL, "Image URL");
+                if(string.IsNullOrWhiteSpace(imageUrl)) continue;
 
-                segments[index++] = new MapSegment(config, imageLoader, url, beginningOfHorizontalRange);
+                string title = DataParser.OptionalString(data, config.Title, "Title");
+
+                int beginningOfHorizontalRange = 1;
+                if (index++ > 0) beginningOfHorizontalRange += segments.Take(index).Sum(s => s.WidthInTiles);
+
+                segments.Add(new MapSegment(constants, imageLoader, imageUrl, title, beginningOfHorizontalRange));
             }
 
-            return segments;
+            if (segments.Count == 0)
+                throw new Exception();
+
+            return segments.ToArray();
         }
 
         #endregion Static Functions

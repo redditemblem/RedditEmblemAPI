@@ -1,4 +1,5 @@
 ﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Helpers.Ranges;
 using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Query;
@@ -26,9 +27,6 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <inheritdoc cref="MapObj.Segments"/>
         IMapSegment[] Segments { get; }
 
-        /// <inheritdoc cref="MapObj.TileObjectInstances"/>
-        IDictionary<int, ITileObjectInstance> TileObjectInstances { get; }
-
         /// <inheritdoc cref="MapObj.GetSegmentByCoord(ICoordinate)"/>
         IMapSegment GetSegmentByCoord(ICoordinate coord);
 
@@ -52,6 +50,12 @@ namespace RedditEmblemAPI.Models.Output.Map
     /// </summary>
     public class MapObj : IMapObj
     {
+        #region Constants
+
+        private static Regex warpGroupRegex = new Regex(@"\(([0-9]+)\)"); //match warp group (ex. "(1)")
+
+        #endregion Constants
+
         #region Attributes
 
         /// <summary>
@@ -69,18 +73,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// </summary>
         public IMapSegment[] Segments { get; private set; }
 
-        /// <summary>
-        /// Dictionary of tile object instances present on the map.
-        /// </summary>
-        public IDictionary<int, ITileObjectInstance> TileObjectInstances { get; private set; }
-
         #endregion Attributes
-
-        #region Constants
-
-        private static Regex warpGroupRegex = new Regex(@"\(([0-9]+)\)"); //match warp group (ex. "(1)")
-
-        #endregion Constants
 
         #region Constructors
 
@@ -95,7 +88,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// Constructor.
         /// </summary>
         /// <exception cref="MapDataLockedException"></exception>
-        /// <exception cref="MapImageURLsNotFoundException"></exception>
+        /// <exception cref="MapProcessingException"></exception>
         public MapObj(MapConfig config, IImageLoader imageLoader, IDictionary<string, ITerrainType> terrainTypes, IDictionary<string, ITileObject> tileObjects)
         {
             this.Constants = config.Constants;
@@ -111,15 +104,19 @@ namespace RedditEmblemAPI.Models.Output.Map
             if (!string.IsNullOrEmpty(chapterPostURL))
                 this.ChapterPostURL = DataParser.OptionalString_URL(chapterPostURL, "Chapter Post URL"); //validate URL
 
-            //Validate we have at least one map image
-            IEnumerable<string> mapImageURLs = DataParser.List_Strings(data, config.MapControls.MapImageURLs);
-            if (!mapImageURLs.Any())
-                throw new MapImageURLsNotFoundException(config.MapControls.Query.Sheet);
+            //Build the map segments
+            try
+            {
+                this.Segments = MapSegment.BuildArray(config.MapControls.Segments, config.Constants, data, imageLoader);
+                AddTilesToSegments(config.MapTiles, terrainTypes);
 
-            this.Segments = MapSegment.BuildArray(config.Constants, imageLoader, mapImageURLs);
-            AddTilesToSegments(config.MapTiles, terrainTypes);
-
-            this.TileObjectInstances = TileObjectInstance.BuildDictionary(config.MapObjects, this, tileObjects);
+                IDictionary<int, ITileObjectInstance> tileObjectInsts = TileObjectInstance.BuildDictionary(config.MapObjects, this, tileObjects);
+                AddTileObjectInstancesToSegments(tileObjectInsts);
+            }
+            catch (Exception ex)
+            {
+                throw new MapProcessingException(ex);
+            }
         }
 
         #region Segment Construction
@@ -127,74 +124,82 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <summary>
         /// Uses <paramref name="config"/>'s queried data to contruct tile matrices in each of the map segments.
         /// </summary>
-        /// <exception cref="MapProcessingException"></exception>
+        /// <exception cref="UnexpectedMapHeightException"></exception>
+        /// <exception cref="UnexpectedMapWidthException"></exception>
         private void AddTilesToSegments(MapTilesConfig config, IDictionary<string, ITerrainType> terrainTypes)
         {
-            try
+            IList<IList<object>> rows = config.Query.Data;
+            IDictionary<int, List<ITile>> warpGroups = new Dictionary<int, List<ITile>>();
+
+            //The total number of rows in the data set should be equal to the tallest map segment's vertical height
+            int maxSegmentHeight = this.Segments.Max(s => s.HeightInTiles);
+            if (rows.Count != maxSegmentHeight)
+                throw new UnexpectedMapHeightException(rows.Count, maxSegmentHeight, config.Query.Sheet);
+
+            for (int row = 0; row < rows.Count(); row++)
             {
-                IList<IList<object>> rows = config.Query.Data;
-                IDictionary<int, List<ITile>> warpGroups = new Dictionary<int, List<ITile>>();
+                //One row can contain terrain for multiple segments, separated by empty cells
+                IEnumerable<string> totalColumns = rows[row].Select(c => c.ToString()).Where(c => !string.IsNullOrWhiteSpace(c));
 
-                //The total number of rows in the data set should be equal to the tallest map segment's vertical height
-                int maxSegmentHeight = this.Segments.Max(s => s.HeightInTiles);
-                if (rows.Count != maxSegmentHeight)
-                    throw new UnexpectedMapHeightException(rows.Count, maxSegmentHeight, config.Query.Sheet);
-
-                for (int row = 0; row < rows.Count(); row++)
+                int columnsTaken = 0;
+                foreach (IMapSegment segment in this.Segments)
                 {
-                    //One row can contain terrain for multiple segments, separated by empty cells
-                    IEnumerable<string> totalColumns = rows[row].Select(c => c.ToString()).Where(c => !string.IsNullOrWhiteSpace(c));
+                    //Segments can have varying heights
+                    //If we've passed the expected max height of this segment already, skip it
+                    if (row >= segment.HeightInTiles) continue;
 
-                    int columnsTaken = 0;
-                    foreach (IMapSegment segment in this.Segments)
+                    //Grab the range of cells that represent the tiles for the current segment
+                    //The start of the range is inclusive, the end is not
+                    Range range = new Range(columnsTaken, columnsTaken + segment.WidthInTiles);
+                    IEnumerable<string> segmentColumns = totalColumns.Take(range);
+
+                    //Move the start of the range for the next segment
+                    columnsTaken += segment.WidthInTiles;
+
+                    //If we reach the end of the populated cells in this row and don't have enough
+                    //to match the expected combined segment width, error.
+                    if (segmentColumns.Count() != segment.WidthInTiles)
+                        throw new UnexpectedMapWidthException(segment.Title, row + 1, segmentColumns.Count(), segment.WidthInTiles, config.Query.Sheet);
+
+                    segment.Tiles[row] = new ITile[segment.WidthInTiles];
+                    for (int column = 0; column < segmentColumns.Count(); column++)
                     {
-                        //Segments can have varying heights
-                        //If we've passed the expected max height of this segment already, skip it
-                        if (row >= segment.HeightInTiles) continue;
+                        string cell = segmentColumns.ElementAt(column);
+                        int? warpGroupNum = GetWarpGroupNumber(ref cell);
 
-                        //Grab the range of cells that represent the tiles for the current segment
-                        //The start of the range is inclusive, the end is not
-                        Range range = new Range(columnsTaken, columnsTaken + segment.WidthInTiles);
-                        IEnumerable<string> segmentColumns = totalColumns.Take(range);
+                        //Calculate the tile's x and y coordinates
+                        int x = segment.HorizontalTileRangeWithinMap.Start.Value + column;
+                        int y = row + 1;
 
-                        //Move the start of the range for the next segment
-                        columnsTaken += segment.WidthInTiles;
+                        //Create the tile
+                        ICoordinate coord = new Coordinate(this.Constants.CoordinateFormat, x, y);
+                        ITerrainType terrainType = TerrainType.MatchName(terrainTypes, cell, coord);
+                        ITile tile = new Tile(coord, terrainType);
 
-                        //If we reach the end of the populated cells in this row and don't have enough
-                        //to match the expected combined segment width, error.
-                        if (segmentColumns.Count() != segment.WidthInTiles)
-                            throw new UnexpectedMapWidthException(segmentColumns.Count(), segment.WidthInTiles, config.Query.Sheet);
-
-                        segment.Tiles[row] = new ITile[segment.WidthInTiles];
-                        for (int column = 0; column < segmentColumns.Count(); column++)
+                        //Set the tile's neighbors
+                        if (row > 0)
                         {
-                            string cell = segmentColumns.ElementAt(column);
-                            int? warpGroupNum = GetWarpGroupNumber(ref cell);
-
-                            //Calculate the tile's x and y coordinates
-                            int x = segment.HorizontalTileRangeWithinMap.Start.Value + column;
-                            int y = row + 1;
-
-                            //Create the tile
-                            ICoordinate coord = new Coordinate(this.Constants.CoordinateFormat, x, y);
-                            ITerrainType terrainType = TerrainType.MatchName(terrainTypes, cell, coord);
-                            ITile tile = new Tile(coord, terrainType);
-
-                            segment.Tiles[row][column] = tile;
-
-                            //If we found a warp group number, add the new tile to a warp group.
-                            if (warpGroupNum.HasValue)
-                                AddTileToWarpGroups(warpGroups, tile, warpGroupNum.Value);
+                            ITile neighbor = segment.Tiles[row - 1][column];
+                            tile.Neighbors[(int)CardinalDirection.North] = neighbor;
+                            neighbor.Neighbors[(int)CardinalDirection.South] = tile;
                         }
+                        if (column > 0)
+                        {
+                            ITile neighbor = segment.Tiles[row][column - 1];
+                            tile.Neighbors[(int)CardinalDirection.West] = neighbor;
+                            neighbor.Neighbors[(int)CardinalDirection.East] = tile;
+                        }
+
+                        segment.Tiles[row][column] = tile;
+
+                        //If we found a warp group number, add the new tile to a warp group.
+                        if (warpGroupNum.HasValue)
+                            AddTileToWarpGroups(warpGroups, tile, warpGroupNum.Value);
                     }
                 }
+            }
 
-                ValidateWarpGroups(warpGroups);
-            }
-            catch (Exception ex)
-            {
-                throw new MapProcessingException(ex);
-            }
+            ValidateWarpGroups(warpGroups);
         }
 
         /// <summary>
@@ -259,6 +264,16 @@ namespace RedditEmblemAPI.Models.Output.Map
                  || entrances.Select(e => e.Coordinate).Union(exits.Select(e => e.Coordinate)).Distinct().Count() < 2)
                     throw new InvalidWarpGroupException(key.ToString());
             }
+        }
+
+        /// <summary>
+        /// Partitions out <paramref name="tileObjectInsts"/> to the correct map segments.
+        /// </summary>
+        private void AddTileObjectInstancesToSegments(IDictionary<int, ITileObjectInstance> tileObjectInsts)
+        {
+            var groupedBySegment = tileObjectInsts.GroupBy(to => GetSegmentByCoord(to.Value.AnchorCoordinate));
+            foreach (var group in groupedBySegment)
+                group.Key.TileObjectInstances = group.ToDictionary();
         }
 
         #endregion Segment Construction

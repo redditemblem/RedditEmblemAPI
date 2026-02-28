@@ -1,5 +1,5 @@
 ﻿using NSubstitute;
-using RedditEmblemAPI.Helpers.Ranges;
+using RedditEmblemAPI.Helpers.Ranges.Movement;
 using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Models.Output.Map;

@@ -1,7 +1,7 @@
 ﻿using Antlr4.Runtime.Misc;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
-using RedditEmblemAPI.Helpers.Ranges;
+using RedditEmblemAPI.Helpers.Ranges.Movement;
 using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Models.Output.Map;

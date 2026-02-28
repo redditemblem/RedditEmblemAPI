@@ -5,13 +5,10 @@ namespace RedditEmblemAPI.Models.Exceptions.Validation
     public class UnexpectedMapWidthException : Exception
     {
         /// <summary>
-        /// Thrown when the number of horizontal tiles fetched from a tiles sheet does not match the calculated number of horizontal tiles from the map image.
+        /// Thrown when the number of horizontal tiles fetched does not match the calculated number of horizontal tiles from a map segment's image.
         /// </summary>
-        /// <param name="actualWidth"></param>
-        /// <param name="expectedWidth"></param>
-        /// <param name="sheetName"></param>
-        public UnexpectedMapWidthException(int actualWidth, int expectedWidth, string sheetName)
-            : base($"{actualWidth} tiles were found in a row from the \"{sheetName}\" sheet when {expectedWidth} were expected.")
+        public UnexpectedMapWidthException(string segmentTitle, int rowNumber, int actualWidth, int expectedWidth, string sheetName)
+            : base($"{actualWidth} tiles were found for segment \"{segmentTitle}\" in row {rowNumber} of the \"{sheetName}\" sheet. {expectedWidth} tiles were expected.")
         { }
     }
 }
