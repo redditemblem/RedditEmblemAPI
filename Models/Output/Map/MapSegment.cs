@@ -207,7 +207,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// <exception cref="TileOutOfBoundsException"></exception>
         public ITile GetTileByCoord(int x, int y)
         {
-            try { return this.Tiles[y - 1][x - 1]; }
+            try { return this.Tiles[y - 1][x - HorizontalTileRangeWithinMap.Start.Value]; }
             catch { throw new TileOutOfBoundsException(new Coordinate(this.CoordinateFormat, x, y)); }
         }
 

@@ -11,6 +11,7 @@ using RedditEmblemAPI.Models.Output.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace RedditEmblemAPI.Models.Output.Map
 {
@@ -171,6 +172,7 @@ namespace RedditEmblemAPI.Models.Output.Map
             foreach (IList<object> row in config.Query.Data)
             {
                 string name = string.Empty;
+                string coordinate = string.Empty;
                 IEnumerable<string> tileObj;
                 ITileObjectInstance tileObjectInst;
 
@@ -178,7 +180,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                 {
                     tileObj = row.Select(r => r.ToString());
                     name = DataParser.OptionalString(tileObj, config.Name, "Name");
-                    string coordinate = DataParser.OptionalString(tileObj, config.Coordinate, "Coordinate");
+                    coordinate = DataParser.OptionalString(tileObj, config.Coordinate, "Coordinate");
 
                     //Don't bother to parse this row if it hasn't been placed on the map
                     if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(coordinate))
@@ -189,7 +191,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                 }
                 catch (Exception ex)
                 {
-                    throw new TileObjectInstanceProcessingException(name, ex);
+                    throw new TileObjectInstanceProcessingException(name, coordinate, ex);
                 }
 
                 //Check if the newly created tile object instance is setup to repeat itself
@@ -201,18 +203,17 @@ namespace RedditEmblemAPI.Models.Output.Map
                         if (!string.IsNullOrEmpty(shapeVal))
                         {
                             TileObjectInstanceRepeaterShape shape = GetTileObjectInstanceRepeaterShape(shapeVal);
-                            int height = DataParser.Int_Positive(tileObj, config.RepeaterTool.Height, "Repeater Tool Height");
-                            int width = DataParser.Int_Positive(tileObj, config.RepeaterTool.Width, "Repeater Tool Width");
+                            int height = DataParser.Int_NonZeroPositive(tileObj, config.RepeaterTool.Height, "Repeater Tool Height");
+                            int width = DataParser.Int_NonZeroPositive(tileObj, config.RepeaterTool.Width, "Repeater Tool Width");
 
-                            if(shape == TileObjectInstanceRepeaterShape.Plus && (height % 2 == 0 || height < 3 || width % 2 == 0 || width < 3))
-                                    throw new Exception("Bad shape parms");
-
-                            RepeatTileObjectInstance(map, tileObjectInst, ref idIterator, shape, height, width);
+                            IEnumerable<ITileObjectInstance> copies = RepeatTileObjectInstance(map, tileObjectInst, ref idIterator, shape, height, width);
+                            foreach (ITileObjectInstance copy in copies)
+                                tileObjectInsts.Add(copy.ID, copy);
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw;
+                        throw new TileObjectInstanceProcessingException(name, coordinate, ex);
                     }
                 }
             }
@@ -248,14 +249,26 @@ namespace RedditEmblemAPI.Models.Output.Map
             }
         }
 
+        #region Plus Shaped Repeater
+
         private static IEnumerable<ITileObjectInstance> RepeatTileObjectInstanceInPlus(IMapObj map, ITileObjectInstance copyFrom, ref int idIterator, int height, int width)
         {
+            if (height % 2 == 0 || width % 2 == 0)
+                throw new ArgumentException("A \"Plus\" shape repeater must have an odd-numbered height and width.");
+            if (height < 3 || width < 3)
+                throw new ArgumentException("A \"Plus\" shape repeater must have a height and width of at least 3 tiles.");
+
             List<ITileObjectInstance> copies = new List<ITileObjectInstance>();
 
             ICoordinate copyFromAnchor = copyFrom.AnchorCoordinate;
             IMapSegment segment = map.GetSegmentByCoord(copyFromAnchor);
+            int size = copyFrom.TileObject.Size;
 
-            int size = copyFrom.OriginTiles.Length;
+            if (height * size > segment.HeightInTiles)
+                throw new ArgumentException("The calculated height (height * tile object size) of a \"Plus\" shape repeater cannot exceed the height of the map segment.");
+            if (width * size > segment.WidthInTiles)
+                throw new ArgumentException("The calculated width (width * tile object size) of a \"Plus\" shape repeater cannot exceed the width of the map segment.");
+
             int verticalRadius = (int)Math.Floor(height / 2m);
             int horizontalRadius = (int)Math.Floor(width / 2m);
 
@@ -264,7 +277,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                 for (int y = 0; y <= verticalRadius; y++)
                 {
                     if (x == 0 && y == 0) continue; //ignore center
-                    if (x + y > verticalRadius || x + y > horizontalRadius) continue; //ignore corners
+                    if (!IsPointInsideTriangle(horizontalRadius, verticalRadius, x, y)) continue; //enforces a slope between the max horizontal and max vertical coords
 
                     int xMod = x * size;
                     int yMod = y * size;
@@ -291,10 +304,78 @@ namespace RedditEmblemAPI.Models.Output.Map
             return copies;
         }
 
+        /// <summary>
+        /// Calculates and returns the area of the triange with points (x1, y1), (x2, y2), and (x3, y3).
+        /// </summary>
+        private static double GetAreaOfTriangle(int x1, int y1, int x2, int y2, int x3, int y3)
+        {
+            return Math.Abs((x1 * (y2 - y3) +
+                             x2 * (y3 - y1) +
+                             x3 * (y1 - y2)) / 2.0);
+        }
+
+        /// <summary>
+        /// Returns true if the point (x, y) lies inside of a right triangle located at (0, 0) with <paramref name="width"/> and <paramref name="height"/>.
+        /// </summary>
+        /// <see cref="https://www.geeksforgeeks.org/dsa/check-whether-a-given-point-lies-inside-a-triangle-or-not/"/>
+        private static bool IsPointInsideTriangle(int width, int height, int x, int y)
+        {
+            /* Calculate area of triangle ABC */
+            double A = GetAreaOfTriangle(width, 0, 0, height, 0, 0);
+
+            /* Calculate area of triangle PBC */
+            double A1 = GetAreaOfTriangle(x, y, 0, height, 0, 0);
+
+            /* Calculate area of triangle PAC */
+            double A2 = GetAreaOfTriangle(width, 0, x, y, 0, 0);
+
+            /* Calculate area of triangle PAB */
+            double A3 = GetAreaOfTriangle(width, 0, 0, height, x, y);
+
+            /* Check if sum of A1, A2 and A3 is same as A */
+            return (A == A1 + A2 + A3);
+        }
+
+        #endregion Plus Shaped Repeater
+
+        #region Rectangle Shaped Repeater
+
         private static IEnumerable<ITileObjectInstance> RepeatTileObjectInstanceInRectangle(IMapObj map, ITileObjectInstance copyFrom, ref int idIterator, int height, int width)
         {
-            return null;
+            List<ITileObjectInstance> copies = new List<ITileObjectInstance>();
+
+            ICoordinate copyFromAnchor = copyFrom.AnchorCoordinate;
+            IMapSegment segment = map.GetSegmentByCoord(copyFromAnchor);
+            int size = copyFrom.TileObject.Size;
+
+            if (height * size > segment.HeightInTiles)
+                throw new ArgumentException("The calculated height (height * tile object size) of a \"Rectangle\" shape repeater cannot exceed the height of the map segment.");
+            if (width * size > segment.WidthInTiles)
+                throw new ArgumentException("The calculated width (width * tile object size) of a \"Rectangle\" shape repeater cannot exceed the width of the map segment.");
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if (x == 0 && y == 0) continue; //ignore anchor
+                    
+                    int xMod = x * size;
+                    int yMod = y * size;
+
+                    ITile tile = null;
+                    try { tile = segment.GetTileByCoord(copyFromAnchor.X + xMod, copyFromAnchor.Y + yMod); } catch (TileOutOfBoundsException) { }
+
+                    if (tile is null) continue;
+
+                    try { copies.Add(new TileObjectInstance(idIterator++, tile.Coordinate, copyFrom, map)); }
+                    catch { }
+                }
+            }
+
+            return copies;
         }
+
+        #endregion Rectangle Shaped Repeater
 
         #endregion Static Functions
     }

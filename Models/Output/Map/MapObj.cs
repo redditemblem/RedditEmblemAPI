@@ -100,17 +100,24 @@ namespace RedditEmblemAPI.Models.Output.Map
             string state = DataParser.OptionalString(data, config.MapControls.MapSwitch, "Map Switch");
             if (!state.Equals("On")) throw new MapDataLockedException();
 
-            string chapterPostURL = DataParser.OptionalString(data, config.MapControls.ChapterPostURL, "Chapter Post URL");
-            if (!string.IsNullOrEmpty(chapterPostURL))
-                this.ChapterPostURL = DataParser.OptionalString_URL(chapterPostURL, "Chapter Post URL"); //validate URL
-
-            //Build the map segments
             try
             {
+                string chapterPostURL = DataParser.OptionalString(data, config.MapControls.ChapterPostURL, "Chapter Post URL");
+                if (!string.IsNullOrEmpty(chapterPostURL))
+                    this.ChapterPostURL = DataParser.OptionalString_URL(chapterPostURL, "Chapter Post URL"); //validate URL
+
+                //Build the map segments
                 this.Segments = MapSegment.BuildArray(config.MapControls.Segments, config.Constants, data, imageLoader);
                 AddTilesToSegments(config.MapTiles, terrainTypes);
+            }
+            catch (Exception ex)
+            {
+                throw new MapProcessingException(ex);
+            }
 
-                IDictionary<int, ITileObjectInstance> tileObjectInsts = TileObjectInstance.BuildDictionary(config.MapObjects, this, tileObjects);
+            IDictionary<int, ITileObjectInstance> tileObjectInsts = TileObjectInstance.BuildDictionary(config.MapObjects, this, tileObjects);
+            try
+            {
                 AddTileObjectInstancesToSegments(tileObjectInsts);
             }
             catch (Exception ex)

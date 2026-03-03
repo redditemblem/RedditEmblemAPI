@@ -40,7 +40,7 @@
     "MapObjects": {
       "Query": {
         "Sheet": "Map Objects",
-        "Selection": "A2:D",
+        "Selection": "A2:G",
         "Orientation": 1
       },
       "Name": 0,
@@ -48,6 +48,11 @@
       "HP": {
         "Current": 2,
         "Maximum": 3
+      },
+      "RepeaterTool": {
+        "Shape": 4,
+        "Height": 5,
+        "Width": 6
       }
     }
   },
