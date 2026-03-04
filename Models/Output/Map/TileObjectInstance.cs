@@ -11,7 +11,6 @@ using RedditEmblemAPI.Models.Output.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace RedditEmblemAPI.Models.Output.Map
 {

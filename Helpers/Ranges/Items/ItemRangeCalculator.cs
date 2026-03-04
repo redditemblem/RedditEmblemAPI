@@ -1,5 +1,4 @@
-﻿using Antlr4.Runtime.Misc;
-using RedditEmblemAPI.Models.Exceptions.Processing;
+﻿using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
@@ -43,38 +42,53 @@ namespace RedditEmblemAPI.Helpers.Ranges.Items
 
         #endregion Setup
 
+        /// <summary>
+        /// Calculates the attack and utility item ranges for all tile object instances on the map.
+        /// </summary>
+        /// <exception cref="RangeCalculationException"></exception>
         public void CalculateTileObjectRanges()
         {
             foreach (ITileObjectInstance tileObjInst in Map.Segments.SelectMany(s => s.TileObjectInstances.Values))
             {
-                //If tile object does not have a configured range, skip it.
-                if (tileObjInst.TileObject.Range.Minimum < 1 || tileObjInst.TileObject.Range.Maximum < 1)
-                    continue;
-
-                IList<ICoordinate> atkRange = new List<ICoordinate>();
-                IList<ICoordinate> utilRange = new List<ICoordinate>();
-
-                //Transpose item data into the struct we're using for recursion
-                List<UnitItemRange> ranges = new List<UnitItemRange> { new UnitItemRange(tileObjInst.TileObject.Range.Minimum, tileObjInst.TileObject.Range.Maximum, ItemRangeShape.Standard, false, true, false) };
-
-                foreach (ITile originTile in tileObjInst.OriginTiles)
+                try
                 {
-                    foreach (OrdinalDirection direction in RANGE_DIRECTIONS.Keys)
-                    {
-                        ItemRangeParameters rangeParms = new ItemRangeParameters(originTile.Coordinate, tileObjInst.OriginTiles.Select(ot => ot.Coordinate).ToList(), ranges, direction, 0);
-                        RecurseItemRange(rangeParms,
-                                         originTile,
-                                         rangeParms.LargestRange,
-                                         ref atkRange,
-                                         ref utilRange
-                                        );
-                    }
-                }
+                    //If tile object does not have a configured range, skip it.
+                    if (tileObjInst.TileObject.Range.Minimum < 1 || tileObjInst.TileObject.Range.Maximum < 1)
+                        continue;
 
-                tileObjInst.AttackRange = atkRange;
+                    IList<ICoordinate> atkRange = new List<ICoordinate>();
+                    IList<ICoordinate> utilRange = new List<ICoordinate>();
+
+                    //Transpose item data into the struct we're using for recursion
+                    List<UnitItemRange> ranges = new List<UnitItemRange> { new UnitItemRange(tileObjInst.TileObject.Range.Minimum, tileObjInst.TileObject.Range.Maximum, ItemRangeShape.Standard, false, true, false) };
+
+                    foreach (ITile originTile in tileObjInst.OriginTiles)
+                    {
+                        foreach (OrdinalDirection direction in RANGE_DIRECTIONS.Keys)
+                        {
+                            ItemRangeParameters rangeParms = new ItemRangeParameters(originTile.Coordinate, tileObjInst.OriginTiles.Select(ot => ot.Coordinate), ranges, direction, 0);
+                            RecurseItemRange(rangeParms,
+                                             originTile,
+                                             rangeParms.LargestRange,
+                                             ref atkRange,
+                                             ref utilRange
+                                            );
+                        }
+                    }
+
+                    tileObjInst.AttackRange = atkRange;
+                }
+                catch(Exception ex)
+                {
+                    throw new RangeCalculationException(tileObjInst, ex);
+                }
             }
         }
 
+        /// <summary>
+        /// Calculates the attack and utility item ranges for all units on the map.
+        /// </summary>
+        /// <exception cref="RangeCalculationException"></exception>
         public void CalculateUnitItemRanges()
         {
             foreach (IUnit unit in Units)

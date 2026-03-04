@@ -1,11 +1,9 @@
 ﻿using NSubstitute;
 using RedditEmblemAPI.Helpers.Ranges;
 using RedditEmblemAPI.Helpers.Ranges.Items;
-using RedditEmblemAPI.Models.Configuration.Map;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
-using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.Units;
 
 namespace UnitTests.Helpers.Ranges.Items

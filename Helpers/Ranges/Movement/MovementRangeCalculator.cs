@@ -31,7 +31,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
         #endregion Attributes
 
         /// <summary>
-        /// 
+        /// Calculates the movement ranges for all units on the map.
         /// </summary>
         /// <exception cref="RangeCalculationException"></exception>
         public void CalculateUnitMovementRanges()
@@ -44,7 +44,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
                     if (!unit.Location.OriginTiles.Any())
                         continue;
 
-                    int movement = CalculateUnitMovement(unit);
+                    int movement = GetUnitMovementFinalValue(unit);
                     MovementRangeParameters unitParms = new MovementRangeParameters(unit);
 
                     IEnumerable<ICoordinate> movementRange = CalculateUnitMovementRange(unitParms, movement);
@@ -59,7 +59,10 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
             }
         }
 
-        private int CalculateUnitMovement(IUnit unit)
+        /// <summary>
+        /// Returns <paramref name="unit"/>'s final movement stat value.
+        /// </summary>
+        private int GetUnitMovementFinalValue(IUnit unit)
         {
             IModifiedStatValue movementStat = unit.Stats.MatchGeneralStatName(Map.Constants.UnitMovementStatName);
             int movementVal = movementStat.FinalValue;
@@ -112,9 +115,6 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
 
         private void TraverseVertexMap(MovementRangeParameters parms, IList<IVertex> vertexMap)
         {
-            //Calculate minimum possible distance to every tile based on path values
-            List<ITile> warpsUsed = new List<ITile>();
-
             while (vertexMap.Any(c => !c.IsVisited))
             {
                 IVertex vertex = vertexMap.Where(c => !c.IsVisited).MinBy(c => c.MinDistanceTo);
@@ -125,56 +125,17 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
                 if (vertex.IsTerminus || vertex.PathCost >= 99 || vertex.MinDistanceTo == int.MaxValue)
                     continue;
 
+                //Update path distances for neighboring vertices that the unit can move to from here
                 IEnumerable<IVertex> neighbors = vertex.Neighbors.Where(n => n is not null && !n.IsVisited && n.PathCost < 99);
                 foreach (IVertex neighbor in neighbors)
                     neighbor.MinDistanceTo = Math.Min(neighbor.MinDistanceTo, vertex.MinDistanceTo + neighbor.PathCost);
 
-                //If the vertex contains a warp entrance, find the costs from its exit too.
-                IEnumerable<ITile> warps = vertex.WarpEntrances.Where(w => !warpsUsed.Contains(w));
-                foreach(ITile entrance in warps)
+                foreach(IVertexWarp warp in vertex.WarpNeighbors)
                 {
-                    warpsUsed.Add(entrance);
-                    int warpCost = CalculateTileWarpMovementCost(parms, entrance);
-
-                    bool warpUpdated = false;
-                    foreach (ITile exit in entrance.WarpData.WarpGroup.Where(t => entrance.Coordinate != t.Coordinate && (t.TerrainType.WarpType == WarpType.Exit || t.TerrainType.WarpType == WarpType.Dual)))
-                    {
-                        IEnumerable<IVertex> exitVertices = vertexMap.Where(v => v.Tiles.Contains(exit));
-                        foreach (IVertex exitVertex in exitVertices)
-                        {
-                            //Ignore any exit on an untraversable vertex
-                            if (exitVertex.PathCost >= 99)
-                                continue;
-
-                            if (vertex.MinDistanceTo + warpCost < exitVertex.MinDistanceTo)
-                            {
-                                exitVertex.MinDistanceTo = vertex.MinDistanceTo + warpCost;
-                                warpUpdated = true;
-                            }
-                        }
-                    }
-
-                    //Reset visited status of all vertices
-                    if (warpUpdated) 
-                        foreach(IVertex vert in vertexMap)
-                            vert.IsVisited = false;
+                    foreach (IVertex warpNeighbor in warp.Neighbors.Where(n => !n.IsVisited && n.PathCost < 99))
+                        warpNeighbor.MinDistanceTo = Math.Min(warpNeighbor.MinDistanceTo, vertex.MinDistanceTo + warp.WarpCost);
                 }
             }
-        }
-
- 
-        private int CalculateTileWarpMovementCost(MovementRangeParameters parms, ITile warp)
-        {
-            IWarpMovementCostSetEffect warpCostSet = parms.WarpCostSets.FirstOrDefault(s => warp.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
-            IWarpMovementCostModifierEffect warpCostMod = parms.WarpCostModifiers.FirstOrDefault(s => warp.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
-
-            int warpCost = warp.TerrainType.WarpCost;
-            if (warpCostSet is not null) warpCost = warpCostSet.Value;
-            else if (warpCostMod is not null) warpCost += warpCostMod.Value;
-
-            warpCost = Math.Max(0, warpCost); //enforce minimum
-
-            return warpCost;
         }
     }
 }

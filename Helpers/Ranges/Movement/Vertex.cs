@@ -20,11 +20,11 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
         /// <inheritdoc cref="Vertex.Neighbors"/>
         IVertex[] Neighbors { get; }
 
+        /// <inheritdoc cref="Vertex.WarpNeighbors"/>
+        IVertexWarp[] WarpNeighbors { get; set; }
+
         /// <inheritdoc cref="Vertex.Tiles"/>
         IEnumerable<ITile> Tiles { get; }
-
-        /// <inheritdoc cref="Vertex.WarpEntrances"/>
-        IEnumerable<ITile> WarpEntrances { get; }
 
         /// <inheritdoc cref="Vertex.IsTraversableOnly"/>
         public bool IsTraversableOnly { get; }
@@ -60,11 +60,14 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
         public IVertex[] Neighbors { get; private set; }
 
         /// <summary>
+        /// The warps that can be taken from this vertex.
+        /// </summary>
+        public IVertexWarp[] WarpNeighbors { get; set; }
+
+        /// <summary>
         /// The collection of tiles represented by this vertex.
         /// </summary>
         public IEnumerable<ITile> Tiles { get; private set; }
-
-        public IEnumerable<ITile> WarpEntrances { get; private set; }
 
         /// <summary>
         /// Flag indicating that units cannot end their path on this vertex.
@@ -99,8 +102,8 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
         public Vertex(IEnumerable<ITile> tiles)
         {
             Neighbors = new IVertex[4];
+            WarpNeighbors = Array.Empty<IVertexWarp>();
             Tiles = tiles;
-            WarpEntrances = tiles.Where(t => t.TerrainType.WarpType == WarpType.Entrance || t.TerrainType.WarpType == WarpType.Dual);
             IsTraversableOnly = tiles.Any(t => t.TerrainType.CannotStopOn);
 
             Reset();
@@ -115,6 +118,9 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
             PathCost = int.MaxValue;
             IsVisited = false;
             IsTerminus = false;
+
+            foreach (IVertexWarp warp in WarpNeighbors)
+                warp.Reset();
         }
 
         /// <summary>
@@ -124,6 +130,9 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
         {
             PathCost = CalculatePathCostForUnit(parms, moveCostHistory);
             IsTerminus = IsTerminusForUnit(parms);
+
+            foreach (IVertexWarp warp in WarpNeighbors)
+                warp.UpdateVertexWarpForUnit(parms);
         }
 
         /// <summary>
@@ -194,8 +203,11 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
         }
 
         /// <summary>
-        /// Evaluates multiple effect scenarios and returns a movement cost based on any that apply. Separated out from the other logic to allow for early returns.
+        /// Evaluates multiple effect scenarios and returns a movement cost based on any that apply.
         /// </summary>
+        /// <remarks>
+        /// Separated out from the other logic to allow for early returns.
+        /// </remarks>
         private int ApplyEffectsToMovementCost(MovementRangeParameters parms, ITile tile, int startingMovementCost)
         {
             ITerrainTypeMovementCostSetEffect_Status movCostSet_Status = parms.MoveCostSets_Statuses.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
@@ -272,6 +284,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
         public static IList<IVertex> BuildVertexMap(IMapObj map, int unitSize)
         {
             List<IVertex> vertexMap = new List<IVertex>();
+            List<IVertex> verticesWithWarpEntrances = new List<IVertex>();
 
             //Vertices cannot span more than one map segment
             //Keep tile selection contained to the current segment
@@ -308,6 +321,10 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
                             vert.Neighbors[(int)CardinalDirection.West] = currentRow[c - 1];
                             currentRow[c - 1].Neighbors[(int)CardinalDirection.East] = vert;
                         }
+
+                        //If this vertex has any warp entrance tiles contained within it, add it to our shortlist for further processing
+                        if(vertexTiles.Any(t => t.WarpData.WarpGroupNumber > 0 && (t.TerrainType.WarpType == WarpType.Entrance || t.TerrainType.WarpType == WarpType.Dual)))
+                            verticesWithWarpEntrances.Add(vert);
                     }
 
                     vertexMap.AddRange(currentRow);
@@ -315,7 +332,36 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
                 }
             }
 
+            //Once we have the full vertex map, link all of our warps together
+            LinkVerticesToWarpNeighbors(vertexMap, verticesWithWarpEntrances);
+
             return vertexMap;
+        }
+
+        /// <summary>
+        /// Iterates through each <paramref name="verticesWithWarpEntrances"/> and sets its warp neighbors.
+        /// </summary>
+        private static void LinkVerticesToWarpNeighbors(List<IVertex> vertexMap, List<IVertex> verticesWithWarpEntrances)
+        {
+            foreach(IVertex vertex in verticesWithWarpEntrances)
+            {
+                List<IVertexWarp> warps = new List<IVertexWarp>();
+
+                //Multi-tile units have the potential to span over multiple warp entrances
+                foreach(ITile warpEntrance in vertex.Tiles.Where(t => t.WarpData.WarpGroupNumber > 0 && (t.TerrainType.WarpType == WarpType.Entrance || t.TerrainType.WarpType == WarpType.Dual)))
+                {
+                    //Find all exits linked to this entrance
+                    foreach(ITile warpExit in warpEntrance.WarpData.WarpGroup.Where(t => warpEntrance.Coordinate != t.Coordinate && (t.TerrainType.WarpType == WarpType.Exit || t.TerrainType.WarpType == WarpType.Dual)))
+                    {
+                        IVertex[] exitVertices = vertexMap.Where(v => v.Tiles.Contains(warpExit)).ToArray();
+
+                        if(exitVertices.Any())
+                            warps.Add(new VertexWarp(warpEntrance, exitVertices));
+                    }
+                }
+
+                vertex.WarpNeighbors = warps.ToArray();
+            }
         }
 
         #endregion Static Functions

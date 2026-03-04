@@ -19,7 +19,7 @@ namespace UnitTests.Helpers.Ranges.Movement
 
             Assert.That(vertex.Neighbors.Count(), Is.EqualTo(4));
             Assert.That(vertex.Tiles, Is.Empty);
-            Assert.That(vertex.WarpEntrances, Is.Empty);
+            Assert.That(vertex.WarpNeighbors, Is.Empty);
             Assert.That(vertex.IsTraversableOnly, Is.False);
 
             Assert.That(vertex.MinDistanceTo, Is.EqualTo(int.MaxValue));
@@ -41,7 +41,7 @@ namespace UnitTests.Helpers.Ranges.Movement
             Assert.That(vertex.Neighbors.Count(), Is.EqualTo(4));
             Assert.That(vertex.Tiles, Is.EqualTo(tiles));
             Assert.That(vertex.Tiles.Count(), Is.EqualTo(1));
-            Assert.That(vertex.WarpEntrances, Is.Empty);
+            Assert.That(vertex.WarpNeighbors, Is.Empty);
             Assert.That(vertex.IsTraversableOnly, Is.False);
 
             Assert.That(vertex.MinDistanceTo, Is.EqualTo(int.MaxValue));
@@ -50,34 +50,6 @@ namespace UnitTests.Helpers.Ranges.Movement
             Assert.That(vertex.IsTerminus, Is.False);
         }
 
-        [Test]
-        public void Constructor_WithWarpEntrances()
-        {
-            ITile entrance = Substitute.For<ITile>();
-            entrance.TerrainType.WarpType.Returns(WarpType.Entrance);
-
-            ITile dual = Substitute.For<ITile>();
-            dual.TerrainType.WarpType.Returns(WarpType.Dual);
-
-            ITile exit = Substitute.For<ITile>();
-            exit.TerrainType.WarpType.Returns(WarpType.Exit);
-
-            IEnumerable<ITile> tiles = new List<ITile>()
-            {
-                entrance,
-                dual,
-                exit
-            };
-
-            IVertex vertex = new Vertex(tiles);
-
-            IEnumerable<ITile> expected = new List<ITile>() { entrance, dual };
-
-            Assert.That(vertex.Tiles, Is.EqualTo(tiles));
-            Assert.That(vertex.Tiles.Count(), Is.EqualTo(3));
-            Assert.That(vertex.WarpEntrances, Is.EqualTo(expected));
-            Assert.That(vertex.WarpEntrances.Count(), Is.EqualTo(2));
-        }
 
         [Test]
         public void Constructor_IsTraversableOnly()
