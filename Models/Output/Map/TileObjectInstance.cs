@@ -276,7 +276,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                 for (int y = 0; y <= verticalRadius; y++)
                 {
                     if (x == 0 && y == 0) continue; //ignore center
-                    if (!IsPointInsideTriangle(horizontalRadius, verticalRadius, x, y)) continue; //enforces a slope between the max horizontal and max vertical coords
+                    if (!IsPointInsideTriangle(horizontalRadius, verticalRadius, x, y)) break; //enforces a slope between the max horizontal and max vertical coords
 
                     int xMod = x * size;
                     int yMod = y * size;

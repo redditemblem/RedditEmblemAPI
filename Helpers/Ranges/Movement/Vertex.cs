@@ -285,6 +285,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
         {
             List<IVertex> vertexMap = new List<IVertex>();
             List<IVertex> verticesWithWarpEntrances = new List<IVertex>();
+            List<IVertex> verticesWithWarpExits = new List<IVertex>();
 
             //Vertices cannot span more than one map segment
             //Keep tile selection contained to the current segment
@@ -322,9 +323,11 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
                             currentRow[c - 1].Neighbors[(int)CardinalDirection.East] = vert;
                         }
 
-                        //If this vertex has any warp entrance tiles contained within it, add it to our shortlist for further processing
-                        if(vertexTiles.Any(t => t.WarpData.WarpGroupNumber > 0 && (t.TerrainType.WarpType == WarpType.Entrance || t.TerrainType.WarpType == WarpType.Dual)))
+                        //If this vertex has any warp tiles contained within it, add it to the shortlists for further processing
+                        if(vertexTiles.Any(t => t.WarpData.WarpGroupNumber > 0 && t.TerrainType.WarpType != WarpType.Exit))
                             verticesWithWarpEntrances.Add(vert);
+                        if (vertexTiles.Any(t => t.WarpData.WarpGroupNumber > 0 && t.TerrainType.WarpType != WarpType.Entrance))
+                            verticesWithWarpExits.Add(vert);
                     }
 
                     vertexMap.AddRange(currentRow);
@@ -333,7 +336,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
             }
 
             //Once we have the full vertex map, link all of our warps together
-            LinkVerticesToWarpNeighbors(vertexMap, verticesWithWarpEntrances);
+            LinkVerticesToWarpNeighbors(vertexMap, verticesWithWarpEntrances, verticesWithWarpExits);
 
             return vertexMap;
         }
@@ -341,7 +344,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
         /// <summary>
         /// Iterates through each <paramref name="verticesWithWarpEntrances"/> and sets its warp neighbors.
         /// </summary>
-        private static void LinkVerticesToWarpNeighbors(List<IVertex> vertexMap, List<IVertex> verticesWithWarpEntrances)
+        private static void LinkVerticesToWarpNeighbors(List<IVertex> vertexMap, List<IVertex> verticesWithWarpEntrances, List<IVertex> verticesWithWarpExits)
         {
             foreach(IVertex vertex in verticesWithWarpEntrances)
             {
@@ -351,13 +354,12 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
                 foreach(ITile warpEntrance in vertex.Tiles.Where(t => t.WarpData.WarpGroupNumber > 0 && (t.TerrainType.WarpType == WarpType.Entrance || t.TerrainType.WarpType == WarpType.Dual)))
                 {
                     //Find all exits linked to this entrance
-                    foreach(ITile warpExit in warpEntrance.WarpData.WarpGroup.Where(t => warpEntrance.Coordinate != t.Coordinate && (t.TerrainType.WarpType == WarpType.Exit || t.TerrainType.WarpType == WarpType.Dual)))
-                    {
-                        IVertex[] exitVertices = vertexMap.Where(v => v.Tiles.Contains(warpExit)).ToArray();
+                    List<IVertex> exitVertices = new List<IVertex>();
+                    foreach (ITile warpExit in warpEntrance.WarpData.WarpGroup.Where(t => warpEntrance.Coordinate != t.Coordinate && (t.TerrainType.WarpType == WarpType.Exit || t.TerrainType.WarpType == WarpType.Dual)))
+                         exitVertices.AddRange(verticesWithWarpExits.Where(v => v.Tiles.Contains(warpExit)));
 
-                        if(exitVertices.Any())
-                            warps.Add(new VertexWarp(warpEntrance, exitVertices));
-                    }
+                    if(exitVertices.Any())
+                        warps.Add(new VertexWarp(warpEntrance, exitVertices.Distinct().ToArray()));
                 }
 
                 vertex.WarpNeighbors = warps.ToArray();

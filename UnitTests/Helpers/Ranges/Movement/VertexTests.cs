@@ -352,6 +352,235 @@ namespace UnitTests.Helpers.Ranges.Movement
             Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { null, null, null, null }));
         }
 
+        [Test]
+        public void BuildVertexMap_UnitSize1_OneSegment_2x2_WithBasicWarpGroup()
+        {
+            IMapObj map = Substitute.For<IMapObj>();
+            IMapSegment segment = Substitute.For<IMapSegment>();
+            map.Segments.Returns(new IMapSegment[] { segment });
+
+            ITile tile1 = Substitute.For<ITile>();
+            ITile tile2 = Substitute.For<ITile>();
+            ITile tile3 = Substitute.For<ITile>();
+            ITile tile4 = Substitute.For<ITile>();
+
+            List<ITile> warpGroup = new List<ITile>() { tile1, tile4 };
+
+            tile1.TerrainType.WarpType.Returns(WarpType.Entrance);
+            tile1.WarpData.WarpGroupNumber.Returns(1);
+            tile1.WarpData.WarpGroup.Returns(warpGroup);
+
+            tile4.TerrainType.WarpType.Returns(WarpType.Exit);
+            tile4.WarpData.WarpGroupNumber.Returns(1);
+            tile4.WarpData.WarpGroup.Returns(warpGroup);
+
+            ITile[][] tiles = new ITile[2][]
+            {
+                new ITile[2]{ tile1, tile2 },
+                new ITile[2]{ tile3, tile4 }
+            };
+            segment.Tiles.Returns(tiles);
+
+            IList<IVertex> vertices = Vertex.BuildVertexMap(map, 1);
+
+            Assert.That(vertices.Count, Is.EqualTo(4));
+
+            IVertex vertex = vertices[0];
+            Assert.That(vertex.Tiles, Is.EqualTo(new List<ITile> { tile1 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { null, vertices[1], vertices[2], null }));
+            Assert.That(vertex.WarpNeighbors.Count, Is.EqualTo(1));
+            Assert.That(vertex.WarpNeighbors.First().WarpEntrance, Is.EqualTo(tile1));
+            Assert.That(vertex.WarpNeighbors.First().Neighbors, Is.EqualTo(new IVertex[] { vertices[3] }));
+
+            vertex = vertices[1];
+            Assert.That(vertex.Tiles, Is.EqualTo(new List<ITile> { tile2 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { null, null, vertices[3], vertices[0] }));
+            Assert.That(vertex.WarpNeighbors, Is.Empty);
+
+            vertex = vertices[2];
+            Assert.That(vertex.Tiles, Is.EqualTo(new List<ITile> { tile3 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { vertices[0], vertices[3], null, null }));
+            Assert.That(vertex.WarpNeighbors, Is.Empty);
+
+            vertex = vertices[3];
+            Assert.That(vertex.Tiles, Is.EqualTo(new List<ITile> { tile4 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { vertices[1], null, null, vertices[2] }));
+            Assert.That(vertex.WarpNeighbors, Is.Empty);
+        }
+
+        [Test]
+        public void BuildVertexMap_UnitSize1_TwoSegments_2x2_2x2_WithMultipleWarpGroups_AllDual()
+        {
+            IMapObj map = Substitute.For<IMapObj>();
+            IMapSegment segment1 = Substitute.For<IMapSegment>();
+            IMapSegment segment2 = Substitute.For<IMapSegment>();
+            map.Segments.Returns(new IMapSegment[] { segment1, segment2 });
+
+            ITile tile1 = Substitute.For<ITile>();
+            ITile tile2 = Substitute.For<ITile>();
+            ITile tile3 = Substitute.For<ITile>();
+            ITile tile4 = Substitute.For<ITile>();
+            ITile tile5 = Substitute.For<ITile>();
+            ITile tile6 = Substitute.For<ITile>();
+            ITile tile7 = Substitute.For<ITile>();
+            ITile tile8 = Substitute.For<ITile>();
+
+            List<ITile> warpGroup1 = new List<ITile>() { tile1, tile5, tile8 };
+            List<ITile> warpGroup2 = new List<ITile>() { tile2, tile7 };
+
+            tile1.TerrainType.WarpType.Returns(WarpType.Dual);
+            tile1.WarpData.WarpGroupNumber.Returns(1);
+            tile1.WarpData.WarpGroup.Returns(warpGroup1);
+
+            tile5.TerrainType.WarpType.Returns(WarpType.Dual);
+            tile5.WarpData.WarpGroupNumber.Returns(1);
+            tile5.WarpData.WarpGroup.Returns(warpGroup1);
+
+            tile8.TerrainType.WarpType.Returns(WarpType.Dual);
+            tile8.WarpData.WarpGroupNumber.Returns(1);
+            tile8.WarpData.WarpGroup.Returns(warpGroup1);
+
+            tile2.TerrainType.WarpType.Returns(WarpType.Dual);
+            tile2.WarpData.WarpGroupNumber.Returns(2);
+            tile2.WarpData.WarpGroup.Returns(warpGroup2);
+
+            tile7.TerrainType.WarpType.Returns(WarpType.Dual);
+            tile7.WarpData.WarpGroupNumber.Returns(2);
+            tile7.WarpData.WarpGroup.Returns(warpGroup2);
+
+            ITile[][] tiles1 = new ITile[2][]
+            {
+                new ITile[2]{ tile1, tile2 },
+                new ITile[2]{ tile3, tile4 }
+            };
+            segment1.Tiles.Returns(tiles1);
+
+            ITile[][] tiles2 = new ITile[2][]
+            {
+                new ITile[2]{ tile5, tile6 },
+                new ITile[2]{ tile7, tile8 }
+            };
+            segment2.Tiles.Returns(tiles2);
+
+            IList<IVertex> vertices = Vertex.BuildVertexMap(map, 1);
+
+            Assert.That(vertices.Count, Is.EqualTo(8));
+
+            IVertex vertex = vertices[0];
+            Assert.That(vertex.Tiles, Is.EqualTo(new List<ITile> { tile1 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { null, vertices[1], vertices[2], null }));
+            Assert.That(vertex.WarpNeighbors.Count, Is.EqualTo(1));
+            Assert.That(vertex.WarpNeighbors[0].WarpEntrance, Is.EqualTo(tile1));
+            Assert.That(vertex.WarpNeighbors[0].Neighbors, Is.EquivalentTo(new IVertex[] { vertices[4], vertices[7] }));
+
+            vertex = vertices[1];
+            Assert.That(vertex.Tiles, Is.EqualTo(new List<ITile> { tile2 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { null, null, vertices[3], vertices[0] }));
+            Assert.That(vertex.WarpNeighbors.Count, Is.EqualTo(1));
+            Assert.That(vertex.WarpNeighbors[0].WarpEntrance, Is.EqualTo(tile2));
+            Assert.That(vertex.WarpNeighbors[0].Neighbors, Is.EquivalentTo(new IVertex[] { vertices[6] }));
+
+            vertex = vertices[2];
+            Assert.That(vertex.Tiles, Is.EqualTo(new List<ITile> { tile3 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { vertices[0], vertices[3], null, null }));
+            Assert.That(vertex.WarpNeighbors, Is.Empty);
+
+            vertex = vertices[3];
+            Assert.That(vertex.Tiles, Is.EqualTo(new List<ITile> { tile4 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { vertices[1], null, null, vertices[2] }));
+            Assert.That(vertex.WarpNeighbors, Is.Empty);
+
+            vertex = vertices[4];
+            Assert.That(vertex.Tiles, Is.EqualTo(new List<ITile> { tile5 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { null, vertices[5], vertices[6], null }));
+            Assert.That(vertex.WarpNeighbors.Count, Is.EqualTo(1));
+            Assert.That(vertex.WarpNeighbors[0].WarpEntrance, Is.EqualTo(tile5));
+            Assert.That(vertex.WarpNeighbors[0].Neighbors, Is.EquivalentTo(new IVertex[] { vertices[0], vertices[7] }));
+
+            vertex = vertices[5];
+            Assert.That(vertex.Tiles, Is.EqualTo(new List<ITile> { tile6 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { null, null, vertices[7], vertices[4] }));
+            Assert.That(vertex.WarpNeighbors, Is.Empty);
+
+            vertex = vertices[6];
+            Assert.That(vertex.Tiles, Is.EqualTo(new List<ITile> { tile7 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { vertices[4], vertices[7], null, null }));
+            Assert.That(vertex.WarpNeighbors.Count, Is.EqualTo(1));
+            Assert.That(vertex.WarpNeighbors[0].WarpEntrance, Is.EqualTo(tile7));
+            Assert.That(vertex.WarpNeighbors[0].Neighbors, Is.EquivalentTo(new IVertex[] { vertices[1] }));
+
+            vertex = vertices[7];
+            Assert.That(vertex.Tiles, Is.EqualTo(new List<ITile> { tile8 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { vertices[5], null, null, vertices[6] }));
+            Assert.That(vertex.WarpNeighbors.Count, Is.EqualTo(1));
+            Assert.That(vertex.WarpNeighbors[0].WarpEntrance, Is.EqualTo(tile8));
+            Assert.That(vertex.WarpNeighbors[0].Neighbors, Is.EquivalentTo(new IVertex[] { vertices[0], vertices[4] }));
+        }
+
+        [Test]
+        public void BuildVertexMap_UnitSize2_OneSegment_3x3_WithBasicWarpGroup()
+        {
+            IMapObj map = Substitute.For<IMapObj>();
+            IMapSegment segment = Substitute.For<IMapSegment>();
+            map.Segments.Returns(new IMapSegment[] { segment });
+
+            ITile tile1 = Substitute.For<ITile>();
+            ITile tile2 = Substitute.For<ITile>();
+            ITile tile3 = Substitute.For<ITile>();
+            ITile tile4 = Substitute.For<ITile>();
+            ITile tile5 = Substitute.For<ITile>();
+            ITile tile6 = Substitute.For<ITile>();
+            ITile tile7 = Substitute.For<ITile>();
+            ITile tile8 = Substitute.For<ITile>();
+            ITile tile9 = Substitute.For<ITile>();
+
+            List<ITile> warpGroup = new List<ITile>() { tile1, tile5 };
+
+            tile1.TerrainType.WarpType.Returns(WarpType.Entrance);
+            tile1.WarpData.WarpGroupNumber.Returns(1);
+            tile1.WarpData.WarpGroup.Returns(warpGroup);
+
+            tile5.TerrainType.WarpType.Returns(WarpType.Exit);
+            tile5.WarpData.WarpGroupNumber.Returns(1);
+            tile5.WarpData.WarpGroup.Returns(warpGroup);
+
+            ITile[][] tiles = new ITile[3][]
+            {
+                new ITile[3]{ tile1, tile2, tile3 },
+                new ITile[3]{ tile4, tile5, tile6 },
+                new ITile[3]{ tile7, tile8, tile9 }
+            };
+            segment.Tiles.Returns(tiles);
+
+            IList<IVertex> vertices = Vertex.BuildVertexMap(map, 2);
+
+            Assert.That(vertices.Count, Is.EqualTo(4));
+
+            IVertex vertex = vertices[0];
+            Assert.That(vertex.Tiles, Is.EquivalentTo(new List<ITile> { tile1, tile2, tile4, tile5 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { null, vertices[1], vertices[2], null }));
+            Assert.That(vertex.WarpNeighbors.Count, Is.EqualTo(1));
+
+            IVertexWarp warp = vertex.WarpNeighbors[0];
+            Assert.That(warp.WarpEntrance, Is.EqualTo(tile1));
+            Assert.That(warp.Neighbors, Is.EquivalentTo(new IVertex[] { vertices[0], vertices[1], vertices[2], vertices[3] }));
+
+            vertex = vertices[1];
+            Assert.That(vertex.Tiles, Is.EquivalentTo(new List<ITile> { tile2, tile3, tile5, tile6 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { null, null, vertices[3], vertices[0] }));
+            Assert.That(vertex.WarpNeighbors, Is.Empty);
+
+            vertex = vertices[2];
+            Assert.That(vertex.Tiles, Is.EquivalentTo(new List<ITile> { tile4, tile5, tile7, tile8 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { vertices[0], vertices[3], null, null }));
+            Assert.That(vertex.WarpNeighbors, Is.Empty);
+
+            vertex = vertices[3];
+            Assert.That(vertex.Tiles, Is.EquivalentTo(new List<ITile> { tile5, tile6, tile8, tile9 }));
+            Assert.That(vertex.Neighbors, Is.EqualTo(new IVertex[] { vertices[1], null, null, vertices[2] }));
+            Assert.That(vertex.WarpNeighbors, Is.Empty);
+        }
+
         #endregion BuildVertexMap
     }
 }
