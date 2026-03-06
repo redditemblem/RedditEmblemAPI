@@ -50,6 +50,11 @@
         "Current": 0,
         "Maximum": 0,
         "RemainingBars": 0 //Optional
+      },
+      "RepeaterTool": { //Optional
+        "Shape": 0,
+        "Height": 0,
+        "Width": 0
       }
     }
   },

@@ -250,6 +250,7 @@ namespace RedditEmblemAPI.Models.Output.Map
                 if(string.IsNullOrWhiteSpace(imageUrl)) continue;
 
                 string title = DataParser.OptionalString(data, config.Title, "Title");
+                if (string.IsNullOrEmpty(title)) title = $"Segment {index + 1}";
 
                 int beginningOfHorizontalRange = 1;
                 if (index++ > 0) beginningOfHorizontalRange += segments.Take(index).Sum(s => s.WidthInTiles);

@@ -308,6 +308,8 @@ namespace UnitTests.Models.Map
             int columnCount = 3;
             ITerrainType plains = TERRAIN_TYPES[PLAINS];
 
+            string title = "Unit Testing Is Cool!";
+
             MapConfig config = new MapConfig()
             {
                 Constants = new MapConstantsConfig() { TileSize = 16 },
@@ -317,7 +319,7 @@ namespace UnitTests.Models.Map
                     {
                         Data = new List<IList<object>>()
                         {
-                            new List<object>(){ INPUT_MAP_SWITCH_ON, INPUT_IMAGE_URL_1 }
+                            new List<object>(){ INPUT_MAP_SWITCH_ON, INPUT_IMAGE_URL_1, title }
                         }
                     },
                     MapSwitch = 0,
@@ -325,7 +327,8 @@ namespace UnitTests.Models.Map
                     {
                         new MapSegmentConfig()
                         {
-                            ImageURL = 1
+                            ImageURL = 1,
+                            Title = 2
                         }
                     }
                 },
@@ -355,7 +358,7 @@ namespace UnitTests.Models.Map
 
             IMapSegment segment = map.Segments[0];
             Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
-            Assert.That(segment.Title, Is.Empty);
+            Assert.That(segment.Title, Is.EqualTo(title));
 
             ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(rowCount), "The segment should contain 3 rows.");
@@ -434,7 +437,7 @@ namespace UnitTests.Models.Map
 
             IMapSegment segment = map.Segments[0];
             Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
-            Assert.That(segment.Title, Is.Empty);
+            Assert.That(segment.Title, Is.EqualTo("Segment 1"));
 
             ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(rowCount), "The segment should contain 5 rows.");
@@ -510,7 +513,7 @@ namespace UnitTests.Models.Map
 
             IMapSegment segment = map.Segments[0];
             Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
-            Assert.That(segment.Title, Is.Empty);
+            Assert.That(segment.Title, Is.EqualTo("Segment 1"));
 
             ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(rowCount), "The segment should contain 2 rows.");
@@ -590,7 +593,7 @@ namespace UnitTests.Models.Map
 
             IMapSegment segment = map.Segments[0];
             Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
-            Assert.That(segment.Title, Is.Empty);
+            Assert.That(segment.Title, Is.EqualTo("Segment 1"));
 
             //Validate segment 1
             ITile[][] tiles = segment.Tiles;
@@ -614,7 +617,7 @@ namespace UnitTests.Models.Map
             //Validate segment 2
             segment = map.Segments[1];
             Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_2));
-            Assert.That(segment.Title, Is.Empty);
+            Assert.That(segment.Title, Is.EqualTo("Segment 2"));
 
             tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(rowCount), "Segment 2 should contain 2 rows.");
@@ -704,7 +707,7 @@ namespace UnitTests.Models.Map
             //Validate segment 1
             IMapSegment segment = map.Segments[0];
             Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
-            Assert.That(segment.Title, Is.Empty);
+            Assert.That(segment.Title, Is.EqualTo("Segment 1"));
 
             ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg1RowCount), "Segment 1 should contain 3 rows.");
@@ -727,7 +730,7 @@ namespace UnitTests.Models.Map
             //Validate segment 2
             segment = map.Segments[1];
             Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_2));
-            Assert.That(segment.Title, Is.Empty);
+            Assert.That(segment.Title, Is.EqualTo("Segment 2"));
 
             tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg2RowCount), "Segment 2 should contain 2 rows.");
@@ -817,7 +820,7 @@ namespace UnitTests.Models.Map
             //Validate segment 1
             IMapSegment segment = map.Segments[0];
             Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
-            Assert.That(segment.Title, Is.Empty);
+            Assert.That(segment.Title, Is.EqualTo("Segment 1"));
 
             ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg1RowCount), "Segment 1 should contain 2 rows.");
@@ -840,7 +843,7 @@ namespace UnitTests.Models.Map
             //Validate segment 2
             segment = map.Segments[1];
             Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_2));
-            Assert.That(segment.Title, Is.Empty);
+            Assert.That(segment.Title, Is.EqualTo("Segment 2"));
 
             tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg2RowCount), "Segment 2 should contain 3 rows.");
@@ -945,7 +948,7 @@ namespace UnitTests.Models.Map
             //Validate segment 1
             IMapSegment segment = map.Segments[0];
             Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_1));
-            Assert.That(segment.Title, Is.Empty);
+            Assert.That(segment.Title, Is.EqualTo("Segment 1"));
 
             ITile[][] tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg1RowCount), "Segment 1 should contain 2 rows.");
@@ -968,7 +971,7 @@ namespace UnitTests.Models.Map
             //Validate segment 2
             segment = map.Segments[1];
             Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_2));
-            Assert.That(segment.Title, Is.Empty);
+            Assert.That(segment.Title, Is.EqualTo("Segment 2"));
 
             tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg2RowCount), "Segment 2 should contain 3 rows.");
@@ -991,7 +994,7 @@ namespace UnitTests.Models.Map
             //Validate segment 3
             segment = map.Segments[2];
             Assert.That(segment.ImageURL, Is.EqualTo(INPUT_IMAGE_URL_3));
-            Assert.That(segment.Title, Is.Empty);
+            Assert.That(segment.Title, Is.EqualTo("Segment 3"));
 
             tiles = segment.Tiles;
             Assert.That(tiles.Count(), Is.EqualTo(seg3RowCount), "Segment 3 should contain 5 rows.");

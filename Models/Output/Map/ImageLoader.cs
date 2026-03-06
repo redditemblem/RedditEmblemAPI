@@ -17,7 +17,7 @@ namespace RedditEmblemAPI.Models.Output.Map
     #endregion Interface
 
     /// <summary>
-    /// Helper class that assists with loading images via HTTP requests.
+    /// Helper class that assists with loading images via HTTP request.
     /// </summary>
     public class ImageLoader : IImageLoader
     {

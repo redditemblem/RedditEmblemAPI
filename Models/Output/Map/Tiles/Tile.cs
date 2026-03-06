@@ -44,6 +44,9 @@ namespace RedditEmblemAPI.Models.Output.Map.Tiles
         /// </summary>
         public ICoordinate Coordinate { get; set; }
 
+        /// <summary>
+        /// The tiles directly adjacent to this tile in the cardinal directions.
+        /// </summary>
         [JsonIgnore]
         public ITile[] Neighbors { get; private set; }
 
