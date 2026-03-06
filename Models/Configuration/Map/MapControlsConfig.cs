@@ -17,12 +17,12 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         public int MapSwitch { get; set; }
 
         /// <summary>
-        /// Required. Cell index of the map image URL value.
+        /// Required. Set of configurations for map segment(s).
         /// </summary>
         [JsonRequired]
-        public int MapImageURL { get; set; }
+        public MapSegmentConfig[] Segments { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
@@ -31,6 +31,6 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         /// </summary>
         public int ChapterPostURL { get; set; } = -1;
 
-        #endregion
+        #endregion Optional Fields
     }
 }

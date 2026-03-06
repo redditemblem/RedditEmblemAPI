@@ -1,15 +1,32 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Unmatched;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
 {
-    public class ItemMaxRangeModifierEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref=ItemMaxRangeModifierEffect"/>
+    public interface IItemMaxRangeModifierEffect
+    {
+        /// <inheritdoc cref=ItemMaxRangeModifierEffect.Categories"/>
+        IEnumerable<string> Categories { get; }
+
+        /// <inheritdoc cref=ItemMaxRangeModifierEffect.Value"/>
+        int Value { get; }
+
+        /// <inheritdoc cref=ItemMaxRangeModifierEffect.DealsDamageFilter"/>
+        DealsDamageFilterType DealsDamageFilter { get; }
+    }
+
+    #endregion Interface
+
+    public class ItemMaxRangeModifierEffect : SkillEffect, IItemMaxRangeModifierEffect
     {
         #region Attributes
 
@@ -19,25 +36,25 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Param1. The list of <c>Item</c> categories to affect.
         /// </summary>
-        private List<string> Categories { get; set; }
+        public IEnumerable<string> Categories { get; private set; }
 
         /// <summary>
         /// Param2. The value by which to modifiy the <c>UnitInventoryItem</c>'s max range.
         /// </summary>
-        private int Value { get; set; }
+        public int Value { get; private set; }
 
         /// <summary>
         /// Optional Param3. The filter by which to further restrict which items are affected based on their Deals Damage? value.
         /// </summary>
-        private DealsDamageFilterType DealsDamageFilter { get; set; } 
+        public DealsDamageFilterType DealsDamageFilter { get; private set; } 
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
-        public ItemMaxRangeModifierEffect(List<string> parameters)
+        public ItemMaxRangeModifierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Categories = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);
@@ -87,12 +104,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
 
             return (DealsDamageFilterType)filterEnum;
         }
+    }
 
-        private enum DealsDamageFilterType
-        {
-            All,
-            Attack,
-            Utility
-        }
+    public enum DealsDamageFilterType
+    {
+        All,
+        Attack,
+        Utility
     }
 }

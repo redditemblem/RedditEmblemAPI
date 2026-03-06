@@ -1,6 +1,6 @@
-﻿using RedditEmblemAPI.Models.Output.Map;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 

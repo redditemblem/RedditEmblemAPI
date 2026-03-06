@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Helpers;
 using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
-using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

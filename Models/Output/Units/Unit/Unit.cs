@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Helpers;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -7,9 +8,7 @@ using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
-using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
-using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

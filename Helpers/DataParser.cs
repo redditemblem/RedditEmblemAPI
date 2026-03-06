@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace RedditEmblemAPI.Services.Helpers
+namespace RedditEmblemAPI.Helpers
 {
     /// <summary>
     /// Static class containing functions to assist with data parsing.
@@ -26,7 +26,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static int Int_Any(IEnumerable<string> data, int index, string fieldName)
         {
-            return Int_Any(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName);
+            return Int_Any(data.ElementAtOrDefault(index) ?? string.Empty, fieldName);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static int Int_Positive(IEnumerable<string> data, int index, string fieldName)
         {
-            return Int_Positive(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName);
+            return Int_Positive(data.ElementAtOrDefault(index) ?? string.Empty, fieldName);
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <exception cref="NonZeroPositiveIntegerException"></exception>
         public static int Int_NonZeroPositive(IEnumerable<string> data, int index, string fieldName)
         {
-            string number = data.ElementAtOrDefault<string>(index);
+            string number = data.ElementAtOrDefault(index);
 
             int val;
             if (!int.TryParse(number, out val) || val < 1)
@@ -81,7 +81,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <exception cref="NegativeIntegerException"></exception>
         public static int Int_Negative(IEnumerable<string> data, int index, string fieldName)
         {
-            string number = data.ElementAtOrDefault<string>(index);
+            string number = data.ElementAtOrDefault(index);
 
             int val;
             if (!int.TryParse(number, out val) || val > -1)
@@ -94,7 +94,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static int OptionalInt_Any(IEnumerable<string> data, int index, string fieldName, int defaultValueIfNull = 0)
         {
-            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault<string>(index)))
+            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault(index)))
                 return defaultValueIfNull;
             return Int_Any(data, index, fieldName);
         }
@@ -104,7 +104,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static int OptionalInt_Positive(IEnumerable<string> data, int index, string fieldName, int defaultValueIfNull = 0)
         {
-            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault<string>(index)))
+            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault(index)))
                 return defaultValueIfNull;
             return Int_Positive(data, index, fieldName);
         }
@@ -114,7 +114,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static int OptionalInt_NonZeroPositive(IEnumerable<string> data, int index, string fieldName, int defaultValueIfNull = 1)
         {
-            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault<string>(index)))
+            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault(index)))
                 return defaultValueIfNull;
             return Int_NonZeroPositive(data, index, fieldName);
         }
@@ -124,7 +124,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static int OptionalInt_Negative(IEnumerable<string> data, int index, string fieldName, int defaultValueIfNull = -1)
         {
-            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault<string>(index)))
+            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault(index)))
                 return defaultValueIfNull;
             return Int_Negative(data, index, fieldName);
         }
@@ -134,7 +134,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static decimal Decimal_Any(IEnumerable<string> data, int index, string fieldName)
         {
-            return Decimal_Any(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName);
+            return Decimal_Any(data.ElementAtOrDefault(index) ?? string.Empty, fieldName);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static decimal Decimal_Positive(IEnumerable<string> data, int index, string fieldName)
         {
-            return Decimal_Positive(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName);
+            return Decimal_Positive(data.ElementAtOrDefault(index) ?? string.Empty, fieldName);
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static decimal Decimal_NonZeroPositive(IEnumerable<string> data, int index, string fieldName)
         {
-            return Decimal_NonZeroPositive(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName);
+            return Decimal_NonZeroPositive(data.ElementAtOrDefault(index) ?? string.Empty, fieldName);
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static decimal Decimal_OneOrGreater(IEnumerable<string> data, int index, string fieldName)
         {
-            return Decimal_OneOrGreater(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName); 
+            return Decimal_OneOrGreater(data.ElementAtOrDefault(index) ?? string.Empty, fieldName); 
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static decimal Decimal_Negative(IEnumerable<string> data, int index, string fieldName)
         {
-            return Decimal_Negative(data.ElementAtOrDefault<string>(index) ?? string.Empty, fieldName);
+            return Decimal_Negative(data.ElementAtOrDefault(index) ?? string.Empty, fieldName);
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static decimal OptionalDecimal_Any(IEnumerable<string> data, int index, string fieldName, decimal defaultValueIfNull = 0)
         {
-            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault<string>(index)))
+            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault(index)))
                 return defaultValueIfNull;
             return Decimal_Any(data, index, fieldName);
         }
@@ -244,7 +244,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static decimal OptionalDecimal_Positive(IEnumerable<string> data, int index, string fieldName, decimal defaultValueIfNull = 0)
         {
-            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault<string>(index)))
+            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault(index)))
                 return defaultValueIfNull;
             return Decimal_Positive(data, index, fieldName);
         }
@@ -254,7 +254,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static decimal OptionalDecimal_NonZeroPositive(IEnumerable<string> data, int index, string fieldName, decimal defaultValueIfNull = 1)
         {
-            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault<string>(index)))
+            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault(index)))
                 return defaultValueIfNull;
             return Decimal_NonZeroPositive(data, index, fieldName);
         }
@@ -264,7 +264,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static decimal OptionalDecimal_OneOrGreater(IEnumerable<string> data, int index, string fieldName, decimal defaultValueIfNull = 1)
         {
-            if(string.IsNullOrWhiteSpace(data.ElementAtOrDefault<string>(index)))
+            if(string.IsNullOrWhiteSpace(data.ElementAtOrDefault(index)))
                 return defaultValueIfNull;
             return Decimal_OneOrGreater(data, index, fieldName);
         }
@@ -274,7 +274,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static decimal OptionalDecimal_Negative(IEnumerable<string> data, int index, string fieldName, decimal defaultValueIfNull = -1)
         {
-            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault<string>(index)))
+            if (string.IsNullOrWhiteSpace(data.ElementAtOrDefault(index)))
                 return defaultValueIfNull;
             return Decimal_Negative(data, index, fieldName);
         }
@@ -288,7 +288,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static string String(IEnumerable<string> data, int index, string fieldName)
         {
-            return String(data.ElementAtOrDefault<string>(index), fieldName);
+            return String(data.ElementAtOrDefault(index), fieldName);
         }
 
         /// <summary>
@@ -308,7 +308,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static string OptionalString(IEnumerable<string> data, int index, string fieldName)
         {
-            return OptionalString(data.ElementAtOrDefault<string>(index), fieldName);
+            return OptionalString(data.ElementAtOrDefault(index), fieldName);
         }
 
         /// <summary>
@@ -328,7 +328,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="fieldName">The name of the value as it should display in any thrown exception messages.</param>
         public static string String_URL(IEnumerable<string> data, int index, string fieldName)
         {
-            return String_URL(data.ElementAtOrDefault<string>(index), fieldName);
+            return String_URL(data.ElementAtOrDefault(index), fieldName);
         }
 
         /// <summary>
@@ -352,7 +352,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static string OptionalString_URL(IEnumerable<string> data, int index, string fieldName)
         {
-            return OptionalString_URL(data.ElementAtOrDefault<string>(index), fieldName);
+            return OptionalString_URL(data.ElementAtOrDefault(index), fieldName);
         }
 
         /// <summary>
@@ -379,7 +379,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static string String_HexCode(IEnumerable<string> data, int index, string fieldName)
         {
-            return String_HexCode(data.ElementAtOrDefault<string>(index), fieldName);
+            return String_HexCode(data.ElementAtOrDefault(index), fieldName);
         }
 
         /// <summary>
@@ -404,7 +404,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static string OptionalString_HexCode(IEnumerable<string> data, int index, string fieldName)
         {
-            return OptionalString_HexCode(data.ElementAtOrDefault<string>(index), fieldName);
+            return OptionalString_HexCode(data.ElementAtOrDefault(index), fieldName);
         }
 
         /// <summary>
@@ -465,7 +465,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="keepEmptyValues">If true, then null or empty string values from <paramref name="data"/> will be retained in the returned list.</param>
         public static List<string> List_StringCSV(IEnumerable<string> data, int index, bool keepEmptyValues = false)
         {
-            return List_StringCSV((data.ElementAtOrDefault<string>(index) ?? string.Empty), keepEmptyValues);
+            return List_StringCSV(data.ElementAtOrDefault(index) ?? string.Empty, keepEmptyValues);
         }
 
         /// <summary>
@@ -498,7 +498,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// <param name="isPositive">If true, an exception will be thrown if any integer in the CSV is less than 0.</param>
         public static List<int> List_IntCSV(IEnumerable<string> data, int index, string fieldName, bool isPositive)
         {
-            return List_IntCSV(data.ElementAtOrDefault<string>(index), fieldName, isPositive);
+            return List_IntCSV(data.ElementAtOrDefault(index), fieldName, isPositive);
         }
 
         /// <summary>
@@ -534,7 +534,7 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static bool OptionalBoolean_YesNo(IEnumerable<string> data, int index, string fieldName)
         {
-            return OptionalBoolean_YesNo(data.ElementAtOrDefault<string>(index), fieldName);
+            return OptionalBoolean_YesNo(data.ElementAtOrDefault(index), fieldName);
         }
 
         /// <summary>
@@ -562,7 +562,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             foreach (NamedStatConfig stat in configs)
             {
-                int val = DataParser.Int_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
+                int val = Int_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
                 if (val == 0 && !includeZeroValues) continue;
 
                 stats.Add(stat.SourceName, val);
@@ -582,7 +582,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             foreach (NamedStatConfig stat in configs)
             {
-                int val = DataParser.OptionalInt_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
+                int val = OptionalInt_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
                 if (val == 0 && !includeZeroValues) continue;
 
                 stats.Add(stat.SourceName, val);
@@ -602,7 +602,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             foreach (NamedStatConfig stat in configs)
             {
-                int val = DataParser.Int_NonZeroPositive(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
+                int val = Int_NonZeroPositive(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
                 stats.Add(stat.SourceName, val);
             }
 
@@ -620,7 +620,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             foreach (NamedStatConfig stat in configs)
             {
-                decimal val = DataParser.Decimal_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
+                decimal val = Decimal_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
                 if (val == 0 && !includeZeroValues) continue;
 
                 stats.Add(stat.SourceName, val);
@@ -640,7 +640,7 @@ namespace RedditEmblemAPI.Services.Helpers
 
             foreach (NamedStatConfig_Displayed stat in configs)
             {
-                decimal val = DataParser.OptionalDecimal_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
+                decimal val = OptionalDecimal_Any(data, stat.Value, string.Format(errorFieldNameFormat, errorFieldNameArgs.Prepend(stat.SourceName).ToArray()));
                 if (val == 0 && !includeZeroValues) continue;
 
                 stats.Add(stat.SourceName, new NamedStatValue(val, stat.InvertModifiedDisplayColors));
@@ -654,8 +654,8 @@ namespace RedditEmblemAPI.Services.Helpers
         /// </summary>
         public static IDictionary<string, int> StatValueCSVs_Int_Any(IEnumerable<string> data, int statsIndex, string statsFieldName, int valuesIndex, string valuesFieldName, bool includeZeroValues = false)
         {
-            List<string> stats = DataParser.List_StringCSV(data, statsIndex);
-            List<int> values = DataParser.List_IntCSV(data, valuesIndex, valuesFieldName, false);
+            List<string> stats = List_StringCSV(data, statsIndex);
+            List<int> values = List_IntCSV(data, valuesIndex, valuesFieldName, false);
 
             return StatValueCSVs_Int_Any(stats, statsFieldName, values, valuesFieldName, includeZeroValues);
         }

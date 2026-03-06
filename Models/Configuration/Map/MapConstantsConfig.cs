@@ -15,13 +15,7 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         [JsonRequired]
         public int TileSize { get; set; }
 
-        /// <summary>
-        /// Required. Spacing between each map tile measured in pixels. 
-        /// </summary>
-        [JsonRequired]
-        public int TileSpacing { get; set; }
-
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
@@ -70,7 +64,7 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         /// </summary>
         public string UnitMovementStatName { get; set; } = "Mov";
 
-        #endregion
+        #endregion Optional Fields
     }
 
     public enum CoordinateFormat

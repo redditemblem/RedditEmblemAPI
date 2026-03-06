@@ -1,7 +1,7 @@
-﻿using RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Validation;
-using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

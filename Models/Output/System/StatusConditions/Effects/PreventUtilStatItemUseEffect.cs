@@ -1,6 +1,6 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 

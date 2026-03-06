@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace RedditEmblemAPI.Services.Helpers
+namespace RedditEmblemAPI.Helpers
 {
     public class EquationParser
     {
@@ -262,13 +262,13 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             return new EquationParserOptions
             {
-                EvalUnitCombatStat = this.EvalUnitCombatStat || other.EvalUnitCombatStat,
-                EvalUnitStat = this.EvalUnitStat || other.EvalUnitStat,
-                EvalUnitLevel = this.EvalUnitLevel || other.EvalUnitLevel,
-                EvalWeaponUtilStat_Greatest = this.EvalWeaponUtilStat_Greatest || other.EvalWeaponUtilStat_Greatest,
-                EvalWeaponUtilStat_Sum = this.EvalWeaponUtilStat_Sum || other.EvalWeaponUtilStat_Sum,
-                EvalWeaponStat = this.EvalWeaponStat || other.EvalWeaponStat,
-                EvalBattalionStat = this.EvalBattalionStat || other.EvalBattalionStat
+                EvalUnitCombatStat = EvalUnitCombatStat || other.EvalUnitCombatStat,
+                EvalUnitStat = EvalUnitStat || other.EvalUnitStat,
+                EvalUnitLevel = EvalUnitLevel || other.EvalUnitLevel,
+                EvalWeaponUtilStat_Greatest = EvalWeaponUtilStat_Greatest || other.EvalWeaponUtilStat_Greatest,
+                EvalWeaponUtilStat_Sum = EvalWeaponUtilStat_Sum || other.EvalWeaponUtilStat_Sum,
+                EvalWeaponStat = EvalWeaponStat || other.EvalWeaponStat,
+                EvalBattalionStat = EvalBattalionStat || other.EvalBattalionStat
             };
         }
     }

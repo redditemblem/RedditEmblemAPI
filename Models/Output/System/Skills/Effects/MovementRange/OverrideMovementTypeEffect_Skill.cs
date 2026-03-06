@@ -1,4 +1,4 @@
-﻿using RedditEmblemAPI.Services.Helpers;
+﻿using RedditEmblemAPI.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange

@@ -1,10 +1,21 @@
-﻿using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Output.Units;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
 {
-    public class HPBelowIgnoreUnitAffiliationsEffect : SkillEffect, IIgnoreUnitAffiliations
+    #region Interface
+
+    /// <inheritdoc cref="HPBelowIgnoreUnitAffiliationsEffect"/>
+    public interface IHPBelowIgnoreUnitAffiliationsEffect : IIgnoreUnitAffiliations
+    {
+        /// <inheritdoc cref="HPBelowIgnoreUnitAffiliationsEffect.HPPercentage"/>
+        int HPPercentage { get; }
+    }
+
+    #endregion Interface
+
+    public class HPBelowIgnoreUnitAffiliationsEffect : SkillEffect, IHPBelowIgnoreUnitAffiliationsEffect
     {
         #region Attributes 
 
@@ -14,14 +25,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Param1. The maximum HP percentage the unit can have.
         /// </summary>
-        private int HPPercentage { get; set; }
+        public int HPPercentage { get; private set; }
 
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public HPBelowIgnoreUnitAffiliationsEffect(List<string> parameters)
+        public HPBelowIgnoreUnitAffiliationsEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.HPPercentage = DataParser.Int_Positive(parameters, INDEX_PARAM_1, NAME_PARAM_1);

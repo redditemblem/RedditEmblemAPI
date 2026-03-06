@@ -1,13 +1,27 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
 {
-    public class ItemMinRangeSetEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="ItemMinRangeSetEffect"/>
+    public interface IItemMinRangeSetEffect
+    {
+        /// <inheritdoc cref="ItemMinRangeSetEffect.Categories"/>
+        IEnumerable<string> Categories { get; }
+
+        /// <inheritdoc cref="ItemMinRangeSetEffect.Value"/>
+        int Value { get; }
+    }
+
+    #endregion Interface
+
+    public class ItemMinRangeSetEffect : SkillEffect, IItemMinRangeSetEffect
     {
         #region Attributes
 
@@ -17,20 +31,20 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
         /// <summary>
         /// Param1. The list of <c>Item</c> categories to affect.
         /// </summary>
-        private List<string> Categories { get; set; }
+        public IEnumerable<string> Categories { get; private set; }
 
         /// <summary>
         /// Param2. The value by which to modifiy the <c>UnitInventoryItem</c>'s min range.
         /// </summary>
-        private int Value { get; set; }
+        public int Value { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
-        public ItemMinRangeSetEffect(List<string> parameters)
+        public ItemMinRangeSetEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             //This needs to be executed last due to items w/ calculated ranges

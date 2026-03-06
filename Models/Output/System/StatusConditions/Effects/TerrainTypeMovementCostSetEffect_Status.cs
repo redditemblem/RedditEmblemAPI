@@ -1,9 +1,26 @@
-﻿using RedditEmblemAPI.Services.Helpers;
+﻿using RedditEmblemAPI.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
-    public class TerrainTypeMovementCostSetEffect_Status : StatusConditionEffect
+    #region Interface
+
+    /// <inheritdoc cref="TerrainTypeMovementCostSetEffect_Status"/>
+    public interface ITerrainTypeMovementCostSetEffect_Status
+    {
+        /// <inheritdoc cref="TerrainTypeMovementCostSetEffect_Status.TerrainTypeGrouping"/>
+        int TerrainTypeGrouping { get; }
+
+        /// <inheritdoc cref="TerrainTypeMovementCostSetEffect_Status.Value"/>
+        int Value { get; }
+
+        /// <inheritdoc cref="TerrainTypeMovementCostSetEffect_Status.CanOverride99MoveCost"/>
+        bool CanOverride99MoveCost { get; }
+    }
+
+    #endregion Interface
+
+    public class TerrainTypeMovementCostSetEffect_Status : StatusConditionEffect, ITerrainTypeMovementCostSetEffect_Status
     {
         #region Attributes
 
@@ -30,7 +47,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// <summary>
         /// Constructor.
         /// </summary>
-        public TerrainTypeMovementCostSetEffect_Status(List<string> parameters)
+        public TerrainTypeMovementCostSetEffect_Status(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.TerrainTypeGrouping = DataParser.Int_Positive(parameters, INDEX_PARAM_1, NAME_PARAM_1);

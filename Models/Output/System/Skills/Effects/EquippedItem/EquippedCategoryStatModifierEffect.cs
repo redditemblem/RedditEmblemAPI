@@ -1,13 +1,27 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
 {
-    public class EquippedCategoryStatModifierEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="EquippedCategoryStatModifierEffect"/>
+    public interface IEquippedCategoryStatModifierEffect
+    {
+        /// <inheritdoc cref="EquippedCategoryStatModifierEffect.Categories"/>
+        IEnumerable<string> Categories { get; }
+
+        /// <inheritdoc cref="EquippedCategoryStatModifierEffect.Modifiers"/>
+        IDictionary<string, int> Modifiers { get; }
+    }
+
+    #endregion Interface
+
+    public class EquippedCategoryStatModifierEffect : SkillEffect, IEquippedCategoryStatModifierEffect
     {
         #region Attributes
 
@@ -17,12 +31,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
         /// <summary>
         /// Param1. List of <c>Item</c> categories to check for.
         /// </summary>
-        private List<string> Categories { get; set; }
+        public IEnumerable<string> Categories { get; private set; }
 
         /// <summary>
         /// Param2/Param3. The unit stat modifiers to apply.
         /// </summary>
-        private IDictionary<string, int> Modifiers { get; set; }
+        public IDictionary<string, int> Modifiers { get; private set; }
 
         #endregion
 
@@ -30,7 +44,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem
         /// Constructor.
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
-        public EquippedCategoryStatModifierEffect(List<string> parameters)
+        public EquippedCategoryStatModifierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Categories = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);
