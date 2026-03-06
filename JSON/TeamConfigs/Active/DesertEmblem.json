@@ -35,8 +35,14 @@
     "MapObjects": {
       "Query": {
         "Sheet": "Map Objects",
-        "Selection": "A1:ZZ",
+        "Selection": "A3:D",
         "Orientation": 1
+      },
+      "Name": 0,
+      "Coordinate": 1,
+      "HP": {
+        "Current": 2,
+        "Maximum": 3
       }
     }
   },
