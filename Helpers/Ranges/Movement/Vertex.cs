@@ -269,7 +269,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
                 return false;
 
             //Check if the blocking unit is inflicted with a relevant status condition
-            if (blockingUnit.StatusConditions.SelectMany(sc => sc.Status.Effects).OfType<DoesNotBlockEnemyAffiliationsEffect>().Any())
+            if (blockingUnit.StatusConditions.SelectMany(sc => sc.Status.Effects).OfType<IDoesNotBlockEnemyAffiliationsEffect>().Any())
                 return false;
 
             //Finally, compare the units' affiliation groupings

@@ -6,7 +6,18 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
-    public class PreventUtilStatItemUseEffect : StatusConditionEffect
+    #region Interface
+
+    /// <inheritdoc cref="PreventUtilStatItemUseEffect"/>
+    public interface IPreventUtilStatItemUseEffect
+    {
+        /// <inheritdoc cref="PreventUtilStatItemUseEffect.UtilizedStats"/>
+        IEnumerable<string> UtilizedStats { get; }
+    }
+
+    #endregion Interface
+
+    public class PreventUtilStatItemUseEffect : StatusConditionEffect, IPreventUtilStatItemUseEffect
     {
         #region Attributes
 
@@ -16,11 +27,11 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// <summary>
         /// Param1. List of item utilized stats to check for.
         /// </summary>
-        private List<string> UtilizedStats { get; set; }
+        public IEnumerable<string> UtilizedStats { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
-        public PreventUtilStatItemUseEffect(List<string> parameters)
+        public PreventUtilStatItemUseEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.UtilizedStats = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);

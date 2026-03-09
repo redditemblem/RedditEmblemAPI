@@ -4,7 +4,18 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
-    public class StatModifierEffect : StatusConditionEffect
+    #region Interface
+
+    /// <inheritdoc cref="StatModifierEffect"/>
+    public interface IStatModifierEffect
+    {
+        /// <inheritdoc cref="StatModifierEffect.Modifiers"/>
+        IDictionary<string, int> Modifiers { get; }
+    }
+
+    #endregion Interface
+
+    public class StatModifierEffect : StatusConditionEffect, IStatModifierEffect
     {
         #region Attributes
 
@@ -14,11 +25,11 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// <summary>
         /// Param1/Param2. The unit stat modifiers to apply.
         /// </summary>
-        private IDictionary<string, int> Modifiers { get; set; }
+        public IDictionary<string, int> Modifiers { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
-        public StatModifierEffect(List<string> parameters)
+        public StatModifierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Modifiers = DataParser.StatValueCSVs_Int_Any(parameters, INDEX_PARAM_1, NAME_PARAM_1, INDEX_PARAM_2, NAME_PARAM_2);

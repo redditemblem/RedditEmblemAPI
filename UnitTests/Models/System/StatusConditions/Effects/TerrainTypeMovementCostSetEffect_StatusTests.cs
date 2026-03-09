@@ -10,7 +10,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         [Test]
         public void Constructor_Null()
         {
-            List<string> parameters = new List<string>();
+            IEnumerable<string> parameters = new List<string>();
 
             Assert.Throws<StatusConditionEffectMissingParameterException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
         }
@@ -18,7 +18,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         [Test]
         public void Constructor_1EmptyString()
         {
-            List<string> parameters = new List<string>() { string.Empty };
+            IEnumerable<string> parameters = new List<string>() { string.Empty };
 
             Assert.Throws<StatusConditionEffectMissingParameterException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
         }
@@ -26,7 +26,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         [Test]
         public void Constructor_2EmptyStrings()
         {
-            List<string> parameters = new List<string>() { string.Empty, string.Empty };
+            IEnumerable<string> parameters = new List<string>() { string.Empty, string.Empty };
 
             Assert.Throws<StatusConditionEffectMissingParameterException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
         }
@@ -34,7 +34,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         [Test]
         public void Constructor_3EmptyStrings()
         {
-            List<string> parameters = new List<string>() { string.Empty, string.Empty, string.Empty };
+            IEnumerable<string> parameters = new List<string>() { string.Empty, string.Empty, string.Empty };
 
             Assert.Throws<PositiveIntegerException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
         }
@@ -42,7 +42,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         [Test]
         public void Constructor_TerrainTypeGrouping_Neg1()
         {
-            List<string> parameters = new List<string>() { "-1", string.Empty, string.Empty };
+            IEnumerable<string> parameters = new List<string>() { "-1", string.Empty, string.Empty };
 
             Assert.Throws<PositiveIntegerException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
         }
@@ -50,7 +50,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         [Test]
         public void Constructor_Value_Neg1()
         {
-            List<string> parameters = new List<string>() { "0", "-1", string.Empty };
+            IEnumerable<string> parameters = new List<string>() { "0", "-1", string.Empty };
 
             Assert.Throws<PositiveIntegerException>(() => new TerrainTypeMovementCostSetEffect_Status(parameters));
         }
@@ -58,7 +58,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         [Test]
         public void Constructor_EmptyCanOverride99MoveCost()
         {
-            List<string> parameters = new List<string>() { "0", "0", string.Empty };
+            IEnumerable<string> parameters = new List<string>() { "0", "0", string.Empty };
 
             ITerrainTypeMovementCostSetEffect_Status effect = new TerrainTypeMovementCostSetEffect_Status(parameters);
             Assert.That(effect.TerrainTypeGrouping, Is.EqualTo(0));
@@ -69,7 +69,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         [Test]
         public void Constructor_CanOverride99MoveCost_No()
         {
-            List<string> parameters = new List<string>() { "0", "0", "No" };
+            IEnumerable<string> parameters = new List<string>() { "0", "0", "No" };
 
             ITerrainTypeMovementCostSetEffect_Status effect = new TerrainTypeMovementCostSetEffect_Status(parameters);
             Assert.That(effect.TerrainTypeGrouping, Is.EqualTo(0));
@@ -80,7 +80,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         [Test]
         public void Constructor_CanOverride99MoveCost_Yes()
         {
-            List<string> parameters = new List<string>() { "1", "1", "Yes" };
+            IEnumerable<string> parameters = new List<string>() { "1", "1", "Yes" };
 
             ITerrainTypeMovementCostSetEffect_Status effect = new TerrainTypeMovementCostSetEffect_Status(parameters);
             Assert.That(effect.TerrainTypeGrouping, Is.EqualTo(1));

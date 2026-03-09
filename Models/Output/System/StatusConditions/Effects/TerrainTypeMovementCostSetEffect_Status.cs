@@ -42,7 +42,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// </summary>
         public bool CanOverride99MoveCost { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.

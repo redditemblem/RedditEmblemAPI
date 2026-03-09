@@ -6,18 +6,29 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
-    public class RemoveTagEffect : StatusConditionEffect
+    #region Interface
+
+    /// <inheritdoc cref="RemoveTagEffect"/>
+    public interface IRemoveTagEffect
+    {
+        /// <inheritdoc cref="RemoveTagEffect.Tags"/>
+        IEnumerable<string> Tags { get; }
+    }
+
+    #endregion Interface
+
+    public class RemoveTagEffect : StatusConditionEffect, IRemoveTagEffect
     {
         #region Attributes
 
         protected override string Name { get { return "RemoveTag"; } }
         protected override int ParameterCount { get { return 1; } }
 
-        private List<string> Tags { get; set; }
+        public IEnumerable<string> Tags { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
-        public RemoveTagEffect(List<string> parameters)
+        public RemoveTagEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Tags = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);

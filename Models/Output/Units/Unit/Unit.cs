@@ -319,7 +319,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public string GetUnitMovementType()
         {
-            OverrideMovementTypeEffect_Status statusOverride = this.StatusConditions.SelectMany(s => s.Status.Effects).OfType<OverrideMovementTypeEffect_Status>().FirstOrDefault();
+            IOverrideMovementTypeEffect_Status statusOverride = this.StatusConditions.SelectMany(s => s.Status.Effects).OfType<IOverrideMovementTypeEffect_Status>().FirstOrDefault();
             if (statusOverride != null)
                 return statusOverride.MovementType;
 
