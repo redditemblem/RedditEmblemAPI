@@ -2,11 +2,37 @@
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using System.Collections.Generic;
 using System.Linq;
+using Regex = System.Text.RegularExpressions;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
 {
-    public class ReplaceCombatStatFormulaVariableEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="ReplaceCombatStatFormulaVariableEffect"/>
+    public interface IReplaceCombatStatFormulaVariableEffect
     {
+        /// <inheritdoc cref="ReplaceCombatStatFormulaVariableEffect.Stats"/>
+        IEnumerable<string> Stats { get; }
+
+        /// <inheritdoc cref="ReplaceCombatStatFormulaVariableEffect.VariablesToReplace"/>
+        IEnumerable<string> VariablesToReplace { get; }
+
+        /// <inheritdoc cref="ReplaceCombatStatFormulaVariableEffect.VariablesToUse"/>
+        IEnumerable<string> VariablesToUse { get; }
+
+        /// <inheritdoc cref="ReplaceCombatStatFormulaVariableEffect.ParserOptions"/>
+        EquationParserOptions ParserOptions { get; }
+    }
+
+    #endregion Interface
+
+    public class ReplaceCombatStatFormulaVariableEffect : SkillEffect, IReplaceCombatStatFormulaVariableEffect
+    {
+        #region Constants
+
+        private static Regex.Regex variableRegex = new Regex.Regex("{[a-zA-Z\\,_\\[\\]]+}");
+        
+        #endregion Constants
 
         #region Attributes
 
@@ -16,17 +42,17 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Param1. The unit combat stats to be affected.
         /// </summary>
-        public List<string> Stats { get; private set; }
+        public IEnumerable<string> Stats { get; private set; }
 
         /// <summary>
         /// Param2. The variables to search for and replace in the formula.
         /// </summary>
-        public List<string> VariablesToReplace { get; private set; }
+        public IEnumerable<string> VariablesToReplace { get; private set; }
 
         /// <summary>
         /// Param3. The variables to replace <c>VariablesToReplace</c> with.
         /// </summary>
-        public List<string> VariablesToUse { get; private set; }
+        public IEnumerable<string> VariablesToUse { get; private set; }
 
         /// <summary>
         /// <c>EquationParserOptions</c> settings to apply to any equations impacted by this effect.
@@ -40,7 +66,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
         /// <exception cref="ParameterLengthsMismatchedException"></exception>
-        public ReplaceCombatStatFormulaVariableEffect(List<string> parameters)
+        public ReplaceCombatStatFormulaVariableEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Stats = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);
@@ -54,7 +80,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
             if (!this.VariablesToUse.Any())
                 throw new RequiredValueNotProvidedException(NAME_PARAM_3);
 
-            if (this.VariablesToReplace.Count != this.VariablesToUse.Count)
+            if (this.VariablesToReplace.Count() != this.VariablesToUse.Count())
                 throw new ParameterLengthsMismatchedException(NAME_PARAM_2, NAME_PARAM_3);
 
             this.ParserOptions = GetEquationParserOptions();
@@ -80,10 +106,10 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Due to the potential for fields to contain embedded CSVs (ex. "{UnitStat[Str,Mag]},{UnitStat[Spd]}"), we need a custom parser.
         /// </summary>
-        private List<string> CustomCSVParse(List<string> data, int index)
+        private IEnumerable<string> CustomCSVParse(IEnumerable<string> data, int index)
         {
             List<string> output = new List<string>();
-            string csv = (data.ElementAtOrDefault<string>(index) ?? string.Empty);
+            string csv = data.ElementAtOrDefault(index) ?? string.Empty;
 
             //Eliminate all whitespace from the string, including interior whitespace
             csv = csv.Trim();
@@ -92,11 +118,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
             if (string.IsNullOrEmpty(csv))
                 return output;
 
-            foreach (string value in csv.Split("},{"))
-            {
-                if (!string.IsNullOrEmpty(value))
-                    output.Add(value.Trim());
-            }
+            Regex.MatchCollection matches = variableRegex.Matches(csv);
+            foreach (Regex.Match variable in matches)
+                output.Add(variable.Value);
 
             return output;
         }

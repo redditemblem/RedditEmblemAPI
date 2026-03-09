@@ -2,8 +2,6 @@
 using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
-using RedditEmblemAPI.Models.Output.System;
-using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
 using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
 using RedditEmblemAPI.Models.Output.Units;
 using System;

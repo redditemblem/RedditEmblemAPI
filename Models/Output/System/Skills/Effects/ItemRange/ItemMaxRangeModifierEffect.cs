@@ -65,6 +65,19 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
                 throw new RequiredValueNotProvidedException(NAME_PARAM_1);
         }
 
+        /// <exception cref="UnmatchedDealsDamageFilterTypeException"></exception>
+        private DealsDamageFilterType GetDealsDamageFilterType(string dealsDamageFilterType)
+        {
+            if (string.IsNullOrEmpty(dealsDamageFilterType))
+                return DealsDamageFilterType.All;
+
+            object filterEnum;
+            if (!Enum.TryParse(typeof(DealsDamageFilterType), dealsDamageFilterType, out filterEnum))
+                throw new UnmatchedDealsDamageFilterTypeException(dealsDamageFilterType);
+
+            return (DealsDamageFilterType)filterEnum;
+        }
+
         /// <summary>
         /// Finds all items in <paramref name="unit"/>'s inventory with a category in <c>Categories</c> and boosts their max range by <c>Value</c>.
         /// </summary>
@@ -90,19 +103,6 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange
                 if (this.Value > item.MaxRange.ForcedModifier)
                     item.MaxRange.ForcedModifier = this.Value;
             }
-        }
-
-        /// <exception cref="UnmatchedDealsDamageFilterTypeException"></exception>
-        private DealsDamageFilterType GetDealsDamageFilterType(string dealsDamageFilterType)
-        {
-            if (string.IsNullOrEmpty(dealsDamageFilterType))
-                return DealsDamageFilterType.All;
-
-            object filterEnum;
-            if (!Enum.TryParse(typeof(DealsDamageFilterType), dealsDamageFilterType, out filterEnum))
-                throw new UnmatchedDealsDamageFilterTypeException(dealsDamageFilterType);
-
-            return (DealsDamageFilterType)filterEnum;
         }
     }
 

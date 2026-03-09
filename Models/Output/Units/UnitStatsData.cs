@@ -217,10 +217,10 @@ namespace RedditEmblemAPI.Models.Output.Units
                 EquationParserOptions options = equationConfig.ParserOptions;
 
                 //Check if skill effects replace any formula variables
-                foreach (ReplaceCombatStatFormulaVariableEffect effect in replacementEffects.Where(re => re.Stats.Contains(stat.SourceName)))
+                foreach (IReplaceCombatStatFormulaVariableEffect effect in replacementEffects.Where(re => re.Stats.Contains(stat.SourceName)))
                 {
-                    for (int i = 0; i < effect.VariablesToReplace.Count; i++)
-                        equation = equation.Replace(effect.VariablesToReplace[i], effect.VariablesToUse[i]);
+                    for (int i = 0; i < effect.VariablesToReplace.Count(); i++)
+                        equation = equation.Replace(effect.VariablesToReplace.ElementAt(i), effect.VariablesToUse.ElementAt(i));
                     options = options.Union(effect.ParserOptions);
                 }
 

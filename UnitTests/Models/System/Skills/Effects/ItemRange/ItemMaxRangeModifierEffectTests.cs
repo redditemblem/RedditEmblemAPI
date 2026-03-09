@@ -1,7 +1,11 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Unmatched;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.ItemRange;
+using RedditEmblemAPI.Models.Output.Units;
 
 namespace UnitTests.Models.System.Skills.Effects.ItemRange
 {
@@ -89,5 +93,66 @@ namespace UnitTests.Models.System.Skills.Effects.ItemRange
         }
 
         #endregion Constructor
+
+        #region Apply
+
+        [TestCase("Bow", 1, "", true)]
+        [TestCase("Sword", 99, "", true)]
+        [TestCase("Sword", 1, "Attack", false)]
+        [TestCase("Sword", 1, "Utility", true)]
+        public void Apply_Failed(string category, int maxRangeBaseValue, string dealsDamageFilter, bool itemDealsDamage)
+        {
+            IUnit unit = Substitute.For<IUnit>();
+            ISkill skill = Substitute.For<ISkill>();
+            IMapObj map = Substitute.For<IMapObj>();
+            List<IUnit> units = new List<IUnit>() { unit };
+
+            IUnitInventoryItem item = Substitute.For<IUnitInventoryItem>();
+            item.Item.Category.Returns(category);
+            item.Item.DealsDamage.Returns(itemDealsDamage);
+            item.MaxRange.BaseValue.Returns(maxRangeBaseValue);
+            item.MaxRange.ForcedModifier.Returns(0);
+
+            unit.Inventory.GetAllItems().Returns(new List<IUnitInventoryItem>() { item });
+
+            IEnumerable<string> parameters = new List<string>() { "Sword", "2", dealsDamageFilter };
+            ItemMaxRangeModifierEffect effect = new ItemMaxRangeModifierEffect(parameters);
+
+            effect.Apply(unit, skill, map, units);
+
+            Assert.That(item.MaxRange.ForcedModifier, Is.EqualTo(0));
+        }
+
+        [TestCase("", true)]
+        [TestCase("", false)]
+        [TestCase("Attack", true)]
+        [TestCase("Utility", false)]
+        public void Apply_Successful(string dealsDamageFilter, bool itemDealsDamage)
+        {
+            string category = "Sword";
+            string values = "2";
+
+            IUnit unit = Substitute.For<IUnit>();
+            ISkill skill = Substitute.For<ISkill>();
+            IMapObj map = Substitute.For<IMapObj>();
+            List<IUnit> units = new List<IUnit>() { unit };
+
+            IUnitInventoryItem item = Substitute.For<IUnitInventoryItem>();
+            item.Item.Category.Returns(category);
+            item.Item.DealsDamage.Returns(itemDealsDamage);
+            item.MaxRange.BaseValue.Returns(1);
+            item.MaxRange.ForcedModifier.Returns(0);
+
+            unit.Inventory.GetAllItems().Returns(new List<IUnitInventoryItem>() { item });
+
+            IEnumerable<string> parameters = new List<string>() { category, values, dealsDamageFilter };
+            ItemMaxRangeModifierEffect effect = new ItemMaxRangeModifierEffect(parameters);
+
+            effect.Apply(unit, skill, map, units);
+
+            Assert.That(item.MaxRange.ForcedModifier, Is.EqualTo(2));
+        }
+
+        #endregion Apply
     }
 }

@@ -124,14 +124,12 @@ namespace RedditEmblemAPI.Helpers
                 foreach (string utilizedStat in primaryEquipped.Item.UtilizedStats)
                 {
                     IModifiedStatValue unitStat = unit.Stats.MatchGeneralStatName(utilizedStat);
-                    if (unitStat.FinalValue > maxValue)
-                        maxValue = unitStat.FinalValue;
+                    maxValue = Math.Max(maxValue, unitStat.FinalValue);
                 }
             }
-            
+
             //Default to 0 if no utilized stats were found
-            if (maxValue == int.MinValue)
-                maxValue = 0;
+            maxValue = Math.Max(0, maxValue);
 
             equation = equation.Replace(VAR_WEAPON_UTIL_STAT_GREATEST, maxValue.ToString());
 
@@ -166,12 +164,7 @@ namespace RedditEmblemAPI.Helpers
             MatchCollection weaponStatMatches = weaponStatRegex.Matches(equation);
             if (!weaponStatMatches.Any()) return;
 
-            IUnitInventoryItem primaryEquipped = unit.Inventory.GetPrimaryEquippedItem();
-            if(primaryEquipped == null && unit.Emblem != null)
-            {
-                //If the primary equipped item isn't in the unit's inventory, check emblem weapons
-                primaryEquipped = unit.Emblem.EngageWeapons.SingleOrDefault(i => i.IsPrimaryEquipped);
-            }
+            IUnitInventoryItem primaryEquipped = GetPrimaryEquippedItem(unit);
 
             foreach (Match match in weaponStatMatches)
             {
@@ -182,8 +175,7 @@ namespace RedditEmblemAPI.Helpers
                     foreach (string statSplit in match.Groups[1].Value.Split(","))
                     {
                         IUnitInventoryItemStat stat = primaryEquipped.MatchStatName(statSplit.Trim());
-                        if (maximumStatValue < stat.FinalValue)
-                            maximumStatValue = stat.FinalValue;
+                        maximumStatValue = Math.Max(maximumStatValue, stat.FinalValue);
                     }
                 }
                 else
@@ -216,8 +208,7 @@ namespace RedditEmblemAPI.Helpers
                     foreach (string statSplit in match.Groups[1].Value.Split(","))
                     {
                         int statValue = battalion.MatchStatName(statSplit.Trim());
-                        if (maximumStatValue < statValue)
-                            maximumStatValue = statValue;
+                        maximumStatValue = Math.Max(maximumStatValue, statValue);
                     }
                 }
                 else

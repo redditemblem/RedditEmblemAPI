@@ -1,5 +1,10 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.System.Skills;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats;
+using RedditEmblemAPI.Models.Output.Units;
 
 namespace UnitTests.Models.System.Skills.Effects.UnitStats
 {
@@ -10,7 +15,7 @@ namespace UnitTests.Models.System.Skills.Effects.UnitStats
         [Test]
         public void Constructor_Null()
         {
-            List<string> parameters = new List<string>();
+            IEnumerable<string> parameters = new List<string>();
 
             Assert.Throws<SkillEffectMissingParameterException>(() => new HPBelowCombatStatModifierEffect(parameters));
         }
@@ -18,7 +23,7 @@ namespace UnitTests.Models.System.Skills.Effects.UnitStats
         [Test]
         public void Constructor_1EmptyString()
         {
-            List<string> parameters = new List<string>() { string.Empty };
+            IEnumerable<string> parameters = new List<string>() { string.Empty };
 
             Assert.Throws<SkillEffectMissingParameterException>(() => new HPBelowCombatStatModifierEffect(parameters));
         }
@@ -26,7 +31,7 @@ namespace UnitTests.Models.System.Skills.Effects.UnitStats
         [Test]
         public void Constructor_2EmptyStrings()
         {
-            List<string> parameters = new List<string>() { string.Empty, string.Empty };
+            IEnumerable<string> parameters = new List<string>() { string.Empty, string.Empty };
 
             Assert.Throws<SkillEffectMissingParameterException>(() => new HPBelowCombatStatModifierEffect(parameters));
         }
@@ -34,7 +39,7 @@ namespace UnitTests.Models.System.Skills.Effects.UnitStats
         [Test]
         public void Constructor_3EmptyStrings()
         {
-            List<string> parameters = new List<string>() { string.Empty, string.Empty, string.Empty };
+            IEnumerable<string> parameters = new List<string>() { string.Empty, string.Empty, string.Empty };
 
             Assert.Throws<PositiveIntegerException>(() => new HPBelowCombatStatModifierEffect(parameters));
         }
@@ -42,7 +47,7 @@ namespace UnitTests.Models.System.Skills.Effects.UnitStats
         [Test]
         public void Constructor_HPPercentage_Neg1()
         {
-            List<string> parameters = new List<string>() { "-1", string.Empty, string.Empty };
+            IEnumerable<string> parameters = new List<string>() { "-1", string.Empty, string.Empty };
 
             Assert.Throws<PositiveIntegerException>(() => new HPBelowCombatStatModifierEffect(parameters));
         }
@@ -50,7 +55,7 @@ namespace UnitTests.Models.System.Skills.Effects.UnitStats
         [Test]
         public void Constructor_EmptyStats()
         {
-            List<string> parameters = new List<string>() { "1", string.Empty, "1" };
+            IEnumerable<string> parameters = new List<string>() { "1", string.Empty, "1" };
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new HPBelowCombatStatModifierEffect(parameters));
         }
@@ -58,7 +63,7 @@ namespace UnitTests.Models.System.Skills.Effects.UnitStats
         [Test]
         public void Constructor_EmptyValues()
         {
-            List<string> parameters = new List<string>() { "1", "Stat", string.Empty };
+            IEnumerable<string> parameters = new List<string>() { "1", "Stat", string.Empty };
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new HPBelowCombatStatModifierEffect(parameters));
         }
@@ -66,7 +71,7 @@ namespace UnitTests.Models.System.Skills.Effects.UnitStats
         [Test]
         public void Constructor_MismatchedStats()
         {
-            List<string> parameters = new List<string>() { "1", "Stat 1,Stat 2", "1" };
+            IEnumerable<string> parameters = new List<string>() { "1", "Stat 1,Stat 2", "1" };
 
             Assert.Throws<ParameterLengthsMismatchedException>(() => new HPBelowCombatStatModifierEffect(parameters));
         }
@@ -74,11 +79,70 @@ namespace UnitTests.Models.System.Skills.Effects.UnitStats
         [Test]
         public void Constructor_MismatchedValues()
         {
-            List<string> parameters = new List<string>() { "1", "Stat ", "1,2" };
+            IEnumerable<string> parameters = new List<string>() { "1", "Stat ", "1,2" };
 
             Assert.Throws<ParameterLengthsMismatchedException>(() => new HPBelowCombatStatModifierEffect(parameters));
         }
 
+        [Test]
+        public void Constructor()
+        {
+            IEnumerable<string> parameters = new List<string>() { "50", "Stat1,Stat2", "1,2" };
+
+            HPBelowCombatStatModifierEffect effect = new HPBelowCombatStatModifierEffect(parameters);
+
+            Assert.That(effect.HPPercentage, Is.EqualTo(50));
+            Assert.That(effect.Modifiers.Count(), Is.EqualTo(2));
+            Assert.That(effect.Modifiers.ContainsKey("Stat1"), Is.True);
+            Assert.That(effect.Modifiers["Stat1"], Is.EqualTo(1));
+            Assert.That(effect.Modifiers.ContainsKey("Stat2"), Is.True);
+            Assert.That(effect.Modifiers["Stat2"], Is.EqualTo(2));
+            Assert.That(effect.ExecutionOrder, Is.EqualTo(SkillEffectExecutionOrder.Standard));
+        }
+
         #endregion Constructor
+
+        #region Apply
+
+        [TestCase(50.1)]
+        public void Apply_ModifiersDidNotApply(decimal unitHpPercentage)
+        {
+            IEnumerable<string> parameters = new List<string>() { "50", "Stat1 ", "1" };
+
+            HPBelowCombatStatModifierEffect effect = new HPBelowCombatStatModifierEffect(parameters);
+
+            IUnit unit = Substitute.For<IUnit>();
+            ISkill skill = Substitute.For<ISkill>();
+            IMapObj map = Substitute.For<IMapObj>();
+            List<IUnit> units = new List<IUnit>() { unit };
+
+            unit.Stats.HP.Percentage.Returns(unitHpPercentage);
+
+            effect.Apply(unit, skill, map, units);
+
+            unit.Stats.DidNotReceiveWithAnyArgs().ApplyCombatStatModifiers(effect.Modifiers, skill.Name, true);
+        }
+
+        [TestCase(49.9)]
+        [TestCase(50)]
+        public void Apply_ModifiersApplied(decimal unitHpPercentage)
+        {
+            IEnumerable<string> parameters = new List<string>() { "50", "Stat1 ", "1" };
+
+            HPBelowCombatStatModifierEffect effect = new HPBelowCombatStatModifierEffect(parameters);
+
+            IUnit unit = Substitute.For<IUnit>();
+            ISkill skill = Substitute.For<ISkill>();
+            IMapObj map = Substitute.For<IMapObj>();
+            List<IUnit> units = new List<IUnit>() { unit };
+
+            unit.Stats.HP.Percentage.Returns(unitHpPercentage);
+
+            effect.Apply(unit, skill, map, units);
+
+            unit.Stats.Received(1).ApplyCombatStatModifiers(effect.Modifiers, skill.Name, true);
+        }
+
+        #endregion Apply
     }
 }

@@ -8,7 +8,21 @@ using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
 {
-    public class HPDifferenceStatModifierEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="HPDifferenceStatModifierEffect"/>
+    public interface IHPDifferenceStatModifierEffect
+    {
+        /// <inheritdoc cref="HPDifferenceStatModifierEffect.Multiplier"/>
+        decimal Multiplier { get; }
+
+        /// <inheritdoc cref="HPDifferenceStatModifierEffect.Stats"/>
+        IEnumerable<string> Stats { get; }
+    }
+
+    #endregion Interface
+
+    public class HPDifferenceStatModifierEffect : SkillEffect, IHPDifferenceStatModifierEffect
     {
         #region Attributes
 
@@ -18,20 +32,20 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Param1. The value by which to multiply the unit's HP difference.
         /// </summary>
-        private decimal Multiplier { get; set; }
+        public decimal Multiplier { get; private set; }
 
         /// <summary>
         /// Param2. The unit stats to be affected.
         /// </summary>
-        private List<string> Stats { get; set; }
+        public IEnumerable<string> Stats { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <exception cref="RequiredValueNotProvidedException"></exception>
-        public HPDifferenceStatModifierEffect(List<string> parameters)
+        public HPDifferenceStatModifierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Multiplier = DataParser.Decimal_NonZeroPositive(parameters, INDEX_PARAM_1, NAME_PARAM_1);

@@ -5,7 +5,21 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
 {
-    public class HPAboveCombatStatModifierEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="HPAboveCombatStatModifierEffect"/>
+    public interface IHPAboveCombatStatModifierEffect
+    {
+        /// <inheritdoc cref="HPAboveCombatStatModifierEffect.HPPercentage"/>
+        int HPPercentage { get; }
+
+        /// <inheritdoc cref="HPAboveCombatStatModifierEffect.Modifiers"/>
+        IDictionary<string, int> Modifiers { get; }
+    }
+
+    #endregion Interface
+
+    public class HPAboveCombatStatModifierEffect : SkillEffect, IHPAboveCombatStatModifierEffect
     {
         #region Attributes
 
@@ -15,19 +29,19 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Param1. The minimum HP percentage the unit can have.
         /// </summary>
-        private int HPPercentage { get; set; }
+        public int HPPercentage { get; private set; }
 
         /// <summary>
         /// Param2/Param3. The unit combat stat modifiers to apply.
         /// </summary>
-        private IDictionary<string, int> Modifiers { get; set; }
+        public IDictionary<string, int> Modifiers { get; private set; }
 
         #endregion
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public HPAboveCombatStatModifierEffect(List<string> parameters)
+        public HPAboveCombatStatModifierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.HPPercentage = DataParser.Int_Positive(parameters, INDEX_PARAM_1, NAME_PARAM_1);
