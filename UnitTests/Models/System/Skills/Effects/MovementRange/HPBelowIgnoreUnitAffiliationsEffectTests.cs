@@ -1,5 +1,6 @@
 ﻿using NSubstitute;
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
 using RedditEmblemAPI.Models.Output.Units;
 
@@ -25,9 +26,10 @@ namespace UnitTests.Models.System.Skills.Effects.MovementRange
                 "20"
             };
 
-            IHPBelowIgnoreUnitAffiliationsEffect effect = new HPBelowIgnoreUnitAffiliationsEffect(data);
+            HPBelowIgnoreUnitAffiliationsEffect effect = new HPBelowIgnoreUnitAffiliationsEffect(data);
 
             Assert.That(effect.HPPercentage, Is.EqualTo(20));
+            Assert.That(effect.ExecutionOrder, Is.EqualTo(SkillEffectExecutionOrder.Standard));
         }
 
         #endregion Constructor

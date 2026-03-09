@@ -5,7 +5,18 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.PairUp
 {
-    public class InPairUpFrontStatModifierEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="InPairUpFrontStatModifierEffect"/>
+    public interface IInPairUpFrontStatModifierEffect
+    {
+        /// <inheritdoc cref="InPairUpFrontStatModifierEffect.Modifiers"/>
+        IDictionary<string, int> Modifiers { get; }
+    }
+
+    #endregion Interface
+
+    public class InPairUpFrontStatModifierEffect : SkillEffect, IInPairUpFrontStatModifierEffect
     {
         #region Attributes
 
@@ -15,14 +26,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.PairUp
         /// <summary>
         /// Param1/Param2. The unit stat modifiers to apply.
         /// </summary>
-        private IDictionary<string, int> Modifiers { get; set; }
+        public IDictionary<string, int> Modifiers { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public InPairUpFrontStatModifierEffect(List<string> parameters)
+        public InPairUpFrontStatModifierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Modifiers = DataParser.StatValueCSVs_Int_Any(parameters, INDEX_PARAM_1, NAME_PARAM_1, INDEX_PARAM_2, NAME_PARAM_2);

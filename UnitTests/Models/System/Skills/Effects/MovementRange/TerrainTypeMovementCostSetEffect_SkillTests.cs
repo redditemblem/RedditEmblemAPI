@@ -1,5 +1,6 @@
 ﻿
 using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
 
 namespace UnitTests.Models.System.Skills.Effects.MovementRange
@@ -63,11 +64,12 @@ namespace UnitTests.Models.System.Skills.Effects.MovementRange
                 canOverride99MoveCost
             };
 
-            ITerrainTypeMovementCostSetEffect_Skill effect = new TerrainTypeMovementCostSetEffect_Skill(data);
+            TerrainTypeMovementCostSetEffect_Skill effect = new TerrainTypeMovementCostSetEffect_Skill(data);
 
             Assert.That(effect.TerrainTypeGrouping, Is.EqualTo(2));
             Assert.That(effect.Value, Is.EqualTo(3));
             Assert.That(effect.CanOverride99MoveCost, Is.EqualTo(expected));
+            Assert.That(effect.ExecutionOrder, Is.EqualTo(SkillEffectExecutionOrder.Standard));
         }
 
         #endregion Constructor

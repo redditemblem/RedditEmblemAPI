@@ -1,4 +1,5 @@
 ﻿using NSubstitute;
+using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
 using RedditEmblemAPI.Models.Output.Units;
 
@@ -12,8 +13,9 @@ namespace UnitTests.Models.System.Skills.Effects.MovementRange
         public void Constructor()
         {
             IEnumerable<string> data = new List<string>();
+            IgnoreUnitAffiliationsEffect effect = new IgnoreUnitAffiliationsEffect(data);
 
-            Assert.DoesNotThrow(() => new IgnoreUnitAffiliationsEffect(data));
+            Assert.That(effect.ExecutionOrder, Is.EqualTo(SkillEffectExecutionOrder.Standard));
         }
 
         #endregion Constructor

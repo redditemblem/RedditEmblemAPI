@@ -1,6 +1,10 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using NSubstitute;
+using RedditEmblemAPI.Models.Exceptions.Validation;
+using RedditEmblemAPI.Models.Output.Map;
+using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.EquippedItem;
+using RedditEmblemAPI.Models.Output.Units;
 
 namespace UnitTests.Models.System.Skills.Effects.EquippedItem
 {
@@ -82,5 +86,70 @@ namespace UnitTests.Models.System.Skills.Effects.EquippedItem
         }
 
         #endregion Constructor
+
+        #region Apply
+
+        [Test]
+        public void Apply_NoPrimaryEquippedItem()
+        {
+            IUnit unit = Substitute.For<IUnit>();
+            ISkill skill = Substitute.For<ISkill>();
+            IMapObj map = Substitute.For<IMapObj>();
+            List<IUnit> units = new List<IUnit>() { unit };
+
+            IUnitInventoryItem item = null;
+            unit.Inventory.GetPrimaryEquippedItem().Returns(item);
+
+            IEnumerable<string> parameters = new List<string>() { "Sword", "Stat1", "1" };
+            EquippedCategoryCombatStatModifierEffect effect = new EquippedCategoryCombatStatModifierEffect(parameters);
+
+            effect.Apply(unit, skill, map, units);
+
+            unit.Stats.DidNotReceiveWithAnyArgs().ApplyCombatStatModifiers(Arg.Any<IDictionary<string, int>>(), skill.Name, true);
+        }
+
+        [Test]
+        public void Apply_WrongItemCategory()
+        {
+            IUnit unit = Substitute.For<IUnit>();
+            ISkill skill = Substitute.For<ISkill>();
+            IMapObj map = Substitute.For<IMapObj>();
+            List<IUnit> units = new List<IUnit>() { unit };
+
+            IUnitInventoryItem item = Substitute.For<IUnitInventoryItem>();
+            item.Item.Category.Returns("Bow");
+
+            unit.Inventory.GetPrimaryEquippedItem().Returns(item);
+
+            IEnumerable<string> parameters = new List<string>() { "Sword", "Stat1", "1" };
+            EquippedCategoryCombatStatModifierEffect effect = new EquippedCategoryCombatStatModifierEffect(parameters);
+
+            effect.Apply(unit, skill, map, units);
+
+            unit.Stats.DidNotReceiveWithAnyArgs().ApplyCombatStatModifiers(Arg.Any<IDictionary<string, int>>(), skill.Name, true);
+        }
+
+        [Test]
+        public void Apply()
+        {
+            IUnit unit = Substitute.For<IUnit>();
+            ISkill skill = Substitute.For<ISkill>();
+            IMapObj map = Substitute.For<IMapObj>();
+            List<IUnit> units = new List<IUnit>() { unit };
+
+            IUnitInventoryItem item = Substitute.For<IUnitInventoryItem>();
+            item.Item.Category.Returns("Sword");
+
+            unit.Inventory.GetPrimaryEquippedItem().Returns(item);
+
+            IEnumerable<string> parameters = new List<string>() { "Sword", "Stat1", "1" };
+            EquippedCategoryCombatStatModifierEffect effect = new EquippedCategoryCombatStatModifierEffect(parameters);
+
+            effect.Apply(unit, skill, map, units);
+
+            unit.Stats.Received(1).ApplyCombatStatModifiers(Arg.Is<IDictionary<string, int>>(m => m["Stat1"] == 1), skill.Name, true);
+        }
+
+        #endregion Apply
     }
 }
