@@ -6,7 +6,6 @@
   "Map": { 
     "Constants": {
       "TileSize": 32,
-      "TileSpacing": 0,
       "HasHeaderTopLeft": true,
       "UnitMovementStatName": "Mov",
       "CoordinateFormat": 1

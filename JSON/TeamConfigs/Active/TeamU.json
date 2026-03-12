@@ -5,8 +5,7 @@
   },
   "Map": {
     "Constants": {
-      "TileSize": 16,
-      "TileSpacing": 0
+      "TileSize": 16
     },
     "MapControls": {
       "Query": {

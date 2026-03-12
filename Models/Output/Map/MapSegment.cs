@@ -246,11 +246,11 @@ namespace RedditEmblemAPI.Models.Output.Map
             int index = 0;
             foreach (MapSegmentConfig config in configs)
             {
-                string imageUrl = DataParser.OptionalString_URL(data, config.ImageURL, "Image URL");
-                if(string.IsNullOrWhiteSpace(imageUrl)) continue;
-
                 string title = DataParser.OptionalString(data, config.Title, "Title");
                 if (string.IsNullOrEmpty(title)) title = $"Segment {index + 1}";
+
+                string imageUrl = DataParser.OptionalString_URL(data, config.ImageURL, $"{title} Image URL");
+                if(string.IsNullOrEmpty(imageUrl)) continue;
 
                 int beginningOfHorizontalRange = 1;
                 if (index++ > 0) beginningOfHorizontalRange += segments.Take(index).Sum(s => s.WidthInTiles);
@@ -258,8 +258,8 @@ namespace RedditEmblemAPI.Models.Output.Map
                 segments.Add(new MapSegment(constants, imageLoader, imageUrl, title, beginningOfHorizontalRange));
             }
 
-            if (segments.Count == 0)
-                throw new Exception();
+            if (segments.Count < 1)
+                throw new MapHasNoSegmentsException();
 
             return segments.ToArray();
         }

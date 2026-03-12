@@ -1,6 +1,7 @@
 ﻿using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.System;
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,7 +12,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Items
         public ICoordinate StartingCoordinate { get; }
         public IEnumerable<ICoordinate> IgnoreTiles { get; }
         public IEnumerable<UnitItemRange> Ranges { get; }
-        public IDictionary<ItemRangeShape, bool> ContainsRangeShape { get; }
+        public IReadOnlyDictionary<ItemRangeShape, bool> ContainsRangeShape { get; }
         public int LargestRange { get; }
         public OrdinalDirection RangeDirection { get; }
         public int AffiliationGrouping { get; }
@@ -31,7 +32,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Items
                 throw new ArgumentException("Safeguard reached. Attempting to calculate a 99 range when none should ever exist at this point.");
         }
 
-        private IDictionary<ItemRangeShape, bool> BuildContainsRangeShapeDictionary()
+        private IReadOnlyDictionary<ItemRangeShape, bool> BuildContainsRangeShapeDictionary()
         {
             IDictionary<ItemRangeShape, bool> shapes = new Dictionary<ItemRangeShape, bool>();
 
@@ -41,7 +42,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Items
             shapes.Add(ItemRangeShape.Saltire, this.Ranges.Any(r => r.Shape == ItemRangeShape.Saltire));
             shapes.Add(ItemRangeShape.Star, this.Ranges.Any(r => r.Shape == ItemRangeShape.Star));
 
-            return shapes;
+            return shapes.ToFrozenDictionary();
         }
     }
 }

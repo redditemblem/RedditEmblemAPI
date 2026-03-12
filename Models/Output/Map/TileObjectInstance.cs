@@ -237,8 +237,8 @@ namespace RedditEmblemAPI.Models.Output.Map
         {
             switch (shape)
             {
-                case TileObjectInstanceRepeaterShape.Plus:
-                    return RepeatTileObjectInstanceInPlus(map, copyFrom, ref idIterator, height, width);
+                case TileObjectInstanceRepeaterShape.Diamond:
+                    return RepeatTileObjectInstanceInDiamond(map, copyFrom, ref idIterator, height, width);
 
                 case TileObjectInstanceRepeaterShape.Rectangle:
                     return RepeatTileObjectInstanceInRectangle(map, copyFrom, ref idIterator, height, width);
@@ -248,14 +248,14 @@ namespace RedditEmblemAPI.Models.Output.Map
             }
         }
 
-        #region Plus Shaped Repeater
+        #region Diamond Shaped Repeater
 
-        private static IEnumerable<ITileObjectInstance> RepeatTileObjectInstanceInPlus(IMapObj map, ITileObjectInstance copyFrom, ref int idIterator, int height, int width)
+        private static IEnumerable<ITileObjectInstance> RepeatTileObjectInstanceInDiamond(IMapObj map, ITileObjectInstance copyFrom, ref int idIterator, int height, int width)
         {
             if (height % 2 == 0 || width % 2 == 0)
-                throw new ArgumentException("A \"Plus\" shape repeater must have an odd-numbered height and width.");
+                throw new ArgumentException("A \"Diamond\" shaped repeater must have an odd-numbered height and width.");
             if (height < 3 || width < 3)
-                throw new ArgumentException("A \"Plus\" shape repeater must have a height and width of at least 3 tiles.");
+                throw new ArgumentException("A \"Diamond\" shaped repeater must have a height and width of at least 3 tiles.");
 
             List<ITileObjectInstance> copies = new List<ITileObjectInstance>();
 
@@ -264,9 +264,9 @@ namespace RedditEmblemAPI.Models.Output.Map
             int size = copyFrom.TileObject.Size;
 
             if (height * size > segment.HeightInTiles)
-                throw new ArgumentException("The calculated height (height * tile object size) of a \"Plus\" shape repeater cannot exceed the height of the map segment.");
+                throw new ArgumentException("The calculated height (height * tile object size) of a \"Diamond\" shaped repeater cannot exceed the height of the map segment.");
             if (width * size > segment.WidthInTiles)
-                throw new ArgumentException("The calculated width (width * tile object size) of a \"Plus\" shape repeater cannot exceed the width of the map segment.");
+                throw new ArgumentException("The calculated width (width * tile object size) of a \"Diamond\" shaped repeater cannot exceed the width of the map segment.");
 
             int verticalRadius = (int)Math.Floor(height / 2m);
             int horizontalRadius = (int)Math.Floor(width / 2m);
@@ -335,12 +335,15 @@ namespace RedditEmblemAPI.Models.Output.Map
             return (A == A1 + A2 + A3);
         }
 
-        #endregion Plus Shaped Repeater
+        #endregion Diamond Shaped Repeater
 
         #region Rectangle Shaped Repeater
 
         private static IEnumerable<ITileObjectInstance> RepeatTileObjectInstanceInRectangle(IMapObj map, ITileObjectInstance copyFrom, ref int idIterator, int height, int width)
         {
+            if (height < 2 || width < 2)
+                throw new ArgumentException("A \"Rectangle\" shaped repeater must have a height and width of at least 2 tiles.");
+
             List<ITileObjectInstance> copies = new List<ITileObjectInstance>();
 
             ICoordinate copyFromAnchor = copyFrom.AnchorCoordinate;
@@ -348,9 +351,9 @@ namespace RedditEmblemAPI.Models.Output.Map
             int size = copyFrom.TileObject.Size;
 
             if (height * size > segment.HeightInTiles)
-                throw new ArgumentException("The calculated height (height * tile object size) of a \"Rectangle\" shape repeater cannot exceed the height of the map segment.");
+                throw new ArgumentException("The calculated height (height * tile object size) of a \"Rectangle\" shaped repeater cannot exceed the height of the map segment.");
             if (width * size > segment.WidthInTiles)
-                throw new ArgumentException("The calculated width (width * tile object size) of a \"Rectangle\" shape repeater cannot exceed the width of the map segment.");
+                throw new ArgumentException("The calculated width (width * tile object size) of a \"Rectangle\" shaped repeater cannot exceed the width of the map segment.");
 
             for (int y = 0; y < height; y++)
             {
@@ -381,7 +384,7 @@ namespace RedditEmblemAPI.Models.Output.Map
 
     public enum TileObjectInstanceRepeaterShape
     {
-        Plus,
+        Diamond,
         Rectangle
     }
 }
