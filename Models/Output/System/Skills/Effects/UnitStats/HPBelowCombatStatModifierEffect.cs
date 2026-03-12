@@ -1,11 +1,25 @@
-﻿using RedditEmblemAPI.Models.Output.Map;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
 {
-    public class HPBelowCombatStatModifierEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="HPBelowCombatStatModifierEffect"/>
+    public interface IHPBelowCombatStatModifierEffect
+    {
+        /// <inheritdoc cref="HPBelowCombatStatModifierEffect.HPPercentage"/>
+        int HPPercentage { get; }
+
+        /// <inheritdoc cref="HPBelowCombatStatModifierEffect.Modifiers"/>
+        IDictionary<string, int> Modifiers { get; }
+    }
+
+    #endregion Interface
+
+    public class HPBelowCombatStatModifierEffect : SkillEffect, IHPBelowCombatStatModifierEffect
     {
         #region Attributes
 
@@ -15,19 +29,19 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.UnitStats
         /// <summary>
         /// Param1. The maximum HP percentage the unit can have.
         /// </summary>
-        private int HPPercentage { get; set; }
+        public int HPPercentage { get; private set; }
 
         /// <summary>
         /// Param2/Param3. The unit combat stat modifiers to apply.
         /// </summary>
-        private IDictionary<string, int> Modifiers { get; set; }
+        public IDictionary<string, int> Modifiers { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public HPBelowCombatStatModifierEffect(List<string> parameters)
+        public HPBelowCombatStatModifierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.HPPercentage = DataParser.Int_Positive(parameters, INDEX_PARAM_1, NAME_PARAM_1);

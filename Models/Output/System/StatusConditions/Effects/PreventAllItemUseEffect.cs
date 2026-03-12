@@ -3,16 +3,23 @@ using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
-    public class PreventAllItemUseEffect : StatusConditionEffect
+    #region Interface
+
+    /// <inheritdoc cref="PreventAllItemUseEffect"/>
+    public interface IPreventAllItemUseEffect { }
+
+    #endregion Interface
+
+    public class PreventAllItemUseEffect : StatusConditionEffect, IPreventAllItemUseEffect
     {
         #region Attributes
 
         protected override string Name { get { return "PreventAllItemUse"; } }
         protected override int ParameterCount { get { return 0; } }
 
-        #endregion
+        #endregion Attributes
 
-        public PreventAllItemUseEffect(List<string> parameters)
+        public PreventAllItemUseEffect(IEnumerable<string> parameters)
             : base(parameters)
         { }
 

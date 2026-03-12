@@ -7,7 +7,6 @@
   "Map": { //Required
     "Constants": { //Required
       "TileSize": 0, //Required
-      "TileSpacing": 0, //Required
       "HasHeaderTopLeft": false, //Optional, defaults to false
       "HasHeaderBottomRight": false, //Optional, defaults to false
       "CalculateRanges": true, //Optional, defaults to true
@@ -23,8 +22,13 @@
         "Orientation": 2
       },
       "MapSwitch": 0, //Required
-      "MapImageURL": 0, //Required
-      "ChapterPostURL": 0 //Optional
+      "ChapterPostURL": 0, //Optional
+      "Segments": [
+        {
+          "Title": 0, //Optional
+          "ImageURL": 0 //Required
+        }
+      ]
     },
     "MapTiles": { //Required
       "Query": {
@@ -45,6 +49,11 @@
         "Current": 0,
         "Maximum": 0,
         "RemainingBars": 0 //Optional
+      },
+      "RepeaterTool": { //Optional
+        "Shape": 0,
+        "Height": 0,
+        "Width": 0
       }
     }
   },

@@ -1,23 +1,34 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
-    public class AddTagEffect : StatusConditionEffect
+    #region Interface
+
+    /// <inheritdoc cref="AddTagEffect"/>
+    public interface IAddTagEffect
+    {
+        /// <inheritdoc cref="AddTagEffect.Tags"/>
+        IEnumerable<string> Tags { get; }
+    }
+
+    #endregion Interface
+
+    public class AddTagEffect : StatusConditionEffect, IAddTagEffect
     {
         #region Attributes
 
         protected override string Name { get { return "AddTag"; } }
         protected override int ParameterCount { get { return 1; } }
 
-        private List<string> Tags { get; set; }
+        public IEnumerable<string> Tags { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
-        public AddTagEffect(List<string> parameters)
+        public AddTagEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Tags = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);

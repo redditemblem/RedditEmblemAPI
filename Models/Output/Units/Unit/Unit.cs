@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Helpers;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -7,9 +8,7 @@ using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Match;
 using RedditEmblemAPI.Models.Output.System.Skills;
 using RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange;
-using RedditEmblemAPI.Models.Output.System.StatusConditions;
 using RedditEmblemAPI.Models.Output.System.StatusConditions.Effects;
-using RedditEmblemAPI.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -320,7 +319,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public string GetUnitMovementType()
         {
-            OverrideMovementTypeEffect_Status statusOverride = this.StatusConditions.SelectMany(s => s.Status.Effects).OfType<OverrideMovementTypeEffect_Status>().FirstOrDefault();
+            IOverrideMovementTypeEffect_Status statusOverride = this.StatusConditions.SelectMany(s => s.Status.Effects).OfType<IOverrideMovementTypeEffect_Status>().FirstOrDefault();
             if (statusOverride != null)
                 return statusOverride.MovementType;
 

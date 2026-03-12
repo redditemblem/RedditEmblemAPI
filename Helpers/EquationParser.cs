@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace RedditEmblemAPI.Services.Helpers
+namespace RedditEmblemAPI.Helpers
 {
     public class EquationParser
     {
@@ -124,14 +124,12 @@ namespace RedditEmblemAPI.Services.Helpers
                 foreach (string utilizedStat in primaryEquipped.Item.UtilizedStats)
                 {
                     IModifiedStatValue unitStat = unit.Stats.MatchGeneralStatName(utilizedStat);
-                    if (unitStat.FinalValue > maxValue)
-                        maxValue = unitStat.FinalValue;
+                    maxValue = Math.Max(maxValue, unitStat.FinalValue);
                 }
             }
-            
+
             //Default to 0 if no utilized stats were found
-            if (maxValue == int.MinValue)
-                maxValue = 0;
+            maxValue = Math.Max(0, maxValue);
 
             equation = equation.Replace(VAR_WEAPON_UTIL_STAT_GREATEST, maxValue.ToString());
 
@@ -166,12 +164,7 @@ namespace RedditEmblemAPI.Services.Helpers
             MatchCollection weaponStatMatches = weaponStatRegex.Matches(equation);
             if (!weaponStatMatches.Any()) return;
 
-            IUnitInventoryItem primaryEquipped = unit.Inventory.GetPrimaryEquippedItem();
-            if(primaryEquipped == null && unit.Emblem != null)
-            {
-                //If the primary equipped item isn't in the unit's inventory, check emblem weapons
-                primaryEquipped = unit.Emblem.EngageWeapons.SingleOrDefault(i => i.IsPrimaryEquipped);
-            }
+            IUnitInventoryItem primaryEquipped = GetPrimaryEquippedItem(unit);
 
             foreach (Match match in weaponStatMatches)
             {
@@ -182,8 +175,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     foreach (string statSplit in match.Groups[1].Value.Split(","))
                     {
                         IUnitInventoryItemStat stat = primaryEquipped.MatchStatName(statSplit.Trim());
-                        if (maximumStatValue < stat.FinalValue)
-                            maximumStatValue = stat.FinalValue;
+                        maximumStatValue = Math.Max(maximumStatValue, stat.FinalValue);
                     }
                 }
                 else
@@ -216,8 +208,7 @@ namespace RedditEmblemAPI.Services.Helpers
                     foreach (string statSplit in match.Groups[1].Value.Split(","))
                     {
                         int statValue = battalion.MatchStatName(statSplit.Trim());
-                        if (maximumStatValue < statValue)
-                            maximumStatValue = statValue;
+                        maximumStatValue = Math.Max(maximumStatValue, statValue);
                     }
                 }
                 else
@@ -262,13 +253,13 @@ namespace RedditEmblemAPI.Services.Helpers
         {
             return new EquationParserOptions
             {
-                EvalUnitCombatStat = this.EvalUnitCombatStat || other.EvalUnitCombatStat,
-                EvalUnitStat = this.EvalUnitStat || other.EvalUnitStat,
-                EvalUnitLevel = this.EvalUnitLevel || other.EvalUnitLevel,
-                EvalWeaponUtilStat_Greatest = this.EvalWeaponUtilStat_Greatest || other.EvalWeaponUtilStat_Greatest,
-                EvalWeaponUtilStat_Sum = this.EvalWeaponUtilStat_Sum || other.EvalWeaponUtilStat_Sum,
-                EvalWeaponStat = this.EvalWeaponStat || other.EvalWeaponStat,
-                EvalBattalionStat = this.EvalBattalionStat || other.EvalBattalionStat
+                EvalUnitCombatStat = EvalUnitCombatStat || other.EvalUnitCombatStat,
+                EvalUnitStat = EvalUnitStat || other.EvalUnitStat,
+                EvalUnitLevel = EvalUnitLevel || other.EvalUnitLevel,
+                EvalWeaponUtilStat_Greatest = EvalWeaponUtilStat_Greatest || other.EvalWeaponUtilStat_Greatest,
+                EvalWeaponUtilStat_Sum = EvalWeaponUtilStat_Sum || other.EvalWeaponUtilStat_Sum,
+                EvalWeaponStat = EvalWeaponStat || other.EvalWeaponStat,
+                EvalBattalionStat = EvalBattalionStat || other.EvalBattalionStat
             };
         }
     }

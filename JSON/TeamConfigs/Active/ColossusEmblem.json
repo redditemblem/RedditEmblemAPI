@@ -6,7 +6,6 @@
   "Map": { 
     "Constants": {
       "TileSize": 32,
-      "TileSpacing": 0,
       "HasHeaderTopLeft": true,
       "UnitMovementStatName": "Mov",
       "CoordinateFormat": 1
@@ -19,7 +18,11 @@
       },
       "MapSwitch": 0,
       "ChapterPostURL": 1,
-      "MapImageURL": 2
+      "Segments": [
+        {
+          "ImageURL": 2
+        }
+      ]
     },
     "MapTiles": {
       "Query": {

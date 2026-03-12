@@ -10,7 +10,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         [Test]
         public void Constructor_Null()
         {
-            List<string> parameters = new List<string>();
+            IEnumerable<string> parameters = new List<string>();
 
             Assert.Throws<StatusConditionEffectMissingParameterException>(() => new OverrideMovementEffect(parameters));
         }
@@ -18,7 +18,7 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         [Test]
         public void Constructor_1EmptyString()
         {
-            List<string> parameters = new List<string>() { string.Empty };
+            IEnumerable<string> parameters = new List<string>() { string.Empty };
 
             Assert.Throws<PositiveIntegerException>(() => new OverrideMovementEffect(parameters));
         }
@@ -26,27 +26,19 @@ namespace UnitTests.Models.System.StatusConditions.Effects
         [Test]
         public void Constructor_InvalidMovementValue()
         {
-            List<string> parameters = new List<string>() { "-1" };
+            IEnumerable<string> parameters = new List<string>() { "-1" };
 
             Assert.Throws<PositiveIntegerException>(() => new OverrideMovementEffect(parameters));
         }
 
-        [Test]
-        public void Constructor_MovementValue_Zero()
+        [TestCase("0", 0)]
+        [TestCase("1", 1)]
+        public void Constructor(string value, int expected)
         {
-            List<string> parameters = new List<string>() { "0" };
+            IEnumerable<string> parameters = new List<string>() { value };
             OverrideMovementEffect effect = new OverrideMovementEffect(parameters);
 
-            Assert.That(effect.MovementValue, Is.EqualTo(0));
-        }
-
-        [Test]
-        public void Constructor_MovementValue_One()
-        {
-            List<string> parameters = new List<string>() { "1" };
-            OverrideMovementEffect effect = new OverrideMovementEffect(parameters);
-
-            Assert.That(effect.MovementValue, Is.EqualTo(1));
+            Assert.That(effect.MovementValue, Is.EqualTo(expected));
         }
 
         #endregion Constructor

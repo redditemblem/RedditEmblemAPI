@@ -6,7 +6,6 @@
   "Map": {
     "Constants": {
       "TileSize": 48,
-      "TileSpacing": 0,
       "HasHeaderTopLeft": false,
       "HasHeaderBottomRight": false,
       "CalculateRanges": true,
@@ -21,8 +20,12 @@
         "Orientation": 2
       },
       "MapSwitch": 0,
-      "MapImageURL": 2,
-      "ChapterPostURL": 1
+      "ChapterPostURL": 1,
+      "Segments": [
+        {
+          "ImageURL": 2
+        }
+      ]
     },
     "MapTiles": {
       "Query": {
@@ -34,7 +37,7 @@
     "MapObjects": {
       "Query": {
         "Sheet": "Map Objects",
-        "Selection": "A3:D",
+        "Selection": "A3:G",
         "Orientation": 1
       },
       "Name": 0,
@@ -42,6 +45,11 @@
       "HP": {
         "Current": 2,
         "Maximum": 3
+      },
+      "RepeaterTool": {
+        "Shape": 4,
+        "Height": 5,
+        "Width": 6
       }
     }
   },

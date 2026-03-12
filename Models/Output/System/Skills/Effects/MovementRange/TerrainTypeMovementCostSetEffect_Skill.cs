@@ -1,9 +1,26 @@
-﻿using RedditEmblemAPI.Services.Helpers;
+﻿using RedditEmblemAPI.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
 {
-    public class TerrainTypeMovementCostSetEffect_Skill : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="TerrainTypeMovementCostSetEffect_Skill"/>
+    public interface ITerrainTypeMovementCostSetEffect_Skill
+    {
+        /// <inheritdoc cref="TerrainTypeMovementCostSetEffect_Skill.TerrainTypeGrouping"/>
+        int TerrainTypeGrouping { get; }
+
+        /// <inheritdoc cref="TerrainTypeMovementCostSetEffect_Skill.Value"/>
+        int Value { get; }
+
+        /// <inheritdoc cref="TerrainTypeMovementCostSetEffect_Skill.CanOverride99MoveCost"/>
+        bool CanOverride99MoveCost { get; }
+    }
+
+    #endregion Interface
+
+    public class TerrainTypeMovementCostSetEffect_Skill : SkillEffect, ITerrainTypeMovementCostSetEffect_Skill
     {
         #region Attributes
 
@@ -25,12 +42,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// </summary>
         public bool CanOverride99MoveCost { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public TerrainTypeMovementCostSetEffect_Skill(List<string> parameters)
+        public TerrainTypeMovementCostSetEffect_Skill(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.TerrainTypeGrouping = DataParser.Int_Positive(parameters, INDEX_PARAM_1, NAME_PARAM_1);

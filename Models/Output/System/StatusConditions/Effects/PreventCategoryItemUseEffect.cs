@@ -1,12 +1,23 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
-    public class PreventCategoryItemUseEffect : StatusConditionEffect
+    #region Interface
+
+    /// <inheritdoc cref="PreventCategoryItemUseEffect"/>
+    public interface IPreventCategoryItemUseEffect
+    {
+        /// <inheritdoc cref="PreventCategoryItemUseEffect.Categories"/>
+        IEnumerable<string> Categories { get; }
+    }
+
+    #endregion Interface
+
+    public class PreventCategoryItemUseEffect : StatusConditionEffect, IPreventCategoryItemUseEffect
     {
         #region Attributes
 
@@ -16,11 +27,11 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// <summary>
         /// Param1. List of item categories to check for.
         /// </summary>
-        private List<string> Categories { get; set; }
+        public IEnumerable<string> Categories { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
-        public PreventCategoryItemUseEffect(List<string> parameters)
+        public PreventCategoryItemUseEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Categories = DataParser.List_StringCSV(parameters, INDEX_PARAM_1);

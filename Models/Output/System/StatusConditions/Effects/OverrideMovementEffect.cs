@@ -1,9 +1,20 @@
-﻿using RedditEmblemAPI.Services.Helpers;
+﻿using RedditEmblemAPI.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
-    public class OverrideMovementEffect : StatusConditionEffect
+    #region Interface
+
+    /// <inheritdoc cref="OverrideMovementEffect"/>
+    public interface IOverrideMovementEffect
+    {
+        /// <inheritdoc cref="OverrideMovementEffect.MovementValue"/>
+        int MovementValue { get; }
+    }
+
+    #endregion Interface
+
+    public class OverrideMovementEffect : StatusConditionEffect, IOverrideMovementEffect
     {
         #region Attributes
 
@@ -12,9 +23,9 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 
         public int MovementValue { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
-        public OverrideMovementEffect(List<string> parameters)
+        public OverrideMovementEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.MovementValue = DataParser.Int_Positive(parameters, INDEX_PARAM_1, NAME_PARAM_1);

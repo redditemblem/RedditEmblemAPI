@@ -1,7 +1,7 @@
-﻿using RedditEmblemAPI.Models.Configuration.Common;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output;
-using RedditEmblemAPI.Services.Helpers;
 
 namespace UnitTests.Helpers
 {

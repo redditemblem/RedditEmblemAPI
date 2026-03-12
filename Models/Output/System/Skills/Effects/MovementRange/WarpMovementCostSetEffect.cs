@@ -1,9 +1,23 @@
-﻿using RedditEmblemAPI.Services.Helpers;
+﻿using RedditEmblemAPI.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
 {
-    public class WarpMovementCostSetEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="WarpMovementCostSetEffect"/>
+    public interface IWarpMovementCostSetEffect
+    {
+        /// <inheritdoc cref="WarpMovementCostSetEffect.TerrainTypeGrouping"/>
+        int TerrainTypeGrouping { get; }
+
+        /// <inheritdoc cref="WarpMovementCostSetEffect.Value"/>
+        int Value { get; }
+    }
+
+    #endregion Interface
+
+    public class WarpMovementCostSetEffect : SkillEffect, IWarpMovementCostSetEffect
     {
         #region Attributes
 
@@ -13,12 +27,12 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
         /// <summary>
         /// Param1. The terrain type grouping to look for <c>Tile</c>s in.
         /// </summary>
-        public int TerrainTypeGrouping { get; set; }
+        public int TerrainTypeGrouping { get; private set; }
 
         /// <summary>
         /// Param2. The value by which to modify Mov.
         /// </summary>
-        public int Value { get; set; }
+        public int Value { get; private set; }
 
         #endregion
 

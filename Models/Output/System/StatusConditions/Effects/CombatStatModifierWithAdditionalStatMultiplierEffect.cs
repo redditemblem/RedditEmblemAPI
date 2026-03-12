@@ -1,11 +1,25 @@
-﻿using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Output.Units;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
-    public class CombatStatModifierWithAdditionalStatMultiplierEffect : StatusConditionEffect
+    #region Interface
+
+    /// <inheritdoc cref=CombatStatModifierWithAdditionalStatMultiplierEffect"/>
+    public interface ICombatStatModifierWithAdditionalStatMultiplierEffect
+    {
+        /// <inheritdoc cref=CombatStatModifierWithAdditionalStatMultiplierEffect.Modifiers"/>
+        IDictionary<string, int> Modifiers { get; }
+
+        /// <inheritdoc cref=CombatStatModifierWithAdditionalStatMultiplierEffect.AdditionalStatName"/>
+        string AdditionalStatName { get; }
+    }
+
+    #endregion Interface
+
+    public class CombatStatModifierWithAdditionalStatMultiplierEffect : StatusConditionEffect, ICombatStatModifierWithAdditionalStatMultiplierEffect
     {
         #region Attributes
 
@@ -15,16 +29,16 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
         /// <summary>
         /// Param1/Param2. The unit combat stat modifiers to apply.
         /// </summary>
-        private IDictionary<string, int> Modifiers { get; set; }
+        public IDictionary<string, int> Modifiers { get; private set; }
 
         /// <summary>
         /// Param3. The name of the status condition additional stat.
         /// </summary>
-        private string AdditionalStatName { get; set; }
+        public string AdditionalStatName { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
-        public CombatStatModifierWithAdditionalStatMultiplierEffect(List<string> parameters)
+        public CombatStatModifierWithAdditionalStatMultiplierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Modifiers = DataParser.StatValueCSVs_Int_Any(parameters, INDEX_PARAM_1, NAME_PARAM_1, INDEX_PARAM_2, NAME_PARAM_2);

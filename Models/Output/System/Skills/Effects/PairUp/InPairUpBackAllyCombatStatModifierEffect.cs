@@ -1,11 +1,22 @@
-﻿using RedditEmblemAPI.Models.Output.Map;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.PairUp
 {
-    public class InPairUpBackAllyCombatStatModifierEffect : SkillEffect
+    #region Interface
+
+    /// <inheritdoc cref="InPairUpBackAllyCombatStatModifierEffect"/>
+    public interface IInPairUpBackAllyCombatStatModifierEffect
+    {
+        /// <inheritdoc cref="InPairUpBackAllyCombatStatModifierEffect.Modifiers"/>
+        IDictionary<string, int> Modifiers { get; }
+    }
+
+    #endregion Interface
+
+    public class InPairUpBackAllyCombatStatModifierEffect : SkillEffect, IInPairUpBackAllyCombatStatModifierEffect
     {
         #region Attributes
 
@@ -15,14 +26,14 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.PairUp
         /// <summary>
         /// Param1/Param2. The unit combat stat modifiers to apply.
         /// </summary>
-        private IDictionary<string, int> Modifiers { get; set; }
+        public IDictionary<string, int> Modifiers { get; private set; }
 
-        #endregion
+        #endregion Attributes
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public InPairUpBackAllyCombatStatModifierEffect(List<string> parameters)
+        public InPairUpBackAllyCombatStatModifierEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             this.Modifiers = DataParser.StatValueCSVs_Int_Any(parameters, INDEX_PARAM_1, NAME_PARAM_1, INDEX_PARAM_2, NAME_PARAM_2);

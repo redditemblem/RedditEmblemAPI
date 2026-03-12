@@ -50,11 +50,11 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// Base constructor.
         /// </summary>
         /// <exception cref="SkillEffectMissingParameterException"></exception>
-        public SkillEffect(List<string> parameters)
+        public SkillEffect(IEnumerable<string> parameters)
         {
             //Make sure enough parameters were passed in
-            if (parameters.Count < this.ParameterCount)
-                throw new SkillEffectMissingParameterException(this.Name, this.ParameterCount, parameters.Count);
+            if (parameters.Count() < this.ParameterCount)
+                throw new SkillEffectMissingParameterException(this.Name, this.ParameterCount, parameters.Count());
 
             //Set the default execution order
             this.ExecutionOrder = SkillEffectExecutionOrder.Standard;
@@ -73,8 +73,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
         /// <exception cref="UnmatchedMovementTypeException"></exception>
         protected void AddTeleportTargetsToUnitRange(IUnit unit, List<ITile> targetTiles)
         {
-            IEnumerable<TerrainTypeMovementCostSetEffect_Skill> moveCostSets_Skill = unit.GetFullSkillsList().SelectMany(s => s.Effects).OfType<TerrainTypeMovementCostSetEffect_Skill>();
-            IEnumerable<TerrainTypeMovementCostSetEffect_Status> moveCostSets_Status = unit.StatusConditions.SelectMany(s => s.Status.Effects).OfType<TerrainTypeMovementCostSetEffect_Status>();
+            IEnumerable<ITerrainTypeMovementCostSetEffect_Skill> moveCostSets_Skill = unit.GetFullSkillsList().SelectMany(s => s.Effects).OfType<ITerrainTypeMovementCostSetEffect_Skill>();
+            IEnumerable<ITerrainTypeMovementCostSetEffect_Status> moveCostSets_Status = unit.StatusConditions.SelectMany(s => s.Status.Effects).OfType<ITerrainTypeMovementCostSetEffect_Status>();
 
             foreach (ITile tile in targetTiles)
             {
@@ -88,8 +88,8 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects
                 //If unit is blocked from this tile, check for an effect that would allow it to access it
                 if (moveCost == 99)
                 {
-                    TerrainTypeMovementCostSetEffect_Skill movCostSet_Skill = moveCostSets_Skill.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
-                    TerrainTypeMovementCostSetEffect_Status movCostSet_Status = moveCostSets_Status.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
+                    ITerrainTypeMovementCostSetEffect_Skill movCostSet_Skill = moveCostSets_Skill.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
+                    ITerrainTypeMovementCostSetEffect_Status movCostSet_Status = moveCostSets_Status.FirstOrDefault(s => tile.TerrainType.Groupings.Contains(s.TerrainTypeGrouping));
                     if (!((movCostSet_Skill != null && movCostSet_Skill.CanOverride99MoveCost) || (movCostSet_Status != null && movCostSet_Status.CanOverride99MoveCost)))
                         continue;
                 }

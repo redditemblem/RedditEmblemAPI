@@ -1,8 +1,8 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Validation;
+﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.Units;
-using RedditEmblemAPI.Services.Helpers;
 using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
@@ -50,8 +50,9 @@ namespace RedditEmblemAPI.Models.Output.System.Skills.Effects.MovementRange
             if (unit.Stats.HP.Percentage > this.HPPercentage)
                 return;
 
-            List<ITile> radius = map.GetTilesInRadius(unit.Location.OriginTiles, this.Radius);
-            radius.ForEach(t => t.UnitData.UnitsObstructingMovement.Add(unit));
+            IEnumerable<ITile> radius = map.GetTilesInRadius(unit.Location.OriginTiles, this.Radius);
+            foreach(ITile tile in radius)
+                tile.UnitData.UnitsObstructingMovement.Add(unit);
         }
     }
 }

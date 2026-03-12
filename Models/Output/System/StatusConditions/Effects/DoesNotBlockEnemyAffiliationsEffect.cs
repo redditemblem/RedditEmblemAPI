@@ -2,16 +2,23 @@
 
 namespace RedditEmblemAPI.Models.Output.System.StatusConditions.Effects
 {
-    public class DoesNotBlockEnemyAffiliationsEffect : StatusConditionEffect
+    #region Interface
+
+    /// <inheritdoc cref="DoesNotBlockEnemyAffiliationsEffect"/>
+    public interface IDoesNotBlockEnemyAffiliationsEffect { }
+
+    #endregion Interface
+
+    public class DoesNotBlockEnemyAffiliationsEffect : StatusConditionEffect, IDoesNotBlockEnemyAffiliationsEffect
     {
         #region Attributes
 
         protected override string Name { get { return "DoesNotBlockEnemyAffiliations"; } }
         protected override int ParameterCount { get { return 0; } }
 
-        #endregion
+        #endregion Attributes
 
-        public DoesNotBlockEnemyAffiliationsEffect(List<string> parameters)
+        public DoesNotBlockEnemyAffiliationsEffect(IEnumerable<string> parameters)
             : base(parameters)
         {
             //This effect has no parameters.
