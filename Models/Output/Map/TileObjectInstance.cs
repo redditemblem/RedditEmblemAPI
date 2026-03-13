@@ -341,8 +341,8 @@ namespace RedditEmblemAPI.Models.Output.Map
 
         private static IEnumerable<ITileObjectInstance> RepeatTileObjectInstanceInRectangle(IMapObj map, ITileObjectInstance copyFrom, ref int idIterator, int height, int width)
         {
-            if (height < 2 || width < 2)
-                throw new ArgumentException("A \"Rectangle\" shaped repeater must have a height and width of at least 2 tiles.");
+            if (height < 2 && width < 2)
+                throw new ArgumentException("A \"Rectangle\" shaped repeater must have a height or width of at least 2 tiles.");
 
             List<ITileObjectInstance> copies = new List<ITileObjectInstance>();
 
