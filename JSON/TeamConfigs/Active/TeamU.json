@@ -157,7 +157,7 @@
       "Queries": [
         {
           "Sheet": "Terrain Chart",
-          "Selection": "A3:T",
+          "Selection": "A3:U",
           "Orientation": 1
         }
       ],
@@ -203,22 +203,26 @@
             {
               "SourceName": "Brigand",
               "Value": 9
+            },
+            {
+              "SourceName": "Pathfinder",
+              "Value": 10
             }
           ]
         },
         {
-          "AffiliationGroupings": 10,
-          "HPModifier": 13,
+          "AffiliationGroupings": 11,
+          "HPModifier": 14,
           "CombatStatModifiers": [
             {
               "SourceName": "Avo",
-              "Value": 11
+              "Value": 12
             }
           ],
           "StatModifiers": [
             {
               "SourceName": "Def",
-              "Value": 12
+              "Value": 13
             }
           ],
           "MovementCosts": [
@@ -245,16 +249,20 @@
             {
               "SourceName": "Brigand",
               "Value": 9
+            },
+            {
+              "SourceName": "Pathfinder",
+              "Value": 10
             }
           ]
         }
       ],
-      "WarpType": 14,
-      "WarpCost": 15,
-      "CannotStopOn": 16,
-      "BlocksItems": 17,
-      "RestrictAffiliations": 18,
-      "Groupings": 19
+      "WarpType": 15,
+      "WarpCost": 16,
+      "CannotStopOn": 17,
+      "BlocksItems": 18,
+      "RestrictAffiliations": 19,
+      "Groupings": 20
     },
     "TileObjects": {
       "Queries": [
