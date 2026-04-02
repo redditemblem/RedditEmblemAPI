@@ -339,7 +339,7 @@
     ],
     "Name": 0,
     "SpriteURL": 2,
-    "Level": 24,
+    "Level": 25,
     "Classes": [ 9 ],
     "Affiliation": 10,
     "Coordinate": 8,
@@ -470,10 +470,6 @@
     ],
     "WeaponRanks": [
       {
-        "Type": 39,
-        "Rank": 43
-      },
-      {
         "Type": 40,
         "Rank": 44
       },
@@ -484,18 +480,18 @@
       {
         "Type": 42,
         "Rank": 46
+      },
+      {
+        "Type": 43,
+        "Rank": 47
       }
     ],
     "Inventory": {
-      "PrimaryEquippedItem": 26,
-      "SecondaryEquippedItems": [ 52, 53 ],
+      "PrimaryEquippedItem": 27,
+      "SecondaryEquippedItems": [ 53, 54 ],
       "Subsections": [
         {
           "Slots": [
-            {
-              "Name": 26,
-              "Uses": 31
-            },
             {
               "Name": 27,
               "Uses": 32
@@ -511,23 +507,27 @@
             {
               "Name": 30,
               "Uses": 35
-            }
-          ]
-        },
-        {
-          "Slots": [
-            {
-              "Name": 36
-            }
-          ]
-        },
-        {
-          "Slots": [
-            {
-              "Name": 52
             },
             {
+              "Name": 31,
+              "Uses": 36
+            }
+          ]
+        },
+        {
+          "Slots": [
+            {
+              "Name": 37
+            }
+          ]
+        },
+        {
+          "Slots": [
+            {
               "Name": 53
+            },
+            {
+              "Name": 54
             }
           ]
         }
@@ -536,7 +536,8 @@
     "Player": 1,
     "PortraitURL": 7,
     "TextFields": [ 6 ],
-    "Experience": 25,
+    "Tags": [ 24 ],
+    "Experience": 26,
     "SystemStats": [
       {
         "SourceName": "Fatigue",
@@ -544,15 +545,12 @@
       },
       {
         "SourceName": "L. Stars",
-        "BaseValue": 54
+        "BaseValue": 55
       }
     ],
     "SkillSubsections": [
       {
         "Skills": [
-          {
-            "Name": 47
-          },
           {
             "Name": 48
           },
@@ -564,6 +562,9 @@
           },
           {
             "Name": 51
+          },
+          {
+            "Name": 52
           }
         ]
       }
@@ -573,7 +574,7 @@
         "Name": 23
       }
     ],
-    "Adjutants": [ 55 ]
+    "Adjutants": [ 56 ]
   },
   "Convoy": {
     "Query": {
