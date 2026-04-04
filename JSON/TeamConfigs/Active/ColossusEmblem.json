@@ -242,6 +242,14 @@
           ],
           "StatModifiers": [
             {
+              "SourceName": "Str",
+              "Value": 2
+            },
+            {
+              "SourceName": "Mag",
+              "Value": 2
+            },
+            {
               "SourceName": "Def",
               "Value": 3
             },

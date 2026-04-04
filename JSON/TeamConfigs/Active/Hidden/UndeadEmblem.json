@@ -1,0 +1,636 @@
+{
+  "Team": {
+    "Name": "Undead Emblem",
+    "WorkbookID": "1VM_lPdJl0w19HZ2pKuWU6gzsuAUGzlFC-qUaNK_RujI"
+  },
+  "Map": {
+    "Constants": {
+      "TileSize": 32,
+      "HasHeaderTopLeft": true,
+      "CoordinateFormat": 1
+    },
+    "MapControls": {
+      "Query": {
+        "Sheet": "System",
+        "Selection": "B1:B",
+        "Orientation": 2
+      },
+      "MapSwitch": 0,
+      "ChapterPostURL": 1,
+      "Segments": [
+        {
+          "ImageURL": 2
+        }
+      ]
+    },
+    "MapTiles": {
+      "Query": {
+        "Sheet": "Map Tiles",
+        "Selection": "A1:ZZ",
+        "Orientation": 1
+      }
+    },
+    "MapObjects": {
+      "Query": {
+        "Sheet": "Map Objects",
+        "Selection": "A2:D",
+        "Orientation": 1
+      },
+      "Name": 0,
+      "Coordinate": 1,
+      "HP": {
+        "Current": 2,
+        "Maximum": 3
+      }
+    }
+  },
+  "System": {
+    "Constants": {
+      "Currency": {
+        "CurrencySymbol": "M",
+        "IsSymbolLeftAligned": false,
+        "IncludeSpace": true
+      },
+      "WeaponRanks": [ "E", "D", "C", "B", "A", "S" ]
+    },
+    "Affiliations": {
+      "Queries": [
+        {
+          "Sheet": "Unit Affiliations",
+          "Selection": "A2:C",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "Grouping": 1,
+      "TextFields": [ 2 ]
+    },
+    "Classes": {
+      "Queries": [
+        {
+          "Sheet": "Classes",
+          "Selection": "A2:G",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "MovementType": 6,
+      "Tags": [ 5 ]
+    },
+    "Items": {
+      "Queries": [
+        {
+          "Sheet": "Items",
+          "Selection": "A2:AM",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "TextFields": [ 1 ],
+      "Category": 2,
+      "WeaponRank": 3,
+      "UtilizedStats": [ 5 ],
+      "TargetedStats": [ 6 ],
+      "Range": {
+        "Minimum": 7,
+        "Maximum": 8
+      },
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 9
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 10
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 11
+        },
+        {
+          "SourceName": "CMulti",
+          "Value": 12
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 14
+        },
+        {
+          "SourceName": "CEva",
+          "Value": 15
+        }
+      ],
+      "EquippedStatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 19
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 20
+        },
+        {
+          "SourceName": "Skl",
+          "Value": 21
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 22
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 23
+        },
+        {
+          "SourceName": "Def",
+          "Value": 24
+        },
+        {
+          "SourceName": "Res",
+          "Value": 25
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 26
+        }
+      ],
+      "Uses": 27,
+      "Tags": [ 34 ],
+      "DealsDamage": 38
+    },
+    "Skills": {
+      "Queries": [
+        {
+          "Sheet": "Skills",
+          "Selection": "A2:H",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "TextFields": [ 2 ],
+      "Effects": [
+        {
+          "Type": 4,
+          "Parameters": [ 5, 6, 7 ]
+        }
+      ]
+    },
+    "StatusConditions": {
+      "Queries": [
+        {
+          "Sheet": "Status Conditions",
+          "Selection": "B2:I",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 1,
+      "Type": 2,
+      "Turns": 3,
+      "TextFields": [ 4 ],
+      "Effects": [
+        {
+          "Type": 5,
+          "Parameters": [ 6, 7 ]
+        }
+      ]
+    },
+    "Tags": {
+      "Queries": [
+        {
+          "Sheet": "Tags",
+          "Selection": "B2:E",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 1,
+      "ShowOnUnit": 2,
+      "UnitAura": 3
+    },
+    "TerrainTypes": {
+      "Queries": [
+        {
+          "Sheet": "Terrain Types",
+          "Selection": "A2:O",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "StatGroups": [
+        {
+          "HPModifier": 4,
+          "CombatStatModifiers": [
+            {
+              "SourceName": "Avo",
+              "Value": 1
+            }
+          ],
+          "StatModifiers": [
+            {
+              "SourceName": "Def",
+              "Value": 2
+            },
+            {
+              "SourceName": "Res",
+              "Value": 3
+            }
+          ],
+          "MovementCosts": [
+            {
+              "SourceName": "Infantry",
+              "Value": 5
+            },
+            {
+              "SourceName": "Beast Primary",
+              "Value": 6
+            },
+            {
+              "SourceName": "Mage",
+              "Value": 7
+            },
+            {
+              "SourceName": "Cavalry",
+              "Value": 8
+            },
+            {
+              "SourceName": "Flier",
+              "Value": 9
+            }
+          ]
+        }
+      ],
+      "Groupings": 10,
+      "BlocksItems": 11,
+      "WarpType": 12,
+      "WarpCost": 13,
+      "TextFields": [ 14 ]
+    },
+    "TileObjects": {
+      "Queries": [
+        {
+          "Sheet": "Tile Objects",
+          "Selection": "B2:L",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 1,
+      "Size": 2,
+      "Layer": 3,
+      "Range": {
+        "Minimum": 4,
+        "Maximum": 5
+      },
+      "HPModifier": 6,
+      "CombatStatModifiers": [
+        {
+          "SourceName": "Avo",
+          "Value": 7
+        }
+      ],
+      "StatModifiers": [
+        {
+          "SourceName": "Def",
+          "Value": 8
+        },
+        {
+          "SourceName": "Res",
+          "Value": 9
+        }
+      ],
+      "TextFields": [ 10 ]
+    }
+  },
+  "Units": {
+    "Queries": [
+      {
+        "Sheet": "Tracker",
+        "Selection": "B1:ZZ",
+        "Orientation": 2
+      }
+    ],
+    "Name": 0,
+    "Player": 1,
+    "Classes": [ 4 ],
+    "Affiliation": 5,
+    "Coordinate": 6,
+    "HasMoved": 7,
+    "Level": 8,
+    "HeldCurrency": 9,
+    "Behavior": 10,
+    "Inventory": {
+      "PrimaryEquippedItem": 11,
+      "Subsections": [
+        {
+          "Slots": [
+            {
+              "Name": 12
+            },
+            {
+              "Name": 13
+            }
+          ]
+        }
+      ]
+    },
+    "StatusConditions": [
+      {
+        "Name": 14
+      },
+      {
+        "Name": 15
+      }
+    ],
+    "SkillSubsections": [
+      {
+        "Skills": [
+          {
+            "Name": 16
+          },
+          {
+            "Name": 17
+          },
+          {
+            "Name": 18
+          },
+          {
+            "Name": 19
+          },
+          {
+            "Name": 20
+          }
+        ]
+      }
+    ],
+    "HP": {
+      "Current": 21,
+      "Maximum": 22
+    },
+    "CombatStats": [
+      {
+        "SourceName": "Atk",
+        "Equations": [
+          {
+            "Equation": "{WeaponUtilStat_Greatest} + {WeaponStat[Mt]}",
+            "ParserOptions": {
+              "EvalWeaponUtilStat_Greatest": true,
+              "EvalWeaponStat": true
+            }
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 45
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 59
+          }
+        ]
+      },
+      {
+        "SourceName": "Hit",
+        "Equations": [
+          {
+            "Equation": "({UnitStat[Skl]} * 1.5) + ({UnitStat[Lck]} * 0.75) + {WeaponStat[Hit]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 46
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 60
+          }
+        ]
+      },
+      {
+        "SourceName": "Crit",
+        "Equations": [
+          {
+            "Equation": "((({UnitStat[Skl]} - 4) * 0.5) + {WeaponStat[Crit]}) * {WeaponStat[CMulti]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 47
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 61
+          }
+        ]
+      },
+      {
+        "SourceName": "Avo",
+        "Equations": [
+          {
+            "Equation": "({UnitStat[Spd]} * 1.5) + ({UnitStat[Lck]} * 0.75) + {WeaponStat[Avo]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 48
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 62
+          }
+        ]
+      },
+      {
+        "SourceName": "CEva",
+        "Equations": [
+          {
+            "Equation": "({UnitStat[Lck]} * 0.5) + {WeaponStat[CEva]}",
+            "ParserOptions": {
+              "EvalUnitStat": true,
+              "EvalWeaponStat": true
+            }
+          }
+        ],
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 49
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 63
+          }
+        ]
+      }
+    ],
+    "Stats": [
+      {
+        "SourceName": "Str",
+        "BaseValue": 71,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 37
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 51
+          }
+        ]
+      },
+      {
+        "SourceName": "Mag",
+        "BaseValue": 72,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 38
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 52
+          }
+        ]
+      },
+      {
+        "SourceName": "Skl",
+        "BaseValue": 73,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 39
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 53
+          }
+        ]
+      },
+      {
+        "SourceName": "Spd",
+        "BaseValue": 74,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 40
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 54
+          }
+        ]
+      },
+      {
+        "SourceName": "Lck",
+        "BaseValue": 75,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 41
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 55
+          }
+        ]
+      },
+      {
+        "SourceName": "Def",
+        "BaseValue": 76,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 42
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 56
+          }
+        ]
+      },
+      {
+        "SourceName": "Res",
+        "BaseValue": 77,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 43
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 57
+          }
+        ]
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 78,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 44
+          },
+          {
+            "SourceName": "Debuff",
+            "Value": 58
+          }
+        ]
+      }
+    ],
+    "WeaponRanks": [
+      {
+        "Type": 65,
+        "Rank": 66
+      },
+      {
+        "Type": 68,
+        "Rank": 69
+      }
+    ],
+    "Tags": [ 94 ],
+    "UnitSize": 95,
+    "TextFields": [ 96 ],
+    "PortraitURL": 97,
+    "SpriteURL": 98
+  },
+  "Convoy": {
+    "Query": {
+      "Sheet": "Convoy",
+      "Selection": "A2:D",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "Owner": 2,
+    "Quantity": 3,
+    "Uses": 1
+  },
+  "Shop": {
+    "Query": {
+      "Sheet": "Shop",
+      "Selection": "A2:E",
+      "Orientation": 1
+    },
+    "Name": 0,
+    "Stock": 1,
+    "Price": 4,
+    "SalePrice": 2,
+    "IsNew": 3
+  }
+}

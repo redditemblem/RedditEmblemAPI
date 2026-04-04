@@ -59,6 +59,10 @@ namespace RedditEmblemAPI.Helpers
                     unit.Location.IsBackOfPair = true;
                     unit.Location.Coordinate = new Coordinate();
                 }
+                catch(Exception ex)
+                {
+                    throw new UnitProcessingException(unit.Name, ex);
+                }
             }
 
 
