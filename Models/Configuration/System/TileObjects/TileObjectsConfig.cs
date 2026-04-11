@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.TileObjects
 {
@@ -12,24 +12,24 @@ namespace RedditEmblemAPI.Models.Configuration.System.TileObjects
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index for a tile object's sprite image URL value.
+        /// Required. Location of a tile object's sprite image URL value.
         /// </summary>
         [JsonRequired]
-        public int SpriteURL { get; set; }
+        public (int, int) SpriteURL { get; set; }
 
         #endregion
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index for a tile object's size value.
+        /// Optional. Location of a tile object's size value.
         /// </summary>
-        public int Size { get; set; } = -1;
+        public (int, int) Size { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index for a tile object's layer value.
+        /// Optional. Location of a tile object's layer value.
         /// </summary>
-        public int Layer { get; set; } = -1;
+        public (int, int) Layer { get; set; } = (-1, -1);
 
         /// <summary>
         /// Optional. Container object for a tile object's range config.
@@ -37,25 +37,25 @@ namespace RedditEmblemAPI.Models.Configuration.System.TileObjects
         public TileObjectRangeConfig Range { get; set; } = null;
 
         /// <summary>
-        /// Optional. Cell index for a tile object's hit point modifier value.
+        /// Optional. Location of a tile object's hit point modifier value.
         /// </summary>
-        public int HPModifier { get; set; } = -1;
+        public (int, int) HPModifier { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of a tile object's combat stat modifiers.
+        /// Optional. Collection of a tile object's combat stat modifiers.
         /// </summary>
-        public List<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] CombatStatModifiers { get; set; } = Array.Empty<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. List of a tile object's combat stat modifiers.
+        /// Optional. Collection of a tile object's combat stat modifiers.
         /// </summary>
-        public List<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] StatModifiers { get; set; } = Array.Empty<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. List of cell indexes for a tile object's text fields.
+        /// Optional. Collection of locations of a tile object's text fields.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
-        #endregion
+        #endregion Optional Fields
     }
 }

@@ -7,20 +7,20 @@ namespace RedditEmblemAPI.Models.Configuration.System.Tags
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index for a tag's sprite.
+        /// Optional. Location of a tag's sprite.
         /// </summary>
-        public int SpriteURL { get; set; } = -1;
+        public (int, int) SpriteURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index for a tag's Show On Unit flag.
+        /// Optional. Location of a tag's Show On Unit flag.
         /// </summary>
-        public int ShowOnUnit { get; set; } = -1;
+        public (int, int) ShowOnUnit { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index for a tag's unit aura hex.
+        /// Optional. Location of a tag's unit aura hex.
         /// </summary>
-        public int UnitAura { get; set; } = -1;
+        public (int, int) UnitAura { get; set; } = (-1, -1);
 
-        #endregion
+        #endregion Optional Fields
     }
 }

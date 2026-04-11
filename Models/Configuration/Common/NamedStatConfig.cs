@@ -16,10 +16,10 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         public string SourceName { get; set; }
 
         /// <summary>
-        /// Required. Cell index for the stat's value.
+        /// Required. Location for the stat's value.
         /// </summary>
         [JsonRequired]
-        public int Value { get; set; }
+        public (int, int) Value { get; set; }
 
         #endregion Required Fields
     }

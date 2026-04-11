@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Statuses
 {
@@ -8,17 +7,17 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index of a status condition effect's type.
+        /// Required. Location of a status condition effect's type.
         /// </summary>
         [JsonRequired]
-        public int Type { get; set; }
+        public (int, int) Type { get; set; }
 
         /// <summary>
-        /// Required. List of cell indexes for the parameters.
+        /// Required. Collection of locations of a status condition's parameters.
         /// </summary>
         [JsonRequired]
-        public List<int> Parameters { get; set; }
+        public (int, int)[] Parameters { get; set; }
 
-        #endregion
+        #endregion Required Fields
     }
 }

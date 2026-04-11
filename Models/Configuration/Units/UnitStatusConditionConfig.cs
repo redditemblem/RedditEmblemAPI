@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.Units
 {
@@ -9,25 +9,25 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index for the name of the status condition.
+        /// Required. Location of the name of the status condition.
         /// </summary>
         [JsonRequired]
-        public int Name { get; set; }
+        public (int, int) Name { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index for the number of remaining turns the status condition has.
+        /// Optional. Location of the number of remaining turns the status condition has.
         /// </summary>
-        public int RemainingTurns { get; set; } = -1;
+        public (int, int) RemainingTurns { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of configs for any additional stats the status condition may track.
+        /// Optional. Collection of configs for any additional stats the status condition may track.
         /// </summary>
-        public List<NamedStatConfig> AdditionalStats { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] AdditionalStats { get; set; } = Array.Empty<NamedStatConfig>();
 
-        #endregion
+        #endregion Optional Fields
     }
 }

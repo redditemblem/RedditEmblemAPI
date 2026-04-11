@@ -28,6 +28,6 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         /// </summary>
         public string SelectValue { get; set; } = string.Empty;
 
-        #endregion
+        #endregion Optional Fields
     }
 }

@@ -1,5 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Statuses
 {
@@ -11,30 +11,30 @@ namespace RedditEmblemAPI.Models.Configuration.System.Statuses
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index for a status condition's sprite.
+        /// Optional. Location of a status condition's sprite.
         /// </summary>
-        public int SpriteURL { get; set; } = -1;
+        public (int, int) SpriteURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index for a status condition's type value.
+        /// Optional. Location of a status condition's type value.
         /// </summary>
-        public int Type { get; set; } = -1;
+        public (int, int) Type { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index for a status condition's turns value.
+        /// Optional. Location of a status condition's turns value.
         /// </summary>
-        public int Turns { get; set; } = -1;
+        public (int, int) Turns { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of cell indexes for a status condition's text fields.
+        /// Optional. Collection of locations of a status condition's text fields.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
-        /// Optional. List of status condition effect configurations.
+        /// Optional. Collection of status condition effect configurations.
         /// </summary>
-        public List<StatusConditionEffectConfig> Effects { get; set; } = new List<StatusConditionEffectConfig>();
+        public StatusConditionEffectConfig[] Effects { get; set; } = Array.Empty<StatusConditionEffectConfig>();
 
-        #endregion
+        #endregion Optional Fields
     }
 }

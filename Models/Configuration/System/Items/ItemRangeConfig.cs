@@ -10,31 +10,31 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index for an item's minimum range value.
+        /// Required. Location of an item's minimum range value.
         /// </summary>
         [JsonRequired]
-        public int Minimum { get; set; }
+        public (int, int) Minimum { get; set; }
 
         /// <summary>
-        /// Required. Cell index for an item's maximum range value.
+        /// Required. Location of an item's maximum range value.
         /// </summary>
         [JsonRequired]
-        public int Maximum { get; set; }
+        public (int, int) Maximum { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index of an item's range shape value.
+        /// Optional. Location of an item's range shape value.
         /// </summary>
-        public int Shape { get; set; } = -1;
+        public (int, int) Shape { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of the flag for if an item can only be used before movement.
+        /// Optional. Location of the flag for if an item can only be used before movement.
         /// </summary>
-        public int CanOnlyUseBeforeMovement { get; set; } = -1;
+        public (int, int) CanOnlyUseBeforeMovement { get; set; } = (-1, -1);
 
-        #endregion
+        #endregion Optional Fields
     }
 }

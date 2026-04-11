@@ -10,25 +10,25 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index for a unit's current hit point value.
+        /// Required. Location of a unit's current hit point value.
         /// </summary>
         [JsonRequired]
-        public int Current { get; set; }
+        public (int, int) Current { get; set; }
 
         /// <summary>
-        /// Required. Cell index for a unit's maximum hit point value.
+        /// Required. Location of a unit's maximum hit point value.
         /// </summary>
         [JsonRequired]
-        public int Maximum { get; set; }
+        public (int, int) Maximum { get; set; }
 
         #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index for the unit's remaining number of hit point bars.
+        /// Optional. Location of the unit's remaining number of hit point bars.
         /// </summary>
-        public int RemainingBars { get; set; } = -1;
+        public (int, int) RemainingBars { get; set; } = (-1, -1);
 
         #endregion Optional Fields
     }

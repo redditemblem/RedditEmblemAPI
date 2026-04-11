@@ -15,7 +15,7 @@ namespace RedditEmblemAPI.Models.Configuration.System
         [JsonRequired]
         public string CurrencySymbol { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 

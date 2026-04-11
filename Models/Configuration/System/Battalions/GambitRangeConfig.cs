@@ -7,17 +7,17 @@ namespace RedditEmblemAPI.Models.Configuration.System.Battalions
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index for an gambit's minimum range value.
+        /// Required. Location of an gambit's minimum range value.
         /// </summary>
         [JsonRequired]
-        public int Minimum { get; set; }
+        public (int, int) Minimum { get; set; }
 
         /// <summary>
-        /// Required. Cell index for an gambit's maximum range value.
+        /// Required. Location of an gambit's maximum range value.
         /// </summary>
         [JsonRequired]
-        public int Maximum { get; set; }
+        public (int, int) Maximum { get; set; }
 
-        #endregion
+        #endregion Required Fields
     }
 }

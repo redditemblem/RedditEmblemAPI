@@ -1,5 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Emblems
 {
@@ -11,14 +11,14 @@ namespace RedditEmblemAPI.Models.Configuration.System.Emblems
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index for the engage attack's sprite URL.
+        /// Optional. Location of the engage attack's sprite URL.
         /// </summary>
-        public int SpriteURL { get; set; } = -1;
+        public (int, int) SpriteURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of cell indexes for an engage attack's text fields.
+        /// Optional. Collection of locations of an engage attack's text fields.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
         #endregion Optional Fields
     }

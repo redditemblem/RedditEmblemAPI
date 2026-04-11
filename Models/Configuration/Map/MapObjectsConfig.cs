@@ -12,16 +12,16 @@ namespace RedditEmblemAPI.Models.Configuration.Map
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index of the name of a tile object placed on the map.
+        /// Required. Location of the name of a tile object placed on the map.
         /// </summary>
         [JsonRequired]
-        public int Name { get; set; }
+        public (int, int) Name { get; set; }
 
         /// <summary>
-        /// Required. Cell index of a tile object's coordinate value.
+        /// Required. Location of a tile object's coordinate value.
         /// </summary>
         [JsonRequired]
-        public int Coordinate { get; set; }
+        public (int, int) Coordinate { get; set; }
 
         #endregion Required Fields
 

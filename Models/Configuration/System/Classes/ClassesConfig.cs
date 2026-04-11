@@ -1,5 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Classes
 {
@@ -11,24 +11,24 @@ namespace RedditEmblemAPI.Models.Configuration.System.Classes
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index of a class's movement type value.
+        /// Optional. Location of a class's movement type value.
         /// </summary>
-        public int MovementType { get; set; } = -1;
+        public (int, int) MovementType { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of a class's battle style.
+        /// Optional. Location of a class's battle style.
         /// </summary>
-        public int BattleStyle { get; set; } = -1;
+        public (int, int) BattleStyle { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of cell indexes for a class's tag field(s).
+        /// Optional. Collection of locations of a class's tag field(s).
         /// </summary>
-        public List<int> Tags { get; set; } = new List<int>();
+        public (int, int)[] Tags { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
-        /// Optional. List of cell indexes for a class's text fields.
+        /// Optional. Collection of locations of a class's text fields.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
         #endregion Optional Fields
     }

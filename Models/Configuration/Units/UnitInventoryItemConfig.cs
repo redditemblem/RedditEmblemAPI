@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.Units
 {
@@ -8,24 +8,24 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index of the inventory item's name.
+        /// Required. Location of the inventory item's name.
         /// </summary>
         [JsonRequired]
-        public int Name { get; set; }
+        public (int, int) Name { get; set; }
 
         #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index of the inventory item's remaining uses.
+        /// Optional. Location of the inventory item's remaining uses.
         /// </summary>
-        public int Uses { get; set; } = -1;
+        public (int, int) Uses { get; set; } = (-1, -1);
 
         ///<summary>
-        ///Optional. Cell indexes of engravings on the inventory item.
+        ///Optional. Collection of locations of engravings on the inventory item.
         ///</summary>
-        public List<int> Engravings { get; set; } = new List<int>();
+        public (int, int)[] Engravings { get; set; } = Array.Empty<(int, int)>();
 
         #endregion Optional Fields
     }

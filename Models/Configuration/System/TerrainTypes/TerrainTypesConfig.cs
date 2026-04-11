@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
 {
@@ -12,50 +12,50 @@ namespace RedditEmblemAPI.Models.Configuration.System.TerrainTypes
         #region Required Fields
 
         /// <summary>
-        /// Required. List of containers for stat groups.
+        /// Required. Collection of containers for stat groups.
         /// </summary>
         [JsonRequired]
-        public List<TerrainTypeStatsConfig> StatGroups { get; set; }
+        public TerrainTypeStatsConfig[] StatGroups { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index of a terrain type's warp type.
+        /// Optional. Location of a terrain type's warp type.
         /// </summary>
-        public int WarpType { get; set; } = -1;
+        public (int, int) WarpType { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of a terrain type's warp cost.
+        /// Optional. Location of a terrain type's warp cost.
         /// </summary>
-        public int WarpCost { get; set; } = -1;
+        public (int, int) WarpCost { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index for terrain type's cannot stop on flags.
+        /// Optional. Location of a terrain type's cannot stop on flags.
         /// </summary>
-        public int CannotStopOn { get; set; } = -1;
+        public (int, int) CannotStopOn { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index for a terrain type's blocks items flag.
+        /// Optional. Location of a terrain type's blocks items flag.
         /// </summary>
-        public int BlocksItems { get; set; } = -1;
+        public (int, int) BlocksItems { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index for a terrain type's affiliation restrictions value.
+        /// Optional. Location of a terrain type's affiliation restrictions value.
         /// </summary>
-        public int RestrictAffiliations { get; set; } = -1;
+        public (int, int) RestrictAffiliations { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of a terrain type's groupings value.
+        /// Optional. Location of a terrain type's groupings value.
         /// </summary>
-        public int Groupings { get; set; } = -1;
+        public (int, int) Groupings { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of cell indexes for a terrain type's text fields.
+        /// Optional. Collection of locations of a terrain type's text fields.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
-        #endregion
+        #endregion Optional Fields
     }
 }

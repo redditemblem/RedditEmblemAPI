@@ -1,5 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Adjutants
 {
@@ -11,24 +11,24 @@ namespace RedditEmblemAPI.Models.Configuration.System.Adjutants
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index of an adjutant's sprite image URL value.
+        /// Optional. Location of an adjutant's sprite image URL value.
         /// </summary>
-        public int SpriteURL { get; set; } = -1;
+        public (int, int) SpriteURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Any modifiers that should be applied to the unit's combat stats when this adjutant is equipped.
+        /// Optional. Collection of modifiers that should be applied to the unit's combat stats when this adjutant is equipped.
         /// </summary>
-        public List<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] CombatStatModifiers { get; set; } = Array.Empty<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. Any modifiers that should be applied to the unit's general stats when this adjutant is equipped.
+        /// Optional. Collection of modifiers that should be applied to the unit's general stats when this adjutant is equipped.
         /// </summary>
-        public List<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] StatModifiers { get; set; } = Array.Empty<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. List of cell indexes for an adjutant's text fields.
+        /// Optional. Collection of locations for an adjutant's text fields.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
         #endregion Optional Fields
     }
