@@ -5,7 +5,6 @@ using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -98,7 +97,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// </summary>
         /// <exception cref="ItemRangeMinimumNotSetException"></exception>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
-        public ItemRange(ItemRangeConfig config, IEnumerable<string> data)
+        public ItemRange(ItemRangeConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Minimum = RangeValueHandler_Minimum(data, config.Minimum);
             this.Maximum = RangeValueHandler_Maximum(data, config.Maximum);
@@ -112,12 +111,12 @@ namespace RedditEmblemAPI.Models.Output.System
             this.CanOnlyUseBeforeMovement = DataParser.OptionalBoolean_YesNo(data, config.CanOnlyUseBeforeMovement, "Can Only Use Before Movement");
         }
 
-        private int RangeValueHandler_Minimum(IEnumerable<string> data, int index)
+        private int RangeValueHandler_Minimum(IEnumerable<IEnumerable<string>> data, (int, int) indices)
         {
             try
             {
-                this.MinimumRaw = data.ElementAtOrDefault<string>(index) ?? string.Empty;
-                return DataParser.OptionalInt_Positive(data, index, "Minimum Range");
+                this.MinimumRaw = DataParser.OptionalString(data, indices, "Minimum Range");
+                return DataParser.OptionalInt_Positive(data, indices, "Minimum Range");
             }
             catch (PositiveIntegerException)
             {
@@ -132,12 +131,12 @@ namespace RedditEmblemAPI.Models.Output.System
             }
         }
 
-        private int RangeValueHandler_Maximum(IEnumerable<string> data, int index)
+        private int RangeValueHandler_Maximum(IEnumerable<IEnumerable<string>> data, (int, int) indices)
         {
             try
             {
-                this.MaximumRaw = data.ElementAtOrDefault<string>(index) ?? string.Empty;
-                return DataParser.OptionalInt_Positive(data, index, "Maximum Range");
+                this.MaximumRaw = DataParser.OptionalString(data, indices, "Maximum Range");
+                return DataParser.OptionalInt_Positive(data, indices, "Maximum Range");
             }
             catch (PositiveIntegerException)
             {

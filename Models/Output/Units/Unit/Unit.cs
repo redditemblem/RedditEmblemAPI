@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -200,7 +201,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Main constructor.
         /// </summary>
-        public Unit(UnitsConfig config, IEnumerable<string> data, SystemInfo system)
+        public Unit(UnitsConfig config, IEnumerable<IEnumerable<string>> data, SystemInfo system)
         {
             //Basic fields
             this.Name = DataParser.String(data, config.Name, "Name");
@@ -240,7 +241,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         #region Build Functions
 
         /// <summary>
-        /// Iterates through the values in <paramref name="data"/> at <paramref name="indexes"/> and attempts to match them to a <c>IClass</c> from <paramref name="classes"/>.
+        /// Iterates through the values in <paramref name="data"/> at <paramref name="indices"/> and attempts to match them to a <c>IClass</c> from <paramref name="classes"/>.
         /// </summary>
         /// /// <remarks>
         /// Depends on the following being built beforehand:
@@ -249,11 +250,11 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </list>
         /// </remarks>
         /// <exception cref="UnmatchedClassException"></exception>
-        private List<IClass> BuildClasses(IEnumerable<string> data, List<int> indexes, IDictionary<string, IClass> classes)
+        private List<IClass> BuildClasses(IEnumerable<IEnumerable<string>> data, (int, int)[] indices, IDictionary<string, IClass> classes)
         {
             List<IClass> unitClasses = new List<IClass>();
 
-            foreach (int index in indexes)
+            foreach ((int, int) index in indices)
             {
                 string name = DataParser.OptionalString(data, index, "Class Name");
                 if (string.IsNullOrEmpty(name))
@@ -369,25 +370,26 @@ namespace RedditEmblemAPI.Models.Output.Units
             List<IUnit> units = new List<IUnit>();
             if (config?.Queries is null) return units;
 
-            //Create units
-            foreach (List<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach(IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    //Convert objects to strings
-                    IEnumerable<string> unit = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(unit, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> unit = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(unit, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (units.Any(u => u.Name == name))
-                        throw new NonUniqueObjectNameException("unit");
+                        if (units.Any(u => u.Name == name))
+                            throw new NonUniqueObjectNameException("unit");
 
-                    units.Add(new Unit(config, unit, system));
-                }
-                catch (Exception ex)
-                {
-                    throw new UnitProcessingException(name, ex);
+                        units.Add(new Unit(config, unit, system));
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new UnitProcessingException(name, ex);
+                    }
                 }
             }
 

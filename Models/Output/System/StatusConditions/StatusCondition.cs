@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Statuses;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -83,7 +84,7 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         /// <summary>
         /// Constructor.
         /// </summary>
-        public StatusCondition(StatusConditionConfig config, IEnumerable<string> data)
+        public StatusCondition(StatusConditionConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -103,12 +104,12 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
         }
 
         /// <summary>
-        /// Matches the value in <paramref name="data"/> at <paramref name="index"/> to a <c>StatusType</c> enum.
+        /// Matches the value in <paramref name="data"/> at <paramref name="indices"/> to a <c>StatusType</c> enum.
         /// </summary>
         /// <exception cref="UnmatchedStatusConditionTypeException"></exception>
-        private StatusConditionType ParseStatusConditionType(IEnumerable<string> data, int index)
+        private StatusConditionType ParseStatusConditionType(IEnumerable<IEnumerable<string>> data, (int, int) indices)
         {
-            string name = DataParser.OptionalString(data, index, "Type");
+            string name = DataParser.OptionalString(data, indices, "Type");
             switch (name)
             {
                 case "": return StatusConditionType.Unassigned;
@@ -152,21 +153,24 @@ namespace RedditEmblemAPI.Models.Output.System.StatusConditions
             IDictionary<string, IStatusCondition> statusConditions = new Dictionary<string, IStatusCondition>();
             if (config?.Queries is null) return statusConditions;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> stat = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(stat, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> stat = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(stat, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!statusConditions.TryAdd(name, new StatusCondition(config, stat)))
-                        throw new NonUniqueObjectNameException("status condition");
-                }
-                catch (Exception ex)
-                {
-                    throw new StatusConditionProcessingException(name, ex);
+                        if (!statusConditions.TryAdd(name, new StatusCondition(config, stat)))
+                            throw new NonUniqueObjectNameException("status condition");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new StatusConditionProcessingException(name, ex);
+                    }
                 }
             }
 

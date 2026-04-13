@@ -1,4 +1,5 @@
 ﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.TileObjects;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -89,12 +90,12 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion Attributes
 
-        public TileObject(TileObjectsConfig config, IEnumerable<string> data)
+        public TileObject(TileObjectsConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.String_URL(data, config.SpriteURL, "Sprite URL");
             this.Size = DataParser.OptionalInt_NonZeroPositive(data, config.Size, "Size");
-            this.Layer = GetTerrainObjectLayerEnum(data.ElementAtOrDefault<string>(config.Layer));
+            this.Layer = GetTerrainObjectLayerEnum(data, config.Layer);
             this.TextFields = DataParser.List_Strings(data, config.TextFields);
 
             if (config.Range != null) this.Range = new TileObjectRange(config.Range, data);
@@ -106,11 +107,12 @@ namespace RedditEmblemAPI.Models.Output.System
         }
 
         /// <summary>
-        /// Converts the string value of <paramref name="layer"/> into the corresponding <c>TerrainObjectLayer</c> value.
+        /// Converts the string value from <paramref name="data"/> at <paramref name="indices"/> into the corresponding <c>TerrainObjectLayer</c> value.
         /// </summary>
         /// <exception cref="UnmatchedTileObjectLayerException"></exception>
-        private TileObjectLayer GetTerrainObjectLayerEnum(string layer)
+        private TileObjectLayer GetTerrainObjectLayerEnum(IEnumerable<IEnumerable<string>> data, (int, int) indices)
         {
+            string layer = DataParser.OptionalString(data, indices, "Layer");
             if (string.IsNullOrEmpty(layer))
                 return TileObjectLayer.Below;
 
@@ -132,21 +134,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, ITileObject> tileObjects = new Dictionary<string, ITileObject>();
             if (config?.Queries is null) return tileObjects;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> tileObj = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(tileObj, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> tileObj = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(tileObj, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!tileObjects.TryAdd(name, new TileObject(config, tileObj)))
-                        throw new NonUniqueObjectNameException("tile object");
-                }
-                catch (Exception ex)
-                {
-                    throw new TileObjectProcessingException(name, ex);
+                        if (!tileObjects.TryAdd(name, new TileObject(config, tileObj)))
+                            throw new NonUniqueObjectNameException("tile object");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TileObjectProcessingException(name, ex);
+                    }
                 }
             }
 

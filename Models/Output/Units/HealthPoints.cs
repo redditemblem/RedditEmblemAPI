@@ -66,13 +66,13 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Constructor.
         /// </summary>
-        public HealthPoints(IEnumerable<string> data, HPConfig config)
+        public HealthPoints(IEnumerable<IEnumerable<string>> data, HPConfig config)
         {
             this.Current = DataParser.Int_Positive(data, config.Current, "Current HP");
             this.Maximum = DataParser.Int_NonZeroPositive(data, config.Maximum, "Maximum HP");
             this.RemainingBars = DataParser.OptionalInt_Positive(data, config.RemainingBars, "Remaining HP Bars");
         }
 
-        #endregion
+        #endregion Constructors
     }
 }

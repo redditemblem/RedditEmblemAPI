@@ -17,8 +17,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <inheritdoc cref="UnitInventorySubsection.EmptySlotCount"/>
         int EmptySlotCount { get; }
 
-        /// <inheritdoc cref="UnitInventorySubsection.AddUnitInventoryItem(UnitInventoryItemConfig, IEnumerable{string}, IDictionary{string, IItem}, IDictionary{string, IEngraving})"/>
-        void AddUnitInventoryItem(UnitInventoryItemConfig config, IEnumerable<string> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings);
+        /// <inheritdoc cref="UnitInventorySubsection.AddUnitInventoryItem(UnitInventoryItemConfig, IEnumerable{IEnumerable{string}}, IDictionary{string, IItem}, IDictionary{string, IEngraving})
+        void AddUnitInventoryItem(UnitInventoryItemConfig config, IEnumerable<IEnumerable<string>> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings);
 
         /// <inheritdoc cref="UnitInventorySubsection.InsertUnitInventoryItem(IUnitInventoryItem)"/>
         void InsertUnitInventoryItem(IUnitInventoryItem item);
@@ -54,7 +54,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Uses the <paramref name="config"/> and <paramref name="data"/> to initialize a new <c>UnitInventoryItem</c> and adds it to <c>this.Items</c>. If the <paramref name="data"/> is empty, increments <c>this.EmptySlotCount</c> instead.
         /// </summary>
-        public void AddUnitInventoryItem(UnitInventoryItemConfig config, IEnumerable<string> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
+        public void AddUnitInventoryItem(UnitInventoryItemConfig config, IEnumerable<IEnumerable<string>> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
         {
             string name = DataParser.OptionalString(data, config.Name, "Item Name");
             if (string.IsNullOrEmpty(name))
@@ -78,7 +78,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
         #region Static Functions
 
-        public static List<IUnitInventorySubsection> BuildList(IEnumerable<InventorySubsectionConfig> configs, IEnumerable<string> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
+        public static List<IUnitInventorySubsection> BuildList(IEnumerable<InventorySubsectionConfig> configs, IEnumerable<IEnumerable<string>> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
         {
             List<IUnitInventorySubsection> subsections = new List<IUnitInventorySubsection>();
 

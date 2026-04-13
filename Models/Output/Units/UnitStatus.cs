@@ -68,7 +68,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Searches for a <c>StatusCondition</c> in <paramref name="statusConditions"/> that matches <paramref name="fullStatusName"/>.
         /// </summary>
         /// <exception cref="UnmatchedStatusConditionException"></exception>
-        public UnitStatus(IEnumerable<string> data, UnitStatusConditionConfig config, IDictionary<string, IStatusCondition> statusConditions)
+        public UnitStatus(IEnumerable<IEnumerable<string>> data, UnitStatusConditionConfig config, IDictionary<string, IStatusCondition> statusConditions)
         {
             this.FullName = DataParser.String(data, config.Name, "Status Condition Name");
             this.RemainingTurns = 0;
@@ -110,7 +110,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Builds and returns a list of the unit's status conditions.
         /// </summary>
-        public static List<IUnitStatus> BuildList(IEnumerable<string> data, List<UnitStatusConditionConfig> configs, IDictionary<string, IStatusCondition> statuses)
+        public static List<IUnitStatus> BuildList(IEnumerable<IEnumerable<string>> data, UnitStatusConditionConfig[] configs, IDictionary<string, IStatusCondition> statuses)
         {
             List<IUnitStatus> statusConditions = new List<IUnitStatus>();
 

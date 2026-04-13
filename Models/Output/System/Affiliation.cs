@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Affiliations;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -60,7 +61,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Affiliation(AffiliationsConfig config, IEnumerable<string> data)
+        public Affiliation(AffiliationsConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.Grouping = DataParser.Int_NonZeroPositive(data, config.Grouping, "Grouping");
@@ -80,21 +81,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, IAffiliation> affiliations = new Dictionary<string, IAffiliation>();
             if (config?.Queries is null) return affiliations;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> aff = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(aff, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> aff = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(aff, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!affiliations.TryAdd(name, new Affiliation(config, aff)))
-                        throw new NonUniqueObjectNameException("affiliation");
-                }
-                catch (Exception ex)
-                {
-                    throw new AffiliationProcessingException(name, ex);
+                        if (!affiliations.TryAdd(name, new Affiliation(config, aff)))
+                            throw new NonUniqueObjectNameException("affiliation");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new AffiliationProcessingException(name, ex);
+                    }
                 }
             }
 

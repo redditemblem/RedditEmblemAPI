@@ -1,13 +1,14 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Processing;
+﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
+using RedditEmblemAPI.Models.Configuration.System.Adjutants;
+using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Match;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using RedditEmblemAPI.Models.Configuration.System.Adjutants;
-using RedditEmblemAPI.Helpers;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -62,7 +63,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Adjutant(AdjutantsConfig config, IEnumerable<string> data)
+        public Adjutant(AdjutantsConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -82,21 +83,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, IAdjutant> adjutants = new Dictionary<string, IAdjutant>();
             if (config?.Queries is null) return adjutants;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> adjutant = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(adjutant, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> adjutant = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(adjutant, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!adjutants.TryAdd(name, new Adjutant(config, adjutant)))
-                        throw new NonUniqueObjectNameException("adjutant");
-                }
-                catch (Exception ex)
-                {
-                    throw new AdjutantProcessingException(name, ex);
+                        if (!adjutants.TryAdd(name, new Adjutant(config, adjutant)))
+                            throw new NonUniqueObjectNameException("adjutant");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new AdjutantProcessingException(name, ex);
+                    }
                 }
             }
 

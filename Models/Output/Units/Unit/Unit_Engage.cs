@@ -53,7 +53,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <item>Sprite</item>
         /// </list>
         /// </remarks>
-        public void Constructor_Unit_Engage(UnitsConfig config, IEnumerable<string> data, SystemInfo system)
+        public void Constructor_Unit_Engage(UnitsConfig config, IEnumerable<IEnumerable<string>> data, SystemInfo system)
         {
             this.Emblem = BuildUnitEmblem(data, config.Emblem, system);
         }
@@ -69,7 +69,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <item>Sprite</item>
         /// </list>
         /// </remarks>
-        private IUnitEmblem BuildUnitEmblem(IEnumerable<string> data, UnitEmblemConfig config, SystemInfo systemData)
+        private IUnitEmblem BuildUnitEmblem(IEnumerable<IEnumerable<string>> data, UnitEmblemConfig config, SystemInfo systemData)
         {
             if (config == null) return null;
 

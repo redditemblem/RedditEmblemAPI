@@ -1,13 +1,14 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Processing;
+﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
+using RedditEmblemAPI.Models.Configuration.System.CombatArts;
+using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System.Match;
-using System.Collections.Generic;
 using System;
-using RedditEmblemAPI.Models.Configuration.System.CombatArts;
+using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using RedditEmblemAPI.Helpers;
 
 namespace RedditEmblemAPI.Models.Output.System
 {
@@ -98,7 +99,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion Attributes
 
-        public CombatArt(CombatArtsConfig config, IEnumerable<string> data, IDictionary<string, ITag> tags)
+        public CombatArt(CombatArtsConfig config, IEnumerable<IEnumerable<string>> data, IDictionary<string, ITag> tags)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -131,21 +132,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, ICombatArt> combatArts = new Dictionary<string, ICombatArt>();
             if (config?.Queries is null) return combatArts;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> combatArt = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(combatArt, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> combatArt = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(combatArt, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!combatArts.TryAdd(name, new CombatArt(config, combatArt, tags)))
-                        throw new NonUniqueObjectNameException("combat art");
-                }
-                catch (Exception ex)
-                {
-                    throw new CombatArtProcessingException(name, ex);
+                        if (!combatArts.TryAdd(name, new CombatArt(config, combatArt, tags)))
+                            throw new NonUniqueObjectNameException("combat art");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new CombatArtProcessingException(name, ex);
+                    }
                 }
             }
 

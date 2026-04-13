@@ -1,4 +1,5 @@
 ﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.BattleStyles;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -43,7 +44,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public BattleStyle(BattleStylesConfig config, IEnumerable<string> data)
+        public BattleStyle(BattleStylesConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -61,21 +62,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, IBattleStyle> battleStyles = new Dictionary<string, IBattleStyle>();
             if (config?.Queries is null) return battleStyles;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> battleStyle = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(battleStyle, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> battleStyle = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(battleStyle, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!battleStyles.TryAdd(name, new BattleStyle(config, battleStyle)))
-                        throw new NonUniqueObjectNameException("battle style");
-                }
-                catch (Exception ex)
-                {
-                    throw new BattleStyleProcessingException(name, ex);
+                        if (!battleStyles.TryAdd(name, new BattleStyle(config, battleStyle)))
+                            throw new NonUniqueObjectNameException("battle style");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new BattleStyleProcessingException(name, ex);
+                    }
                 }
             }
 

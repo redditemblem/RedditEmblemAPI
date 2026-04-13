@@ -37,8 +37,8 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <inheritdoc cref="UnitStatsData.General"/>
         IDictionary<string, IModifiedStatValue> General { get; }
 
-        /// <inheritdoc cref="UnitStatsData.CalculateCombatStats(List{CalculatedStatConfig}, IUnit)"/>
-        void CalculateCombatStats(List<CalculatedStatConfig> stats, IUnit unit);
+        /// <inheritdoc cref="UnitStatsData.CalculateCombatStats(CalculatedStatConfig[], IUnit)" />
+        void CalculateCombatStats(CalculatedStatConfig[] stats, IUnit unit);
 
         /// <inheritdoc cref="UnitStatsData.MatchCombatStatName(string)"/>
         IModifiedStatValue MatchCombatStatName(string name);
@@ -130,7 +130,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Constructor.
         /// </summary>
-        public UnitStatsData(UnitsConfig config, IEnumerable<string> data)
+        public UnitStatsData(UnitsConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Level = DataParser.Int_NonZeroPositive(data, config.Level, "Level");
 
@@ -152,7 +152,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Iterates <paramref name="calculatedStats"/> and builds a dictionary of values. Does NOT calculate the stat's base value.
         /// </summary>
-        private IDictionary<string, IModifiedStatValue> BuildCombatStats(IEnumerable<string> data, List<CalculatedStatConfig> calculatedStats)
+        private IDictionary<string, IModifiedStatValue> BuildCombatStats(IEnumerable<IEnumerable<string>> data, CalculatedStatConfig[] calculatedStats)
         {
             IDictionary<string, IModifiedStatValue> stats = new Dictionary<string, IModifiedStatValue>();
 
@@ -170,7 +170,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Iterates through the stats in <paramref name="config"/> and builds a dictionary of values.
         /// </summary>
-        private IDictionary<string, IModifiedStatValue> BuildModifiedStatDictionary(IEnumerable<string> data, List<ModifiedNamedStatConfig_Displayed> config, bool requireBaseValue = true)
+        private IDictionary<string, IModifiedStatValue> BuildModifiedStatDictionary(IEnumerable<IEnumerable<string>> data, ModifiedNamedStatConfig_Displayed[] config, bool requireBaseValue = true)
         {
             IDictionary<string, IModifiedStatValue> stats = new Dictionary<string, IModifiedStatValue>();
 
@@ -194,7 +194,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Assembles and executes the equations in <paramref name="stats"/>.
         /// </summary>
-        public void CalculateCombatStats(List<CalculatedStatConfig> stats, IUnit unit)
+        public void CalculateCombatStats(CalculatedStatConfig[] stats, IUnit unit)
         {
             List<ReplaceCombatStatFormulaVariableEffect> replacementEffects = unit.GetFullSkillsList().SelectMany(s => s.Effects).OfType<ReplaceCombatStatFormulaVariableEffect>().ToList();
             string equippedUtilStat = GetItemUtilizedStatName(unit.Inventory.GetPrimaryEquippedItem());

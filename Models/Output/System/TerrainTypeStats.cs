@@ -81,7 +81,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion Attributes
 
-        public TerrainTypeStats(TerrainTypeStatsConfig config, IEnumerable<string> data, IDictionary<string, IAffiliation> affiliations) 
+        public TerrainTypeStats(TerrainTypeStatsConfig config, IEnumerable<IEnumerable<string>> data, IDictionary<string, IAffiliation> affiliations) 
         {
             this.AffiliationGroupings = DataParser.List_IntCSV(data, config.AffiliationGroupings, "Affiliation Groupings", true);
             this.AffiliationNames = GetAffiliationGroupingNames(affiliations);

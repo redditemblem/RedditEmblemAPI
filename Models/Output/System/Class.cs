@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Classes;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -62,7 +63,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Class(ClassesConfig config, IEnumerable<string> data, bool isUnitMovementTypeConfigured, IDictionary<string, IBattleStyle> battleStyles)
+        public Class(ClassesConfig config, IEnumerable<IEnumerable<string>> data, bool isUnitMovementTypeConfigured, IDictionary<string, IBattleStyle> battleStyles)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             
@@ -96,21 +97,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, IClass> classes = new Dictionary<string, IClass>();
             if (config?.Queries is null) return classes;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> cls = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(cls, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> cls = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(cls, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!classes.TryAdd(name, new Class(config, cls, isUnitMovementTypeConfigured, battleStyles)))
-                        throw new NonUniqueObjectNameException("class");
-                }
-                catch (Exception ex)
-                {
-                    throw new ClassProcessingException(name, ex);
+                        if (!classes.TryAdd(name, new Class(config, cls, isUnitMovementTypeConfigured, battleStyles)))
+                            throw new NonUniqueObjectNameException("class");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ClassProcessingException(name, ex);
+                    }
                 }
             }
 

@@ -89,7 +89,7 @@ namespace RedditEmblemAPI.Models.Output.Map
         /// Constructor.
         /// </summary>
         /// <param name="tileObjectID">ID for identifying this particular tile object instance. Should be unique.</param>
-        public TileObjectInstance(MapObjectsConfig config, int tileObjectID, IEnumerable<string> data, IMapObj map, IDictionary<string, ITileObject> tileObjects)
+        public TileObjectInstance(MapObjectsConfig config, int tileObjectID, IEnumerable<IEnumerable<string>> data, IMapObj map, IDictionary<string, ITileObject> tileObjects)
         {
             this.ID = tileObjectID;
 
@@ -168,16 +168,16 @@ namespace RedditEmblemAPI.Models.Output.Map
             if (config?.Query is null) return tileObjectInsts;
 
             int idIterator = 1;
-            foreach (IList<object> row in config.Query.Data)
+            foreach(IEnumerable<IEnumerable<object>> set in config.Query.Data.Chunk(config.Query.NumberOfSetsPerObject))
             {
                 string name = string.Empty;
                 string coordinate = string.Empty;
-                IEnumerable<string> tileObj;
+                IEnumerable<IEnumerable<string>> tileObj;
                 ITileObjectInstance tileObjectInst;
 
                 try
                 {
-                    tileObj = row.Select(r => r.ToString());
+                    tileObj = set.Select(c => c.Select(r => r.ToString()));
                     name = DataParser.OptionalString(tileObj, config.Name, "Name");
                     coordinate = DataParser.OptionalString(tileObj, config.Coordinate, "Coordinate");
 

@@ -21,6 +21,9 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         /// <inheritdoc cref="Query.AllowNullData"/>
         bool AllowNullData { get; set; }
 
+        /// <inheritdoc cref="Query.NumberOfSetsPerObject"/>
+        int NumberOfSetsPerObject { get; set; }
+
         /// <inheritdoc cref="Query.Data"/>
         IList<IList<object>> Data { get; set; }
     }
@@ -68,11 +71,19 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Flag indicating whether or not this query should error if the data comes back null. Defaults to true.
+        /// Optional, defaults to true. Flag indicating whether or not this query should error if the data comes back null.
         /// </summary>
         public bool AllowNullData { get; set; } = true;
 
-        #endregion
+        /// <summary>
+        /// Optional, defaults to 1. For queries of objects with data that spans multiple rows or columns, the count of how many rows or columns per object.
+        /// </summary>
+        /// <remarks>
+        /// This is primarily intended to be used for units, as they are the most common use case of data spanning multiple columns.
+        /// </remarks>
+        public int NumberOfSetsPerObject { get; set; } = 1;
+
+        #endregion Optional Fields
 
         /// <summary>
         /// Not a JSON value. The matrix of objects returned from Google after execution of this query.

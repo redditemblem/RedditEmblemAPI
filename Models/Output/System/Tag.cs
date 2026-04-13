@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Tags;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -53,7 +54,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Tag(TagsConfig config, IEnumerable<string> data)
+        public Tag(TagsConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -72,21 +73,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, ITag> tags = new Dictionary<string, ITag>();
             if (config?.Queries is null) return tags;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> tag = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(tag, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> tag = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(tag, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!tags.TryAdd(name, new Tag(config, tag)))
-                        throw new NonUniqueObjectNameException("tag");
-                }
-                catch (Exception ex)
-                {
-                    throw new TagProcessingException(name, ex);
+                        if (!tags.TryAdd(name, new Tag(config, tag)))
+                            throw new NonUniqueObjectNameException("tag");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TagProcessingException(name, ex);
+                    }
                 }
             }
 

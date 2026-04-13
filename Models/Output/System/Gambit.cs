@@ -1,4 +1,5 @@
 ﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Battalions;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -75,7 +76,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion Attributes
 
-        public Gambit(GambitsConfig config, IEnumerable<string> data)
+        public Gambit(GambitsConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -98,21 +99,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, IGambit> gambits = new Dictionary<string, IGambit>();
             if (config?.Queries is null) return gambits;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> gambit = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(gambit, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> gambit = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(gambit, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!gambits.TryAdd(name, new Gambit(config, gambit)))
-                        throw new NonUniqueObjectNameException("gambit");
-                }
-                catch (Exception ex)
-                {
-                    throw new GambitProcessingException(name, ex);
+                        if (!gambits.TryAdd(name, new Gambit(config, gambit)))
+                            throw new NonUniqueObjectNameException("gambit");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new GambitProcessingException(name, ex);
+                    }
                 }
             }
 

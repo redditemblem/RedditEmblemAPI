@@ -48,7 +48,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// Constructor. Builds the Items list and flags equipped items.
         /// </summary>
         /// <exception cref="UnmatchedEquippedItemException"></exception>
-        public UnitInventory(InventoryConfig config, SystemInfo system, IEnumerable<string> data, IUnitEmblem emblem)
+        public UnitInventory(InventoryConfig config, SystemInfo system, IEnumerable<IEnumerable<string>> data, IUnitEmblem emblem)
         {
             this.Subsections = UnitInventorySubsection.BuildList(config.Subsections, data, system.Items, system.Engravings);
 
@@ -77,7 +77,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 equipped.IsPrimaryEquipped = true;
             }
 
-            foreach (int index in config.SecondaryEquippedItems)
+            foreach ((int, int) index in config.SecondaryEquippedItems)
             {
                 string secondaryEquippedItemName = DataParser.OptionalString(data, index, "Equipped Item");
                 if (string.IsNullOrEmpty(secondaryEquippedItemName))

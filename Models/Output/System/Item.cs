@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Processing;
@@ -196,7 +197,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Item(ItemsConfig config, IEnumerable<string> data, IDictionary<string, ISkill> skills, IDictionary<string, ITag> tags, IDictionary<string, IEngraving> engravings)
+        public Item(ItemsConfig config, IEnumerable<IEnumerable<string>> data, IDictionary<string, ISkill> skills, IDictionary<string, ITag> tags, IDictionary<string, IEngraving> engravings)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -231,7 +232,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Builds and returns a list of the item's equipped skills.
         /// </summary>
-        private List<IUnitSkill> BuildEquippedSkills(IEnumerable<string> data, List<UnitSkillConfig> configs, IDictionary<string, ISkill> skills)
+        private List<IUnitSkill> BuildEquippedSkills(IEnumerable<IEnumerable<string>> data, UnitSkillConfig[] configs, IDictionary<string, ISkill> skills)
         {
             //Note: I'm using UnitSkill here because that's what input structure the skill display is expecting
             List<IUnitSkill> equippedSkills = new List<IUnitSkill>();
@@ -267,21 +268,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, IItem> items = new Dictionary<string, IItem>();
             if (config?.Queries is null) return items;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> item = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(item, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> item = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(item, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!items.TryAdd(name, new Item(config, item, skills, tags, engravings)))
-                        throw new NonUniqueObjectNameException("item");
-                }
-                catch (Exception ex)
-                {
-                    throw new ItemProcessingException(name, ex);
+                        if (!items.TryAdd(name, new Item(config, item, skills, tags, engravings)))
+                            throw new NonUniqueObjectNameException("item");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ItemProcessingException(name, ex);
+                    }
                 }
             }
 

@@ -57,7 +57,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public WeaponRankBonus(WeaponRankBonusesConfig config, IEnumerable<string> data)
+        public WeaponRankBonus(WeaponRankBonusesConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Category = DataParser.String(data, config.Category, "Category");
             this.Rank = DataParser.OptionalString(data, config.Rank, "Rank");
@@ -77,13 +77,13 @@ namespace RedditEmblemAPI.Models.Output.System
             List<IWeaponRankBonus> weaponRankBonuses = new List<IWeaponRankBonus>();
             if (config?.Query is null) return weaponRankBonuses;
 
-            foreach (IList<object> row in config.Query.Data)
+            foreach (IEnumerable<IEnumerable<object>> set in config.Query.Data.Chunk(config.Query.NumberOfSetsPerObject))
             {
                 string category = string.Empty;
                 string rank = string.Empty;
                 try
                 {
-                    IEnumerable<string> bonus = row.Select(r => r.ToString());
+                    IEnumerable<IEnumerable<string>> bonus = set.Select(c => c.Select(r => r.ToString()));
                     category = DataParser.OptionalString(bonus, config.Category, "Category");
                     rank = DataParser.OptionalString(bonus, config.Rank, "Rank");
 
@@ -103,6 +103,6 @@ namespace RedditEmblemAPI.Models.Output.System
             return weaponRankBonuses;
         }
 
-        #endregion
+        #endregion Static Functions
     }
 }

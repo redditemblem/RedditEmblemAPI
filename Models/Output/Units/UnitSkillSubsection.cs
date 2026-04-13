@@ -40,7 +40,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <summary>
         /// Builds a list of <c>UnitSkillSubsections</c> using <paramref name="data"/> and <paramref name="configs"/> and returns it.
         /// </summary>
-        public static List<IUnitSkillSubsection> BuildList(IEnumerable<string> data, List<UnitSkillSubsectionConfig> configs, IDictionary<string, ISkill> skills)
+        public static List<IUnitSkillSubsection> BuildList(IEnumerable<IEnumerable<string>> data, UnitSkillSubsectionConfig[] configs, IDictionary<string, ISkill> skills)
         {
             List<IUnitSkillSubsection> subsections = new List<IUnitSkillSubsection>();
             foreach (UnitSkillSubsectionConfig subsectionConfig in configs)
