@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.Units.CalculatedStats
 {
@@ -15,12 +15,12 @@ namespace RedditEmblemAPI.Models.Configuration.Units.CalculatedStats
         public string SourceName { get; set; }
 
         /// <summary>
-        /// Required. List of equation configs.
+        /// Required. Collection of equation configs.
         /// </summary>
         [JsonRequired]
-        public List<CalculatedStatEquationConfig> Equations { get; set; }
+        public CalculatedStatEquationConfig[] Equations { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
@@ -32,7 +32,7 @@ namespace RedditEmblemAPI.Models.Configuration.Units.CalculatedStats
         /// <summary>
         /// Optional. List of named modifiers to this stat. (ex. "Buff/Debuff")
         /// </summary>
-        public List<NamedStatConfig> Modifiers { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] Modifiers { get; set; } = Array.Empty<NamedStatConfig>();
 
         /// <summary>
         /// Optional, defaults to false. Flag indicating if the normal positive/negative modified colors in the UI for this stat should be inverted.

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.CombatArts
 {
@@ -18,50 +18,50 @@ namespace RedditEmblemAPI.Models.Configuration.System.CombatArts
         public CombatArtRangeConfig Range { get; set; }
 
         /// <summary>
-        /// Required. List of a combat art's stats.
+        /// Required. Collection of a combat art's stats.
         /// </summary>
         [JsonRequired]
-        public List<NamedStatConfig> Stats { get; set; }
+        public NamedStatConfig[] Stats { get; set; }
 
         /// <summary>
-        /// Required. Cell index of the durability cost of a combat art.
+        /// Required. Location of the durability cost of a combat art.
         /// </summary>
         [JsonRequired]
-        public int DurabilityCost { get; set; }
+        public (int, int) DurabilityCost { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index of an combat art's sprite image URL value.
+        /// Optional. Location of an combat art's sprite image URL value.
         /// </summary>
-        public int SpriteURL { get; set; } = -1;
+        public (int, int) SpriteURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of a combat art's weapon rank value.
+        /// Optional. Location of a combat art's weapon rank value.
         /// </summary>
-        public int WeaponRank { get; set; } = -1;
+        public (int, int) WeaponRank { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of a combat art's category value.
+        /// Optional. Location of a combat art's category value.
         /// </summary>
-        public int Category { get; set; } = -1;
+        public (int, int) Category { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of a combat art's utilized stat value.
+        /// Optional. Collection of locations of a combat art's utilized stat value(s).
         /// </summary>
-        public List<int> UtilizedStats { get; set; } = new List<int>();
+        public (int, int)[] UtilizedStats { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
-        /// Optional. List of cell indexes for a combat art's tag(s).
+        /// Optional. Collection of locations of a combat art's tag(s).
         /// </summary>
-        public List<int> Tags { get; set; } = new List<int>();
+        public (int, int)[] Tags { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
-        /// Optional. List of cell indexes for a combat art's text fields.
+        /// Optional. Collection of locations of a combat art's text fields.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
         #endregion Optional Fields
     }

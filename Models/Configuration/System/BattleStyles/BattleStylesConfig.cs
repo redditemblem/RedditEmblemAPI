@@ -1,5 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.BattleStyles
 {
@@ -11,15 +11,15 @@ namespace RedditEmblemAPI.Models.Configuration.System.BattleStyles
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index for a battle style's sprite.
+        /// Optional. Location of a battle style's sprite.
         /// </summary>
-        public int SpriteURL { get; set; } = -1;
+        public (int, int) SpriteURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of cell indexes for a battle style's text fields.
+        /// Optional. Collection of locations of a battle style's text fields.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
-        #endregion
+        #endregion Optional Fields
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Convoy;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -119,13 +120,13 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
         /// <summary>
         /// Constructor. Builds the <c>ConvoyItem</c> and matches it to an <c>Item</c> definition from <paramref name="items"/>.
         /// </summary>
-        public ConvoyItem(ConvoyConfig config, IEnumerable<string> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
+        public ConvoyItem(ConvoyConfig config, IEnumerable<IEnumerable<string>> data, IDictionary<string, IItem> items, IDictionary<string, IEngraving> engravings)
         {
             this.FullName = DataParser.String(data, config.Name, "Name");
             this.Uses = 0;
 
             string name = this.FullName;
-            if(config.Uses > -1)
+            if(config.Uses.IsConfigured())
             {
                 this.Uses = DataParser.OptionalInt_Positive(data, config.Uses, "Uses");
             }
@@ -198,12 +199,12 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             List<IConvoyItem> convoyItems = new List<IConvoyItem>();
             if (config?.Query is null) return convoyItems;
 
-            foreach (IList<object> row in config.Query.Data)
+            foreach (IEnumerable<IEnumerable<object>> set in config.Query.Data.Chunk(config.Query.NumberOfSetsPerObject))
             {
                 string name = string.Empty;
                 try
                 {
-                    IEnumerable<string> convoyItem = row.Select(r => r.ToString());
+                    IEnumerable<IEnumerable<string>> convoyItem = set.Select(c => c.Select(r => r.ToString()));
                     name = DataParser.OptionalString(convoyItem, config.Name, "Name");
                     if (string.IsNullOrEmpty(name)) continue;
 

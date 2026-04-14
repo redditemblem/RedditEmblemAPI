@@ -39,13 +39,13 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new Battalion(config, data, GAMBITS));
         }
@@ -55,16 +55,19 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new Battalion(config, data, GAMBITS));
@@ -75,16 +78,19 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "Gambit 3"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "Gambit 3"
+                }
             };
 
             Assert.Throws<UnmatchedGambitException>(() => new Battalion(config, data, GAMBITS));
@@ -95,17 +101,20 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    string.Empty
+                }
             };
 
             Assert.Throws<PositiveIntegerException>(() => new Battalion(config, data, GAMBITS));
@@ -116,17 +125,20 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                "-1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    "-1"
+                }
             };
 
             Assert.Throws<PositiveIntegerException>(() => new Battalion(config, data, GAMBITS));
@@ -137,17 +149,20 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -165,19 +180,22 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>(),
-                SpriteURL = 3
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>(),
+                SpriteURL = (0, 3)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    string.Empty
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -190,19 +208,22 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>(),
-                SpriteURL = 3
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>(),
+                SpriteURL = (0, 3)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                "NotAURL"
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    "NotAURL"
+                }
             };
 
             Assert.Throws<URLException>(() => new Battalion(config, data, GAMBITS));
@@ -213,19 +234,22 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>(),
-                SpriteURL = 3
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>(),
+                SpriteURL = (0, 3)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -242,19 +266,22 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>(),
-                Rank = 3
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>(),
+                Rank = (0, 3)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    string.Empty
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -269,19 +296,22 @@ namespace UnitTests.Models.System
 
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>(),
-                Rank = 3
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>(),
+                Rank = (0, 3)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                rank
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    rank
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -298,20 +328,23 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>(),
-                TextFields = new List<int> { 3, 4 }
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>(),
+                TextFields = new (int, int)[]{ (0, 3), (0, 4) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -327,20 +360,23 @@ namespace UnitTests.Models.System
 
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>(),
-                TextFields = new List<int> { 3, 4 }
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>(),
+                TextFields = new (int, int)[]{ (0, 3), (0, 4) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                textField1,
-                textField2
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    textField1,
+                    textField2
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -362,25 +398,28 @@ namespace UnitTests.Models.System
 
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = new NamedStatConfig[]
                 {
-                    new NamedStatConfig{ SourceName = stat1, Value = 3 },
-                    new NamedStatConfig{ SourceName = stat2, Value = 4 },
-                    new NamedStatConfig{ SourceName = stat3, Value = 5 }
+                    new NamedStatConfig{ SourceName = stat1, Value = (0, 3) },
+                    new NamedStatConfig{ SourceName = stat2, Value = (0, 4) },
+                    new NamedStatConfig{ SourceName = stat3, Value = (0, 5) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                string.Empty,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -400,25 +439,28 @@ namespace UnitTests.Models.System
 
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = new NamedStatConfig[]
                 {
-                    new NamedStatConfig{ SourceName = stat1, Value = 3 },
-                    new NamedStatConfig{ SourceName = stat2, Value = 4 },
-                    new NamedStatConfig{ SourceName = stat3, Value = 5 }
+                    new NamedStatConfig{ SourceName = stat1, Value = (0, 3) },
+                    new NamedStatConfig{ SourceName = stat2, Value = (0, 4) },
+                    new NamedStatConfig{ SourceName = stat3, Value = (0, 5) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                "-1",
-                "0",
-                "1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    "-1",
+                    "0",
+                    "1"
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -438,26 +480,29 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>(),
-                StatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>(),
+                StatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig{ SourceName = "Stat 1", Value = 3 },
-                    new NamedStatConfig{ SourceName = "Stat 2", Value = 4 },
-                    new NamedStatConfig{ SourceName = "Stat 3", Value = 5 }
+                    new NamedStatConfig{ SourceName = "Stat 1", Value = (0, 3) },
+                    new NamedStatConfig{ SourceName = "Stat 2", Value = (0, 4) },
+                    new NamedStatConfig{ SourceName = "Stat 3", Value = (0, 5) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                string.Empty,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -474,26 +519,29 @@ namespace UnitTests.Models.System
 
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>(),
-                StatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>(),
+                StatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig{ SourceName = stat1, Value = 3 },
-                    new NamedStatConfig{ SourceName = stat2, Value = 4 },
-                    new NamedStatConfig{ SourceName = stat3, Value = 5 }
+                    new NamedStatConfig{ SourceName = stat1, Value = (0, 3) },
+                    new NamedStatConfig{ SourceName = stat2, Value = (0, 4) },
+                    new NamedStatConfig{ SourceName = stat3, Value = (0, 5) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                "-1",
-                "0",
-                "1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    "-1",
+                    "0",
+                    "1"
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -515,21 +563,24 @@ namespace UnitTests.Models.System
 
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = new NamedStatConfig[]
                 {
-                    new NamedStatConfig(){ SourceName = stat1, Value = 3 }
+                    new NamedStatConfig(){ SourceName = stat1, Value = (0, 3) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                "3"
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    "3"
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -544,21 +595,24 @@ namespace UnitTests.Models.System
 
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = new NamedStatConfig[]
                 {
-                    new NamedStatConfig(){ SourceName = stat1, Value = 3 }
+                    new NamedStatConfig(){ SourceName = stat1, Value = (0, 3) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE,
-                "3"
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE,
+                    "3"
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -576,17 +630,20 @@ namespace UnitTests.Models.System
         {
             BattalionsConfig config = new BattalionsConfig()
             {
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GAMBIT,
-                INPUT_MAX_ENDURANCE
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GAMBIT,
+                    INPUT_MAX_ENDURANCE
+                }
             };
 
             IBattalion batt = new Battalion(config, data, GAMBITS);
@@ -617,10 +674,10 @@ namespace UnitTests.Models.System
             BattalionsConfig config = new BattalionsConfig()
             {
                 Queries = null,
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
             IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, GAMBITS);
@@ -642,10 +699,10 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
             IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, GAMBITS);
@@ -668,10 +725,10 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
             Assert.Throws<BattalionProcessingException>(() => Battalion.BuildDictionary(config, GAMBITS));
@@ -693,10 +750,10 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
             Assert.Throws<BattalionProcessingException>(() => Battalion.BuildDictionary(config, GAMBITS));
@@ -717,10 +774,10 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
             IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, GAMBITS);
@@ -751,14 +808,68 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Gambit = 1,
-                MaxEndurance = 2,
-                Stats = new List<NamedStatConfig>()
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
             IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, GAMBITS);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            BattalionsConfig config = new BattalionsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Battalion 1", INPUT_GAMBIT, "1" },
+                            new List<object>(){ "Text Field 1", "Text Field 2" },
+                            new List<object>(){ "Battalion 2", INPUT_GAMBIT, "2" },
+                            new List<object>(){ "Text Field 3", "Text Field 4" },
+                            new List<object>(){ "Battalion 3", INPUT_GAMBIT, "3" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                Gambit = (0, 1),
+                MaxEndurance = (0, 2),
+                Stats = Array.Empty<NamedStatConfig>(),
+                TextFields = new (int, int)[] { (1, 0), (1, 1) }
+            };
+
+            IDictionary<string, IBattalion> dict = Battalion.BuildDictionary(config, GAMBITS);
+
+            Assert.That(dict.Count, Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Battalion 1"), Is.True);
+            Assert.That(dict.ContainsKey("Battalion 2"), Is.True);
+            Assert.That(dict.ContainsKey("Battalion 3"), Is.True);
+
+            IGambit gambit = GAMBITS[INPUT_GAMBIT];
+
+            IBattalion batt = dict["Battalion 1"];
+            List<string> expectedTextFields = new List<string>() { "Text Field 1", "Text Field 2" };
+            Assert.That(batt.Gambit, Is.EqualTo(gambit));
+            Assert.That(batt.MaxEndurance, Is.EqualTo(1));
+            Assert.That(batt.TextFields, Is.EqualTo(expectedTextFields));
+
+            batt = dict["Battalion 2"];
+            expectedTextFields = new List<string>() { "Text Field 3", "Text Field 4" };
+            Assert.That(batt.Gambit, Is.EqualTo(gambit));
+            Assert.That(batt.MaxEndurance, Is.EqualTo(2));
+            Assert.That(batt.TextFields, Is.EqualTo(expectedTextFields));
+
+            batt = dict["Battalion 3"];
+            Assert.That(batt.Gambit, Is.EqualTo(gambit));
+            Assert.That(batt.MaxEndurance, Is.EqualTo(3));
+            Assert.That(batt.TextFields, Is.Empty);
         }
 
         #endregion BuildDictionary

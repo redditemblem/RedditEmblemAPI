@@ -2,6 +2,7 @@
 using RedditEmblemAPI.Models.Configuration.Units;
 using RedditEmblemAPI.Models.Exceptions.Validation;
 using RedditEmblemAPI.Models.Output.System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -48,7 +49,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <item>Emblem (Engage)</item>
         /// </list>
         /// </remarks>
-        public void Constructor_Unit_Inventory(UnitsConfig config, IEnumerable<string> data, SystemInfo system)
+        public void Constructor_Unit_Inventory(UnitsConfig config, IEnumerable<IEnumerable<string>> data, SystemInfo system)
         {
             this.WeaponRanks = BuildWeaponRanks(data, config.WeaponRanks, system.Constants.WeaponRanks.Any());
             this.Inventory = BuildUnitInventory(data, config.Inventory, system);
@@ -62,10 +63,10 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <param name="validateWeaponRankLetters">Flag indicating if weapon rank types should have an accompanying letter.</param>
         /// <exception cref="WeaponRankMissingLetterException"></exception>
         /// <exception cref="NonUniqueObjectNameException"></exception>
-        private IDictionary<string, string> BuildWeaponRanks(IEnumerable<string> data, List<UnitWeaponRanksConfig> config, bool validateWeaponRankLetters)
+        private IDictionary<string, string> BuildWeaponRanks(IEnumerable<IEnumerable<string>> data, UnitWeaponRanksConfig[] configs, bool validateWeaponRankLetters)
         {
             IDictionary<string, string> weaponRanks = new Dictionary<string, string>();
-            foreach (UnitWeaponRanksConfig rank in config)
+            foreach (UnitWeaponRanksConfig rank in configs)
             {
                 string rankType;
                 if (!string.IsNullOrEmpty(rank.SourceName)) rankType = rank.SourceName;
@@ -101,7 +102,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// <item>Emblem</item>
         /// </list>
         /// </remarks>
-        private IUnitInventory BuildUnitInventory(IEnumerable<string> data, InventoryConfig config, SystemInfo system)
+        private IUnitInventory BuildUnitInventory(IEnumerable<IEnumerable<string>> data, InventoryConfig config, SystemInfo system)
         {
             IUnitInventory inventory = new UnitInventory(config, system, data, this.Emblem);
 
@@ -117,7 +118,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 {
                     if (string.IsNullOrEmpty(unitRank)
                      || string.IsNullOrEmpty(item.Item.WeaponRank)
-                     || system.Constants.WeaponRanks.IndexOf(unitRank) >= system.Constants.WeaponRanks.IndexOf(item.Item.WeaponRank))
+                     || Array.IndexOf(system.Constants.WeaponRanks, unitRank) >= Array.IndexOf(system.Constants.WeaponRanks, item.Item.WeaponRank))
                         item.CanEquip = true;
                 }
                 else if (string.IsNullOrEmpty(item.Item.WeaponRank) && !item.Item.UtilizedStats.Any())

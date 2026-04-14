@@ -22,11 +22,11 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new Affiliation(config, data));
         }
@@ -36,14 +36,17 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "0"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "0"
+                }
             };
 
             Assert.Throws<NonZeroPositiveIntegerException>(() => new Affiliation(config, data));
@@ -54,14 +57,17 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GROUPING
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GROUPING
+                }
             };
 
             IAffiliation aff = new Affiliation(config, data);
@@ -77,16 +83,19 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Name = 0,
-                Grouping = 1,
-                SpriteURL = 2
+                Name = (0, 0),
+                Grouping = (0, 1),
+                SpriteURL = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GROUPING,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GROUPING,
+                    string.Empty
+                }
             };
 
             IAffiliation aff = new Affiliation(config, data);
@@ -99,16 +108,19 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Name = 0,
-                Grouping = 1,
-                SpriteURL = 2
+                Name = (0, 0),
+                Grouping = (0, 1),
+                SpriteURL = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GROUPING,
-                "NotAURL"
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GROUPING,
+                    "NotAURL"
+                }
             };
 
             Assert.Throws<URLException>(() => new Affiliation(config, data));
@@ -119,16 +131,19 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Name = 0,
-                Grouping = 1,
-                SpriteURL = 2
+                Name = (0, 0),
+                Grouping = (0, 1),
+                SpriteURL = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GROUPING,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GROUPING,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             IAffiliation aff = new Affiliation(config, data);
@@ -145,16 +160,19 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Name = 0,
-                Grouping = 1,
-                FlipUnitSprites = 2
+                Name = (0, 0),
+                Grouping = (0, 1),
+                FlipUnitSprites = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GROUPING,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GROUPING,
+                    string.Empty
+                }
             };
 
             IAffiliation aff = new Affiliation(config, data);
@@ -167,16 +185,19 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Name = 0,
-                Grouping = 1,
-                FlipUnitSprites = 2
+                Name = (0, 0),
+                Grouping = (0, 1),
+                FlipUnitSprites = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GROUPING,
-                "No"
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GROUPING,
+                    "No"
+                }
             };
 
             IAffiliation aff = new Affiliation(config, data);
@@ -189,16 +210,19 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Name = 0,
-                Grouping = 1,
-                FlipUnitSprites = 2
+                Name = (0, 0),
+                Grouping = (0, 1),
+                FlipUnitSprites = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GROUPING,
-                "Yes"
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GROUPING,
+                    "Yes"
+                }
             };
 
             IAffiliation aff = new Affiliation(config, data);
@@ -215,17 +239,20 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Name = 0,
-                Grouping = 1,
-                TextFields = new List<int>() { 2, 3 }
+                Name = (0, 0),
+                Grouping = (0, 1),
+                TextFields = new (int, int)[]{ (0, 2), (0, 3) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GROUPING,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GROUPING,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IAffiliation aff = new Affiliation(config, data);
@@ -242,17 +269,20 @@ namespace UnitTests.Models.System
 
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Name = 0,
-                Grouping = 1,
-                TextFields = new List<int>() { 2, 3 }
+                Name = (0, 0),
+                Grouping = (0, 1),
+                TextFields = new (int, int)[]{ (0, 2), (0, 3) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GROUPING,
-                textField1,
-                textField2
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GROUPING,
+                    textField1,
+                    textField2
+                }
             };
 
             IAffiliation aff = new Affiliation(config, data);
@@ -270,14 +300,17 @@ namespace UnitTests.Models.System
         {
             AffiliationsConfig config = new AffiliationsConfig()
             {
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_GROUPING
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_GROUPING
+                }
             };
 
             IAffiliation aff = new Affiliation(config, data);
@@ -306,8 +339,8 @@ namespace UnitTests.Models.System
             AffiliationsConfig config = new AffiliationsConfig()
             {
                 Queries = null,
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
             IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
@@ -329,8 +362,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
             IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
@@ -353,8 +386,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
             Assert.Throws<AffiliationProcessingException>(() => Affiliation.BuildDictionary(config));
@@ -375,8 +408,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
             Assert.Throws<AffiliationProcessingException>(() => Affiliation.BuildDictionary(config));
@@ -397,8 +430,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
             IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
@@ -429,12 +462,61 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
             IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            AffiliationsConfig config = new AffiliationsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Affiliation 1", "1", "Text Field 1" },
+                            new List<object>(){ "Text Field 2" },
+                            new List<object>(){ "Affiliation 2", "1", "Text Field 3" },
+                            new List<object>(){ "Text Field 4" },
+                            new List<object>(){ "Affiliation 3", "2", "Text Field 5" }
+
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                Grouping = (0, 1),
+                TextFields = new (int, int)[] { (0, 2), (1, 0) }
+            };
+
+            IDictionary<string, IAffiliation> dict = Affiliation.BuildDictionary(config);
+
+            Assert.That(dict.Count, Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Affiliation 1"), Is.True);
+            Assert.That(dict.ContainsKey("Affiliation 2"), Is.True);
+            Assert.That(dict.ContainsKey("Affiliation 3"), Is.True);
+
+            IAffiliation aff = dict["Affiliation 1"];
+            List<string> expectedTextFields = new List<string>() { "Text Field 1", "Text Field 2" };
+            Assert.That(aff.Grouping, Is.EqualTo(1));
+            Assert.That(aff.TextFields, Is.EqualTo(expectedTextFields));
+
+            aff = dict["Affiliation 2"];
+            expectedTextFields = new List<string>() { "Text Field 3", "Text Field 4" };
+            Assert.That(aff.Grouping, Is.EqualTo(1));
+            Assert.That(aff.TextFields, Is.EqualTo(expectedTextFields));
+
+            aff = dict["Affiliation 3"];
+            expectedTextFields = new List<string>() { "Text Field 5" };
+            Assert.That(aff.Grouping, Is.EqualTo(2));
+            Assert.That(aff.TextFields, Is.EqualTo(expectedTextFields));
         }
 
         #endregion BuildDictionary

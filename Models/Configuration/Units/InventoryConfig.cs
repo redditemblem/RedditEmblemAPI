@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.Units
 {
@@ -11,26 +11,26 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index of a unit's primary equipped item name.
+        /// Required. Location of a unit's primary equipped item name.
         /// </summary>
         [JsonRequired]
-        public int PrimaryEquippedItem { get; set; }
+        public (int, int) PrimaryEquippedItem { get; set; }
 
         /// <summary>
-        /// Required. List of a unit's inventory subsections.
+        /// Required. Collection of a unit's inventory subsections.
         /// </summary>
         [JsonRequired]
-        public List<InventorySubsectionConfig> Subsections { get; set; }
+        public InventorySubsectionConfig[] Subsections { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. List of cell indexes for a unit's secondary equipped item names.
+        /// Optional. Collection of locations of a unit's secondary equipped item names.
         /// </summary>
-        public List<int> SecondaryEquippedItems { get; set; } = new List<int>();
+        public (int, int)[] SecondaryEquippedItems { get; set; } = Array.Empty<(int, int)>();
 
-        #endregion
+        #endregion Optional Fields
     }
 }

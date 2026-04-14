@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Battalions
 {
@@ -12,48 +12,47 @@ namespace RedditEmblemAPI.Models.Configuration.System.Battalions
         #region Required Fields
 
         /// <summary>
-        /// Required. The cell index of a battalion's gambit name value.
+        /// Required. Location of a battalion's gambit name value.
         /// </summary>
         [JsonRequired]
-        public int Gambit { get; set; }
+        public (int, int) Gambit { get; set; }
 
         /// <summary>
-        /// Required. The cell index of a battalion's max endurance value.
+        /// Required. Location of a battalion's max endurance value.
         /// </summary>
         [JsonRequired]
-        public int MaxEndurance { get; set; }
+        public (int, int) MaxEndurance { get; set; }
 
         /// <summary>
-        /// Required. List of the battalion's stats.
+        /// Required. Collection of the battalion's stats.
         /// </summary>
         [JsonRequired]
-        public List<NamedStatConfig> Stats { get; set; }
-
+        public NamedStatConfig[] Stats { get; set; }
 
         #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index for the battalion's icon sprite URL.
+        /// Optional. Location of the battalion's icon sprite URL.
         /// </summary>
-        public int SpriteURL { get; set; } = -1;
+        public (int, int) SpriteURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. The authority (or other) rank required to use this battalion.
+        /// Optional. Location of the authority (or other) rank required to use this battalion.
         /// </summary>
-        public int Rank { get; set; } = -1;
+        public (int, int) Rank { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Any modifiers that should be applied to the unit's general stats when this battalion is equipped.
+        /// Optional. Collection of modifiers that should be applied to the unit's general stats when this battalion is equipped.
         /// </summary>
-        public List<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] StatModifiers { get; set; } = Array.Empty<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. List of cell indexes for any text information about the battalion to display.
+        /// Optional. Collection of locations for any text information about the battalion to display.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
-        #endregion
+        #endregion Optional Fields
     }
 }

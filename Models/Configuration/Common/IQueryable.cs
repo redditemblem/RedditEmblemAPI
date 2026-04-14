@@ -39,7 +39,7 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         public IEnumerable<Query> Queries { get; set; }
 
         /// <inheritdoc cref="MultiQueryable.Name"/>
-        int Name { get; set; }
+        (int, int) Name { get; set; }
     }
 
     /// <summary>
@@ -54,10 +54,10 @@ namespace RedditEmblemAPI.Models.Configuration.Common
         public IEnumerable<Query> Queries { get; set; }
 
         /// <summary>
-        /// [IMultiQueryable] Required. Cell index for this object's name.
+        /// [IMultiQueryable] Required. Location for this object's name.
         /// </summary>
         [JsonRequired]
-        public int Name { get; set; }
+        public (int, int) Name { get; set; }
     }
 
     #endregion IMultiQueryable

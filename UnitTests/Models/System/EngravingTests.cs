@@ -43,10 +43,10 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { };
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new Engraving(config, data, TAGS));
         }
@@ -56,10 +56,16 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]
+                {
+                    INPUT_NAME 
+                } 
+            };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
 
@@ -73,14 +79,17 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -93,14 +102,17 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "NotAURL"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "NotAURL"
+                }
             };
 
             Assert.Throws<URLException>(() => new Engraving(config, data, TAGS));
@@ -111,14 +123,17 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -138,19 +153,22 @@ namespace UnitTests.Models.System
 
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                ItemStatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                ItemStatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -166,19 +184,22 @@ namespace UnitTests.Models.System
 
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                ItemStatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                ItemStatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1",
-                "-1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1",
+                    "-1"
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -197,19 +218,22 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 ItemRangeOverrides = new ItemRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -225,19 +249,22 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 ItemRangeOverrides = new ItemRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1",
-                "2"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1",
+                    "2"
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -253,23 +280,26 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 ItemRangeOverrides = new ItemRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2,
-                    Shape = 3,
-                    CanOnlyUseBeforeMovement = 4
+                    Minimum = (0, 1),
+                    Maximum = (0, 2),
+                    Shape = (0, 3),
+                    CanOnlyUseBeforeMovement = (0, 4)
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1",
-                "2",
-                "Cross",
-                "Yes"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1",
+                    "2",
+                    "Cross",
+                    "Yes"
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -292,19 +322,22 @@ namespace UnitTests.Models.System
 
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                CombatStatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                CombatStatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -320,19 +353,22 @@ namespace UnitTests.Models.System
 
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                CombatStatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                CombatStatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1",
-                "-1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1",
+                    "-1"
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -354,19 +390,22 @@ namespace UnitTests.Models.System
 
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                StatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                StatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -382,19 +421,22 @@ namespace UnitTests.Models.System
 
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                StatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                StatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1",
-                "-1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1",
+                    "-1"
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -413,15 +455,18 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                Tags = new List<int> { 1, 2 }
+                Name = (0, 0),
+                Tags = new (int, int)[]{ (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -434,14 +479,17 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                Tags = new List<int> { 1 }
+                Name = (0, 0),
+                Tags = new (int, int)[] { (0, 1) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "Tag 3"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "Tag 3"
+                }
             };
 
             Assert.Throws<UnmatchedTagException>(() => new Engraving(config, data, TAGS));
@@ -452,15 +500,18 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                Tags = new List<int> { 1, 2 }
+                Name = (0, 0),
+                Tags = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "Tag 1,Tag 1",
-                "Tag 1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "Tag 1,Tag 1",
+                    "Tag 1"
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -474,14 +525,17 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                Tags = new List<int> { 1 }
+                Name = (0, 0),
+                Tags = new (int, int)[] { (0, 1) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "Tag 1,Tag 2"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "Tag 1,Tag 2"
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -495,15 +549,18 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                Tags = new List<int> { 1, 2 }
+                Name = (0, 0),
+                Tags = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "Tag 1",
-                "Tag 2"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "Tag 1",
+                    "Tag 2"
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -521,15 +578,18 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -545,15 +605,18 @@ namespace UnitTests.Models.System
 
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                textField1,
-                textField2
+                new string[]
+                {
+                    INPUT_NAME,
+                    textField1,
+                    textField2
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -571,14 +634,17 @@ namespace UnitTests.Models.System
         {
             EngravingsConfig config = new EngravingsConfig()
             {
-                Name = 0,
-                Tags = new List<int> { 1 }
+                Name = (0, 0),
+                Tags = new (int, int)[] { (0, 1) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "Tag 1,Tag 2"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "Tag 1,Tag 2"
+                }
             };
 
             IEngraving engraving = new Engraving(config, data, TAGS);
@@ -610,7 +676,7 @@ namespace UnitTests.Models.System
             EngravingsConfig config = new EngravingsConfig()
             {
                 Queries = null,
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
@@ -632,7 +698,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
@@ -655,7 +721,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             Assert.Throws<EngravingProcessingException>(() => Engraving.BuildDictionary(config, TAGS));
@@ -676,7 +742,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
@@ -707,11 +773,55 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            EngravingsConfig config = new EngravingsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Engraving 1", "Text Field 1" },
+                            new List<object>(){ "Text Field 2" },
+                            new List<object>(){ "Engraving 2", "Text Field 3" },
+                            new List<object>(){ "Text Field 4" },
+                            new List<object>(){ "Engraving 3", "Text Field 5" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (1, 0) }
+            };
+
+            IDictionary<string, IEngraving> dict = Engraving.BuildDictionary(config, TAGS);
+
+            Assert.That(dict.Count, Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Engraving 1"), Is.True);
+            Assert.That(dict.ContainsKey("Engraving 2"), Is.True);
+            Assert.That(dict.ContainsKey("Engraving 3"), Is.True);
+
+            IEngraving engraving = dict["Engraving 1"];
+            List<string> expectedTextFields = new List<string>() { "Text Field 1", "Text Field 2" };
+            Assert.That(engraving.TextFields, Is.EqualTo(expectedTextFields));
+
+            engraving = dict["Engraving 2"];
+            expectedTextFields = new List<string>() { "Text Field 3", "Text Field 4" };
+            Assert.That(engraving.TextFields, Is.EqualTo(expectedTextFields));
+
+            engraving = dict["Engraving 3"];
+            expectedTextFields = new List<string>() { "Text Field 5" };
+            Assert.That(engraving.TextFields, Is.EqualTo(expectedTextFields));
         }
 
         #endregion BuildDictionary

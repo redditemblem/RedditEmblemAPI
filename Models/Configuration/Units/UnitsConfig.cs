@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units.CalculatedStats;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.Units
 {
@@ -13,28 +13,28 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index of a unit's sprite image URL value.
+        /// Required. Location of a unit's sprite image URL value.
         /// </summary>
         [JsonRequired]
-        public int SpriteURL { get; set; }
+        public (int, int) SpriteURL { get; set; }
 
         /// <summary>
-        /// Required. Cell index of a unit's level value.
+        /// Required. Location of a unit's level value.
         /// </summary>
         [JsonRequired]
-        public int Level { get; set; }
+        public (int, int) Level { get; set; }
 
         /// <summary>
-        /// Required. Cell index of a unit's affiliation value.
+        /// Required. Location of a unit's affiliation value.
         /// </summary>
         [JsonRequired]
-        public int Affiliation { get; set; }
+        public (int, int) Affiliation { get; set; }
 
         /// <summary>
-        /// Required. Cell index of a unit's coordinate value.
+        /// Required. Location of a unit's coordinate value.
         /// </summary>
         [JsonRequired]
-        public int Coordinate { get; set; }
+        public (int, int) Coordinate { get; set; }
 
         /// <summary>
         /// Required. Container object for a unit's HP configuration.
@@ -43,22 +43,22 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public HPConfig HP { get; set; }
 
         /// <summary>
-        /// Required. List of equations to calculate a unit's combat stats.
+        /// Required. Collection of equations to calculate a unit's combat stats.
         /// </summary>
         [JsonRequired]
-        public List<CalculatedStatConfig> CombatStats { get; set; }
+        public CalculatedStatConfig[] CombatStats { get; set; }
 
         /// <summary>
-        /// Required. List of a unit's base stats.
+        /// Required. Collection of a unit's base stats.
         /// </summary>
         [JsonRequired]
-        public List<ModifiedNamedStatConfig_Displayed> Stats { get; set; }
+        public ModifiedNamedStatConfig_Displayed[] Stats { get; set; }
 
         /// <summary>
-        /// Required. List of a unit's weapon ranks.
+        /// Required. Collection of a unit's weapon ranks.
         /// </summary>
         [JsonRequired]
-        public List<UnitWeaponRanksConfig> WeaponRanks { get; set; }
+        public UnitWeaponRanksConfig[] WeaponRanks { get; set; }
 
         /// <summary>
         /// Required. Container object for a unit's inventory configuration.
@@ -66,89 +66,89 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         [JsonRequired]
         public InventoryConfig Inventory { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index of the unit's controlling player.
+        /// Optional. Location of the unit's controlling player.
         /// </summary>
-        public int Player { get; set; } = -1;
+        public (int, int) Player { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of the unit's character application URL value.
+        /// Optional. Location of the unit's character application URL value.
         /// </summary>
-        public int CharacterApplicationURL { get; set; } = -1;
+        public (int, int) CharacterApplicationURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of the unit's portrait image URL value.
+        /// Optional. Location of the unit's portrait image URL value.
         /// </summary>
-        public int PortraitURL { get; set; } = -1;
+        public (int, int) PortraitURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of cell indexes for a unit's class values.
+        /// Optional. Collection of locations of a unit's class values.
         /// </summary>
-        public List<int> Classes { get; set; } = new List<int>();
+        public (int, int)[] Classes { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
-        /// Optional. The cell index for a unit's movement type.
+        /// Optional. Location of a unit's movement type.
         /// </summary>
-        public int MovementType { get; set; } = -1;
+        public (int, int) MovementType { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of cell indexes for a unit's text fields.
+        /// Optional. Collection of locations of a unit's text fields.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
-        /// Optional. Cell index of a unit's experience value.
+        /// Optional. Location of a unit's experience value.
         /// </summary>
-        public int Experience { get; set; } = -1;
+        public (int, int) Experience { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of the unit's held currency amount.
+        /// Optional. Location of the unit's held currency amount.
         /// </summary>
-        public int HeldCurrency { get; set; } = -1;
+        public (int, int) HeldCurrency { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of the unit's size in number of tiles.
+        /// Optional. Location of the unit's size in number of tiles.
         /// </summary>
-        public int UnitSize { get; set; } = -1;
+        public (int, int) UnitSize { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of a unit's movement flag value.
+        /// Optional. Location of a unit's movement flag value.
         /// </summary>
-        public int HasMoved { get; set; } = -1;
+        public (int, int) HasMoved { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of cell indexes for a unit's tag(s).
+        /// Optional. Collection of locations of a unit's tag(s).
         /// </summary>
-        public List<int> Tags { get; set; } = new List<int>();
+        public (int, int)[] Tags { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
-        /// Optional. Cell index of a unit's behavior description.
+        /// Optional. Location of a unit's behavior description.
         /// </summary>
-        public int Behavior { get; set; } = -1;
+        public (int, int) Behavior { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of a unit's system stats.
+        /// Optional. Collection of a unit's system stats.
         /// </summary>
-        public List<ModifiedNamedStatConfig_Displayed> SystemStats { get; set; } = new List<ModifiedNamedStatConfig_Displayed>();
+        public ModifiedNamedStatConfig_Displayed[] SystemStats { get; set; } = Array.Empty<ModifiedNamedStatConfig_Displayed>();
 
         /// <summary>
-        /// Optional. List of container objects for a unit's status conditions.
+        /// Optional. Collection of container objects for a unit's status conditions.
         /// </summary>
-        public List<UnitStatusConditionConfig> StatusConditions { get; set; } = new List<UnitStatusConditionConfig>();
+        public UnitStatusConditionConfig[] StatusConditions { get; set; } = Array.Empty<UnitStatusConditionConfig>();
 
         /// <summary>
-        /// Optional. List of container objects for a unit's skill subsection configs.
+        /// Optional. Collection of container objects for a unit's skill subsection configs.
         /// </summary>
-        public List<UnitSkillSubsectionConfig> SkillSubsections { get; set; } = new List<UnitSkillSubsectionConfig>();
+        public UnitSkillSubsectionConfig[] SkillSubsections { get; set; } = Array.Empty<UnitSkillSubsectionConfig>();
 
         /// <summary>
-        /// Optional. List of cell indexes of a unit's combat art(s).
+        /// Optional. Collection of locations of a unit's combat art(s).
         /// </summary>
-        public List<int> CombatArts { get; set; } = new List<int>();
+        public (int, int)[] CombatArts { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
         /// Optional. Container object for a unit's battalion configuration.
@@ -156,15 +156,15 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         public UnitBattalionConfig Battalion { get; set; } = null;
 
         /// <summary>
-        /// Optional. List of cell indexes for a unit's adjutant(s).
+        /// Optional. Collection of locations of a unit's adjutant(s).
         /// </summary>
-        public List<int> Adjutants { get; set; } = new List<int>();
+        public (int, int)[] Adjutants { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
         /// Optional. Container object for a unit's emblem configuration.
         /// </summary>
         public UnitEmblemConfig Emblem { get; set; } = null;
 
-        #endregion
+        #endregion Optional Fields
     }
 }

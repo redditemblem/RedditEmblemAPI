@@ -21,10 +21,10 @@ namespace UnitTests.Models.System
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { };
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new BattleStyle(config, data));
         }
@@ -34,12 +34,15 @@ namespace UnitTests.Models.System
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]
+                {
+                    INPUT_NAME
+                }
             };
 
             IBattleStyle style = new BattleStyle(config, data);
@@ -53,14 +56,17 @@ namespace UnitTests.Models.System
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             IBattleStyle style = new BattleStyle(config, data);
@@ -73,14 +79,17 @@ namespace UnitTests.Models.System
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             IBattleStyle style = new BattleStyle(config, data);
@@ -97,15 +106,18 @@ namespace UnitTests.Models.System
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[]{ (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IBattleStyle style = new BattleStyle(config, data);
@@ -121,15 +133,18 @@ namespace UnitTests.Models.System
 
             BattleStylesConfig config = new BattleStylesConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                textField1,
-                textField2
+                new string[]
+                {
+                    INPUT_NAME,
+                    textField1,
+                    textField2
+                }
             };
 
             IBattleStyle style = new BattleStyle(config, data);
@@ -147,12 +162,15 @@ namespace UnitTests.Models.System
         {
             BattleStylesConfig config = new BattleStylesConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]
+                {
+                    INPUT_NAME
+                }
             };
 
             IBattleStyle style = new BattleStyle(config, data);
@@ -181,7 +199,7 @@ namespace UnitTests.Models.System
             BattleStylesConfig config = new BattleStylesConfig()
             {
                 Queries = null,
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
@@ -203,7 +221,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
@@ -226,7 +244,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             Assert.Throws<BattleStyleProcessingException>(() => BattleStyle.BuildDictionary(config));
@@ -247,8 +265,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
             Assert.Throws<BattleStyleProcessingException>(() => BattleStyle.BuildDictionary(config));
@@ -269,7 +287,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
@@ -300,11 +318,55 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            BattleStylesConfig config = new BattleStylesConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Style 1", "Text Field 1" },
+                            new List<object>(){ "Text Field 2" },
+                            new List<object>(){ "Style 2", "Text Field 3" },
+                            new List<object>(){ "Text Field 4" },
+                            new List<object>(){ "Style 3", "Text Field 5" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (1, 0) }
+            };
+
+            IDictionary<string, IBattleStyle> dict = BattleStyle.BuildDictionary(config);
+
+            Assert.That(dict.Count, Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Style 1"), Is.True);
+            Assert.That(dict.ContainsKey("Style 2"), Is.True);
+            Assert.That(dict.ContainsKey("Style 3"), Is.True);
+
+            IBattleStyle style = dict["Style 1"];
+            List<string> expectedTextFields = new List<string>() { "Text Field 1", "Text Field 2" };
+            Assert.That(style.TextFields, Is.EqualTo(expectedTextFields));
+
+            style = dict["Style 2"];
+            expectedTextFields = new List<string>() { "Text Field 3", "Text Field 4" };
+            Assert.That(style.TextFields, Is.EqualTo(expectedTextFields));
+
+            style = dict["Style 3"];
+            expectedTextFields = new List<string>() { "Text Field 5" };
+            Assert.That(style.TextFields, Is.EqualTo(expectedTextFields));
         }
 
         #endregion BuildDictionary

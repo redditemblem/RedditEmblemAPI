@@ -1,4 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Configuration;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System;
 using RedditEmblemAPI.Models.Output.System;
 using RedditEmblemAPI.Models.Output.System.Match;
@@ -94,12 +95,12 @@ namespace RedditEmblemAPI.Models.Output.Storage.Shop
                 new ItemSort("Price", "price", false),
                 new ItemSort("Category", "category", true)
             };
-            if (config.System.Constants.WeaponRanks.Count > 0)
+            if (config.System.Constants.WeaponRanks.Count() > 0)
                 sorts.Add(new ItemSort(this.InterfaceLabels.WeaponRanks, "weaponRank", true));
 
             IDictionary<string, bool> filters = new Dictionary<string, bool>();
-            filters.Add("AllowNew", (config.Shop.IsNew != -1));
-            filters.Add("AllowSales", (config.Shop.SalePrice != -1));
+            filters.Add("AllowNew", (config.Shop.IsNew.IsConfigured()));
+            filters.Add("AllowSales", (config.Shop.SalePrice.IsConfigured()));
             filters.Add("AllowEngravings", config.Shop.Engravings.Any() || config.System.Items.Engravings.Any());
             filters.Add("AllowEquippedSkills", config.System.Items.EquippedSkills.Any());
 

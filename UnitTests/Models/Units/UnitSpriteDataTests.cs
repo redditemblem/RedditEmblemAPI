@@ -11,10 +11,10 @@ namespace UnitTests.Models.Units
         {
             UnitsConfig config = new UnitsConfig()
             {
-                SpriteURL = 0
+                SpriteURL = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new UnitSpriteData(config, data));
         }
@@ -24,12 +24,12 @@ namespace UnitTests.Models.Units
         {
             UnitsConfig config = new UnitsConfig()
             {
-                SpriteURL = 0
+                SpriteURL = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                "NotAUrl"
+                new string[]{ "NotAUrl" }
             };
 
             Assert.Throws<URLException>(() => new UnitSpriteData(config, data));
@@ -40,12 +40,12 @@ namespace UnitTests.Models.Units
         {
             UnitsConfig config = new UnitsConfig()
             {
-                SpriteURL = 0
+                SpriteURL = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                UnitTestConsts.IMAGE_URL
+                new string[]{ UnitTestConsts.IMAGE_URL }
             };
 
             IUnitSpriteData sprite = new UnitSpriteData(config, data);
@@ -64,14 +64,17 @@ namespace UnitTests.Models.Units
         {
             UnitsConfig config = new UnitsConfig()
             {
-                SpriteURL = 0,
-                PortraitURL = 1
+                SpriteURL = (0, 0),
+                PortraitURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                UnitTestConsts.IMAGE_URL,
-                string.Empty
+                new string[]
+                {
+                    UnitTestConsts.IMAGE_URL,
+                    string.Empty
+                }
             };
 
             IUnitSpriteData sprite = new UnitSpriteData(config, data);
@@ -85,14 +88,17 @@ namespace UnitTests.Models.Units
         {
             UnitsConfig config = new UnitsConfig()
             {
-                SpriteURL = 0,
-                PortraitURL = 1
+                SpriteURL = (0, 0),
+                PortraitURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                UnitTestConsts.IMAGE_URL,
-                "NotAUrl"
+                new string[]
+                {
+                    UnitTestConsts.IMAGE_URL,
+                    "NotAUrl"
+                }
             };
 
             Assert.Throws<URLException>(() => new UnitSpriteData(config, data));
@@ -103,14 +109,17 @@ namespace UnitTests.Models.Units
         {
             UnitsConfig config = new UnitsConfig()
             {
-                SpriteURL = 0,
-                PortraitURL = 1
+                SpriteURL = (0, 0),
+                PortraitURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                UnitTestConsts.IMAGE_URL,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    UnitTestConsts.IMAGE_URL,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             IUnitSpriteData sprite = new UnitSpriteData(config, data);
@@ -130,14 +139,17 @@ namespace UnitTests.Models.Units
         {
             UnitsConfig config = new UnitsConfig()
             {
-                SpriteURL = 0,
-                HasMoved = 1
+                SpriteURL = (0, 0),
+                HasMoved = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                UnitTestConsts.IMAGE_URL,
-                input
+                new string[]
+                {
+                    UnitTestConsts.IMAGE_URL,
+                    input
+                }
             };
 
             IUnitSpriteData sprite = new UnitSpriteData(config, data);

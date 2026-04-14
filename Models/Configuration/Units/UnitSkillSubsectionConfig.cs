@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Text.Json.Serialization;
 
 namespace RedditEmblemAPI.Models.Configuration.Units
@@ -8,10 +8,10 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         #region Required Fields
 
         /// <summary>
-        /// Required. List of container objects for a unit's skills.
+        /// Required. Collection of container objects for a unit's skills.
         /// </summary>
         [JsonRequired]
-        public List<UnitSkillConfig> Skills { get; set; } = new List<UnitSkillConfig>();
+        public UnitSkillConfig[] Skills { get; set; } = Array.Empty<UnitSkillConfig>();
 
         #endregion Required Fields
     }

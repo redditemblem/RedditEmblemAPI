@@ -99,12 +99,12 @@ namespace UnitTests.Models.Storage
         {
             ShopConfig config = new ShopConfig()
             {
-                Name = 0,
-                Price = 1,
-                Stock = 2
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new ShopItem(config, data, ITEMS, ENGRAVINGS));
         }
@@ -114,16 +114,19 @@ namespace UnitTests.Models.Storage
         {
             ShopConfig config = new ShopConfig()
             {
-                Name = 0,
-                Price = 1,
-                Stock = 2
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                "Item 3",
-                INPUT_PRICE,
-                INPUT_STOCK
+                new string[]
+                {
+                    "Item 3",
+                    INPUT_PRICE,
+                    INPUT_STOCK
+                }
             };
 
             Assert.Throws<UnmatchedItemException>(() => new ShopItem(config, data, ITEMS, ENGRAVINGS));
@@ -134,16 +137,19 @@ namespace UnitTests.Models.Storage
         {
             ShopConfig config = new ShopConfig()
             {
-                Name = 0,
-                Price = 1,
-                Stock = 2
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_PRICE,
-                INPUT_STOCK
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_PRICE,
+                    INPUT_STOCK
+                }
             };
 
             IShopItem item = new ShopItem(config, data, ITEMS, ENGRAVINGS);
@@ -168,16 +174,19 @@ namespace UnitTests.Models.Storage
 
             ShopConfig config = new ShopConfig()
             {
-                Name = 0,
-                Price = 1,
-                Stock = 2
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_PRICE,
-                INPUT_STOCK
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_PRICE,
+                    INPUT_STOCK
+                }
             };
 
             IShopItem item = new ShopItem(config, data, ITEMS, ENGRAVINGS);
@@ -200,16 +209,19 @@ namespace UnitTests.Models.Storage
 
             ShopConfig config = new ShopConfig()
             {
-                Name = 0,
-                Price = 1,
-                Stock = 2
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_PRICE,
-                INPUT_STOCK
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_PRICE,
+                    INPUT_STOCK
+                }
             };
 
             IShopItem item = new ShopItem(config, data, ITEMS, ENGRAVINGS);
@@ -230,18 +242,21 @@ namespace UnitTests.Models.Storage
         {
             ShopConfig config = new ShopConfig()
             {
-                Name = 0,
-                Price = 1,
-                Stock = 2,
-                SalePrice = 3
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2),
+                SalePrice = (0, 3)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_PRICE,
-                INPUT_STOCK,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_PRICE,
+                    INPUT_STOCK,
+                    string.Empty
+                }
             };
 
             IShopItem item = new ShopItem(config, data, ITEMS, ENGRAVINGS);
@@ -255,18 +270,21 @@ namespace UnitTests.Models.Storage
         {
             ShopConfig config = new ShopConfig()
             {
-                Name = 0,
-                Price = 1,
-                Stock = 2,
-                SalePrice = 3
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2),
+                SalePrice = (0, 3)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_PRICE,
-                INPUT_STOCK,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_PRICE,
+                    INPUT_STOCK,
+                    input
+                }
             };
 
             Assert.Throws<PositiveIntegerException>(() => new ShopItem(config, data, ITEMS, ENGRAVINGS));
@@ -278,18 +296,21 @@ namespace UnitTests.Models.Storage
         {
             ShopConfig config = new ShopConfig()
             {
-                Name = 0,
-                Price = 1,
-                Stock = 2,
-                SalePrice = 3
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2),
+                SalePrice = (0, 3)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_PRICE,
-                INPUT_STOCK,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_PRICE,
+                    INPUT_STOCK,
+                    input
+                }
             };
 
             IShopItem item = new ShopItem(config, data, ITEMS, ENGRAVINGS);
@@ -309,18 +330,21 @@ namespace UnitTests.Models.Storage
         {
             ShopConfig config = new ShopConfig()
             {
-                Name = 0,
-                Price = 1,
-                Stock = 2,
-                IsNew = 3
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2),
+                IsNew = (0, 3)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_PRICE,
-                INPUT_STOCK,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_PRICE,
+                    INPUT_STOCK,
+                    input
+                }
             };
 
             IShopItem item = new ShopItem(config, data, ITEMS, ENGRAVINGS);
@@ -337,19 +361,22 @@ namespace UnitTests.Models.Storage
         {
             ShopConfig config = new ShopConfig()
             {
-                Name = 0,
-                Price = 1,
-                Stock = 2,
-                Engravings = new List<int>() { 3, 4 }
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2),
+                Engravings = new (int, int)[] { (0, 3), (0, 4) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_PRICE,
-                INPUT_STOCK,
-                "Engraving 1",
-                "Engraving 2"
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_PRICE,
+                    INPUT_STOCK,
+                    "Engraving 1",
+                    "Engraving 2"
+                }
             };
 
             IShopItem item = new ShopItem(config, data, ITEMS, ENGRAVINGS);
@@ -384,18 +411,21 @@ namespace UnitTests.Models.Storage
 
             ShopConfig config = new ShopConfig()
             {
-                Name = 0,
-                Price = 1,
-                Stock = 2,
-                Engravings = new List<int>() { 3 }
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2),
+                Engravings = new (int, int)[] { (0, 3) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_PRICE,
-                INPUT_STOCK,
-                engravingName
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_PRICE,
+                    INPUT_STOCK,
+                    engravingName
+                }
             };
 
             IShopItem item = new ShopItem(config, data, ITEMS, ENGRAVINGS);
@@ -430,9 +460,9 @@ namespace UnitTests.Models.Storage
             ShopConfig config = new ShopConfig()
             {
                 Query = null,
-                Name = 0,
-                Price = 1,
-                Stock = 2
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2)
             };
 
             List<IShopItem> list = ShopItem.BuildList(config, ITEMS, ENGRAVINGS);
@@ -452,9 +482,9 @@ namespace UnitTests.Models.Storage
                         new List<object>(){ }
                     }
                 },
-                Name = 0,
-                Price = 1,
-                Stock = 2
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2)
             };
 
             List<IShopItem> list = ShopItem.BuildList(config, ITEMS, ENGRAVINGS);
@@ -474,9 +504,9 @@ namespace UnitTests.Models.Storage
                         new List<object>(){ INPUT_NAME, "-1", INPUT_STOCK }
                     }
                 },
-                Name = 0,
-                Price = 1,
-                Stock = 2
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2)
             };
 
             Assert.Throws<ShopItemProcessingException>(() => ShopItem.BuildList(config, ITEMS, ENGRAVINGS));
@@ -494,9 +524,9 @@ namespace UnitTests.Models.Storage
                         new List<object>(){ INPUT_NAME, INPUT_PRICE, INPUT_STOCK }
                     }
                 },
-                Name = 0,
-                Price = 1,
-                Stock = 2
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2)
             };
 
             List<IShopItem> list = ShopItem.BuildList(config, ITEMS, ENGRAVINGS);
@@ -519,14 +549,50 @@ namespace UnitTests.Models.Storage
                         new List<object>(){ "Item 2", INPUT_PRICE, INPUT_STOCK }
                     }
                 },
-                Name = 0,
-                Price = 1,
-                Stock = 2
+                Name = (0, 0),
+                Price = (0, 1),
+                Stock = (0, 2)
             };
 
             List<IShopItem> list = ShopItem.BuildList(config, ITEMS, ENGRAVINGS);
 
             Assert.That(list.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildList_MultiSet()
+        {
+            ShopConfig config = new ShopConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Item 1" },
+                        new List<object>(){ "100", "2" },
+                        new List<object>(){ "Item 2" },
+                        new List<object>(){ "300", "4" }
+                    },
+                    NumberOfSetsPerObject = 2
+                },
+                Name = (0, 0),
+                Price = (1, 0),
+                Stock = (1, 1)
+            };
+
+            List<IShopItem> list = ShopItem.BuildList(config, ITEMS, ENGRAVINGS);
+
+            Assert.That(list.Count, Is.EqualTo(2));
+
+            IShopItem item1 = list.SingleOrDefault(i => i.FullName == "Item 1");
+            Assert.That(item1, Is.Not.Null);
+            Assert.That(item1.Price, Is.EqualTo(100));
+            Assert.That(item1.Stock, Is.EqualTo(2));
+
+            IShopItem item2 = list.SingleOrDefault(i => i.FullName == "Item 2");
+            Assert.That(item2, Is.Not.Null);
+            Assert.That(item2.Price, Is.EqualTo(300));
+            Assert.That(item2.Stock, Is.EqualTo(4));
         }
 
         #endregion BuildList

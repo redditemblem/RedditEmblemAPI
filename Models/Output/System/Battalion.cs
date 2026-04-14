@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Battalions;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -88,7 +89,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion Attributes
 
-        public Battalion(BattalionsConfig config, IEnumerable<string> data, IDictionary<string, IGambit> gambits)
+        public Battalion(BattalionsConfig config, IEnumerable<IEnumerable<string>> data, IDictionary<string, IGambit> gambits)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
 
@@ -134,21 +135,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, IBattalion> battalions = new Dictionary<string, IBattalion>();
             if (config?.Queries is null) return battalions;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> battalion = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(battalion, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> battalion = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(battalion, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!battalions.TryAdd(name, new Battalion(config, battalion, gambits)))
-                        throw new NonUniqueObjectNameException("battalion");
-                }
-                catch (Exception ex)
-                {
-                    throw new BattalionProcessingException(name, ex);
+                        if (!battalions.TryAdd(name, new Battalion(config, battalion, gambits)))
+                            throw new NonUniqueObjectNameException("battalion");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new BattalionProcessingException(name, ex);
+                    }
                 }
             }
 

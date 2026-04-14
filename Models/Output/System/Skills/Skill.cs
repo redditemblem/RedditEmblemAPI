@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Skills;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -74,7 +75,7 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Skill(SkillsConfig config, IEnumerable<string> data)
+        public Skill(SkillsConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -180,21 +181,24 @@ namespace RedditEmblemAPI.Models.Output.System.Skills
             IDictionary<string, ISkill> skills = new Dictionary<string, ISkill>();
             if (config?.Queries is null) return skills;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> skill = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(skill, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> skill = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(skill, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!skills.TryAdd(name, new Skill(config, skill)))
-                        throw new NonUniqueObjectNameException("skill");
-                }
-                catch (Exception ex)
-                {
-                    throw new SkillProcessingException(name, ex);
+                        if (!skills.TryAdd(name, new Skill(config, skill)))
+                            throw new NonUniqueObjectNameException("skill");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new SkillProcessingException(name, ex);
+                    }
                 }
             }
 

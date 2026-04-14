@@ -1,5 +1,5 @@
 ﻿using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Emblems
 {
@@ -11,24 +11,24 @@ namespace RedditEmblemAPI.Models.Configuration.System.Emblems
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index of an emblem's sprite image URL value.
+        /// Optional. Location of an emblem's sprite image URL value.
         /// </summary>
-        public int SpriteURL { get; set; } = -1;
+        public (int, int) SpriteURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of an emblem's tagline.
+        /// Optional. Location of an emblem's tagline.
         /// </summary>
-        public int Tagline { get; set; } = -1;
+        public (int, int) Tagline { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of an emblem's engaged unit aura hex.
+        /// Optional. Location of an emblem's engaged unit aura hex.
         /// </summary>
-        public int EngagedUnitAura { get; set; } = -1;
+        public (int, int) EngagedUnitAura { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of cell indexes for an emblem's text fields.
+        /// Optional. Collection of locations of an emblem's text fields.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
         #endregion Optional Fields
     }

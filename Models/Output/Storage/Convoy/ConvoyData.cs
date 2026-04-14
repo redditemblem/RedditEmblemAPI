@@ -95,7 +95,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
                 new ItemSort("Category", "category", true),
                 new ItemSort("Uses", "maxUses", true)
             };
-            if (config.System.Constants.WeaponRanks.Count > 0)
+            if (config.System.Constants.WeaponRanks.Count() > 0)
                 sorts.Add(new ItemSort(this.InterfaceLabels.WeaponRanks, "weaponRank", true));
 
             IDictionary<string, bool> filters = new Dictionary<string, bool>();

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System
 {
@@ -15,9 +15,9 @@ namespace RedditEmblemAPI.Models.Configuration.System
         public string Emblem { get; set; } = "Emblem";
         public string Gambit { get; set; } = "Gambit";
         public string Inventory { get; set; } = "Inventory";
-        public IEnumerable<string> InventorySubsections { get; set; } = new List<string>();
+        public string[] InventorySubsections { get; set; } = Array.Empty<string>();
         public string Skills { get; set; } = "Skills";
-        public IEnumerable<string> SkillSubsections { get; set; } = new List<string>();
+        public string[] SkillSubsections { get; set; } = Array.Empty<string>();
         public string StatusConditions { get; set; } = "Status Conditions";
         public string WeaponRanks { get; set; } = "Weapon Ranks";
     }

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.Shop
 {
@@ -12,42 +12,42 @@ namespace RedditEmblemAPI.Models.Configuration.Shop
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index for a shop item's name value.
+        /// Required. Location of a shop item's name value.
         /// </summary>
         [JsonRequired]
-        public int Name { get; set; }
+        public (int, int) Name { get; set; }
 
         /// <summary>
-        /// Required.  Cell index for a shop item's price value.
+        /// Required. Location of a shop item's price value.
         /// </summary>
         [JsonRequired]
-        public int Price { get; set; }
+        public (int, int) Price { get; set; }
 
         /// <summary>
-        /// Required. Cell index for a shop item's stock value.
+        /// Required. Location of a shop item's stock value.
         /// </summary>
         [JsonRequired]
-        public int Stock { get; set; }
+        public (int, int) Stock { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index for a shop item's sale price value.
+        /// Optional. Location of a shop item's sale price value.
         /// </summary>
-        public int SalePrice { get; set; } = -1;
+        public (int, int) SalePrice { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index for a shop item's is new flag.
+        /// Optional. Location of a shop item's is new flag.
         /// </summary>
-        public int IsNew { get; set; } = -1;
+        public (int, int) IsNew { get; set; } = (-1, -1);
 
         /// <summary>
         /// Optional. Cell indexes for a shop item's engravings.
         /// </summary>
-        public List<int> Engravings { get; set; } = new List<int>();
+        public (int, int)[] Engravings { get; set; } = Array.Empty<(int, int)>();
 
-        #endregion
+        #endregion Optional Fields
     }
 }

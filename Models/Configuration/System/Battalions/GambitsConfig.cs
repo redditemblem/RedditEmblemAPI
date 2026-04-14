@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Battalions
 {
@@ -12,10 +12,10 @@ namespace RedditEmblemAPI.Models.Configuration.System.Battalions
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index of a gambit's max uses value.
+        /// Required. Location of a gambit's max uses value.
         /// </summary>
         [JsonRequired]
-        public int MaxUses { get; set; }
+        public (int, int) MaxUses { get; set; }
 
         /// <summary>
         /// Required. Container object for gambit's range configuration.
@@ -24,31 +24,30 @@ namespace RedditEmblemAPI.Models.Configuration.System.Battalions
         public GambitRangeConfig Range { get; set; }
 
         /// <summary>
-        /// Required. List of the gambit's stats.
+        /// Required. Collection of the gambit's stats.
         /// </summary>
         [JsonRequired]
-        public List<NamedStatConfig> Stats { get; set; }
+        public NamedStatConfig[] Stats { get; set; }
 
         #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index for the gambit's icon sprite URL.
+        /// Optional. Location of the gambit's icon sprite URL.
         /// </summary>
-        public int SpriteURL { get; set; } = -1;
+        public (int, int) SpriteURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. The unit stats (ex. Str/Mag/etc) that the gambit uses.
+        /// Optional. Collection of locations of the names of the unit stats (ex. Str/Mag/etc) that the gambit uses.
         /// </summary>
-        public int UtilizedStats { get; set; } = -1;
+        public (int, int)[] UtilizedStats { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
-        /// Optional. List of cell indexes for any text information about the gambit to display.
+        /// Optional. Collection of locations of any text information about the gambit to display.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
         #endregion Optional Fields
-
     }
 }

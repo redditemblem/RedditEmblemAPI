@@ -52,12 +52,12 @@ namespace RedditEmblemAPI.Models.Output.Units
         #endregion Attributes
 
         /// <summary>
-        /// Initalizes a new skill from a unit and matches it to a <c>Skill</c> in <paramref name="skills"/>.
+        /// Initalizes a new skill from a unit and matches it to an <c>ISkill</c> in <paramref name="skills"/>.
         /// </summary>
-        public UnitSkill(IEnumerable<string> data, UnitSkillConfig config, IDictionary<string, ISkill> skills, bool flagAsMatched = true)
+        public UnitSkill(IEnumerable<IEnumerable<string>> data, UnitSkillConfig config, IDictionary<string, ISkill> skills, bool flagAsMatched = true)
         {
             this.FullName = DataParser.String(data, config.Name, "Skill Name");
-            this.AdditionalStats = DataParser.NamedStatDictionary_OptionalInt_Any(config.AdditionalStats, data, false, this.FullName + " {0}");
+            this.AdditionalStats = DataParser.NamedStatDictionary_OptionalInt_Any(config.AdditionalStats, data, false, $"{this.FullName} {{0}}");
 
             this.Skill = System.Skills.Skill.MatchName(skills, this.FullName.Trim(), flagAsMatched);
         }

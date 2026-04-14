@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Affiliations
 {
@@ -12,30 +12,30 @@ namespace RedditEmblemAPI.Models.Configuration.System.Affiliations
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index of an affiliation's grouping value.
+        /// Required. Location of an affiliation's grouping value.
         /// </summary>
         [JsonRequired]
-        public int Grouping { get; set; }
+        public (int, int) Grouping { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index of an affiliation's sprite URL.
+        /// Optional. Location of an affiliation's sprite URL.
         /// </summary>
-        public int SpriteURL { get; set; } = -1;
+        public (int, int) SpriteURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of an affiliation's flip unit sprites flag.
+        /// Optional. Location of an affiliation's flip unit sprites flag.
         /// </summary>
-        public int FlipUnitSprites { get; set; } = -1;
+        public (int, int) FlipUnitSprites { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of cell indexes for an affiliation's text fields.
+        /// Optional. Collection of locations for an affiliation's text fields.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
-        #endregion
+        #endregion Optional Fields
     }
 }

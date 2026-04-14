@@ -124,16 +124,16 @@ namespace RedditEmblemAPI.Services
         /// <summary>
         /// Opens the file located at <paramref name="filePath"/> and deserializes its contents into a <c>JSONConfiguration</c> object.
         /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
         /// <exception cref="TeamConfigurationNotFoundException"></exception>
         private JSONConfiguration DeserializeJSONConfiguration(string filePath)
         {
             try
             {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Converters.Add(new IntTupleConverter()); //custom converter for (int, int) tuples
+
                 using (StreamReader file = File.OpenText(filePath))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
                     return (JSONConfiguration)serializer.Deserialize(file, typeof(JSONConfiguration));
                 }
             }

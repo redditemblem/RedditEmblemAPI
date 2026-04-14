@@ -13,15 +13,15 @@
         public string SourceName { get; set; } = string.Empty;
 
         /// <summary>
-        /// Optional. If weapon ranks are dynamic, the cell index for the weapon rank type. Mutually exclusive with <c>SourceName</c>.
+        /// Optional. If weapon ranks are dynamic, the location of the weapon rank type. Mutually exclusive with <c>SourceName</c>.
         /// </summary>
-        public int Type { get; set; } = -1;
+        public (int, int) Type { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index for the weapon rank letter.
+        /// Optional. Location of the weapon rank letter.
         /// </summary>
-        public int Rank { get; set; } = -1;
+        public (int, int) Rank { get; set; } = (-1, -1);
 
-        #endregion
+        #endregion Optional Fields
     }
 }

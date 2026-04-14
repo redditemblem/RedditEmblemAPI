@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Emblems;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -58,7 +59,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion Attributes
 
-        public Emblem(EmblemsConfig config, IEnumerable<string> data)
+        public Emblem(EmblemsConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -78,21 +79,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, IEmblem> emblems = new Dictionary<string, IEmblem>();
             if (config?.Queries is null) return emblems;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> emblem = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(emblem, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> emblem = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(emblem, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!emblems.TryAdd(name, new Emblem(config, emblem)))
-                        throw new NonUniqueObjectNameException("emblem");
-                }
-                catch (Exception ex)
-                {
-                    throw new EmblemProcessingException(name, ex);
+                        if (!emblems.TryAdd(name, new Emblem(config, emblem)))
+                            throw new NonUniqueObjectNameException("emblem");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new EmblemProcessingException(name, ex);
+                    }
                 }
             }
 

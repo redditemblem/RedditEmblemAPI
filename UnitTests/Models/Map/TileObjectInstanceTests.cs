@@ -37,6 +37,7 @@ namespace UnitTests.Models.Map
             string tileObj1Name = "Tile Object 1";
             ITileObject tileObj1 = Substitute.For<ITileObject>();
             tileObj1.Name.Returns(tileObj1Name);
+            tileObj1.Size.Returns(1);
 
             IDictionary<string, ITileObject> tileObjs = new Dictionary<string, ITileObject>();
             tileObjs.Add(tileObj1Name, tileObj1);
@@ -80,12 +81,12 @@ namespace UnitTests.Models.Map
         {
             MapObjectsConfig config = new MapObjectsConfig()
             {
-                Name = 0,
-                Coordinate = 1
+                Name = (0, 0),
+                Coordinate = (0, 1)
             };
 
             int tileObjectID = 1;
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new TileObjectInstance(config, tileObjectID, data, MAP, TILE_OBJECTS));
         }
@@ -95,15 +96,18 @@ namespace UnitTests.Models.Map
         {
             MapObjectsConfig config = new MapObjectsConfig()
             {
-                Name = 0,
-                Coordinate = 1
+                Name = (0, 0),
+                Coordinate = (0, 1)
             };
 
             int tileObjectID = 1;
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new TileObjectInstance(config, tileObjectID, data, MAP, TILE_OBJECTS));
@@ -114,15 +118,18 @@ namespace UnitTests.Models.Map
         {
             MapObjectsConfig config = new MapObjectsConfig()
             {
-                Name = 0,
-                Coordinate = 1
+                Name = (0, 0),
+                Coordinate = (0, 1)
             };
 
             int tileObjectID = 1;
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "FakeCoord"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "FakeCoord"
+                }
             };
 
             Assert.Throws<XYCoordinateFormattingException>(() => new TileObjectInstance(config, tileObjectID, data, MAP, TILE_OBJECTS));
@@ -133,15 +140,18 @@ namespace UnitTests.Models.Map
         {
             MapObjectsConfig config = new MapObjectsConfig()
             {
-                Name = 0,
-                Coordinate = 1
+                Name = (0, 0),
+                Coordinate = (0, 1)
             };
 
             int tileObjectID = 1;
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                "Tile Object 2",
-                "1,1"
+                new string[]
+                {
+                    "Tile Object 2",
+                    "1,1"
+                }
             };
 
             Assert.Throws<UnmatchedTileObjectException>(() => new TileObjectInstance(config, tileObjectID, data, MAP, TILE_OBJECTS));
@@ -152,15 +162,18 @@ namespace UnitTests.Models.Map
         {
             MapObjectsConfig config = new MapObjectsConfig()
             {
-                Name = 0,
-                Coordinate = 1
+                Name = (0, 0),
+                Coordinate = (0, 1)
             };
 
             int tileObjectID = 1;
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1,1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1,1"
+                }
             };
 
             ITileObject tileObj = TILE_OBJECTS[INPUT_NAME];
@@ -188,15 +201,18 @@ namespace UnitTests.Models.Map
         {
             MapObjectsConfig config = new MapObjectsConfig()
             {
-                Name = 0,
-                Coordinate = 1
+                Name = (0, 0),
+                Coordinate = (0, 1)
             };
 
             int tileObjectID = 1;
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1,1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1,1"
+                }
             };
 
             ITileObject tileObj = TILE_OBJECTS[INPUT_NAME];
@@ -236,22 +252,25 @@ namespace UnitTests.Models.Map
         {
             MapObjectsConfig config = new MapObjectsConfig()
             {
-                Name = 0,
-                Coordinate = 1,
+                Name = (0, 0),
+                Coordinate = (0, 1),
                 HP = new HPConfig()
                 {
-                    Current = 2,
-                    Maximum = 3,
-                    RemainingBars = 4
+                    Current = (0, 2),
+                    Maximum = (0, 3),
+                    RemainingBars = (0, 4)
                 }
             };
 
             int tileObjectID = 1;
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1,1",
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1,1",
+                    string.Empty
+                }
             };
 
             ITileObjectInstance instance = new TileObjectInstance(config, tileObjectID, data, MAP, TILE_OBJECTS);
@@ -265,24 +284,27 @@ namespace UnitTests.Models.Map
         {
             MapObjectsConfig config = new MapObjectsConfig()
             {
-                Name = 0,
-                Coordinate = 1,
+                Name = (0, 0),
+                Coordinate = (0, 1),
                 HP = new HPConfig()
                 {
-                    Current = 2,
-                    Maximum = 3,
-                    RemainingBars = 4
+                    Current = (0, 2),
+                    Maximum = (0, 3),
+                    RemainingBars = (0, 4)
                 }
             };
 
             int tileObjectID = 1;
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1,1",
-                "10",
-                "15",
-                "1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1,1",
+                    "10",
+                    "15",
+                    "1"
+                }
             };
 
             ITileObjectInstance instance = new TileObjectInstance(config, tileObjectID, data, MAP, TILE_OBJECTS);
@@ -332,8 +354,8 @@ namespace UnitTests.Models.Map
                         new List<object>(){ }
                     }
                 },
-                Name = 0,
-                Coordinate = 1
+                Name = (0, 0),
+                Coordinate = (0, 1)
             };
 
             IDictionary<int, ITileObjectInstance> dict = TileObjectInstance.BuildDictionary(config, MAP, TILE_OBJECTS);
@@ -352,8 +374,8 @@ namespace UnitTests.Models.Map
                         new List<object>(){ string.Empty, "1,1" }
                     }
                 },
-                Name = 0,
-                Coordinate = 1
+                Name = (0, 0),
+                Coordinate = (0, 1)
             };
 
             IDictionary<int, ITileObjectInstance> dict = TileObjectInstance.BuildDictionary(config, MAP, TILE_OBJECTS);
@@ -372,8 +394,8 @@ namespace UnitTests.Models.Map
                         new List<object>(){ INPUT_NAME, string.Empty }
                     }
                 },
-                Name = 0,
-                Coordinate = 1
+                Name = (0, 0),
+                Coordinate = (0, 1)
             };
 
             IDictionary<int, ITileObjectInstance> dict = TileObjectInstance.BuildDictionary(config, MAP, TILE_OBJECTS);
@@ -392,8 +414,8 @@ namespace UnitTests.Models.Map
                         new List<object>(){ INPUT_NAME, "test" }
                     }
                 },
-                Name = 0,
-                Coordinate = 1
+                Name = (0, 0),
+                Coordinate = (0, 1)
             };
 
             Assert.Throws<TileObjectInstanceProcessingException>(() => TileObjectInstance.BuildDictionary(config, MAP, TILE_OBJECTS));
@@ -411,8 +433,8 @@ namespace UnitTests.Models.Map
                         new List<object>(){ INPUT_NAME, "1,1" }
                     }
                 },
-                Name = 0,
-                Coordinate = 1
+                Name = (0, 0),
+                Coordinate = (0, 1)
             };
 
             IDictionary<int, ITileObjectInstance> dict = TileObjectInstance.BuildDictionary(config, MAP, TILE_OBJECTS);
@@ -434,12 +456,47 @@ namespace UnitTests.Models.Map
                         new List<object>(){ INPUT_NAME, "1,2" }
                     }
                 },
-                Name = 0,
-                Coordinate = 1
+                Name = (0, 0),
+                Coordinate = (0, 1)
             };
 
             IDictionary<int, ITileObjectInstance> dict = TileObjectInstance.BuildDictionary(config, MAP, TILE_OBJECTS);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            MapObjectsConfig config = new MapObjectsConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ INPUT_NAME },
+                        new List<object>(){ "1,1" },
+                        new List<object>(){ INPUT_NAME },
+                        new List<object>(){ "2,2" }
+                    },
+                    NumberOfSetsPerObject = 2
+                },
+                Name = (0, 0),
+                Coordinate = (1, 0)
+            };
+
+            IDictionary<int, ITileObjectInstance> dict = TileObjectInstance.BuildDictionary(config, MAP, TILE_OBJECTS);
+
+            Assert.That(dict.Count, Is.EqualTo(2));
+
+            ITileObjectInstance object1 = dict[1];
+            Assert.That(object1, Is.Not.Null);
+            Assert.That(object1.AnchorCoordinate.X, Is.EqualTo(1));
+            Assert.That(object1.AnchorCoordinate.Y, Is.EqualTo(1));
+
+            ITileObjectInstance object2 = dict[2];
+            Assert.That(object2, Is.Not.Null);
+            Assert.That(object2.AnchorCoordinate.X, Is.EqualTo(2));
+            Assert.That(object2.AnchorCoordinate.Y, Is.EqualTo(2));
         }
 
         #endregion BuildDictionary

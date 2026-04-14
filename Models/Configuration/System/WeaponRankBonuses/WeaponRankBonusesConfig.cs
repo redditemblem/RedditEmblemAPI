@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses
 {
@@ -12,29 +12,29 @@ namespace RedditEmblemAPI.Models.Configuration.System.WeaponRankBonuses
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index of a weapon rank bonus category.
+        /// Required. Location of a weapon rank bonus category.
         /// </summary>
         [JsonRequired]
-        public int Category { get; set; }
+        public (int, int) Category { get; set; }
 
         #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index of a weapon rank bonus rank.
+        /// Optional. Location of a weapon rank bonus rank.
         /// </summary>
-        public int Rank { get; set; } = -1;
+        public (int, int) Rank { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. List of combat stat modifiers for a weapon rank bonus.
+        /// Optional. Collection of combat stat modifiers for a weapon rank bonus.
         /// </summary>
-        public List<NamedStatConfig> CombatStatModifiers { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] CombatStatModifiers { get; set; } = Array.Empty<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. List of stat modifiers for a weapon rank bonus.
+        /// Optional. Collection of stat modifiers for a weapon rank bonus.
         /// </summary>
-        public List<NamedStatConfig> StatModifiers { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] StatModifiers { get; set; } = Array.Empty<NamedStatConfig>();
 
         #endregion Optional Fields
     }

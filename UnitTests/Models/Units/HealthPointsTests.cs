@@ -11,11 +11,11 @@ namespace UnitTests.Models.Units
         {
             HPConfig config = new HPConfig()
             {
-                Current = 0,
-                Maximum = 1
+                Current = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<PositiveIntegerException>(() => new HealthPoints(data, config));
         }
@@ -25,14 +25,17 @@ namespace UnitTests.Models.Units
         {
             HPConfig config = new HPConfig()
             {
-                Current = 0,
-                Maximum = 1
+                Current = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                "-1",
-                "0"
+                new string[]
+                {
+                    "-1",
+                    "0"
+                }
             };
 
             Assert.Throws<PositiveIntegerException>(() => new HealthPoints(data, config));
@@ -48,14 +51,17 @@ namespace UnitTests.Models.Units
         {
             HPConfig config = new HPConfig()
             {
-                Current = 0,
-                Maximum = 1
+                Current = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                input1,
-                input2
+                new string[]
+                {
+                    input1,
+                    input2
+                }
             };
 
             IHealthPoints hp = new HealthPoints(data, config);
@@ -76,16 +82,19 @@ namespace UnitTests.Models.Units
         {
             HPConfig config = new HPConfig()
             {
-                Current = 0,
-                Maximum = 1,
-                RemainingBars = 2
+                Current = (0, 0),
+                Maximum = (0, 1),
+                RemainingBars = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                "20",
-                "20",
-                input
+                new string[]
+                {
+                    "20",
+                    "20",
+                    input
+                }
             };
 
             IHealthPoints hp = new HealthPoints(data, config);

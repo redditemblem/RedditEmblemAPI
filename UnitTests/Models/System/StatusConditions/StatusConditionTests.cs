@@ -22,10 +22,10 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new StatusCondition(config, data));
         }
@@ -35,12 +35,12 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]{ INPUT_NAME }
             };
 
             IStatusCondition status = new StatusCondition(config, data);
@@ -55,14 +55,17 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             IStatusCondition status = new StatusCondition(config, data);
@@ -75,14 +78,17 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "NotAURL"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "NotAURL"
+                }
             };
 
             Assert.Throws<URLException>(() => new StatusCondition(config, data));
@@ -93,14 +99,17 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             IStatusCondition status = new StatusCondition(config, data);
@@ -117,14 +126,17 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                Type = 1
+                Name = (0, 0),
+                Type = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "fake"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "fake"
+                }
             };
 
             Assert.Throws<UnmatchedStatusConditionTypeException>(() => new StatusCondition(config, data));
@@ -138,14 +150,17 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                Type = 1
+                Name = (0, 0),
+                Type = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                type
+                new string[]
+                {
+                    INPUT_NAME,
+                    type
+                }
             };
 
             IStatusCondition status = new StatusCondition(config, data);
@@ -163,14 +178,17 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                Turns = 1
+                Name = (0, 0),
+                Turns = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    input
+                }
             };
 
             IStatusCondition status = new StatusCondition(config, data);
@@ -184,14 +202,17 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                Turns = 1
+                Name = (0, 0),
+                Turns = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                turns
+                new string[]
+                {
+                    INPUT_NAME,
+                    turns
+                }
             };
 
             Assert.Throws<NonZeroPositiveIntegerException>(() => new StatusCondition(config, data));
@@ -206,15 +227,18 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IStatusCondition status = new StatusCondition(config, data);
@@ -231,15 +255,18 @@ namespace UnitTests.Models.System.StatusConditions
 
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                textField1,
-                textField2
+                new string[]
+                {
+                    INPUT_NAME,
+                    textField1,
+                    textField2
+                }
             };
 
             IStatusCondition status = new StatusCondition(config, data);
@@ -257,13 +284,13 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                Effects = new List<StatusConditionEffectConfig>()
+                Name = (0, 0),
+                Effects = Array.Empty<StatusConditionEffectConfig>()
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]{ INPUT_NAME }
             };
 
             IStatusCondition status = new StatusCondition(config, data);
@@ -276,21 +303,24 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                Effects = new List<StatusConditionEffectConfig>()
+                Name = (0, 0),
+                Effects = new StatusConditionEffectConfig[]
                 {
                     new StatusConditionEffectConfig()
                     {
-                        Type = 1,
-                        Parameters = new List<int>(){ 2, 3, 4 }
+                        Type = (0, 1),
+                        Parameters = new (int, int)[] { (0, 2), (0, 3), (0, 4) }
                     }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             IStatusCondition status = new StatusCondition(config, data);
@@ -303,21 +333,24 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                Effects = new List<StatusConditionEffectConfig>()
+                Name = (0, 0),
+                Effects = new StatusConditionEffectConfig[]
                 {
                     new StatusConditionEffectConfig()
                     {
-                        Type = 1,
-                        Parameters = new List<int>(){ 2, 3, 4 }
+                        Type = (0, 1),
+                        Parameters = new (int, int)[] { (0, 2), (0, 3), (0, 4) }
                     }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "FakeEffect"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "FakeEffect"
+                }
             };
 
             Assert.Throws<UnmatchedStatusConditionEffectException>(() => new StatusCondition(config, data));
@@ -340,24 +373,27 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0,
-                Effects = new List<StatusConditionEffectConfig>()
+                Name = (0, 0),
+                Effects = new StatusConditionEffectConfig[]
                 {
                     new StatusConditionEffectConfig()
                     {
-                        Type = 1,
-                        Parameters = new List<int>(){ 2, 3, 4 }
+                        Type = (0, 1),
+                        Parameters = new (int, int)[] { (0, 2), (0, 3), (0, 4) }
                     }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                effectName,
-                effectParam1,
-                effectParam2,
-                effectParam3
+                new string[]
+                {
+                    INPUT_NAME,
+                    effectName,
+                    effectParam1,
+                    effectParam2,
+                    effectParam3
+                }
             };
 
             IStatusCondition status = new StatusCondition(config, data);
@@ -380,12 +416,12 @@ namespace UnitTests.Models.System.StatusConditions
         {
             StatusConditionConfig config = new StatusConditionConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]{ INPUT_NAME }
             };
 
             IStatusCondition status = new StatusCondition(config, data);
@@ -414,7 +450,7 @@ namespace UnitTests.Models.System.StatusConditions
             StatusConditionConfig config = new StatusConditionConfig()
             {
                 Queries = null,
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IStatusCondition> dict = StatusCondition.BuildDictionary(config);
@@ -436,7 +472,7 @@ namespace UnitTests.Models.System.StatusConditions
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IStatusCondition> dict = StatusCondition.BuildDictionary(config);
@@ -459,7 +495,7 @@ namespace UnitTests.Models.System.StatusConditions
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             Assert.Throws<StatusConditionProcessingException>(() => StatusCondition.BuildDictionary(config));
@@ -480,8 +516,8 @@ namespace UnitTests.Models.System.StatusConditions
                         }
                     }
                 },
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
             Assert.Throws<StatusConditionProcessingException>(() => StatusCondition.BuildDictionary(config));
@@ -502,7 +538,7 @@ namespace UnitTests.Models.System.StatusConditions
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IStatusCondition> dict = StatusCondition.BuildDictionary(config);
@@ -533,11 +569,55 @@ namespace UnitTests.Models.System.StatusConditions
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IStatusCondition> dict = StatusCondition.BuildDictionary(config);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            StatusConditionConfig config = new StatusConditionConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Condition 1", "Text Field 1" },
+                            new List<object>(){ "Text Field 2" },
+                            new List<object>(){ "Condition 2", "Text Field 3" },
+                            new List<object>(){ "Text Field 4" },
+                            new List<object>(){ "Condition 3", "Text Field 5" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (1, 0) }
+            };
+
+            IDictionary<string, IStatusCondition> dict = StatusCondition.BuildDictionary(config);
+
+            Assert.That(dict.Count, Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Condition 1"), Is.True);
+            Assert.That(dict.ContainsKey("Condition 2"), Is.True);
+            Assert.That(dict.ContainsKey("Condition 3"), Is.True);
+
+            IStatusCondition condition = dict["Condition 1"];
+            List<string> expectedTextFields = new List<string>() { "Text Field 1", "Text Field 2" };
+            Assert.That(condition.TextFields, Is.EqualTo(expectedTextFields));
+
+            condition = dict["Condition 2"];
+            expectedTextFields = new List<string>() { "Text Field 3", "Text Field 4" };
+            Assert.That(condition.TextFields, Is.EqualTo(expectedTextFields));
+
+            condition = dict["Condition 3"];
+            expectedTextFields = new List<string>() { "Text Field 5" };
+            Assert.That(condition.TextFields, Is.EqualTo(expectedTextFields));
         }
 
         #endregion BuildDictionary

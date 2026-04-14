@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace RedditEmblemAPI.Models.Configuration.Units
 {
@@ -8,10 +7,10 @@ namespace RedditEmblemAPI.Models.Configuration.Units
         #region Required Fields
 
         /// <summary>
-        /// Required. List of container objects for the unit's inventory items.
+        /// Required. Collection of container objects for the unit's inventory items.
         /// </summary>
         [JsonRequired]
-        public List<UnitInventoryItemConfig> Slots { get; set; }
+        public UnitInventoryItemConfig[] Slots { get; set; }
 
         #endregion Required Fields
     }

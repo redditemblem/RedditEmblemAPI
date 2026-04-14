@@ -24,11 +24,11 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             IItemRange output = new ItemRange(config, data);
 
@@ -41,11 +41,14 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "-1", "0" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]{ "-1", "0" }
+            };
 
             Assert.Throws<PositiveIntegerException>(() => new ItemRange(config, data));
         }
@@ -55,11 +58,14 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "0", "-1" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]{ "0", "-1" }
+            };
 
             Assert.Throws<PositiveIntegerException>(() => new ItemRange(config, data));
         }
@@ -69,11 +75,14 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "0", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]{ "0", "1" }
+            };
 
             Assert.Throws<ItemRangeMinimumNotSetException>(() => new ItemRange(config, data));
         }
@@ -83,11 +92,14 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "2", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]{ "2", "1" }
+            };
 
             Assert.Throws<MinimumGreaterThanMaximumException>(() => new ItemRange(config, data));
         }
@@ -97,11 +109,14 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1 };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1 }
+            };
 
             IItemRange range = new ItemRange(config, data);
 
@@ -116,11 +131,14 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "1 * 2", ITEM_RANGE_VAL_1 };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "1 * 2", ITEM_RANGE_VAL_1 }
+            };
 
             Assert.Throws<PositiveIntegerException>(() => new ItemRange(config, data));
         }
@@ -132,11 +150,14 @@ namespace UnitTests.Models.System
 
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { formula, ITEM_RANGE_VAL_1 };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ formula, ITEM_RANGE_VAL_1 }
+            };
 
             IItemRange range = new ItemRange(config, data);
 
@@ -150,11 +171,14 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, "1 * 2" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, "1 * 2" }
+            };
 
             Assert.Throws<PositiveIntegerException>(() => new ItemRange(config, data));
         }
@@ -166,11 +190,14 @@ namespace UnitTests.Models.System
 
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, formula };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, formula }
+            };
 
             IItemRange range = new ItemRange(config, data);
 
@@ -188,12 +215,15 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1,
-                Shape = 2
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                Shape = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, string.Empty }
+            };
 
             IItemRange range = new ItemRange(config, data);
 
@@ -205,12 +235,15 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1,
-                Shape = 2
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                Shape = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "NotAShape" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "NotAShape" }
+            };
 
             Assert.Throws<UnmatchedItemRangeShapeException>(() => new ItemRange(config, data));
         }
@@ -220,12 +253,15 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1,
-                Shape = 2
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                Shape = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STANDARD };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STANDARD }
+            };
 
             IItemRange range = new ItemRange(config, data);
 
@@ -237,12 +273,15 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1,
-                Shape = 2
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                Shape = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STANDARD.ToLower() };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STANDARD.ToLower() }
+            };
 
             Assert.Throws<UnmatchedItemRangeShapeException>(() => new ItemRange(config, data));
         }
@@ -252,12 +291,15 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1,
-                Shape = 2
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                Shape = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STANDARD.ToUpper() };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STANDARD.ToUpper() }
+            };
 
             Assert.Throws<UnmatchedItemRangeShapeException>(() => new ItemRange(config, data));
         }
@@ -267,12 +309,15 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1,
-                Shape = 2
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                Shape = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_SQUARE };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_SQUARE }
+            };
 
             IItemRange range = new ItemRange(config, data);
 
@@ -284,12 +329,15 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1,
-                Shape = 2
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                Shape = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_CROSS };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_CROSS }
+            };
 
             IItemRange range = new ItemRange(config, data);
 
@@ -301,12 +349,15 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1,
-                Shape = 2
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                Shape = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_SALTIRE };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_SALTIRE }
+            };
 
             IItemRange range = new ItemRange(config, data);
 
@@ -318,12 +369,15 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1,
-                Shape = 2
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                Shape = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STAR };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, ITEM_RANGE_SHAPE_STAR }
+            };
 
             IItemRange range = new ItemRange(config, data);
 
@@ -339,12 +393,15 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1,
-                CanOnlyUseBeforeMovement = 2
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                CanOnlyUseBeforeMovement = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, string.Empty }
+            };
 
             IItemRange range = new ItemRange(config, data);
 
@@ -356,12 +413,15 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1,
-                CanOnlyUseBeforeMovement = 2
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                CanOnlyUseBeforeMovement = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "No" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "No" }
+            };
 
             IItemRange range = new ItemRange(config, data);
 
@@ -373,12 +433,15 @@ namespace UnitTests.Models.System
         {
             ItemRangeConfig config = new ItemRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1,
-                CanOnlyUseBeforeMovement = 2
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                CanOnlyUseBeforeMovement = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "Yes" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "Yes" }
+            };
 
             IItemRange range = new ItemRange(config, data);
 

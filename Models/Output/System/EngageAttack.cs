@@ -1,4 +1,5 @@
 ﻿using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Emblems;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -40,7 +41,7 @@ namespace RedditEmblemAPI.Models.Output.System
 
         #endregion Attributes
 
-        public EngageAttack(EngageAttacksConfig config, IEnumerable<string> data) 
+        public EngageAttack(EngageAttacksConfig config, IEnumerable<IEnumerable<string>> data) 
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -58,21 +59,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, IEngageAttack> engageAttacks = new Dictionary<string, IEngageAttack>();
             if (config?.Queries is null) return engageAttacks;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> attack = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(attack, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> attack = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(attack, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!engageAttacks.TryAdd(name, new EngageAttack(config, attack)))
-                        throw new NonUniqueObjectNameException("engage attack");
-                }
-                catch (Exception ex)
-                {
-                    throw new EngageAttackProcessingException(name, ex);
+                        if (!engageAttacks.TryAdd(name, new EngageAttack(config, attack)))
+                            throw new NonUniqueObjectNameException("engage attack");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new EngageAttackProcessingException(name, ex);
+                    }
                 }
             }
 

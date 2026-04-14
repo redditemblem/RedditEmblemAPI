@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.TerrainTypes;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -114,7 +115,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public TerrainType(TerrainTypesConfig config, IEnumerable<string> data, IDictionary<string, IAffiliation> affiliations)
+        public TerrainType(TerrainTypesConfig config, IEnumerable<IEnumerable<string>> data, IDictionary<string, IAffiliation> affiliations)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.CannotStopOn = DataParser.OptionalBoolean_YesNo(data, config.CannotStopOn, "Cannot Stop On");
@@ -136,14 +137,14 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Iterates through <paramref name="configs"/> and builds a list of <c>TerrainTypeStats</c>.
         /// </summary>
         /// <exception cref="DuplicateTerrainTypeStatsException"></exception>
-        private List<ITerrainTypeStats> BuildTerrainTypeStats(IEnumerable<string> data, List<TerrainTypeStatsConfig> configs, IDictionary<string, IAffiliation> affiliations)
+        private List<ITerrainTypeStats> BuildTerrainTypeStats(IEnumerable<IEnumerable<string>> data, TerrainTypeStatsConfig[] configs, IDictionary<string, IAffiliation> affiliations)
         {
             List<ITerrainTypeStats> groups = new List<ITerrainTypeStats>();
             foreach (TerrainTypeStatsConfig config in configs)
             {
                 //We want to include the group only if it's the default group or if it has at least one grouping value included.
                 string values = DataParser.OptionalString(data, config.AffiliationGroupings, "Affiliation Groupings");
-                if (config.AffiliationGroupings != -1 && string.IsNullOrEmpty(values))
+                if (config.AffiliationGroupings.IsConfigured() && string.IsNullOrEmpty(values))
                     continue;
 
                 groups.Add(new TerrainTypeStats(config, data, affiliations));
@@ -203,21 +204,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, ITerrainType> terrainTypes = new Dictionary<string, ITerrainType>();
             if (config?.Queries is null) return terrainTypes;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> type = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(type, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> type = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(type, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!terrainTypes.TryAdd(name, new TerrainType(config, type, affiliations)))
-                        throw new NonUniqueObjectNameException("terrain type");
-                }
-                catch (Exception ex)
-                {
-                    throw new TerrainTypeProcessingException(name, ex);
+                        if (!terrainTypes.TryAdd(name, new TerrainType(config, type, affiliations)))
+                            throw new NonUniqueObjectNameException("terrain type");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TerrainTypeProcessingException(name, ex);
+                    }
                 }
             }
 

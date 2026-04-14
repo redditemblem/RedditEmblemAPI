@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.Units;
-using System.Collections.Generic;
+using System;
 
 namespace RedditEmblemAPI.Models.Configuration.System.Items
 {
@@ -13,34 +13,34 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         #region Required Fields
 
         /// <summary>
-        /// Required. Cell index of an item's category value.
+        /// Required. Location of an item's category value.
         /// </summary>
         [JsonRequired]
-        public int Category { get; set; }
+        public (int, int) Category { get; set; }
 
         /// <summary>
-        /// Required. Cell index of an item's utilized stat value.
+        /// Required. Collection of locations of an item's utilized stat value(s).
         /// </summary>
         [JsonRequired]
-        public List<int> UtilizedStats { get; set; }
+        public (int, int)[] UtilizedStats { get; set; }
 
         /// <summary>
-        /// Required. Cell index of an item's deal damage flag.
+        /// Required. Location of an item's deal damage flag.
         /// </summary>
         [JsonRequired]
-        public int DealsDamage { get; set; }
+        public (int, int) DealsDamage { get; set; }
 
         /// <summary>
-        /// Required. Cell index of an item's uses value.
+        /// Required. Location of an item's uses value.
         /// </summary>
         [JsonRequired]
-        public int Uses { get; set; }
+        public (int, int) Uses { get; set; }
 
         /// <summary>
-        /// Required. List of an item's stat configurations.
+        /// Required. Collection of an item's stat configurations.
         /// </summary>
         [JsonRequired]
-        public List<NamedStatConfig_Displayed> Stats { get; set; }
+        public NamedStatConfig_Displayed[] Stats { get; set; }
 
         /// <summary>
         /// Required. Container object for an item's range configuration.
@@ -48,75 +48,75 @@ namespace RedditEmblemAPI.Models.Configuration.System.Items
         [JsonRequired]
         public ItemRangeConfig Range { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
         /// <summary>
-        /// Optional. Cell index of an item's sprite image URL value.
+        /// Optional. Location of an item's sprite image URL value.
         /// </summary>
-        public int SpriteURL { get; set; } = -1;
+        public (int, int) SpriteURL { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of an item's weapon rank value.
+        /// Optional. Location of an item's weapon rank value.
         /// </summary>
-        public int WeaponRank { get; set; } = -1;
+        public (int, int) WeaponRank { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of an item's is always usable flag.
+        /// Optional. Location of an item's is always usable flag.
         /// </summary>
-        public int IsAlwaysUsable { get; set; } = -1;
+        public (int, int) IsAlwaysUsable { get; set; } = (-1, -1);
 
         /// <summary>
-        /// Optional. Cell index of an item's targeted stats value.
+        /// Optional. Collection of locations of an item's targeted stats value.
         /// </summary>
-        public List<int> TargetedStats { get; set; } = new List<int>();
+        public (int, int)[] TargetedStats { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
-        /// Optional. List of an item's combat stat modifiers when equipped.
+        /// Optional. Collection of an item's combat stat modifiers when equipped.
         /// </summary>
-        public List<NamedStatConfig> EquippedCombatStatModifiers { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] EquippedCombatStatModifiers { get; set; } = Array.Empty<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. List of an item's stat modifiers when equipped.
+        /// Optional. Collection of an item's stat modifiers when equipped.
         /// </summary>
-        public List<NamedStatConfig> EquippedStatModifiers { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] EquippedStatModifiers { get; set; } = Array.Empty<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. List of an item's skills that activate when equipped.
+        /// Optional. Collection of an item's skills that activate when equipped.
         /// </summary>
-        public List<UnitSkillConfig> EquippedSkills { get; set; } = new List<UnitSkillConfig>();
+        public UnitSkillConfig[] EquippedSkills { get; set; } = Array.Empty<UnitSkillConfig>();
 
         /// <summary>
-        /// Optional. List of an item's combat stat modifiers when in a unit's inventory.
+        /// Optional. Collection of an item's combat stat modifiers when in a unit's inventory.
         /// </summary>
-        public List<NamedStatConfig> InventoryCombatStatModifiers { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] InventoryCombatStatModifiers { get; set; } = Array.Empty<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. List of an item's stat modifiers when in a unit's inventory.
+        /// Optional. Collection of an item's stat modifiers when in a unit's inventory.
         /// </summary>
-        public List<NamedStatConfig> InventoryStatModifiers { get; set; } = new List<NamedStatConfig>();
+        public NamedStatConfig[] InventoryStatModifiers { get; set; } = Array.Empty<NamedStatConfig>();
 
         /// <summary>
-        /// Optional. List of cell indexes for an item's engraving(s).
+        /// Optional. Collection of locations of an item's engraving(s).
         /// </summary>
-        public List<int> Engravings { get; set; } = new List<int>();
+        public (int, int)[] Engravings { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
-        /// Optional. List of cell indexes for an item's tag(s).
+        /// Optional. Collection of locations of an item's tag(s).
         /// </summary>
-        public List<int> Tags { get; set; } = new List<int>();
+        public (int, int)[] Tags { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
-        /// Optional. List of cell indexes for an item's text fields.
+        /// Optional. Collection of locations of an item's text fields.
         /// </summary>
-        public List<int> TextFields { get; set; } = new List<int>();
+        public (int, int)[] TextFields { get; set; } = Array.Empty<(int, int)>();
 
         /// <summary>
-        /// Optional. Cell index of an item's graphic image URL.
+        /// Optional. Location of an item's graphic image URL.
         /// </summary>
-        public int GraphicURL { get; set; } = -1;
+        public (int, int) GraphicURL { get; set; } = (-1, -1);
 
-        #endregion
+        #endregion Optional Fields
     }
 }

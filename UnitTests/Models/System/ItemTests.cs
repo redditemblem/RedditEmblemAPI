@@ -82,20 +82,20 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = (0, 6),
+                    Maximum = (0, 7)
                 }
             };
 
-            IEnumerable<string> data = new List<string>() { };
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new Item(config, data, SKILLS, TAGS, ENGRAVINGS));
         }
@@ -105,27 +105,40 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = new NamedStatConfig_Displayed[]
                 {
                     new NamedStatConfig_Displayed()
                     {
                         SourceName = "Mt",
-                        Value = 5
+                        Value = (0, 5)
                     }
                 },
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = (0, 6),
+                    Maximum = (0, 7)
                 }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_STAT_MIGHT, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_STAT_MIGHT,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -149,21 +162,34 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                IsAlwaysUsable = 7
+                IsAlwaysUsable = (0, 7)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    string.Empty
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -175,21 +201,34 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                IsAlwaysUsable = 7
+                IsAlwaysUsable = (0, 7)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "No" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    "No"
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -201,21 +240,34 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                IsAlwaysUsable = 7
+                IsAlwaysUsable = (0, 7)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Yes" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    "Yes"
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -231,21 +283,34 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                SpriteURL = 7
+                SpriteURL = (0, 7)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    string.Empty
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -257,21 +322,34 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                SpriteURL = 7
+                SpriteURL = (0, 7)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "NotAURL" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    "NotAURL"
+                }
+            };
 
             Assert.Throws<URLException>(() => new Item(config, data, SKILLS, TAGS, ENGRAVINGS));
         }
@@ -281,21 +359,34 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                SpriteURL = 7
+                SpriteURL = (0, 7)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, UnitTestConsts.IMAGE_URL };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    UnitTestConsts.IMAGE_URL
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -311,21 +402,35 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                Tags = new List<int> { 7, 8 }
+                Tags = new (int, int)[] { (0, 7), (0, 8) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    string.Empty,
+                    string.Empty
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -337,21 +442,35 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                Tags = new List<int> { 7, 8 }
+                Tags = new (int, int)[] { (0, 7), (0, 8) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 3", string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    "Tag 3",
+                    string.Empty
+                }
+            };
 
             Assert.Throws<UnmatchedTagException>(() => new Item(config, data, SKILLS, TAGS, ENGRAVINGS));
         }
@@ -361,21 +480,35 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                Tags = new List<int> { 7, 8 }
+                Tags = new (int, int)[] { (0, 7), (0, 8) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 1", "Tag 1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    "Tag 1",
+                    "Tag 1"
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -388,21 +521,35 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                Tags = new List<int> { 7, 8 }
+                Tags = new (int, int)[] { (0, 7), (0, 8) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 1,Tag 2", string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    "Tag 1,Tag 2",
+                    string.Empty
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -415,21 +562,35 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                Tags = new List<int> { 7, 8 }
+                Tags = new (int, int)[] { (0, 7), (0, 8) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 1", "Tag 2" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    "Tag 1",
+                    "Tag 2"
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -446,21 +607,35 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                TextFields = new List<int> { 7, 8 }
+                TextFields = new (int, int)[] { (0, 7), (0, 8) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    string.Empty,
+                    string.Empty
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -475,21 +650,35 @@ namespace UnitTests.Models.System
 
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                TextFields = new List<int> { 7, 8 }
+                TextFields = new (int, int)[] { (0, 7), (0, 8) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, field1, field2 };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    field1,
+                    field2
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -506,21 +695,34 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                GraphicURL = 7
+                GraphicURL = (0, 7)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    string.Empty
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -532,21 +734,34 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                GraphicURL = 7
+                GraphicURL = (0, 7)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "NotAURL" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    "NotAURL"
+                }
+            };
 
             Assert.Throws<URLException>(() => new Item(config, data, SKILLS, TAGS, ENGRAVINGS));
         }
@@ -556,21 +771,34 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                GraphicURL = 7
+                GraphicURL = (0, 7)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, UnitTestConsts.IMAGE_URL };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    UnitTestConsts.IMAGE_URL
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -586,20 +814,32 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -615,24 +855,37 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                EquippedSkills = new List<UnitSkillConfig>()
+                EquippedSkills = new UnitSkillConfig[]
                 { 
-                    new UnitSkillConfig(){ Name = 7 }
+                    new UnitSkillConfig(){ Name = (0, 7) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Skill 1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    "Skill 1"
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -651,21 +904,34 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                Tags = new List<int> { 7 }
+                Tags = new (int, int)[] { (0, 7) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Tag 1, Tag 2" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    "Tag 1, Tag 2"
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -683,21 +949,34 @@ namespace UnitTests.Models.System
         {
             ItemsConfig config = new ItemsConfig()
             {
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 6,
-                    Maximum = 7
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 },
-                Engravings = new List<int> { 8 }
+                Engravings = new (int, int)[] { (0, 7) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_CATEGORY, INPUT_UTILIZED_STATS, INPUT_DEALS_DAMAGE, INPUT_USES, INPUT_RANGE_MINIMUM, INPUT_RANGE_MAXIMUM, "Engraving 1, Engraving 2" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_CATEGORY,
+                    INPUT_UTILIZED_STATS,
+                    INPUT_DEALS_DAMAGE,
+                    INPUT_USES,
+                    INPUT_RANGE_MINIMUM,
+                    INPUT_RANGE_MAXIMUM,
+                    "Engraving 1, Engraving 2"
+                }
+            };
 
             IItem item = new Item(config, data, SKILLS, TAGS, ENGRAVINGS);
 
@@ -750,16 +1029,16 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 }
             };
 
@@ -783,16 +1062,16 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 }
             };
 
@@ -814,16 +1093,16 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 }
             };
 
@@ -855,21 +1134,76 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                Category = 1,
-                UtilizedStats = new List<int> { 2 },
-                DealsDamage = 3,
-                Uses = 4,
-                Stats = new List<NamedStatConfig_Displayed>(),
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (0, 4),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
                 Range = new ItemRangeConfig()
                 {
-                    Minimum = 5,
-                    Maximum = 6
+                    Minimum = (0, 5),
+                    Maximum = (0, 6)
                 }
             };
 
             IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            ItemsConfig config = new ItemsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Item 1", "Sword", "Str", "Yes" },
+                            new List<object>(){ "0", "1", "2" },
+                            new List<object>(){ "Item 2", "Staff", "Mag", "No" },
+                            new List<object>(){ "3", "4", "5" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                Category = (0, 1),
+                UtilizedStats = new (int, int)[] { (0, 2) },
+                DealsDamage = (0, 3),
+                Uses = (1, 0),
+                Stats = Array.Empty<NamedStatConfig_Displayed>(),
+                Range = new ItemRangeConfig()
+                {
+                    Minimum = (1, 1),
+                    Maximum = (1, 2)
+                }
+            };
+
+            IDictionary<string, IItem> dict = Item.BuildDictionary(config, SKILLS, TAGS, ENGRAVINGS);
+
+            Assert.That(dict.Count, Is.EqualTo(2));
+            Assert.That(dict.ContainsKey("Item 1"), Is.True);
+            Assert.That(dict.ContainsKey("Item 2"), Is.True);
+
+            IItem item = dict["Item 1"];
+            Assert.That(item.Category, Is.EqualTo("Sword"));
+            Assert.That(item.UtilizedStats, Is.EqualTo(new List<string>() { "Str" }));
+            Assert.That(item.DealsDamage, Is.True);
+            Assert.That(item.MaxUses, Is.EqualTo(0));
+            Assert.That(item.Range.Minimum, Is.EqualTo(1));
+            Assert.That(item.Range.Maximum, Is.EqualTo(2));
+
+            item = dict["Item 2"];
+            Assert.That(item.Category, Is.EqualTo("Staff"));
+            Assert.That(item.UtilizedStats, Is.EqualTo(new List<string>() { "Mag" }));
+            Assert.That(item.DealsDamage, Is.False);
+            Assert.That(item.MaxUses, Is.EqualTo(3));
+            Assert.That(item.Range.Minimum, Is.EqualTo(4));
+            Assert.That(item.Range.Maximum, Is.EqualTo(5));
         }
 
         #endregion BuildDictionary

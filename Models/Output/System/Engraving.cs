@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
@@ -92,7 +93,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Engraving(EngravingsConfig config, IEnumerable<string> data, IDictionary<string, ITag> tags)
+        public Engraving(EngravingsConfig config, IEnumerable<IEnumerable<string>> data, IDictionary<string, ITag> tags)
         {
             this.Name = DataParser.String(data, config.Name, "Name");
             this.SpriteURL = DataParser.OptionalString_URL(data, config.SpriteURL, "Sprite URL");
@@ -124,21 +125,24 @@ namespace RedditEmblemAPI.Models.Output.System
             IDictionary<string, IEngraving> engravings = new Dictionary<string, IEngraving>();
             if (config?.Queries is null) return engravings;
 
-            foreach (IList<object> row in config.Queries.SelectMany(q => q.Data))
+            foreach (IQuery query in config.Queries)
             {
-                string name = string.Empty;
-                try
+                foreach (IEnumerable<IEnumerable<object>> set in query.Data.Chunk(query.NumberOfSetsPerObject))
                 {
-                    IEnumerable<string> engraving = row.Select(r => r.ToString());
-                    name = DataParser.OptionalString(engraving, config.Name, "Name");
-                    if (string.IsNullOrEmpty(name)) continue;
+                    string name = string.Empty;
+                    try
+                    {
+                        IEnumerable<IEnumerable<string>> engraving = set.Select(c => c.Select(r => r.ToString()));
+                        name = DataParser.OptionalString(engraving, config.Name, "Name");
+                        if (string.IsNullOrEmpty(name)) continue;
 
-                    if (!engravings.TryAdd(name, new Engraving(config, engraving, tags)))
-                        throw new NonUniqueObjectNameException("engraving");
-                }
-                catch (Exception ex)
-                {
-                    throw new EngravingProcessingException(name, ex);
+                        if (!engravings.TryAdd(name, new Engraving(config, engraving, tags)))
+                            throw new NonUniqueObjectNameException("engraving");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new EngravingProcessingException(name, ex);
+                    }
                 }
             }
 

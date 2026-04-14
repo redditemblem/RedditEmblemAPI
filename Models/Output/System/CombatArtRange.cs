@@ -38,7 +38,7 @@ namespace RedditEmblemAPI.Models.Output.System
         /// Constructor.
         /// </summary>
         /// <exception cref="MinimumGreaterThanMaximumException"></exception>
-        public CombatArtRange(CombatArtRangeConfig config, IEnumerable<string> data)
+        public CombatArtRange(CombatArtRangeConfig config, IEnumerable<IEnumerable<string>> data)
         {
             this.Minimum = DataParser.OptionalInt_Positive(data, config.Minimum, "Minimum Range");
             this.Maximum = DataParser.OptionalInt_Positive(data, config.Maximum, "Maximum Range");
