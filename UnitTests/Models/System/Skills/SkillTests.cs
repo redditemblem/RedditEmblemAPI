@@ -28,10 +28,10 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { };
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new Skill(config, data));
         }
@@ -41,12 +41,12 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]{ INPUT_NAME }
             };
 
             ISkill skill = new Skill(config, data);
@@ -61,14 +61,17 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             ISkill skill = new Skill(config, data);
@@ -81,14 +84,17 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "NotAURL"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "NotAURL"
+                }
             };
 
             Assert.Throws<URLException>(() => new Skill(config, data));
@@ -99,14 +105,17 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             ISkill skill = new Skill(config, data);
@@ -123,15 +132,18 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             ISkill skill = new Skill(config, data);
@@ -148,15 +160,18 @@ namespace UnitTests.Models.System.Skills
 
             SkillsConfig config = new SkillsConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                textField1,
-                textField2
+                new string[]
+                {
+                    INPUT_NAME,
+                    textField1,
+                    textField2
+                }
             };
 
             ISkill skill = new Skill(config, data);
@@ -174,13 +189,13 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Name = 0,
-                Effects = new List<SkillEffectConfig>()
+                Name = (0, 0),
+                Effects = Array.Empty<SkillEffectConfig>()
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]{ INPUT_NAME }
             };
 
             ISkill skill = new Skill(config, data);
@@ -193,21 +208,24 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Name = 0,
-                Effects = new List<SkillEffectConfig>()
+                Name = (0, 0),
+                Effects = new SkillEffectConfig[]
                 {
                     new SkillEffectConfig()
                     {
-                        Type = 1,
-                        Parameters = new List<int>(){ 2, 3, 4 }
+                        Type = (0, 1),
+                        Parameters = new (int, int)[] { (0, 2), (0, 3), (0, 4) }
                     }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             ISkill skill = new Skill(config, data);
@@ -220,21 +238,24 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Name = 0,
-                Effects = new List<SkillEffectConfig>()
+                Name = (0, 0),
+                Effects = new SkillEffectConfig[]
                 {
                     new SkillEffectConfig()
                     {
-                        Type = 1,
-                        Parameters = new List<int>(){ 2, 3, 4 }
+                        Type = (0, 1),
+                        Parameters = new (int, int)[] { (0, 2), (0, 3), (0, 4) }
                     }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "FakeEffect"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "FakeEffect"
+                }
             };
 
             Assert.Throws<UnmatchedSkillEffectException>(() => new Skill(config, data));
@@ -314,24 +335,27 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Name = 0,
-                Effects = new List<SkillEffectConfig>()
+                Name = (0, 0),
+                Effects = new SkillEffectConfig[]
                 {
                     new SkillEffectConfig()
                     {
-                        Type = 1,
-                        Parameters = new List<int>(){ 2, 3, 4 }
+                        Type = (0, 1),
+                        Parameters = new (int, int)[] { (0, 2), (0, 3), (0, 4) }
                     }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                effectName,
-                effectParam1,
-                effectParam2,
-                effectParam3
+                new string[]
+                {
+                    INPUT_NAME,
+                    effectName,
+                    effectParam1,
+                    effectParam2,
+                    effectParam3
+                }
             };
 
             ISkill skill = new Skill(config, data);
@@ -354,12 +378,12 @@ namespace UnitTests.Models.System.Skills
         {
             SkillsConfig config = new SkillsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]{ INPUT_NAME }
             };
 
             ISkill skill = new Skill(config, data);
@@ -388,7 +412,7 @@ namespace UnitTests.Models.System.Skills
             SkillsConfig config = new SkillsConfig()
             {
                 Queries = null,
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, ISkill> dict = Skill.BuildDictionary(config);
@@ -410,7 +434,7 @@ namespace UnitTests.Models.System.Skills
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, ISkill> dict = Skill.BuildDictionary(config);
@@ -433,7 +457,7 @@ namespace UnitTests.Models.System.Skills
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             Assert.Throws<SkillProcessingException>(() => Skill.BuildDictionary(config));
@@ -454,8 +478,8 @@ namespace UnitTests.Models.System.Skills
                         }
                     }
                 },
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
             Assert.Throws<SkillProcessingException>(() => Skill.BuildDictionary(config));
@@ -476,7 +500,7 @@ namespace UnitTests.Models.System.Skills
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, ISkill> dict = Skill.BuildDictionary(config);
@@ -507,11 +531,55 @@ namespace UnitTests.Models.System.Skills
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, ISkill> dict = Skill.BuildDictionary(config);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            SkillsConfig config = new SkillsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Skill 1", "Text Field 1" },
+                            new List<object>(){ "Text Field 2" },
+                            new List<object>(){ "Skill 2", "Text Field 3" },
+                            new List<object>(){ "Text Field 4" },
+                            new List<object>(){ "Skill 3", "Text Field 5" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (1, 0) }
+            };
+
+            IDictionary<string, ISkill> dict = Skill.BuildDictionary(config);
+
+            Assert.That(dict.Count, Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Skill 1"), Is.True);
+            Assert.That(dict.ContainsKey("Skill 2"), Is.True);
+            Assert.That(dict.ContainsKey("Skill 3"), Is.True);
+
+            ISkill skill = dict["Skill 1"];
+            List<string> expectedTextFields = new List<string>() { "Text Field 1", "Text Field 2" };
+            Assert.That(skill.TextFields, Is.EqualTo(expectedTextFields));
+
+            skill = dict["Skill 2"];
+            expectedTextFields = new List<string>() { "Text Field 3", "Text Field 4" };
+            Assert.That(skill.TextFields, Is.EqualTo(expectedTextFields));
+
+            skill = dict["Skill 3"];
+            expectedTextFields = new List<string>() { "Text Field 5" };
+            Assert.That(skill.TextFields, Is.EqualTo(expectedTextFields));
         }
 
         #endregion BuildDictionary

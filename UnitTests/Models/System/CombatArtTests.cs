@@ -50,20 +50,20 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = new NamedStatConfig[]
                 {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 3 }
+                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = (0, 3) }
                 },
-                DurabilityCost = 5
+                DurabilityCost = (0, 5)
             };
 
-            IEnumerable<string> data = new List<string>() { };
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new CombatArt(config, data, TAGS));
         }
@@ -73,21 +73,24 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = new NamedStatConfig[]
                 {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 3 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 4 }
+                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = (0, 3) },
+                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = (0, 4) }
                 },
-                DurabilityCost = 5
+                DurabilityCost = (0, 5)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "-1", "1", INPUT_DURABILITY_COST };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "-1", "1", INPUT_DURABILITY_COST }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -106,18 +109,21 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                SpriteURL = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                SpriteURL = (0, 4)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, string.Empty }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -129,18 +135,21 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                SpriteURL = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                SpriteURL = (0, 4)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, "NotAURL" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, "NotAURL" }
+            };
 
             Assert.Throws<URLException>(() => new CombatArt(config, data, TAGS));
         }
@@ -150,18 +159,21 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                SpriteURL = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                SpriteURL = (0, 4)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, UnitTestConsts.IMAGE_URL };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, UnitTestConsts.IMAGE_URL }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -177,18 +189,21 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                WeaponRank = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                WeaponRank = (0, 4)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, string.Empty }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -202,18 +217,21 @@ namespace UnitTests.Models.System
 
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                WeaponRank = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                WeaponRank = (0, 4)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, weaponRank };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, weaponRank }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -229,18 +247,21 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                Category = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                Category = (0, 4)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, string.Empty }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -254,18 +275,21 @@ namespace UnitTests.Models.System
 
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                Category = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                Category = (0, 4)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, category };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, category }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -281,18 +305,21 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                UtilizedStats = new List<int>() { 4, 5 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                UtilizedStats = new (int, int)[]{ (0, 4), (0, 5) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, string.Empty, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, string.Empty, string.Empty }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -307,18 +334,21 @@ namespace UnitTests.Models.System
 
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                UtilizedStats = new List<int>() { 4, 5 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                UtilizedStats = new (int, int)[] { (0, 4), (0, 5) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, stat1, stat2 };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, stat1, stat2 }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -336,18 +366,21 @@ namespace UnitTests.Models.System
 
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                UtilizedStats = new List<int>() { 4, 5 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                UtilizedStats = new (int, int)[] { (0, 4), (0, 5) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, stat1 + "," + stat2, stat3 + "," + stat4 };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, stat1 + "," + stat2, stat3 + "," + stat4 }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -363,18 +396,21 @@ namespace UnitTests.Models.System
 
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                UtilizedStats = new List<int>() { 4, 5 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                UtilizedStats = new (int, int)[]{ (0, 4), (0, 5) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, stat1 + "," + stat2, stat1 };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, stat1 + "," + stat2, stat1 }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -392,18 +428,21 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                Tags = new List<int>() { 4, 5 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                Tags = new (int, int)[] { (0, 4), (0, 5) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, string.Empty, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, string.Empty, string.Empty }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -415,18 +454,21 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                Tags = new List<int>() { 4 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                Tags = new (int, int)[] { (0, 4) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, "Tag 3" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, "Tag 3" }
+            };
 
             Assert.Throws<UnmatchedTagException>(() => new CombatArt(config, data, TAGS));
         }
@@ -438,18 +480,21 @@ namespace UnitTests.Models.System
 
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                Tags = new List<int>() { 4, 5 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                Tags = new (int, int)[] { (0, 4), (0, 5) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, tag1, tag1 };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, tag1, tag1 }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -462,18 +507,21 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                Tags = new List<int>() { 4 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                Tags = new (int, int)[] { (0, 4) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, "Tag 1,Tag 2" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, "Tag 1,Tag 2" }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -486,18 +534,21 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                Tags = new List<int>() { 4, 5 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                Tags = new (int, int)[] { (0, 4), (0, 5) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, "Tag 1", "Tag 2" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, "Tag 1", "Tag 2" }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -514,18 +565,21 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 5,
-                TextFields = new List<int>() { 6, 7 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                TextFields = new (int, int)[] { (0, 4), (0, 5) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, string.Empty, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, string.Empty, string.Empty }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -540,18 +594,21 @@ namespace UnitTests.Models.System
 
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                TextFields = new List<int>() { 4, 5 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                TextFields = new (int, int)[] { (0, 4), (0, 5) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, textField1, textField2 };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, textField1, textField2 }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -568,17 +625,20 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -594,18 +654,21 @@ namespace UnitTests.Models.System
         {
             CombatArtsConfig config = new CombatArtsConfig()
             {
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3,
-                Tags = new List<int>() { 4, 5 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3),
+                Tags = new (int, int)[] { (0, 4), (0, 5) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, "Tag 1", "Tag 2" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            { 
+                new string[]{ INPUT_NAME, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, INPUT_DURABILITY_COST, "Tag 1", "Tag 2" }
+            };
 
             ICombatArt art = new CombatArt(config, data, TAGS);
 
@@ -657,14 +720,14 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3)
             };
 
             IDictionary<string, ICombatArt> dict = CombatArt.BuildDictionary(config, TAGS);
@@ -687,14 +750,14 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3)
             };
 
             Assert.Throws<CombatArtProcessingException>(() => CombatArt.BuildDictionary(config, TAGS));
@@ -715,14 +778,14 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3)
             };
 
             IDictionary<string, ICombatArt> dict = CombatArt.BuildDictionary(config, TAGS);
@@ -753,18 +816,64 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
+                Name = (0, 0),
                 Range = new CombatArtRangeConfig()
                 {
-                    Minimum = 1,
-                    Maximum = 2
+                    Minimum = (0, 1),
+                    Maximum = (0, 2)
                 },
-                Stats = new List<NamedStatConfig>(),
-                DurabilityCost = 3
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (0, 3)
             };
 
             IDictionary<string, ICombatArt> dict = CombatArt.BuildDictionary(config, TAGS);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            CombatArtsConfig config = new CombatArtsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>() { "Art 1", "1" },
+                            new List<object>() { "2", "3" },
+                            new List<object>() { "Art 2", "4" },
+                            new List<object>() { "5", "6" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                Range = new CombatArtRangeConfig()
+                {
+                    Minimum = (0, 1),
+                    Maximum = (1, 0)
+                },
+                Stats = Array.Empty<NamedStatConfig>(),
+                DurabilityCost = (1, 1)
+            };
+
+            IDictionary<string, ICombatArt> dict = CombatArt.BuildDictionary(config, TAGS);
+
+            Assert.That(dict.Count, Is.EqualTo(2));
+            Assert.That(dict.ContainsKey("Art 1"), Is.True);
+            Assert.That(dict.ContainsKey("Art 2"), Is.True);
+
+            ICombatArt art = dict["Art 1"];
+            Assert.That(art.Range.Minimum, Is.EqualTo(1));
+            Assert.That(art.Range.Maximum, Is.EqualTo(2));
+            Assert.That(art.DurabilityCost, Is.EqualTo(3));
+
+            art = dict["Art 2"];
+            Assert.That(art.Range.Minimum, Is.EqualTo(4));
+            Assert.That(art.Range.Maximum, Is.EqualTo(5));
+            Assert.That(art.DurabilityCost, Is.EqualTo(6));
         }
 
         #endregion BuildDictionary

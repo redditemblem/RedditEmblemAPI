@@ -11,11 +11,11 @@ namespace UnitTests.Models.System
         {
             GambitRangeConfig config = new GambitRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<PositiveIntegerException>(() => new GambitRange(config, data));
         }
@@ -25,11 +25,14 @@ namespace UnitTests.Models.System
         {
             GambitRangeConfig config = new GambitRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "-1", "0" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ "-1", "0" }
+            };
 
             Assert.Throws<PositiveIntegerException>(() => new GambitRange(config, data));
         }
@@ -39,11 +42,14 @@ namespace UnitTests.Models.System
         {
             GambitRangeConfig config = new GambitRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "0", "-1" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]{ "0", "-1" }
+            };
 
             Assert.Throws<PositiveIntegerException>(() => new GambitRange(config, data));
         }
@@ -53,11 +59,14 @@ namespace UnitTests.Models.System
         {
             GambitRangeConfig config = new GambitRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "2", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ "2", "1" }
+            };
 
             Assert.Throws<MinimumGreaterThanMaximumException>(() => new GambitRange(config, data));
         }
@@ -67,11 +76,14 @@ namespace UnitTests.Models.System
         {
             GambitRangeConfig config = new GambitRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "1", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "1", "1" }
+            };
 
             IGambitRange range = new GambitRange(config, data);
 

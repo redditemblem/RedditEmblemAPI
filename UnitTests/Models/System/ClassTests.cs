@@ -39,10 +39,10 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new Class(config, data, true, BATTLE_STYLES));
         }
@@ -52,12 +52,15 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]
+                {
+                    INPUT_NAME
+                }
             };
 
             IClass cls = new Class(config, data, true, BATTLE_STYLES);
@@ -72,14 +75,17 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0,
-                MovementType = 1
+                Name = (0, 0),
+                MovementType = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             //Movement type is conditionally required depending on whether or not the unit movement type field is in play
@@ -101,14 +107,17 @@ namespace UnitTests.Models.System
 
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0,
-                MovementType = 1
+                Name = (0, 0),
+                MovementType = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                movementType
+                new string[]
+                {
+                    INPUT_NAME,
+                    movementType
+                }
             };
 
             //Movement type is conditionally required depending on whether or not the unit movement type field is in play
@@ -134,14 +143,17 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0,
-                BattleStyle = 1
+                Name = (0, 0),
+                BattleStyle = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             IClass cls = new Class(config, data, true, BATTLE_STYLES);
@@ -154,14 +166,17 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0,
-                BattleStyle = 1
+                Name = (0, 0),
+                BattleStyle = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "Battle Style 2"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "Battle Style 2"
+                }
             };
 
             Assert.Throws<UnmatchedBattleStyleException>(() => new Class(config, data, true, BATTLE_STYLES));
@@ -174,14 +189,17 @@ namespace UnitTests.Models.System
 
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0,
-                BattleStyle = 1
+                Name = (0, 0),
+                BattleStyle = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                battleStyle
+                new string[]
+                {
+                    INPUT_NAME,
+                    battleStyle
+                }
             };
 
             IClass cls = new Class(config, data, true, BATTLE_STYLES);
@@ -200,15 +218,18 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0,
-                Tags = new List<int> { 1, 2 }
+                Name = (0, 0),
+                Tags = new (int, int)[]{ (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IClass cls = new Class(config, data, true, BATTLE_STYLES);
@@ -225,15 +246,18 @@ namespace UnitTests.Models.System
 
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0,
-                Tags = new List<int> { 1, 2 }
+                Name = (0, 0),
+                Tags = new (int, int)[]{ (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                tag1 + "," + tag2,
-                tag3
+                new string[]
+                {
+                    INPUT_NAME,
+                    tag1 + "," + tag2,
+                    tag3
+                }
             };
 
             IClass cls = new Class(config, data, true, BATTLE_STYLES);
@@ -251,15 +275,18 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0,
-                TextFields = new List<int> { 1, 2 }
+                Name =  (0, 0),
+                TextFields = new (int, int)[]{ (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IClass cls = new Class(config, data, true, BATTLE_STYLES);
@@ -275,15 +302,18 @@ namespace UnitTests.Models.System
 
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0,
-                TextFields = new List<int> { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[]{ (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                textField1,
-                textField2
+                new string[]
+                {
+                    INPUT_NAME,
+                    textField1,
+                    textField2
+                }
             };
 
             IClass cls = new Class(config, data, true, BATTLE_STYLES);
@@ -301,12 +331,15 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]
+                {
+                    INPUT_NAME
+                }
             };
 
             IClass cls = new Class(config, data, true, BATTLE_STYLES);
@@ -323,14 +356,17 @@ namespace UnitTests.Models.System
         {
             ClassesConfig config = new ClassesConfig()
             {
-                Name = 0,
-                BattleStyle = 1
+                Name = (0, 0),
+                BattleStyle = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                INPUT_BATTLE_STYLE
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_BATTLE_STYLE
+                }
             };
 
             IClass cls = new Class(config, data, true, BATTLE_STYLES);
@@ -361,7 +397,7 @@ namespace UnitTests.Models.System
             ClassesConfig config = new ClassesConfig()
             {
                 Queries = null,
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IClass> dict = Class.BuildDictionary(config, true, BATTLE_STYLES);
@@ -383,7 +419,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IClass> dict = Class.BuildDictionary(config, true, BATTLE_STYLES);
@@ -406,7 +442,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             Assert.Throws<ClassProcessingException>(() => Class.BuildDictionary(config, true, BATTLE_STYLES));
@@ -427,7 +463,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IClass> dict = Class.BuildDictionary(config, true, BATTLE_STYLES);
@@ -458,11 +494,55 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IClass> dict = Class.BuildDictionary(config, true, BATTLE_STYLES);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            ClassesConfig config = new ClassesConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Class 1", "Text Field 1" },
+                            new List<object>(){ "Text Field 2" },
+                            new List<object>(){ "Class 2", "Text Field 3" },
+                            new List<object>(){ "Text Field 4" },
+                            new List<object>(){ "Class 3", "Text Field 5" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (1, 0) }
+            };
+
+            IDictionary<string, IClass> dict = Class.BuildDictionary(config, true, BATTLE_STYLES);
+
+            Assert.That(dict.Count, Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Class 1"), Is.True);
+            Assert.That(dict.ContainsKey("Class 2"), Is.True);
+            Assert.That(dict.ContainsKey("Class 3"), Is.True);
+
+            IClass cls = dict["Class 1"];
+            List<string> expectedTextFields = new List<string>() { "Text Field 1", "Text Field 2" };
+            Assert.That(cls.TextFields, Is.EqualTo(expectedTextFields));
+
+            cls = dict["Class 2"];
+            expectedTextFields = new List<string>() { "Text Field 3", "Text Field 4" };
+            Assert.That(cls.TextFields, Is.EqualTo(expectedTextFields));
+
+            cls = dict["Class 3"];
+            expectedTextFields = new List<string>() { "Text Field 5" };
+            Assert.That(cls.TextFields, Is.EqualTo(expectedTextFields));
         }
 
         #endregion BuildDictionary

@@ -21,10 +21,10 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { };
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new Adjutant(config, data));
         }
@@ -34,12 +34,15 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]
+                {
+                    INPUT_NAME
+                }
             };
 
             IAdjutant adj = new Adjutant(config, data);
@@ -54,14 +57,17 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             IAdjutant adj = new Adjutant(config, data);
@@ -74,14 +80,17 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             IAdjutant adj = new Adjutant(config, data);
@@ -101,19 +110,22 @@ namespace UnitTests.Models.System
 
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Name = 0,
-                CombatStatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                CombatStatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IAdjutant adj = new Adjutant(config, data);
@@ -130,19 +142,22 @@ namespace UnitTests.Models.System
 
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Name = 0,
-                CombatStatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                CombatStatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1",
-                "-1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1",
+                    "-1"
+                }
             };
 
             IAdjutant adj = new Adjutant(config, data);
@@ -167,19 +182,22 @@ namespace UnitTests.Models.System
 
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Name = 0,
-                StatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                StatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IAdjutant adj = new Adjutant(config, data);
@@ -196,19 +214,22 @@ namespace UnitTests.Models.System
 
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Name = 0,
-                StatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                StatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1",
-                "-1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1",
+                    "-1"
+                }
             };
 
             IAdjutant adj = new Adjutant(config, data);
@@ -230,15 +251,18 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[]{ (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IAdjutant adj = new Adjutant(config, data);
@@ -255,15 +279,18 @@ namespace UnitTests.Models.System
 
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[]{ (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                textField1,
-                textField2
+                new string[]
+                {
+                    INPUT_NAME,
+                    textField1,
+                    textField2
+                }
             };
 
             IAdjutant adj = new Adjutant(config, data);
@@ -281,12 +308,15 @@ namespace UnitTests.Models.System
         {
             AdjutantsConfig config = new AdjutantsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]
+                {
+                    INPUT_NAME
+                }
             };
 
             IAdjutant adj = new Adjutant(config, data);
@@ -316,7 +346,7 @@ namespace UnitTests.Models.System
             AdjutantsConfig config = new AdjutantsConfig()
             {
                 Queries = null,
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
@@ -339,7 +369,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
@@ -363,7 +393,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             Assert.Throws<AdjutantProcessingException>(() => Adjutant.BuildDictionary(config));
@@ -384,8 +414,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
             Assert.Throws<AdjutantProcessingException>(() => Adjutant.BuildDictionary(config));
@@ -406,7 +436,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
@@ -438,12 +468,53 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
 
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            AdjutantsConfig config = new AdjutantsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Adjutant 1", "Text Field 1" },
+                            new List<object>(){ "Text Field 2" },
+                            new List<object>(){ "Adjutant 2", "Text Field 3" },
+                            new List<object>(){ "Text Field 4" },
+                            new List<object>(){ "Adjutant 3", "Text Field 5" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (1, 0) }
+            };
+
+            IDictionary<string, IAdjutant> dict = Adjutant.BuildDictionary(config);
+
+            Assert.That(dict.Keys.Count(), Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Adjutant 1"), Is.True);
+            Assert.That(dict.ContainsKey("Adjutant 2"), Is.True);
+            Assert.That(dict.ContainsKey("Adjutant 3"), Is.True);
+
+            List<string> expectedTextFields = new List<string>() { "Text Field 1", "Text Field 2" };
+            Assert.That(dict["Adjutant 1"].TextFields, Is.EqualTo(expectedTextFields));
+
+            expectedTextFields = new List<string>() { "Text Field 3", "Text Field 4" };
+            Assert.That(dict["Adjutant 2"].TextFields, Is.EqualTo(expectedTextFields));
+
+            expectedTextFields = new List<string>() { "Text Field 5" };
+            Assert.That(dict["Adjutant 3"].TextFields, Is.EqualTo(expectedTextFields));
         }
 
         #endregion BuildDictionary

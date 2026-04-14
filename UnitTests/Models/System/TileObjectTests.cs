@@ -22,11 +22,11 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new TileObject(config, data));
         }
@@ -36,14 +36,17 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -59,16 +62,19 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                Size = 2
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                Size = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    string.Empty
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -81,16 +87,19 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                Size = 2
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                Size = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                "0"
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    "0"
+                }
             };
 
             Assert.Throws<NonZeroPositiveIntegerException>(() => new TileObject(config, data));
@@ -101,16 +110,19 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                Size = 2
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                Size = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                "2"
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    "2"
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -127,16 +139,19 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                Layer = 2
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                Layer = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    string.Empty
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -149,16 +164,19 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                Layer = 2
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                Layer = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                "FakeLayerType"
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    "FakeLayerType"
+                }
             };
 
             Assert.Throws<UnmatchedTileObjectLayerException>(() => new TileObject(config, data));
@@ -170,16 +188,19 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                Layer = 2
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                Layer = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    input
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -196,17 +217,20 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                TextFields = new List<int>() { 2, 3 }
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                TextFields = new (int, int)[] { (0, 2), (0, 3) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -222,17 +246,20 @@ namespace UnitTests.Models.System
 
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                TextFields = new List<int>() { 2, 3 }
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                TextFields = new (int, int)[] { (0, 2), (0, 3) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                textField1,
-                textField2
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    textField1,
+                    textField2
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -250,14 +277,17 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -273,21 +303,24 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
+                Name = (0, 0),
+                SpriteURL = (0, 1),
                 Range = new TileObjectRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                "1",
-                "2"
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    "1",
+                    "2"
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -307,16 +340,19 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                HPModifier = 2
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                HPModifier = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    string.Empty
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -330,16 +366,19 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                HPModifier = 2
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                HPModifier = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    input
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -359,21 +398,24 @@ namespace UnitTests.Models.System
 
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                CombatStatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                CombatStatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 2 },
-                    new NamedStatConfig { SourceName = stat2, Value = 3 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 2) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 3) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -389,21 +431,24 @@ namespace UnitTests.Models.System
 
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                CombatStatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                CombatStatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 2 },
-                    new NamedStatConfig { SourceName = stat2, Value = 3 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 2) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 3) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                "1",
-                "-1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    "1",
+                    "-1"
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -428,21 +473,24 @@ namespace UnitTests.Models.System
 
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                StatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                StatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 2 },
-                    new NamedStatConfig { SourceName = stat2, Value = 3 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 2) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 3) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -458,21 +506,24 @@ namespace UnitTests.Models.System
 
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                StatModifiers = new List<NamedStatConfig>()
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                StatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 2 },
-                    new NamedStatConfig { SourceName = stat2, Value = 3 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 2) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 3) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL,
-                "1",
-                "-1"
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    "1",
+                    "-1"
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -494,14 +545,17 @@ namespace UnitTests.Models.System
         {
             TileObjectsConfig config = new TileObjectsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             ITileObject tileObj = new TileObject(config, data);
@@ -530,8 +584,8 @@ namespace UnitTests.Models.System
             TileObjectsConfig config = new TileObjectsConfig()
             {
                 Queries = null,
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
             IDictionary<string, ITileObject> dict = TileObject.BuildDictionary(config);
@@ -553,8 +607,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
             IDictionary<string, ITileObject> dict = TileObject.BuildDictionary(config);
@@ -577,8 +631,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
             Assert.Throws<TileObjectProcessingException>(() => TileObject.BuildDictionary(config));
@@ -599,8 +653,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
             Assert.Throws<TileObjectProcessingException>(() => TileObject.BuildDictionary(config));
@@ -621,8 +675,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
             IDictionary<string, ITileObject> dict = TileObject.BuildDictionary(config);
@@ -653,12 +707,60 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
             IDictionary<string, ITileObject> dict = TileObject.BuildDictionary(config);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            TileObjectsConfig config = new TileObjectsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Object 1", UnitTestConsts.IMAGE_URL, "Text Field 1" },
+                            new List<object>(){ "Text Field 2" },
+                            new List<object>(){ "Object 2", UnitTestConsts.IMAGE_URL, "Text Field 3" },
+                            new List<object>(){ "Text Field 4" },
+                            new List<object>(){ "Object 3", UnitTestConsts.IMAGE_URL, "Text Field 5" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                TextFields = new (int, int)[] { (0, 2), (1, 0) }
+            };
+
+            IDictionary<string, ITileObject> dict = TileObject.BuildDictionary(config);
+
+            Assert.That(dict.Count, Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Object 1"), Is.True);
+            Assert.That(dict.ContainsKey("Object 2"), Is.True);
+            Assert.That(dict.ContainsKey("Object 3"), Is.True);
+
+            ITileObject obj = dict["Object 1"];
+            List<string> expectedTextFields = new List<string>() { "Text Field 1", "Text Field 2" };
+            Assert.That(obj.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
+            Assert.That(obj.TextFields, Is.EqualTo(expectedTextFields));
+
+            obj = dict["Object 2"];
+            expectedTextFields = new List<string>() { "Text Field 3", "Text Field 4" };
+            Assert.That(obj.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
+            Assert.That(obj.TextFields, Is.EqualTo(expectedTextFields));
+
+            obj = dict["Object 3"];
+            expectedTextFields = new List<string>() { "Text Field 5" };
+            Assert.That(obj.SpriteURL, Is.EqualTo(UnitTestConsts.IMAGE_URL));
+            Assert.That(obj.TextFields, Is.EqualTo(expectedTextFields));
         }
 
         #endregion BuildDictionary

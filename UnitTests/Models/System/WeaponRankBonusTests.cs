@@ -19,10 +19,10 @@ namespace UnitTests.Models.System
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
-                Category = 0
+                Category = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { };
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new WeaponRankBonus(config, data));
         }
@@ -32,10 +32,13 @@ namespace UnitTests.Models.System
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
-                Category = 0
+                Category = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_CATEGORY };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_CATEGORY }
+            };
 
             IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
 
@@ -49,11 +52,14 @@ namespace UnitTests.Models.System
         {
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
-                Category = 0,
-                Rank = 1
+                Category = (0, 0),
+                Rank = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_CATEGORY, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_CATEGORY, string.Empty }
+            };
 
             IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
 
@@ -67,11 +73,14 @@ namespace UnitTests.Models.System
 
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
-                Category = 0,
-                Rank = 1
+                Category = (0, 0),
+                Rank = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_CATEGORY, rank };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_CATEGORY, rank } 
+            };
 
             IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
 
@@ -90,19 +99,22 @@ namespace UnitTests.Models.System
 
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
-                Category = 0,
-                CombatStatModifiers = new List<NamedStatConfig>()
+                Category = (0, 0),
+                CombatStatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_CATEGORY,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_CATEGORY,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
@@ -118,19 +130,22 @@ namespace UnitTests.Models.System
 
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
-                Category = 0,
-                CombatStatModifiers = new List<NamedStatConfig>()
+                Category = (0, 0),
+                CombatStatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_CATEGORY,
-                "1",
-                "-1"
+                new string[]
+                {
+                    INPUT_CATEGORY,
+                    "1",
+                    "-1"
+                }
             };
 
             IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
@@ -152,19 +167,22 @@ namespace UnitTests.Models.System
 
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
-                Category = 0,
-                StatModifiers = new List<NamedStatConfig>()
+                Category = (0, 0),
+                StatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_CATEGORY,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_CATEGORY,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
@@ -180,19 +198,22 @@ namespace UnitTests.Models.System
 
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
-                Category = 0,
-                StatModifiers = new List<NamedStatConfig>()
+                Category = (0, 0),
+                StatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig { SourceName = stat1, Value = 1 },
-                    new NamedStatConfig { SourceName = stat2, Value = 2 }
+                    new NamedStatConfig { SourceName = stat1, Value = (0, 1) },
+                    new NamedStatConfig { SourceName = stat2, Value = (0, 2) }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_CATEGORY,
-                "1",
-                "-1"
+                new string[]
+                {
+                    INPUT_CATEGORY,
+                    "1",
+                    "-1"
+                }
             };
 
             IWeaponRankBonus bonus = new WeaponRankBonus(config, data);
@@ -219,7 +240,7 @@ namespace UnitTests.Models.System
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
                 Query = null,
-                Category = 0
+                Category = (0, 0)
             };
 
             List<IWeaponRankBonus> list = WeaponRankBonus.BuildList(config);
@@ -238,7 +259,7 @@ namespace UnitTests.Models.System
                         new List<object>(){ }
                     }
                 },
-                Category = 0
+                Category = (0, 0)
             };
 
             List<IWeaponRankBonus> list = WeaponRankBonus.BuildList(config);
@@ -257,7 +278,7 @@ namespace UnitTests.Models.System
                         new List<object>(){ INPUT_CATEGORY }
                     }
                 },
-                Category = 0
+                Category = (0, 0)
             };
 
             List<IWeaponRankBonus> list = WeaponRankBonus.BuildList(config);
@@ -276,8 +297,8 @@ namespace UnitTests.Models.System
                         new List<object>(){ INPUT_CATEGORY, "A" }
                     }
                 },
-                Category = 0,
-                Rank = 1
+                Category = (0, 0),
+                Rank = (0, 1)
             };
 
             List<IWeaponRankBonus> list = WeaponRankBonus.BuildList(config);
@@ -298,12 +319,48 @@ namespace UnitTests.Models.System
                         new List<object>(){ INPUT_CATEGORY, "C" }
                     }
                 },
-                Category = 0,
-                Rank = 1
+                Category = (0, 0),
+                Rank = (0, 1)
             };
 
             List<IWeaponRankBonus> list = WeaponRankBonus.BuildList(config);
             Assert.That(list.Count, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void BuildList_MultiSet_WithInput_MultipleBonuses()
+        {
+            WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ INPUT_CATEGORY },
+                        new List<object>(){ "E" },
+                        new List<object>(){ INPUT_CATEGORY },
+                        new List<object>(){ "D" },
+                        new List<object>(){ INPUT_CATEGORY },
+                        new List<object>(){ "C" }
+                    },
+                    NumberOfSetsPerObject = 2
+                },
+                Category = (0, 0),
+                Rank = (1, 0)
+            };
+
+            List<IWeaponRankBonus> list = WeaponRankBonus.BuildList(config);
+
+            Assert.That(list.Count, Is.EqualTo(3));
+
+            IWeaponRankBonus bonus1 = list.SingleOrDefault(b => b.Category == INPUT_CATEGORY && b.Rank == "E");
+            Assert.That(bonus1, Is.Not.Null);
+
+            IWeaponRankBonus bonus2 = list.SingleOrDefault(b => b.Category == INPUT_CATEGORY && b.Rank == "D");
+            Assert.That(bonus2, Is.Not.Null);
+
+            IWeaponRankBonus bonus3 = list.SingleOrDefault(b => b.Category == INPUT_CATEGORY && b.Rank == "C");
+            Assert.That(bonus3, Is.Not.Null);
         }
 
         [Test]
@@ -319,8 +376,8 @@ namespace UnitTests.Models.System
                         new List<object>(){ INPUT_CATEGORY, "A" }
                     }
                 },
-                Category = 0,
-                Rank = 1
+                Category = (0, 0),
+                Rank = (0, 1)
             };
 
             Assert.Throws<WeaponRankBonusProcessingException>(() => WeaponRankBonus.BuildList(config));
@@ -339,10 +396,10 @@ namespace UnitTests.Models.System
                         new List<object>(){ INPUT_CATEGORY, "A" }
                     }
                 },
-                Category = 0,
-                CombatStatModifiers = new List<NamedStatConfig>
+                Category = (0, 0),
+                CombatStatModifiers = new NamedStatConfig[]
                 {
-                    new NamedStatConfig(){ SourceName = "Atk", Value = 1 }
+                    new NamedStatConfig(){ SourceName = "Atk", Value = (0, 1) }
                 }
             };
 

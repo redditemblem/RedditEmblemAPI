@@ -17,11 +17,11 @@ namespace UnitTests.Models.System
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             ICombatArtRange range = new CombatArtRange(config, data);
 
@@ -34,11 +34,14 @@ namespace UnitTests.Models.System
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "-1", "0" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "-1", "0" }
+            };
 
             Assert.Throws<PositiveIntegerException>(() => new CombatArtRange(config, data));
         }
@@ -48,11 +51,14 @@ namespace UnitTests.Models.System
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "0", "-1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0", "-1" }
+            };
 
             Assert.Throws<PositiveIntegerException>(() => new CombatArtRange(config, data));
         }
@@ -62,11 +68,14 @@ namespace UnitTests.Models.System
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "2", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            { 
+                new string[] { "2", "1" } 
+            };
 
             Assert.Throws<MinimumGreaterThanMaximumException>(() => new CombatArtRange(config, data));
         }
@@ -76,11 +85,14 @@ namespace UnitTests.Models.System
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "0", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            { 
+                new string[] { "0", "1" } 
+            };
 
             Assert.Throws<ItemRangeMinimumNotSetException>(() => new CombatArtRange(config, data));
         }
@@ -90,11 +102,14 @@ namespace UnitTests.Models.System
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { "1", "0" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            { 
+                new string[] { "1", "0" } 
+            };
 
             Assert.Throws<ItemRangeMinimumNotSetException>(() => new CombatArtRange(config, data));
         }
@@ -104,11 +119,14 @@ namespace UnitTests.Models.System
         {
             CombatArtRangeConfig config = new CombatArtRangeConfig()
             {
-                Minimum = 0,
-                Maximum = 1
+                Minimum = (0, 0),
+                Maximum = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { ART_RANGE_VAL_1, ART_RANGE_VAL_1 };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ART_RANGE_VAL_1, ART_RANGE_VAL_1 }
+            };
 
             ICombatArtRange range = new CombatArtRange(config, data);
 

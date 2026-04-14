@@ -31,12 +31,12 @@ namespace UnitTests.Models.Units
         {
             UnitBattalionConfig config = new UnitBattalionConfig()
             {
-                Battalion = 0,
-                Endurance = 1,
-                GambitUses = 2
+                Battalion = (0, 0),
+                Endurance = (0, 1),
+                GambitUses = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new UnitBattalion(config, data, BATTALIONS));
         }
@@ -46,14 +46,17 @@ namespace UnitTests.Models.Units
         {
             UnitBattalionConfig config = new UnitBattalionConfig()
             {
-                Battalion = 0,
-                Endurance = 1,
-                GambitUses = 2
+                Battalion = (0, 0),
+                Endurance = (0, 1),
+                GambitUses = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                "Battalion 2"
+                new string[]
+                {
+                    "Battalion 2"
+                }
             };
 
             Assert.Throws<UnmatchedBattalionException>(() => new UnitBattalion(config, data, BATTALIONS));
@@ -66,16 +69,19 @@ namespace UnitTests.Models.Units
 
             UnitBattalionConfig config = new UnitBattalionConfig()
             {
-                Battalion = 0,
-                Endurance = 1,
-                GambitUses = 2
+                Battalion = (0, 0),
+                Endurance = (0, 1),
+                GambitUses = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                battName,
-                "1",
-                "3"
+                new string[]
+                {
+                    battName,
+                    "1",
+                    "3"
+                }
             };
 
             IUnitBattalion batt = new UnitBattalion(config, data, BATTALIONS);

@@ -21,10 +21,10 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new Tag(config, data));
         }
@@ -34,10 +34,13 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME }
+            };
 
             ITag tag = new Tag(config, data);
 
@@ -51,11 +54,14 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME, string.Empty }
+            };
 
             ITag tag = new Tag(config, data);
 
@@ -67,11 +73,14 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, "NotAURL" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME, "NotAURL" }
+            };
 
             Assert.Throws<URLException>(() => new Tag(config, data));
         }
@@ -81,11 +90,14 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, UnitTestConsts.IMAGE_URL };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME, UnitTestConsts.IMAGE_URL }
+            };
 
             ITag tag = new Tag(config, data);
 
@@ -101,11 +113,14 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Name = 0,
-                ShowOnUnit = 1
+                Name = (0, 0),
+                ShowOnUnit = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME, string.Empty }
+            };
 
             ITag tag = new Tag(config, data);
 
@@ -117,11 +132,14 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Name = 0,
-                ShowOnUnit = 1
+                Name = (0, 0),
+                ShowOnUnit = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, "No" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME, "No" }
+            };
 
             ITag tag = new Tag(config, data);
 
@@ -133,11 +151,14 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Name = 0,
-                ShowOnUnit = 1
+                Name = (0, 0),
+                ShowOnUnit = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, "Yes" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME, "Yes" }
+            };
 
             ITag tag = new Tag(config, data);
 
@@ -149,12 +170,15 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Name = 0,
-                SpriteURL = 1,
-                ShowOnUnit = 2
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                ShowOnUnit = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, UnitTestConsts.IMAGE_URL, "Yes" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            { 
+                new string[]{ INPUT_NAME, UnitTestConsts.IMAGE_URL, "Yes" }
+            };
 
             ITag tag = new Tag(config, data);
 
@@ -170,11 +194,14 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Name = 0,
-                UnitAura = 1
+                Name = (0, 0),
+                UnitAura = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME, string.Empty }
+            };
 
             ITag tag = new Tag(config, data);
 
@@ -186,11 +213,14 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Name = 0,
-                UnitAura = 1
+                Name = (0, 0),
+                UnitAura = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, "NotAHex" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME, "NotAHex" }
+            };
 
             Assert.Throws<HexException>(() => new Tag(config, data));
         }
@@ -202,11 +232,14 @@ namespace UnitTests.Models.System
 
             TagsConfig config = new TagsConfig()
             {
-                Name = 0,
-                UnitAura = 1
+                Name = (0, 0),
+                UnitAura = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, hexcode };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME, hexcode }
+            };
 
             ITag tag = new Tag(config, data);
 
@@ -222,10 +255,13 @@ namespace UnitTests.Models.System
         {
             TagsConfig config = new TagsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME }
+            };
 
             ITag tag = new Tag(config, data);
 
@@ -264,7 +300,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
@@ -287,7 +323,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             Assert.Throws<TagProcessingException>(() => Tag.BuildDictionary(config));
@@ -308,7 +344,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
@@ -339,11 +375,52 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            TagsConfig config = new TagsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Tag 1" },
+                            new List<object>(){ "FFFFFF" },
+                            new List<object>(){ "Tag 2" },
+                            new List<object>(){ "AAAAAA" },
+                            new List<object>(){ "Tag 3" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                UnitAura = (1, 0)
+            };
+
+            IDictionary<string, ITag> dict = Tag.BuildDictionary(config);
+
+            Assert.That(dict.Count, Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Tag 1"), Is.True);
+            Assert.That(dict.ContainsKey("Tag 2"), Is.True);
+            Assert.That(dict.ContainsKey("Tag 3"), Is.True);
+
+            ITag tag = dict["Tag 1"];
+            Assert.That(tag.UnitAura, Is.EqualTo("#FFFFFF"));
+
+            tag = dict["Tag 2"];
+            Assert.That(tag.UnitAura, Is.EqualTo("#AAAAAA"));
+
+            tag = dict["Tag 3"];
+            Assert.That(tag.UnitAura, Is.Empty);
         }
 
         #endregion BuildDictionary

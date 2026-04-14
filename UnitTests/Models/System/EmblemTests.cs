@@ -21,10 +21,10 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { };
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new Emblem(config, data));
         }
@@ -34,10 +34,12 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME };
+            IEnumerable<IEnumerable<string>> data = new string[][]{
+                new string[]{ INPUT_NAME }
+            };
 
             IEmblem emblem = new Emblem(config, data);
 
@@ -51,14 +53,17 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             IEmblem emblem = new Emblem(config, data);
@@ -71,14 +76,17 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "NotAURL"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "NotAURL"
+                }
             };
 
             Assert.Throws<URLException>(() => new Emblem(config, data));
@@ -89,14 +97,17 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             IEmblem emblem = new Emblem(config, data);
@@ -113,14 +124,17 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0,
-                Tagline = 1
+                Name = (0, 0),
+                Tagline = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             IEmblem emblem = new Emblem(config, data);
@@ -135,14 +149,17 @@ namespace UnitTests.Models.System
 
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0,
-                Tagline = 1
+                Name = (0, 0),
+                Tagline = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                tagline
+                new string[]
+                {
+                    INPUT_NAME,
+                    tagline
+                }
             };
 
             IEmblem emblem = new Emblem(config, data);
@@ -159,14 +176,17 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0,
-                EngagedUnitAura = 1
+                Name = (0, 0),
+                EngagedUnitAura = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             IEmblem emblem = new Emblem(config, data);
@@ -179,14 +199,17 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0,
-                EngagedUnitAura = 1
+                Name = (0, 0),
+                EngagedUnitAura = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "NotAHexCode"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "NotAHexCode"
+                }
             };
 
             Assert.Throws<HexException>(() => new Emblem(config, data));
@@ -199,14 +222,17 @@ namespace UnitTests.Models.System
 
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0,
-                EngagedUnitAura = 1
+                Name = (0, 0),
+                EngagedUnitAura = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                hexCode
+                new string[]
+                {
+                    INPUT_NAME,
+                    hexCode
+                }
             };
 
             IEmblem emblem = new Emblem(config, data);
@@ -223,15 +249,18 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IEmblem emblem = new Emblem(config, data);
@@ -247,15 +276,18 @@ namespace UnitTests.Models.System
 
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                textField1,
-                textField2
+                new string[]
+                {
+                    INPUT_NAME,
+                    textField1,
+                    textField2
+                }
             };
 
             IEmblem emblem = new Emblem(config, data);
@@ -273,10 +305,13 @@ namespace UnitTests.Models.System
         {
             EmblemsConfig config = new EmblemsConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ INPUT_NAME }
+            };
 
             IEmblem emblem = new Emblem(config, data);
 
@@ -304,7 +339,7 @@ namespace UnitTests.Models.System
             EmblemsConfig config = new EmblemsConfig()
             {
                 Queries = null,
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
@@ -326,7 +361,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
@@ -349,7 +384,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             Assert.Throws<EmblemProcessingException>(() => Emblem.BuildDictionary(config));
@@ -370,7 +405,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
@@ -401,11 +436,55 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            EmblemsConfig config = new EmblemsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Emblem 1", "Text Field 1" },
+                            new List<object>(){ "Text Field 2" },
+                            new List<object>(){ "Emblem 2", "Text Field 3" },
+                            new List<object>(){ "Text Field 4" },
+                            new List<object>(){ "Emblem 3", "Text Field 5" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (1, 0) }
+            };
+
+            IDictionary<string, IEmblem> dict = Emblem.BuildDictionary(config);
+
+            Assert.That(dict.Count, Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Emblem 1"), Is.True);
+            Assert.That(dict.ContainsKey("Emblem 2"), Is.True);
+            Assert.That(dict.ContainsKey("Emblem 3"), Is.True);
+
+            IEmblem emblem = dict["Emblem 1"];
+            List<string> expectedTextFields = new List<string>() { "Text Field 1", "Text Field 2" };
+            Assert.That(emblem.TextFields, Is.EqualTo(expectedTextFields));
+
+            emblem = dict["Emblem 2"];
+            expectedTextFields = new List<string>() { "Text Field 3", "Text Field 4" };
+            Assert.That(emblem.TextFields, Is.EqualTo(expectedTextFields));
+
+            emblem = dict["Emblem 3"];
+            expectedTextFields = new List<string>() { "Text Field 5" };
+            Assert.That(emblem.TextFields, Is.EqualTo(expectedTextFields));
         }
 
         #endregion BuildDictionary

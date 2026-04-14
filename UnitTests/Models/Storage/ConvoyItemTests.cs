@@ -86,9 +86,16 @@ namespace UnitTests.Models.Storage
             item2.Tags.Returns(new List<ITag>() { TAGS["Tag 1"], TAGS["Tag 2"] });
             item2.Engravings.Returns(new List<IEngraving>() { ENGRAVINGS["Engraving 2"] });
 
+            string item3Name = "Item 3";
+            IItem item3 = Substitute.For<IItem>();
+            item3.Name.Returns(item3Name);
+            item3.Tags.Returns(new List<ITag>());
+            item3.Engravings.Returns(new List<IEngraving>());
+
             this.ITEMS = new Dictionary<string, IItem>();
             this.ITEMS.Add(item1Name, item1);
             this.ITEMS.Add(item2Name, item2);
+            this.ITEMS.Add(item3Name, item3);
         }
 
         #endregion SetUp
@@ -98,10 +105,10 @@ namespace UnitTests.Models.Storage
         {
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new ConvoyItem(config, data, ITEMS, ENGRAVINGS));
         }
@@ -111,12 +118,15 @@ namespace UnitTests.Models.Storage
         {
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                "Item 3"
+                new string[]
+                {
+                    "Item 4"
+                }
             };
 
             Assert.Throws<UnmatchedItemException>(() => new ConvoyItem(config, data, ITEMS, ENGRAVINGS));
@@ -127,12 +137,15 @@ namespace UnitTests.Models.Storage
         {
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]
+                {
+                    INPUT_NAME
+                }
             };
 
             IConvoyItem item = new ConvoyItem(config, data, ITEMS, ENGRAVINGS);
@@ -154,12 +167,12 @@ namespace UnitTests.Models.Storage
 
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                nameWithUses
+                new string[]{ nameWithUses }
             };
 
             IConvoyItem item = new ConvoyItem(config, data, ITEMS, ENGRAVINGS);
@@ -180,14 +193,17 @@ namespace UnitTests.Models.Storage
         {
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0,
-                Uses = 1
+                Name = (0, 0),
+                Uses = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    input
+                }
             };
 
             Assert.Throws<PositiveIntegerException>(() => new ConvoyItem(config, data, ITEMS, ENGRAVINGS));
@@ -199,14 +215,17 @@ namespace UnitTests.Models.Storage
         {
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0,
-                Uses = 1
+                Name = (0, 0),
+                Uses = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    input
+                }
             };
 
             IConvoyItem item = new ConvoyItem(config, data, ITEMS, ENGRAVINGS);
@@ -226,12 +245,15 @@ namespace UnitTests.Models.Storage
 
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]
+                {
+                    INPUT_NAME
+                }
             };
 
             IConvoyItem item = new ConvoyItem(config, data, ITEMS, ENGRAVINGS);
@@ -254,12 +276,15 @@ namespace UnitTests.Models.Storage
 
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]
+                {
+                    INPUT_NAME
+                }
             };
 
             IConvoyItem item = new ConvoyItem(config, data, ITEMS, ENGRAVINGS);
@@ -281,14 +306,17 @@ namespace UnitTests.Models.Storage
         {
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0,
-                Owner = 1
+                Name = (0, 0),
+                Owner = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    input
+                }
             };
 
             IConvoyItem item = new ConvoyItem(config, data, ITEMS, ENGRAVINGS);
@@ -305,14 +333,17 @@ namespace UnitTests.Models.Storage
         {
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0,
-                Value = 1
+                Name = (0, 0),
+                Value = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    input
+                }
             };
 
             Assert.Throws<PositiveIntegerException>(() => new ConvoyItem(config, data, ITEMS, ENGRAVINGS));
@@ -324,14 +355,17 @@ namespace UnitTests.Models.Storage
         {
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0,
-                Value = 1
+                Name = (0, 0),
+                Value = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    input
+                }
             };
 
             IConvoyItem item = new ConvoyItem(config, data, ITEMS, ENGRAVINGS);
@@ -349,14 +383,17 @@ namespace UnitTests.Models.Storage
         {
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0,
-                Quantity = 1
+                Name = (0, 0),
+                Quantity = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    input
+                }
             };
 
             Assert.Throws<NonZeroPositiveIntegerException>(() => new ConvoyItem(config, data, ITEMS, ENGRAVINGS));
@@ -367,14 +404,17 @@ namespace UnitTests.Models.Storage
         {
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0,
-                Quantity = 1
+                Name = (0, 0),
+                Quantity = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    input
+                }
             };
 
             IConvoyItem item = new ConvoyItem(config, data, ITEMS, ENGRAVINGS);
@@ -391,15 +431,18 @@ namespace UnitTests.Models.Storage
         {
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0,
-                Engravings = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                Engravings = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "Engraving 1",
-                "Engraving 2"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "Engraving 1",
+                    "Engraving 2"
+                }
             };
 
             IConvoyItem item = new ConvoyItem(config, data, ITEMS, ENGRAVINGS);
@@ -434,14 +477,17 @@ namespace UnitTests.Models.Storage
 
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0,
-                Engravings = new List<int>() { 1 }
+                Name = (0, 0),
+                Engravings = new (int, int)[] { (0, 1) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                engravingName
+                new string[]
+                {
+                    INPUT_NAME,
+                    engravingName
+                }
             };
 
             IConvoyItem item = new ConvoyItem(config, data, ITEMS, ENGRAVINGS);
@@ -475,12 +521,12 @@ namespace UnitTests.Models.Storage
 
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]{ INPUT_NAME }
             };
 
             IConvoyItem item = new ConvoyItem(config, data, ITEMS, ENGRAVINGS);
@@ -502,12 +548,12 @@ namespace UnitTests.Models.Storage
 
             ConvoyConfig config = new ConvoyConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[] { INPUT_NAME }
             };
 
             IConvoyItem item = new ConvoyItem(config, data, ITEMS, ENGRAVINGS);
@@ -535,7 +581,7 @@ namespace UnitTests.Models.Storage
             ConvoyConfig config = new ConvoyConfig()
             {
                 Query = null,
-                Name = 0
+                Name = (0, 0)
             };
 
             List<IConvoyItem> list = ConvoyItem.BuildList(config, ITEMS, ENGRAVINGS);
@@ -555,7 +601,7 @@ namespace UnitTests.Models.Storage
                         new List<object>(){ }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             List<IConvoyItem> list = ConvoyItem.BuildList(config, ITEMS, ENGRAVINGS);
@@ -575,8 +621,8 @@ namespace UnitTests.Models.Storage
                         new List<object>(){ INPUT_NAME, "-1" }
                     }
                 },
-                Name = 0,
-                Uses = 1
+                Name = (0, 0),
+                Uses = (0, 1)
             };
 
             Assert.Throws<ConvoyItemProcessingException>(() => ConvoyItem.BuildList(config, ITEMS, ENGRAVINGS));
@@ -594,7 +640,7 @@ namespace UnitTests.Models.Storage
                         new List<object>(){ INPUT_NAME }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             List<IConvoyItem> list = ConvoyItem.BuildList(config, ITEMS, ENGRAVINGS);
@@ -617,12 +663,50 @@ namespace UnitTests.Models.Storage
                         new List<object>(){ "Item 2" }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             List<IConvoyItem> list = ConvoyItem.BuildList(config, ITEMS, ENGRAVINGS);
 
             Assert.That(list.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildList_MultiSet()
+        {
+            ConvoyConfig config = new ConvoyConfig()
+            {
+                Query = new Query()
+                {
+                    Data = new List<IList<object>>()
+                    {
+                        new List<object>(){ "Item 1" },
+                        new List<object>(){ "IronPegasus" },
+                        new List<object>(){ "Item 2" },
+                        new List<object>(){ "FerrousCentaur" },
+                        new List<object>(){ "Item 3" }
+                    },
+                    NumberOfSetsPerObject = 2
+                },
+                Name = (0, 0),
+                Owner = (1, 0)
+            };
+
+            List<IConvoyItem> list = ConvoyItem.BuildList(config, ITEMS, ENGRAVINGS);
+
+            Assert.That(list.Count, Is.EqualTo(3));
+
+            IConvoyItem item1 = list.SingleOrDefault(i => i.FullName == "Item 1");
+            Assert.That(item1, Is.Not.Null);
+            Assert.That(item1.Owner, Is.EqualTo("IronPegasus"));
+
+            IConvoyItem item2 = list.SingleOrDefault(i => i.FullName == "Item 2");
+            Assert.That(item2, Is.Not.Null);
+            Assert.That(item2.Owner, Is.EqualTo("FerrousCentaur"));
+
+            IConvoyItem item3 = list.SingleOrDefault(i => i.FullName == "Item 3");
+            Assert.That(item3, Is.Not.Null);
+            Assert.That(item3.Owner, Is.Empty);
         }
 
         #endregion BuildList

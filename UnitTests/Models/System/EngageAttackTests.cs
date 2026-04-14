@@ -21,10 +21,10 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>() { };
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new EngageAttack(config, data));
         }
@@ -34,12 +34,15 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]
+                {
+                    INPUT_NAME
+                }
             };
 
             IEngageAttack attack = new EngageAttack(config, data);
@@ -54,14 +57,17 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             IEngageAttack attack = new EngageAttack(config, data);
@@ -74,14 +80,17 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                UnitTestConsts.IMAGE_URL
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL
+                }
             };
 
             EngageAttack attack = new EngageAttack(config, data);
@@ -98,15 +107,18 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             IEngageAttack attack = new EngageAttack(config, data);
@@ -122,15 +134,18 @@ namespace UnitTests.Models.System
 
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Name = 0,
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                textField1,
-                textField2
+                new string[]
+                {
+                    INPUT_NAME,
+                    textField1,
+                    textField2
+                }
             };
 
             IEngageAttack attack = new EngageAttack(config, data);
@@ -148,12 +163,15 @@ namespace UnitTests.Models.System
         {
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
-                Name = 0
+                Name = (0, 0)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]
+                { 
+                    INPUT_NAME 
+                }
             };
 
             IEngageAttack attack = new EngageAttack(config, data);
@@ -182,7 +200,7 @@ namespace UnitTests.Models.System
             EngageAttacksConfig config = new EngageAttacksConfig()
             {
                 Queries = null,
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
@@ -204,7 +222,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
@@ -227,7 +245,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             Assert.Throws<EngageAttackProcessingException>(() => EngageAttack.BuildDictionary(config));
@@ -248,8 +266,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                SpriteURL = 1
+                Name = (0, 0),
+                SpriteURL = (0, 1)
             };
 
             Assert.Throws<EngageAttackProcessingException>(() => EngageAttack.BuildDictionary(config));
@@ -270,7 +288,7 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
@@ -301,11 +319,55 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0
+                Name = (0, 0)
             };
 
             IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            EngageAttacksConfig config = new EngageAttacksConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Attack 1", "Text Field 1" },
+                            new List<object>(){ "Text Field 2" },
+                            new List<object>(){ "Attack 2", "Text Field 3" },
+                            new List<object>(){ "Text Field 4" },
+                            new List<object>(){ "Attack 3", "Text Field 5" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                TextFields = new (int, int)[] { (0, 1), (1, 0) }
+            };
+
+            IDictionary<string, IEngageAttack> dict = EngageAttack.BuildDictionary(config);
+
+            Assert.That(dict.Count, Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Attack 1"), Is.True);
+            Assert.That(dict.ContainsKey("Attack 2"), Is.True);
+            Assert.That(dict.ContainsKey("Attack 3"), Is.True);
+
+            IEngageAttack attack = dict["Attack 1"];
+            List<string> expectedTextFields = new List<string>() { "Text Field 1", "Text Field 2" };
+            Assert.That(attack.TextFields, Is.EqualTo(expectedTextFields));
+
+            attack = dict["Attack 2"];
+            expectedTextFields = new List<string>() { "Text Field 3", "Text Field 4" };
+            Assert.That(attack.TextFields, Is.EqualTo(expectedTextFields));
+
+            attack = dict["Attack 3"];
+            expectedTextFields = new List<string>() { "Text Field 5" };
+            Assert.That(attack.TextFields, Is.EqualTo(expectedTextFields));
         }
 
         #endregion BuildDictionary

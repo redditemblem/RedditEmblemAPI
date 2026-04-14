@@ -13,7 +13,7 @@ namespace UnitTests.Helpers
         public void NamedStatDictionary_Int_Any_NoConfigs()
         {
             IEnumerable<NamedStatConfig> configs = new List<NamedStatConfig>();
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_Int_Any(configs, data);
             
@@ -28,10 +28,10 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<AnyIntegerException>(() => DataParser.NamedStatDictionary_Int_Any(configs, data));
         }
@@ -46,10 +46,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { input };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ input }
+            };
 
             Assert.Throws<AnyIntegerException>(() => DataParser.NamedStatDictionary_Int_Any(configs, data));
         }
@@ -62,10 +65,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[] { "0" }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_Int_Any(configs, data);
             
@@ -80,10 +86,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0" }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_Int_Any(configs, data, true);
 
@@ -100,10 +109,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { input };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ input }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_Int_Any(configs, data);
 
@@ -119,15 +131,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "1", "2" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "1", "2" }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_Int_Any(configs, data);
 
@@ -144,15 +159,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0", "1" }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_Int_Any(configs, data);
 
@@ -168,15 +186,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0", "1" }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_Int_Any(configs, data, true);
 
@@ -193,7 +214,7 @@ namespace UnitTests.Helpers
         public void NamedStatDictionary_OptionalInt_Any_NoConfigs()
         {
             IEnumerable<NamedStatConfig> configs = new List<NamedStatConfig>();
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_OptionalInt_Any(configs, data);
 
@@ -208,10 +229,10 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_OptionalInt_Any(configs, data);
             Assert.That(output, Is.Empty);
@@ -225,10 +246,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ string.Empty }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_OptionalInt_Any(configs, data);
             Assert.That(output, Is.Empty);
@@ -242,10 +266,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ UnitTestConsts.WHITESPACE_STRING }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_OptionalInt_Any(configs, data);
             Assert.That(output, Is.Empty);
@@ -259,10 +286,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "test" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[] { "test" }
+            };
 
             Assert.Throws<AnyIntegerException>(() => DataParser.NamedStatDictionary_OptionalInt_Any(configs, data));
         }
@@ -275,10 +305,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0" }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_OptionalInt_Any(configs, data);
 
@@ -293,10 +326,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0" }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_OptionalInt_Any(configs, data, true);
 
@@ -312,10 +348,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { input };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ input }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_OptionalInt_Any(configs, data);
 
@@ -330,15 +369,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "1", "2" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "1", "2" }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_OptionalInt_Any(configs, data);
 
@@ -355,15 +397,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0", "1" }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_OptionalInt_Any(configs, data);
 
@@ -379,15 +424,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0", "1" }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_OptionalInt_Any(configs, data, true);
 
@@ -404,7 +452,7 @@ namespace UnitTests.Helpers
         public void NamedStatDictionary_Int_NonZeroPositive_NoConfigs()
         {
             IEnumerable<NamedStatConfig> configs = new List<NamedStatConfig>();
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_Int_NonZeroPositive(configs, data);
 
@@ -419,10 +467,10 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<NonZeroPositiveIntegerException>(() => DataParser.NamedStatDictionary_Int_NonZeroPositive(configs, data));
         }
@@ -439,10 +487,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { input };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ input }
+            };
 
             Assert.Throws<NonZeroPositiveIntegerException>(() => DataParser.NamedStatDictionary_Int_NonZeroPositive(configs, data));
         }
@@ -455,10 +506,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { input };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ input }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_Int_NonZeroPositive(configs, data);
 
@@ -474,15 +528,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "1", "2" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "1", "2" }
+            };
 
             IDictionary<string, int> output = DataParser.NamedStatDictionary_Int_NonZeroPositive(configs, data);
 
@@ -499,15 +556,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0", "1" }
+            };
 
             Assert.Throws<NonZeroPositiveIntegerException>(() => DataParser.NamedStatDictionary_Int_NonZeroPositive(configs, data));
         }
@@ -520,7 +580,7 @@ namespace UnitTests.Helpers
         public void NamedStatDictionary_Decimal_Any_NoConfigs()
         {
             IEnumerable<NamedStatConfig> configs = new List<NamedStatConfig>();
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             IDictionary<string, decimal> output = DataParser.NamedStatDictionary_Decimal_Any(configs, data);
 
@@ -535,10 +595,10 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<AnyDecimalException>(() => DataParser.NamedStatDictionary_Decimal_Any(configs, data));
         }
@@ -551,10 +611,10 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<AnyDecimalException>(() => DataParser.NamedStatDictionary_Decimal_Any(configs, data, true));
         }
@@ -567,10 +627,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ string.Empty }
+            };
 
             Assert.Throws<AnyDecimalException>(() => DataParser.NamedStatDictionary_Decimal_Any(configs, data));
         }
@@ -583,10 +646,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ string.Empty }
+            };
 
             Assert.Throws<AnyDecimalException>(() => DataParser.NamedStatDictionary_Decimal_Any(configs, data, true));
         }
@@ -599,10 +665,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ UnitTestConsts.WHITESPACE_STRING }
+            };
 
             Assert.Throws<AnyDecimalException>(() => DataParser.NamedStatDictionary_Decimal_Any(configs, data));
         }
@@ -615,10 +684,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ UnitTestConsts.WHITESPACE_STRING } 
+            };
 
             Assert.Throws<AnyDecimalException>(() => DataParser.NamedStatDictionary_Decimal_Any(configs, data, true));
         }
@@ -631,10 +703,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "test" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]{ "test" }
+            };
 
             Assert.Throws<AnyDecimalException>(() => DataParser.NamedStatDictionary_Decimal_Any(configs, data));
         }
@@ -647,10 +722,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "test" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "test" }
+            };
 
             Assert.Throws<AnyDecimalException>(() => DataParser.NamedStatDictionary_Decimal_Any(configs, data, true));
         }
@@ -663,10 +741,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0" }
+            };
 
             IDictionary<string, decimal> output = DataParser.NamedStatDictionary_Decimal_Any(configs, data);
 
@@ -681,10 +762,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0" }
+            };
 
             IDictionary<string, decimal> output = DataParser.NamedStatDictionary_Decimal_Any(configs, data, true);
 
@@ -702,10 +786,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { input };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ input }
+            };
 
             IDictionary<string, decimal> output = DataParser.NamedStatDictionary_Decimal_Any(configs, data);
 
@@ -721,15 +808,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "1", "2" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "1", "2" }
+            };
 
             IDictionary<string, decimal> output = DataParser.NamedStatDictionary_Decimal_Any(configs, data);
 
@@ -746,15 +836,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0", "1" }
+            };
 
             IDictionary<string, decimal> output = DataParser.NamedStatDictionary_Decimal_Any(configs, data);
 
@@ -771,15 +864,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0", "1" }
+            };
 
             IDictionary<string, decimal> output = DataParser.NamedStatDictionary_Decimal_Any(configs, data, true);
 
@@ -796,7 +892,7 @@ namespace UnitTests.Helpers
         public void NamedStatValueDictionary_OptionalDecimal_Any_NoConfigs()
         {
             IEnumerable<NamedStatConfig_Displayed> configs = new List<NamedStatConfig_Displayed>();
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
             
@@ -811,10 +907,10 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
 
@@ -829,10 +925,10 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
             
@@ -849,10 +945,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ string.Empty }
+            };
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
 
@@ -867,10 +966,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ string.Empty }
+            };
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
             
@@ -887,10 +989,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ UnitTestConsts.WHITESPACE_STRING }
+            };
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
 
@@ -905,10 +1010,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { UnitTestConsts.WHITESPACE_STRING };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ UnitTestConsts.WHITESPACE_STRING }
+            };
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
             
@@ -925,10 +1033,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "test" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "test" }
+            };
 
             Assert.Throws<AnyDecimalException>(() => DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data));
         }
@@ -941,10 +1052,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "test" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "test" }
+            };
 
             Assert.Throws<AnyDecimalException>(() => DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true));
         }
@@ -957,10 +1071,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0" }
+            };
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
             
@@ -975,10 +1092,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0" }
+            };
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
             
@@ -998,10 +1118,13 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 }
             };
-            IEnumerable<string> data = new List<string>() { input };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ input }
+            };
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
             
@@ -1018,15 +1141,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "1", "2" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "1", "2" }
+            };
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
             
@@ -1045,15 +1171,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0", "1" }
+            };
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data);
             
@@ -1071,15 +1200,18 @@ namespace UnitTests.Helpers
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 1",
-                    Value = 0
+                    Value = (0, 0)
                 },
                 new NamedStatConfig_Displayed()
                 {
                     SourceName = "Stat 2",
-                    Value = 1
+                    Value = (0, 1)
                 }
             };
-            IEnumerable<string> data = new List<string>() { "0", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ "0", "1" }
+            };
 
             IDictionary<string, INamedStatValue> output = DataParser.NamedStatValueDictionary_OptionalDecimal_Any(configs, data, true);
             

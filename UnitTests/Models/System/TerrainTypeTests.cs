@@ -52,11 +52,11 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>()
             };
 
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new TerrainType(config, data, AFFILIATIONS));
         }
@@ -70,39 +70,42 @@ namespace UnitTests.Models.System
 
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
+                Name = (0, 0),
+                StatGroups = new TerrainTypeStatsConfig[]
                 {
                     new TerrainTypeStatsConfig
                     {
-                        MovementCosts = new List<NamedStatConfig>()
+                        MovementCosts = new NamedStatConfig[]
                         {
                             new NamedStatConfig()
                             {
                                 SourceName = infantry,
-                                Value = 1
+                                Value = (0, 1)
                             },
                             new NamedStatConfig()
                             {
                                 SourceName = mounted,
-                                Value = 2
+                                Value = (0, 2)
                             },
                             new NamedStatConfig()
                             {
                                 SourceName = flying,
-                                Value = 3
+                                Value = (0, 3)
                             }
                         }
                     }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1",
-                "2",
-                "3"
+                new string[]
+                { 
+                    INPUT_NAME,
+                    "1",
+                    "2",
+                    "3"
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -126,31 +129,34 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
+                Name = (0, 0),
+                StatGroups = new TerrainTypeStatsConfig[]
                 {
                     new TerrainTypeStatsConfig
                     {
-                        MovementCosts = new List<NamedStatConfig>()
+                        MovementCosts = Array.Empty<NamedStatConfig>()
                     },
                     new TerrainTypeStatsConfig
                     {
-                        AffiliationGroupings = 1,
-                        MovementCosts = new List<NamedStatConfig>()
+                        AffiliationGroupings = (0, 1),
+                        MovementCosts = Array.Empty<NamedStatConfig>()
                     },
                     new TerrainTypeStatsConfig
                     {
-                        AffiliationGroupings = 2,
-                        MovementCosts = new List<NamedStatConfig>()
+                        AffiliationGroupings = (0, 2),
+                        MovementCosts = Array.Empty<NamedStatConfig>()
                     }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1",
-                "2,3"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1",
+                    "2,3"
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -175,27 +181,30 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
+                Name = (0, 0),
+                StatGroups = new TerrainTypeStatsConfig[]
                 {
                     new TerrainTypeStatsConfig
                     {
-                        AffiliationGroupings = 1,
-                        MovementCosts = new List<NamedStatConfig>()
+                        AffiliationGroupings = (0, 1),
+                        MovementCosts = Array.Empty<NamedStatConfig>()
                     },
                     new TerrainTypeStatsConfig
                     {
-                        AffiliationGroupings = 2,
-                        MovementCosts = new List<NamedStatConfig>()
+                        AffiliationGroupings = (0, 2),
+                        MovementCosts = Array.Empty<NamedStatConfig>()
                     }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1",
-                "1,2"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1",
+                    "1,2"
+                }
             };
 
             Assert.Throws<DuplicateTerrainTypeStatsException>(() => new TerrainType(config, data, AFFILIATIONS));
@@ -206,25 +215,28 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
+                Name = (0, 0),
+                StatGroups = new TerrainTypeStatsConfig[]
                 {
                     new TerrainTypeStatsConfig
                     {
-                        MovementCosts = new List<NamedStatConfig>()
+                        MovementCosts = Array.Empty<NamedStatConfig>()
                     },
                     new TerrainTypeStatsConfig
                     {
-                        AffiliationGroupings = 1,
-                        MovementCosts = new List<NamedStatConfig>()
+                        AffiliationGroupings = (0, 1),
+                        MovementCosts = Array.Empty<NamedStatConfig>()
                     }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -240,15 +252,18 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                CannotStopOn = 1
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                CannotStopOn = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -261,15 +276,18 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                CannotStopOn = 1
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                CannotStopOn = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "No"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "No"
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -282,15 +300,18 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                CannotStopOn = 1
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                CannotStopOn = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "Yes"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "Yes"
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -307,15 +328,18 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                BlocksItems = 1
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                BlocksItems = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -328,15 +352,18 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                BlocksItems = 1
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                BlocksItems = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "No"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "No"
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -349,15 +376,18 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                BlocksItems = 1
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                BlocksItems = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "Yes"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "Yes"
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -374,15 +404,18 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                RestrictAffiliations = 1
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                RestrictAffiliations = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -395,15 +428,18 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                RestrictAffiliations = 1
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                RestrictAffiliations = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1,2,3"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1,2,3"
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -421,15 +457,18 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                Groupings = 1
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                Groupings = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -442,15 +481,18 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                Groupings = 1
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                Groupings = (0, 1)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1,2,3"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1,2,3"
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -468,16 +510,19 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                TextFields = new (int, int)[] { (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -493,16 +538,19 @@ namespace UnitTests.Models.System
 
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                TextFields = new List<int>() { 1, 2 }
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                TextFields = new (int, int)[]{ (0, 1), (0, 2) }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                textField1,
-                textField2
+                new string[]
+                {
+                    INPUT_NAME,
+                    textField1,
+                    textField2
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -520,17 +568,20 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                WarpType = 1,
-                WarpCost = 2
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                WarpType = (0, 1),
+                WarpCost = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                string.Empty,
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    string.Empty,
+                    string.Empty
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -544,17 +595,20 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                WarpType = 1,
-                WarpCost = 2
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                WarpType = (0, 1),
+                WarpCost = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "FakeWarpType",
-                string.Empty
+                new string[]
+                {
+                    INPUT_NAME,
+                    "FakeWarpType",
+                    string.Empty
+                }
             };
 
             Assert.Throws<UnmatchedWarpTypeException>(() => new TerrainType(config, data, AFFILIATIONS));
@@ -567,17 +621,20 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                WarpType = 1,
-                WarpCost = 2
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                WarpType = (0, 1),
+                WarpCost = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "Entrance",
-                input
+                new string[]
+                {
+                    INPUT_NAME,
+                    "Entrance",
+                    input
+                }
             };
 
             Assert.Throws<PositiveIntegerException>(() => new TerrainType(config, data, AFFILIATIONS));
@@ -591,17 +648,20 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                WarpType = 1,
-                WarpCost = 2
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                WarpType = (0, 1),
+                WarpCost = (0, 2)
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                input1,
-                input2
+                new string[]
+                {
+                    INPUT_NAME,
+                    input1,
+                    input2
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -619,31 +679,34 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
+                Name = (0, 0),
+                StatGroups = new TerrainTypeStatsConfig[]
                 {
                     new TerrainTypeStatsConfig
                     {
-                        MovementCosts = new List<NamedStatConfig>()
+                        MovementCosts = Array.Empty<NamedStatConfig>()
                     },
                     new TerrainTypeStatsConfig
                     {
-                        AffiliationGroupings = 1,
-                        MovementCosts = new List<NamedStatConfig>()
+                        AffiliationGroupings = (0, 1),
+                        MovementCosts = Array.Empty<NamedStatConfig>()
                     },
                     new TerrainTypeStatsConfig
                     {
-                        AffiliationGroupings = 2,
-                        MovementCosts = new List<NamedStatConfig>()
+                        AffiliationGroupings = (0, 2),
+                        MovementCosts = Array.Empty<NamedStatConfig>()
                     }
                 }
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME,
-                "1",
-                "2"
+                new string[]
+                {
+                    INPUT_NAME,
+                    "1",
+                    "2"
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -681,13 +744,16 @@ namespace UnitTests.Models.System
         {
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>()
             };
 
-            IEnumerable<string> data = new List<string>()
+            IEnumerable<IEnumerable<string>> data = new string[][]
             {
-                INPUT_NAME
+                new string[]
+                {
+                    INPUT_NAME
+                }
             };
 
             ITerrainType terrain = new TerrainType(config, data, AFFILIATIONS);
@@ -716,8 +782,8 @@ namespace UnitTests.Models.System
             TerrainTypesConfig config = new TerrainTypesConfig()
             {
                 Queries = null,
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>()
             };
 
             IDictionary<string, ITerrainType> dict = TerrainType.BuildDictionary(config, AFFILIATIONS);
@@ -739,8 +805,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>()
             };
 
             IDictionary<string, ITerrainType> dict = TerrainType.BuildDictionary(config, AFFILIATIONS);
@@ -763,8 +829,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>()
             };
 
             Assert.Throws<TerrainTypeProcessingException>(() => TerrainType.BuildDictionary(config, AFFILIATIONS));
@@ -785,9 +851,9 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>(),
-                RestrictAffiliations = 1
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                RestrictAffiliations = (0, 1)
             };
 
             Assert.Throws<TerrainTypeProcessingException>(() => TerrainType.BuildDictionary(config, AFFILIATIONS));
@@ -808,8 +874,8 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>()
             };
 
             IDictionary<string, ITerrainType> dict = TerrainType.BuildDictionary(config, AFFILIATIONS);
@@ -840,12 +906,57 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                StatGroups = new List<TerrainTypeStatsConfig>()
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>()
             };
 
             IDictionary<string, ITerrainType> dict = TerrainType.BuildDictionary(config, AFFILIATIONS);
             Assert.That(dict.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            TerrainTypesConfig config = new TerrainTypesConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Type 1", "Text Field 1" },
+                            new List<object>(){ "Text Field 2" },
+                            new List<object>(){ "Type 2", "Text Field 3" },
+                            new List<object>(){ "Text Field 4" },
+                            new List<object>(){ "Type 3", "Text Field 5" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                StatGroups = Array.Empty<TerrainTypeStatsConfig>(),
+                TextFields = new (int, int)[] { (0, 1), (1, 0) }
+            };
+
+            IDictionary<string, ITerrainType> dict = TerrainType.BuildDictionary(config, AFFILIATIONS);
+
+            Assert.That(dict.Count, Is.EqualTo(3));
+            Assert.That(dict.ContainsKey("Type 1"), Is.True);
+            Assert.That(dict.ContainsKey("Type 2"), Is.True);
+            Assert.That(dict.ContainsKey("Type 3"), Is.True);
+
+            ITerrainType type = dict["Type 1"];
+            List<string> expectedTextFields = new List<string>() { "Text Field 1", "Text Field 2" };
+            Assert.That(type.TextFields, Is.EqualTo(expectedTextFields));
+
+            type = dict["Type 2"];
+            expectedTextFields = new List<string>() { "Text Field 3", "Text Field 4" };
+            Assert.That(type.TextFields, Is.EqualTo(expectedTextFields));
+
+            type = dict["Type 3"];
+            expectedTextFields = new List<string>() { "Text Field 5" };
+            Assert.That(type.TextFields, Is.EqualTo(expectedTextFields));
         }
 
         #endregion BuildDictionary

@@ -1063,8 +1063,8 @@ namespace UnitTests.Models.Map
                             new List<object>(){ "Tile Object 1", "2,2" }
                         }
                     },
-                    Name = 0,
-                    Coordinate = 1
+                    Name = (0, 0),
+                    Coordinate = (0, 1)
                 }
             };
 

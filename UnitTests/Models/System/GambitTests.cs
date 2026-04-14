@@ -27,16 +27,16 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = Array.Empty<NamedStatConfig>()
             };
-            IEnumerable<string> data = new List<string>();
+            IEnumerable<IEnumerable<string>> data = [];
 
             Assert.Throws<RequiredValueNotProvidedException>(() => new Gambit(config, data));
         }
@@ -46,16 +46,23 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = Array.Empty<NamedStatConfig>()
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, "-1" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    "-1"
+                }
+            };
 
             Assert.Throws<PositiveIntegerException>(() => new Gambit(config, data));
         }
@@ -65,16 +72,24 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = Array.Empty<NamedStatConfig>()
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, "-1" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            { 
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    "-1"
+                }
+            };
 
             Assert.Throws<PositiveIntegerException>(() => new Gambit(config, data));
         }
@@ -84,16 +99,25 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = Array.Empty<NamedStatConfig>()
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, "-1" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            { 
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    "-1"
+                }
+            };
 
             Assert.Throws<PositiveIntegerException>(() => new Gambit(config, data));
         }
@@ -103,16 +127,25 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = Array.Empty<NamedStatConfig>()
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, "2", "1" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    "2",
+                    "1"
+                }
+            };
 
             Assert.Throws<MinimumGreaterThanMaximumException>(() => new Gambit(config, data));
         }
@@ -122,19 +155,29 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = new NamedStatConfig[]
                 {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 }
+                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = (0, 4) }
                 }
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "a" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    INPUT_MAXIMUM_RANGE,
+                    "a"
+                }
+            };
 
             Assert.Throws<AnyIntegerException>(() => new Gambit(config, data));
         }
@@ -144,20 +187,31 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = new NamedStatConfig[]
                 {
-                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = 4 },
-                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = 5 }
+                    new NamedStatConfig(){ SourceName = STAT_1_SOURCE_NAME, Value = (0, 4) },
+                    new NamedStatConfig(){ SourceName = STAT_2_SOURCE_NAME, Value = (0, 5) }
                 }
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "1", "2" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    INPUT_MAXIMUM_RANGE,
+                    "1",
+                    "2"
+                }
+            };
 
             IGambit gambit = new Gambit(config, data);
 
@@ -176,17 +230,27 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>(),
-                SpriteURL = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                SpriteURL = (0, 4)
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    INPUT_MAXIMUM_RANGE,
+                    string.Empty
+                }
+            };
 
             IGambit gambit = new Gambit(config, data);
 
@@ -198,17 +262,27 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>(),
-                SpriteURL = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                SpriteURL = (0, 4)
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "NotAURL" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    INPUT_MAXIMUM_RANGE,
+                    "NotAURL"
+                }
+            };
 
             Assert.Throws<URLException>(() => new Gambit(config, data));
         }
@@ -218,18 +292,28 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>(),
-                SpriteURL = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                SpriteURL = (0, 4)
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, UnitTestConsts.IMAGE_URL };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    INPUT_MAXIMUM_RANGE,
+                    UnitTestConsts.IMAGE_URL
+                }
+            };
 
             IGambit gambit = new Gambit(config, data);
 
@@ -245,17 +329,27 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>(),
-                UtilizedStats = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                UtilizedStats = new (int, int)[] { (0, 4) }
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            { 
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    INPUT_MAXIMUM_RANGE,
+                    string.Empty
+                }
+            };
 
             IGambit gambit = new Gambit(config, data);
 
@@ -269,17 +363,27 @@ namespace UnitTests.Models.System
 
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>(),
-                UtilizedStats = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                UtilizedStats = new (int, int)[] { (0, 4) }
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, stat };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    INPUT_MAXIMUM_RANGE,
+                    stat
+                }
+            };
 
             IGambit gambit = new Gambit(config, data);
 
@@ -292,17 +396,27 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>(),
-                UtilizedStats = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                UtilizedStats = new (int, int)[] { (0, 4) }
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "Str,Mag,Skl" };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            { 
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    INPUT_MAXIMUM_RANGE,
+                    "Str,Mag,Skl"
+                }
+            };
 
             IGambit gambit = new Gambit(config, data);
 
@@ -315,17 +429,27 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>(),
-                UtilizedStats = 4
+                Stats = Array.Empty<NamedStatConfig>(),
+                UtilizedStats = new (int, int)[] { (0, 4) }
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, "Str," };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    INPUT_MAXIMUM_RANGE,
+                    "Str,"
+                }
+            };
 
             IGambit gambit = new Gambit(config, data);
 
@@ -342,18 +466,29 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>(),
-                TextFields = new List<int>() { 4, 5 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                TextFields = new (int, int)[] { (0, 4), (0, 5) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, string.Empty, string.Empty };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    INPUT_MAXIMUM_RANGE,
+                    string.Empty,
+                    string.Empty
+                }
+            };
 
             IGambit gambit = new Gambit(config, data);
 
@@ -368,18 +503,29 @@ namespace UnitTests.Models.System
 
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>(),
-                TextFields = new List<int>() { 4, 5 }
+                Stats = Array.Empty<NamedStatConfig>(),
+                TextFields = new (int, int)[] { (0, 4), (0, 5) }
             };
 
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE, textField1, textField2 };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            { 
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    INPUT_MAXIMUM_RANGE,
+                    textField1,
+                    textField2
+                }
+            };
 
             IGambit gambit = new Gambit(config, data);
 
@@ -396,16 +542,25 @@ namespace UnitTests.Models.System
         {
             GambitsConfig config = new GambitsConfig()
             {
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = Array.Empty<NamedStatConfig>()
             };
-            IEnumerable<string> data = new List<string>() { INPUT_NAME, INPUT_MAX_USES, INPUT_MINIMUM_RANGE, INPUT_MAXIMUM_RANGE };
+            IEnumerable<IEnumerable<string>> data = new string[][] 
+            { 
+                new string[]
+                {
+                    INPUT_NAME,
+                    INPUT_MAX_USES,
+                    INPUT_MINIMUM_RANGE,
+                    INPUT_MAXIMUM_RANGE
+                }
+            };
 
             IGambit gambit = new Gambit(config, data);
 
@@ -433,14 +588,14 @@ namespace UnitTests.Models.System
             GambitsConfig config = new GambitsConfig()
             {
                 Queries = null,
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
             IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
@@ -462,14 +617,14 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
             IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
@@ -492,14 +647,14 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
             Assert.Throws<GambitProcessingException>(() => Gambit.BuildDictionary(config));
@@ -520,14 +675,14 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
             IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
@@ -558,21 +713,67 @@ namespace UnitTests.Models.System
                         }
                     }
                 },
-                Name = 0,
-                MaxUses = 1,
+                Name = (0, 0),
+                MaxUses = (0, 1),
                 Range = new GambitRangeConfig()
                 {
-                    Minimum = 2,
-                    Maximum = 3
+                    Minimum = (0, 2),
+                    Maximum = (0, 3)
                 },
-                Stats = new List<NamedStatConfig>()
+                Stats = Array.Empty<NamedStatConfig>()
             };
 
             IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
             Assert.That(dict.Count, Is.EqualTo(4));
         }
 
-        # endregion BuildDictionary
+        [Test]
+        public void BuildDictionary_MultiSet()
+        {
+            GambitsConfig config = new GambitsConfig()
+            {
+                Queries = new List<Query>()
+                {
+                    new Query()
+                    {
+                        Data = new List<IList<object>>()
+                        {
+                            new List<object>(){ "Gambit 1", "1" },
+                            new List<object>(){ "2", "3" },
+                            new List<object>(){ "Gambit 2", "4" },
+                            new List<object>(){ "5", "6" }
+                        },
+                        NumberOfSetsPerObject = 2
+                    }
+                },
+                Name = (0, 0),
+                MaxUses = (0, 1),
+                Range = new GambitRangeConfig()
+                {
+                    Minimum = (1, 0),
+                    Maximum = (1, 1)
+                },
+                Stats = Array.Empty<NamedStatConfig>()
+            };
+
+            IDictionary<string, IGambit> dict = Gambit.BuildDictionary(config);
+
+            Assert.That(dict.Count, Is.EqualTo(2));
+            Assert.That(dict.ContainsKey("Gambit 1"), Is.True);
+            Assert.That(dict.ContainsKey("Gambit 2"), Is.True);
+
+            IGambit gambit = dict["Gambit 1"];
+            Assert.That(gambit.MaxUses, Is.EqualTo(1));
+            Assert.That(gambit.Range.Minimum, Is.EqualTo(2));
+            Assert.That(gambit.Range.Maximum, Is.EqualTo(3));
+
+            gambit = dict["Gambit 2"];
+            Assert.That(gambit.MaxUses, Is.EqualTo(4));
+            Assert.That(gambit.Range.Minimum, Is.EqualTo(5));
+            Assert.That(gambit.Range.Maximum, Is.EqualTo(6));
+        }
+
+        #endregion BuildDictionary
 
         #region MatchNames
 

@@ -27,7 +27,7 @@ namespace UnitTests.Models.Configuration.Common
             WeaponRankBonusesConfig config = new WeaponRankBonusesConfig()
             {
                 Query = new Query(),
-                Category = 0
+                Category = (0, 0)
             };
 
             bool wasAdded = queries.AddQueryable(config);
@@ -55,8 +55,8 @@ namespace UnitTests.Models.Configuration.Common
             AffiliationsConfig config = new AffiliationsConfig()
             {
                 Queries = new List<Query>(),
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
             bool wasAdded = queries.AddQueryable(config);
@@ -75,8 +75,8 @@ namespace UnitTests.Models.Configuration.Common
                 {
                     new Query()
                 },
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
             bool wasAdded = queries.AddQueryable(config);
@@ -96,8 +96,8 @@ namespace UnitTests.Models.Configuration.Common
                     new Query(),
                     new Query()
                 },
-                Name = 0,
-                Grouping = 1
+                Name = (0, 0),
+                Grouping = (0, 1)
             };
 
             bool wasAdded = queries.AddQueryable(config);
