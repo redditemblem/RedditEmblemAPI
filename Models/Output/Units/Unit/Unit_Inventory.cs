@@ -118,7 +118,7 @@ namespace RedditEmblemAPI.Models.Output.Units
                 {
                     if (string.IsNullOrEmpty(unitRank)
                      || string.IsNullOrEmpty(item.Item.WeaponRank)
-                     || system.Constants.WeaponRanks.IndexOf(unitRank) >= system.Constants.WeaponRanks.IndexOf(item.Item.WeaponRank))
+                     || Array.IndexOf(system.Constants.WeaponRanks, unitRank) >= Array.IndexOf(system.Constants.WeaponRanks, item.Item.WeaponRank))
                         item.CanEquip = true;
                 }
                 else if (string.IsNullOrEmpty(item.Item.WeaponRank) && !item.Item.UtilizedStats.Any())

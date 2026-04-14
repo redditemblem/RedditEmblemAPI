@@ -126,7 +126,7 @@ namespace RedditEmblemAPI.Models.Output.Storage.Convoy
             this.Uses = 0;
 
             string name = this.FullName;
-            if(config.Uses > -1)
+            if(config.Uses.IsConfigured())
             {
                 this.Uses = DataParser.OptionalInt_Positive(data, config.Uses, "Uses");
             }

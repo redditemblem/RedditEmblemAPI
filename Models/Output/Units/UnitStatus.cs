@@ -75,7 +75,7 @@ namespace RedditEmblemAPI.Models.Output.Units
 
             string name = this.FullName;
 
-            if (config.RemainingTurns != -1)
+            if (config.RemainingTurns.IsConfigured())
             {
                 this.RemainingTurns = DataParser.OptionalInt_Positive(data, config.RemainingTurns, $"{this.FullName} Remaining Turns");
             }

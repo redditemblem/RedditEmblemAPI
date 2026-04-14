@@ -144,7 +144,7 @@ namespace RedditEmblemAPI.Models.Output.System
             {
                 //We want to include the group only if it's the default group or if it has at least one grouping value included.
                 string values = DataParser.OptionalString(data, config.AffiliationGroupings, "Affiliation Groupings");
-                if (config.AffiliationGroupings != -1 && string.IsNullOrEmpty(values))
+                if (config.AffiliationGroupings.IsConfigured() && string.IsNullOrEmpty(values))
                     continue;
 
                 groups.Add(new TerrainTypeStats(config, data, affiliations));

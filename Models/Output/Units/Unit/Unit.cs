@@ -225,7 +225,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             //Classes and movement types
             //The unit movement type field itself is optional, but if it is present it must be populated
             this.Classes = BuildClasses(data, config.Classes, system.Classes);
-            if (config.MovementType > -1) this.UnitMovementType = DataParser.String(data, config.MovementType, "Movement Type");
+            if (config.MovementType.IsConfigured()) this.UnitMovementType = DataParser.String(data, config.MovementType, "Movement Type");
             else this.UnitMovementType = string.Empty;
 
             MatchTags(system.Tags);
@@ -268,7 +268,7 @@ namespace RedditEmblemAPI.Models.Output.Units
             }
 
             //If we have class fields configured, error if we found no values
-            if (indexes.Count > 0 && !unitClasses.Any())
+            if (indices.Count() > 0 && !unitClasses.Any())
                 throw new Exception("Unit must have at least one class defined.");
 
             return unitClasses;
