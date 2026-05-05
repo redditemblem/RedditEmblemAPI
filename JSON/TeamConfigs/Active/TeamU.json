@@ -133,12 +133,18 @@
       "Queries": [
         {
           "Sheet": "Conditions",
-          "Selection": "A2:B",
+          "Selection": "A2:F",
           "Orientation": 1
         }
       ],
       "Name": 0,
-      "TextFields": [ 1 ]
+      "TextFields": [ 1 ],
+      "Effects": [
+        {
+          "Type": 2,
+          "Parameters": [ 3, 4, 5 ]
+        }
+      ]
     },
     "Tags": {
       "Queries": [
@@ -339,13 +345,13 @@
     ],
     "Name": 0,
     "SpriteURL": 2,
-    "Level": 25,
-    "Classes": [ 9 ],
-    "Affiliation": 10,
-    "Coordinate": 8,
+    "Level": 26,
+    "Classes": [ 8 ],
+    "Affiliation": 9,
+    "Coordinate": 7,
     "HP": {
-      "Current": 11,
-      "Maximum": 12
+      "Current": 10,
+      "Maximum": 11
     },
     "CombatStats": [
       {
@@ -433,46 +439,42 @@
     "Stats": [
       {
         "SourceName": "Str",
-        "BaseValue": 13
+        "BaseValue": 12
       },
       {
         "SourceName": "Mag",
-        "BaseValue": 14
+        "BaseValue": 13
       },
       {
         "SourceName": "Skl",
-        "BaseValue": 15
+        "BaseValue": 14
       },
       {
         "SourceName": "Spd",
-        "BaseValue": 16
+        "BaseValue": 15
       },
       {
         "SourceName": "Lck",
-        "BaseValue": 17
+        "BaseValue": 16
       },
       {
         "SourceName": "Def",
-        "BaseValue": 18
+        "BaseValue": 17
       },
       {
         "SourceName": "Con",
-        "BaseValue": 19
+        "BaseValue": 18
       },
       {
         "SourceName": "FCC",
-        "BaseValue": 20
+        "BaseValue": 19
       },
       {
         "SourceName": "Mov",
-        "BaseValue": 21
+        "BaseValue": 20
       }
     ],
     "WeaponRanks": [
-      {
-        "Type": 40,
-        "Rank": 44
-      },
       {
         "Type": 41,
         "Rank": 45
@@ -484,18 +486,18 @@
       {
         "Type": 43,
         "Rank": 47
+      },
+      {
+        "Type": 44,
+        "Rank": 48
       }
     ],
     "Inventory": {
-      "PrimaryEquippedItem": 27,
-      "SecondaryEquippedItems": [ 53, 54 ],
+      "PrimaryEquippedItem": 28,
+      "SecondaryEquippedItems": [ 54, 55 ],
       "Subsections": [
         {
           "Slots": [
-            {
-              "Name": 27,
-              "Uses": 32
-            },
             {
               "Name": 28,
               "Uses": 33
@@ -511,49 +513,50 @@
             {
               "Name": 31,
               "Uses": 36
-            }
-          ]
-        },
-        {
-          "Slots": [
-            {
-              "Name": 37
-            }
-          ]
-        },
-        {
-          "Slots": [
-            {
-              "Name": 53
             },
             {
+              "Name": 32,
+              "Uses": 37
+            }
+          ]
+        },
+        {
+          "Slots": [
+            {
+              "Name": 38
+            }
+          ]
+        },
+        {
+          "Slots": [
+            {
               "Name": 54
+            },
+            {
+              "Name": 55
             }
           ]
         }
       ]
     },
     "Player": 1,
-    "PortraitURL": 7,
-    "TextFields": [ 6 ],
-    "Tags": [ 24 ],
-    "Experience": 26,
+    "PortraitURL": 6,
+    "TextFields": [ 5 ],
+    "Tags": [ 25 ],
+    "Experience": 27,
     "SystemStats": [
       {
         "SourceName": "Fatigue",
-        "BaseValue": 22
+        "BaseValue": 21
       },
       {
         "SourceName": "L. Stars",
-        "BaseValue": 55
+        "BaseValue": 56
       }
     ],
     "SkillSubsections": [
       {
         "Skills": [
-          {
-            "Name": 48
-          },
           {
             "Name": 49
           },
@@ -565,16 +568,25 @@
           },
           {
             "Name": 52
+          },
+          {
+            "Name": 53
           }
         ]
       }
     ],
     "StatusConditions": [
       {
+        "Name": 22
+      },
+      {
         "Name": 23
+      },
+      {
+        "Name": 24
       }
     ],
-    "Adjutants": [ 56 ]
+    "Adjutants": [ 57 ]
   },
   "Convoy": {
     "Query": {
