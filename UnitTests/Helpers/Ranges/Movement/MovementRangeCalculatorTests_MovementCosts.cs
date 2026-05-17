@@ -121,7 +121,7 @@ namespace UnitTests.Helpers.Ranges.Movement
             unit.Location.OriginTiles.Returns(new List<ITile> { unitOrigin });
             unit.GetFullSkillsList().Returns(new List<ISkill>());
             unit.StatusConditions.Returns(new List<IUnitStatus>());
-            unit.Ranges.Movement.Returns(new List<ICoordinate>());
+            unit.Ranges.MovementWithMinimumCost.Returns(new Dictionary<ICoordinate, int>());
             unit.GetUnitMovementType().Returns(MOVEMENT_TYPE_INFANTRY);
 
             this.Unit = unit;
@@ -151,15 +151,15 @@ namespace UnitTests.Helpers.Ranges.Movement
             mov.FinalValue.Returns(movement);
             this.Unit.Stats.MatchGeneralStatName(MOVEMENT_STAT_NAME).Returns(mov);
 
-            Assert.That(this.Unit.Ranges.Movement, Is.Empty);
+            Assert.That(this.Unit.Ranges.MovementWithMinimumCost, Is.Empty);
 
             MovementRangeCalculator calc = new MovementRangeCalculator(this.Map, new List<IUnit> { this.Unit });
             calc.CalculateUnitMovementRanges();
 
-            Assert.That(this.Unit.Ranges.Movement, Is.Not.Empty);
+            Assert.That(this.Unit.Ranges.MovementWithMinimumCost, Is.Not.Empty);
 
-            IList<ICoordinate> expected = new List<ICoordinate>();
             ITile[][] tiles = Map.Segments[0].Tiles;
+            IList<ICoordinate> expected = new List<ICoordinate>();
 
             int i = 1;
             for (int c = 0; c < expectedNumberOfTilesMoved+i && c < tiles[0].Length; c++)
@@ -169,7 +169,7 @@ namespace UnitTests.Helpers.Ranges.Movement
                 else i++;
             }
 
-            Assert.That(this.Unit.Ranges.Movement, Is.EquivalentTo(expected));
+            Assert.That(this.Unit.Ranges.MovementWithMinimumCost.Keys, Is.EquivalentTo(expected));
         }
     }
 }

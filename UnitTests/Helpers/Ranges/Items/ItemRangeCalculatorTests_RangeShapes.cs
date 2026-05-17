@@ -1,6 +1,8 @@
 ﻿using NSubstitute;
 using RedditEmblemAPI.Helpers.Ranges;
 using RedditEmblemAPI.Helpers.Ranges.Items;
+using RedditEmblemAPI.Models.Configuration.Map;
+using RedditEmblemAPI.Models.Output;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
@@ -38,6 +40,10 @@ namespace UnitTests.Helpers.Ranges.Items
             plains.BlocksItems.Returns(false);
 
             IMapObj map = Substitute.For<IMapObj>();
+
+            MapConstantsConfig config = new MapConstantsConfig();
+            config.UnitMovementStatName = "Mov";
+            map.Constants.Returns(config);
 
             ITile[][] tiles = new ITile[7][];
             for (int r = 0; r < 7; r++)
@@ -85,9 +91,14 @@ namespace UnitTests.Helpers.Ranges.Items
             IUnit unit = Substitute.For<IUnit>();
             unit.Location.UnitSize.Returns(1);
             unit.Location.OriginTiles.Returns(new List<ITile> { unitOrigin });
+            unit.StatusConditions.Returns(new List<IUnitStatus>());
+
+            IModifiedStatValue move = Substitute.For<IModifiedStatValue>();
+            move.FinalValue.Returns(0);
+            unit.Stats.MatchGeneralStatName("Mov").Returns(move);
 
             ICoordinate unitCoord = unitOrigin.Coordinate;
-            unit.Ranges.Movement.Returns(new List<ICoordinate> { unitCoord });
+            unit.Ranges.MovementWithMinimumCost.Returns(new Dictionary<ICoordinate, int> { { unitCoord, 0 } });
             unit.Ranges.Attack.Returns(new List<ICoordinate>());
             unit.Ranges.Utility.Returns(new List<ICoordinate>());
 

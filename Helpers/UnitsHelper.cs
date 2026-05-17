@@ -181,7 +181,7 @@ namespace RedditEmblemAPI.Helpers
 
                     unit.Location.OriginTiles.Add(tile);
                     if(map.Constants.CalculateRanges)
-                        unit.Ranges.Movement.Add(tile.Coordinate);
+                        unit.Ranges.MovementWithMinimumCost.Add(tile.Coordinate, 0);
 
                     if (applyTileBinding)
                     {

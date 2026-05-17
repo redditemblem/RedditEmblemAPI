@@ -10,16 +10,16 @@ namespace RedditEmblemAPI.Helpers.Ranges.Items
         public int MinRange { get; }
         public int MaxRange { get; }
         public ItemRangeShape Shape { get; }
-        public bool CanOnlyUseBeforeMovement { get; }
+        public int MaxPathCostBeforeUse { get; }
         public bool DealsDamage { get; }
         public bool AllowMeleeRange { get; }
 
-        public UnitItemRange(decimal minRange, decimal maxRange, ItemRangeShape shape, bool canOnlyBeUsedBeforeMovement, bool dealsDamage, bool allowMeleeRange)
+        public UnitItemRange(decimal minRange, decimal maxRange, ItemRangeShape shape, int maxPathCostBeforeUse, bool dealsDamage, bool allowMeleeRange)
         {
             MinRange = (int)decimal.Floor(minRange);
             MaxRange = (int)decimal.Floor(maxRange);
             Shape = shape;
-            CanOnlyUseBeforeMovement = canOnlyBeUsedBeforeMovement;
+            MaxPathCostBeforeUse = maxPathCostBeforeUse;
             DealsDamage = dealsDamage;
             AllowMeleeRange = allowMeleeRange;
         }

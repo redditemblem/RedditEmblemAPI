@@ -241,7 +241,7 @@ namespace UnitTests.Models.System
             Assert.That(engraving.ItemRangeOverrides.Minimum, Is.EqualTo(0));
             Assert.That(engraving.ItemRangeOverrides.Maximum, Is.EqualTo(0));
             Assert.That(engraving.ItemRangeOverrides.Shape, Is.EqualTo(ItemRangeShape.Standard));
-            Assert.That(engraving.ItemRangeOverrides.CanOnlyUseBeforeMovement, Is.False);
+            Assert.That(engraving.ItemRangeOverrides.ReduceMovementByToUse, Is.EqualTo(0));
         }
 
         [Test]
@@ -272,7 +272,7 @@ namespace UnitTests.Models.System
             Assert.That(engraving.ItemRangeOverrides.Minimum, Is.EqualTo(1));
             Assert.That(engraving.ItemRangeOverrides.Maximum, Is.EqualTo(2));
             Assert.That(engraving.ItemRangeOverrides.Shape, Is.EqualTo(ItemRangeShape.Standard));
-            Assert.That(engraving.ItemRangeOverrides.CanOnlyUseBeforeMovement, Is.False);
+            Assert.That(engraving.ItemRangeOverrides.ReduceMovementByToUse, Is.EqualTo(0));
         }
 
         [Test]
@@ -286,7 +286,7 @@ namespace UnitTests.Models.System
                     Minimum = (0, 1),
                     Maximum = (0, 2),
                     Shape = (0, 3),
-                    CanOnlyUseBeforeMovement = (0, 4)
+                    ReduceMovementByToUse = (0, 4)
                 }
             };
 
@@ -298,7 +298,7 @@ namespace UnitTests.Models.System
                     "1",
                     "2",
                     "Cross",
-                    "Yes"
+                    "2"
                 }
             };
 
@@ -307,7 +307,7 @@ namespace UnitTests.Models.System
             Assert.That(engraving.ItemRangeOverrides.Minimum, Is.EqualTo(1));
             Assert.That(engraving.ItemRangeOverrides.Maximum, Is.EqualTo(2));
             Assert.That(engraving.ItemRangeOverrides.Shape, Is.EqualTo(ItemRangeShape.Cross));
-            Assert.That(engraving.ItemRangeOverrides.CanOnlyUseBeforeMovement, Is.True);
+            Assert.That(engraving.ItemRangeOverrides.ReduceMovementByToUse, Is.EqualTo(2));
         }
 
         #endregion OptionalField_ItemRangeOverrides

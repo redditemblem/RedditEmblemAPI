@@ -91,7 +91,7 @@ namespace UnitTests.Helpers.Ranges.Movement
             unit.Location.OriginTiles.Returns(new List<ITile> { unitOrigin });
             unit.GetFullSkillsList().Returns(new List<ISkill>());
             unit.StatusConditions.Returns(new List<IUnitStatus>());
-            unit.Ranges.Movement.Returns(new List<ICoordinate>());
+            unit.Ranges.MovementWithMinimumCost.Returns(new Dictionary<ICoordinate, int>());
             unit.GetUnitMovementType().Returns(MOVEMENT_TYPE_INFANTRY);
 
             this.Unit = unit;
@@ -108,23 +108,23 @@ namespace UnitTests.Helpers.Ranges.Movement
             mov.FinalValue.Returns(movement);
             this.Unit.Stats.MatchGeneralStatName(MOVEMENT_STAT_NAME).Returns(mov);
 
-            Assert.That(this.Unit.Ranges.Movement, Is.Empty);
+            Assert.That(this.Unit.Ranges.MovementWithMinimumCost, Is.Empty);
 
             MovementRangeCalculator calc = new MovementRangeCalculator(this.Map, new List<IUnit> { this.Unit });
             calc.CalculateUnitMovementRanges();
 
-            Assert.That(this.Unit.Ranges.Movement, Is.Not.Empty);
+            Assert.That(this.Unit.Ranges.MovementWithMinimumCost, Is.Not.Empty);
 
             ITile[][] tiles = Map.Segments[0].Tiles;
-            IList<ICoordinate> expected = new List<ICoordinate>()
+            IDictionary<ICoordinate, int> expected = new Dictionary<ICoordinate, int>()
             {
-                tiles[1][2].Coordinate,
-                tiles[2][1].Coordinate,
-                tiles[2][2].Coordinate,
-                tiles[2][3].Coordinate,
-                tiles[3][2].Coordinate
+                { tiles[1][2].Coordinate, 1 },
+                { tiles[2][1].Coordinate, 1 },
+                { tiles[2][2].Coordinate, 0 },
+                { tiles[2][3].Coordinate, 1 },
+                { tiles[3][2].Coordinate, 1 }
             };
-            Assert.That(this.Unit.Ranges.Movement, Is.EquivalentTo(expected));
+            Assert.That(this.Unit.Ranges.MovementWithMinimumCost, Is.EquivalentTo(expected));
         }
 
         [Test]
@@ -136,31 +136,31 @@ namespace UnitTests.Helpers.Ranges.Movement
             mov.FinalValue.Returns(movement);
             this.Unit.Stats.MatchGeneralStatName(MOVEMENT_STAT_NAME).Returns(mov);
 
-            Assert.That(this.Unit.Ranges.Movement, Is.Empty);
+            Assert.That(this.Unit.Ranges.MovementWithMinimumCost, Is.Empty);
 
             MovementRangeCalculator calc = new MovementRangeCalculator(this.Map, new List<IUnit> { this.Unit });
             calc.CalculateUnitMovementRanges();
 
-            Assert.That(this.Unit.Ranges.Movement, Is.Not.Empty);
+            Assert.That(this.Unit.Ranges.MovementWithMinimumCost, Is.Not.Empty);
 
             ITile[][] tiles = Map.Segments[0].Tiles;
-            IList<ICoordinate> expected = new List<ICoordinate>()
+            IDictionary<ICoordinate, int> expected = new Dictionary<ICoordinate, int>()
             {
-                tiles[0][2].Coordinate,
-                tiles[1][1].Coordinate,
-                tiles[1][2].Coordinate,
-                tiles[1][3].Coordinate,
-                tiles[2][0].Coordinate,
-                tiles[2][1].Coordinate,
-                tiles[2][2].Coordinate,
-                tiles[2][3].Coordinate,
-                tiles[2][4].Coordinate,
-                tiles[3][1].Coordinate,
-                tiles[3][2].Coordinate,
-                tiles[3][3].Coordinate,
-                tiles[4][2].Coordinate
+                { tiles[0][2].Coordinate, 2 },
+                { tiles[1][1].Coordinate, 2 },
+                { tiles[1][2].Coordinate, 1 },
+                { tiles[1][3].Coordinate, 2 },
+                { tiles[2][0].Coordinate, 2 },
+                { tiles[2][1].Coordinate, 1 },
+                { tiles[2][2].Coordinate, 0 },
+                { tiles[2][3].Coordinate, 1 },
+                { tiles[2][4].Coordinate, 2 },
+                { tiles[3][1].Coordinate, 2 },
+                { tiles[3][2].Coordinate, 1 },
+                { tiles[3][3].Coordinate, 2 },
+                { tiles[4][2].Coordinate, 2 }
             };
-            Assert.That(this.Unit.Ranges.Movement, Is.EquivalentTo(expected));
+            Assert.That(this.Unit.Ranges.MovementWithMinimumCost, Is.EquivalentTo(expected));
         }
 
         [Test]
@@ -172,21 +172,41 @@ namespace UnitTests.Helpers.Ranges.Movement
             mov.FinalValue.Returns(movement);
             this.Unit.Stats.MatchGeneralStatName(MOVEMENT_STAT_NAME).Returns(mov);
 
-            Assert.That(this.Unit.Ranges.Movement, Is.Empty);
+            Assert.That(this.Unit.Ranges.MovementWithMinimumCost, Is.Empty);
 
             MovementRangeCalculator calc = new MovementRangeCalculator(this.Map, new List<IUnit> { this.Unit });
             calc.CalculateUnitMovementRanges();
 
-            Assert.That(this.Unit.Ranges.Movement, Is.Not.Empty);
+            Assert.That(this.Unit.Ranges.MovementWithMinimumCost, Is.Not.Empty);
 
             //Everything but the map corners
             ITile[][] tiles = Map.Segments[0].Tiles;
-            IList<ICoordinate> expected = tiles.SelectMany(r => r)
-                                               .Where(c => c != tiles[0][0] && c != tiles[0][4] && c != tiles[4][0] && c != tiles[4][4])
-                                               .Select(t => t.Coordinate)
-                                               .ToList();
+            IDictionary<ICoordinate, int> expected = new Dictionary<ICoordinate, int>()
+            {
+                { tiles[0][1].Coordinate, 3 },
+                { tiles[0][2].Coordinate, 2 },
+                { tiles[0][3].Coordinate, 3 },
+                { tiles[1][0].Coordinate, 3 },
+                { tiles[1][1].Coordinate, 2 },
+                { tiles[1][2].Coordinate, 1 },
+                { tiles[1][3].Coordinate, 2 },
+                { tiles[1][4].Coordinate, 3 },
+                { tiles[2][0].Coordinate, 2 },
+                { tiles[2][1].Coordinate, 1 },
+                { tiles[2][2].Coordinate, 0 },
+                { tiles[2][3].Coordinate, 1 },
+                { tiles[2][4].Coordinate, 2 },
+                { tiles[3][0].Coordinate, 3 },
+                { tiles[3][1].Coordinate, 2 },
+                { tiles[3][2].Coordinate, 1 },
+                { tiles[3][3].Coordinate, 2 },
+                { tiles[3][4].Coordinate, 3 },
+                { tiles[4][1].Coordinate, 3 },
+                { tiles[4][2].Coordinate, 2 },
+                { tiles[4][3].Coordinate, 3 }
+            };
 
-            Assert.That(this.Unit.Ranges.Movement, Is.EquivalentTo(expected));
+            Assert.That(this.Unit.Ranges.MovementWithMinimumCost, Is.EquivalentTo(expected));
         }
     }
 }

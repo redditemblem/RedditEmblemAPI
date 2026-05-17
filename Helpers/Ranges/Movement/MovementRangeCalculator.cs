@@ -42,13 +42,19 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
                     if (!unit.Location.OriginTiles.Any())
                         continue;
 
-                    int movement = GetUnitMovementFinalValue(unit);
+                    int movement = GetUnitMovementFinalValue(this.Map.Constants.UnitMovementStatName, unit);
                     MovementRangeParameters unitParms = new MovementRangeParameters(unit);
 
-                    IEnumerable<ICoordinate> movementRange = CalculateUnitMovementRange(unitParms, movement);
+                    IEnumerable<(ICoordinate, int)> movementRange = CalculateUnitMovementRange(unitParms, movement);
 
                     //Make sure we keep any coordinates inserted into the unit's range prior to the calculation
-                    unit.Ranges.Movement = unit.Ranges.Movement.Union(movementRange).Distinct().ToList();
+                    foreach((ICoordinate, int) coord in movementRange)
+                    {
+                        if (unit.Ranges.MovementWithMinimumCost.TryGetValue(coord.Item1, out int existingPathCost))
+                            unit.Ranges.MovementWithMinimumCost[coord.Item1] = Math.Min(existingPathCost, coord.Item2);
+                        else
+                            unit.Ranges.MovementWithMinimumCost.Add(coord.Item1, coord.Item2);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -60,18 +66,18 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
         /// <summary>
         /// Returns <paramref name="unit"/>'s final movement stat value.
         /// </summary>
-        private int GetUnitMovementFinalValue(IUnit unit)
+        public static int GetUnitMovementFinalValue(string moveStatName, IUnit unit)
         {
-            IModifiedStatValue movementStat = unit.Stats.MatchGeneralStatName(Map.Constants.UnitMovementStatName);
+            IModifiedStatValue movementStat = unit.Stats.MatchGeneralStatName(moveStatName);
             int movementVal = movementStat.FinalValue;
 
             IOverrideMovementEffect overrideMovEffect = unit.StatusConditions.SelectMany(s => s.Status.Effects).OfType<IOverrideMovementEffect>().FirstOrDefault();
-            if (overrideMovEffect != null) movementVal = overrideMovEffect.MovementValue;
+            if (overrideMovEffect is not null) movementVal = overrideMovEffect.MovementValue;
 
             return movementVal;
         }
 
-        private IEnumerable<ICoordinate> CalculateUnitMovementRange(MovementRangeParameters unitParms, int movementVal)
+        private IEnumerable<(ICoordinate, int)> CalculateUnitMovementRange(MovementRangeParameters unitParms, int movementVal)
         {
             int unitSize = unitParms.Unit.Location.UnitSize;
 
@@ -108,7 +114,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
             TraverseVertexMap(unitParms, vertexMap);
 
             return vertexMap.Where(v => v.MinDistanceTo <= movementVal && v.MinDistanceTo < 99 && !v.IsTraversableOnly)
-                            .SelectMany(c => c.Tiles.Select(t => t.Coordinate));
+                            .SelectMany(v => v.Tiles.Select(t => (t.Coordinate, v.MinDistanceTo)));
         }
 
         private void TraverseVertexMap(MovementRangeParameters parms, IList<IVertex> vertexMap)
