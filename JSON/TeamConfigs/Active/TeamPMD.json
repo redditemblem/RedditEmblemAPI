@@ -124,7 +124,8 @@
       "Range": {
         "Minimum": 13,
         "Maximum": 14,
-        "Shape": 12
+        "Shape": 12,
+        "ReduceMovementByToUse": 4
       },
       "TextFields": [ 5, 7 ]
     },
