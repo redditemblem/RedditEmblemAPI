@@ -84,7 +84,7 @@ namespace RedditEmblemAPI.Services
         /// Returns an alphabetical list of team configurations present within the "JSON/TeamConfigs/Active" file directory.
         /// </summary>
         /// <returns></returns>
-        public IList<TeamData> LoadTeamList()
+        public IEnumerable<TeamData> LoadTeamList()
         {
             IList<TeamData> teams = new List<TeamData>();
 
@@ -95,7 +95,7 @@ namespace RedditEmblemAPI.Services
                 teams.Add(new TeamData(config.Team.Name, (config.Convoy != null), (config.Shop != null)));
             }
 
-            return teams.OrderBy(t => t.TeamName).ToList();
+            return teams.OrderBy(t => t.TeamName);
         }
 
         #region JSON File Processing

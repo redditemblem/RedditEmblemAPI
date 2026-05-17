@@ -1,5 +1,7 @@
-﻿using RedditEmblemAPI.Models.Output.Map;
+﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Models.Output.Map;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedditEmblemAPI.Models.Output.Units
 {
@@ -8,14 +10,14 @@ namespace RedditEmblemAPI.Models.Output.Units
     /// <inheritdoc cref="UnitRangeData"/>
     public interface IUnitRangeData
     {
-        /// <inheritdoc cref="UnitRangeData.Movement"/>
-        IList<ICoordinate> Movement { get; set; }
+        /// <inheritdoc cref="UnitRangeData.MovementWithMinimumCost"/>
+        IDictionary<ICoordinate, int> MovementWithMinimumCost { get; set; }
 
         /// <inheritdoc cref="UnitRangeData.Attack"/>
-        IList<ICoordinate> Attack { get; set; }
+        IEnumerable<ICoordinate> Attack { get; set; }
 
         /// <inheritdoc cref="UnitRangeData.Utility"/>
-        IList<ICoordinate> Utility { get; set; }
+        IEnumerable<ICoordinate> Utility { get; set; }
     }
 
     #endregion Interface
@@ -28,19 +30,26 @@ namespace RedditEmblemAPI.Models.Output.Units
         #region Attributes
 
         /// <summary>
-        /// List of tiles that the unit is capable of moving to.
+        /// Dictionary of coordinates that the unit is capable of moving to. Value is the minimum path cost for the unit to reach that coordinate.
         /// </summary>
-        public IList<ICoordinate> Movement { get; set; }
+        [JsonIgnore]
+        public IDictionary<ICoordinate, int> MovementWithMinimumCost { get; set; }
 
         /// <summary>
-        /// List of tiles that the unit is capable of attacking.
+        /// For JSON serialization only. Returns <c>this.MovementWithMinimumCost</c>'s coordinate key set.
         /// </summary>
-        public IList<ICoordinate> Attack { get; set; }
+        [JsonProperty]
+        private IEnumerable<ICoordinate> Movement => this.MovementWithMinimumCost.Select(c => c.Key);
 
         /// <summary>
-        /// List of tiles that the unit is capable of using a utility item on.
+        /// Collection of coordinates that the unit is capable of attacking.
         /// </summary>
-        public IList<ICoordinate> Utility { get; set; }
+        public IEnumerable<ICoordinate> Attack { get; set; }
+
+        /// <summary>
+        /// Collection of coordinates that the unit is capable of using a utility item on.
+        /// </summary>
+        public IEnumerable<ICoordinate> Utility { get; set; }
 
         #endregion Attributes
 
@@ -49,7 +58,7 @@ namespace RedditEmblemAPI.Models.Output.Units
         /// </summary>
         public UnitRangeData()
         {
-            this.Movement = new List<ICoordinate>();
+            this.MovementWithMinimumCost = new Dictionary<ICoordinate, int>();
             this.Attack = new List<ICoordinate>();
             this.Utility = new List<ICoordinate>();
         }

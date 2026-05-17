@@ -16,6 +16,6 @@ namespace RedditEmblemAPI.Services
 
         ShopData LoadShopData(string teamName);
 
-        IList<TeamData> LoadTeamList();
+        IEnumerable<TeamData> LoadTeamList();
     }
 }

@@ -405,7 +405,7 @@ namespace UnitTests.Models.System
 
             IItemRange range = new ItemRange(config, data);
 
-            Assert.That(range.CanOnlyUseBeforeMovement, Is.False);
+            Assert.That(range.ReduceMovementByToUse, Is.EqualTo(0));
         }
 
         [Test]
@@ -425,7 +425,7 @@ namespace UnitTests.Models.System
 
             IItemRange range = new ItemRange(config, data);
 
-            Assert.That(range.CanOnlyUseBeforeMovement, Is.False);
+            Assert.That(range.ReduceMovementByToUse, Is.EqualTo(0));
         }
 
         [Test]
@@ -445,9 +445,54 @@ namespace UnitTests.Models.System
 
             IItemRange range = new ItemRange(config, data);
 
-            Assert.That(range.CanOnlyUseBeforeMovement, Is.True);
+            Assert.That(range.ReduceMovementByToUse, Is.EqualTo(99));
         }
 
         #endregion OptionalField_CanOnlyUseBeforeMovement
+
+        #region OptionalField_ReduceMovementBy
+
+        [Test]
+        public void Constructor_OptionalField_ReduceMovementBy_Negative()
+        {
+            ItemRangeConfig config = new ItemRangeConfig()
+            {
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                ReduceMovementByToUse = (0, 2)
+            };
+
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, "-1" }
+            };
+
+            Assert.Throws<PositiveIntegerException>(() => new ItemRange(config, data));
+        }
+
+        [TestCase("", 0)]
+        [TestCase("0", 0)]
+        [TestCase("1", 1)]
+        [TestCase("2", 2)]
+        public void Constructor_OptionalField_ReduceMovementBy(string input, int expected)
+        {
+            ItemRangeConfig config = new ItemRangeConfig()
+            {
+                Minimum = (0, 0),
+                Maximum = (0, 1),
+                ReduceMovementByToUse = (0, 2)
+            };
+
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]{ ITEM_RANGE_VAL_1, ITEM_RANGE_VAL_1, input }
+            };
+
+            IItemRange range = new ItemRange(config, data);
+
+            Assert.That(range.ReduceMovementByToUse, Is.EqualTo(expected));
+        }
+
+        #endregion OptionalField_ReduceMovementBy
     }
 }

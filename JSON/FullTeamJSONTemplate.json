@@ -167,7 +167,7 @@
         "Minimum": 0, //Required
         "Maximum": 0, //Required
         "Shape": 0, //Optional
-        "CanOnlyUseBeforeMovement": 0 //Optional
+        "ReduceMovementByToUse": 0 //Optional
       },
       "Tags": [ 0 ], //Optional, only use if Tags sheet is provided
       "TextFields": [], //Optional

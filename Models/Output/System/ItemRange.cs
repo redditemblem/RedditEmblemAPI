@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedditEmblemAPI.Helpers;
+using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.Items;
 using RedditEmblemAPI.Models.Exceptions.Unmatched;
 using RedditEmblemAPI.Models.Exceptions.Validation;
@@ -34,8 +35,8 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <inheritdoc cref="ItemRange.Shape"/>
         ItemRangeShape Shape { get; }
 
-        /// <inheritdoc cref="ItemRange.CanOnlyUseBeforeMovement"/>
-        bool CanOnlyUseBeforeMovement { get; }
+        /// <inheritdoc cref="ItemRange.ReduceMovementByToUse" />
+        int ReduceMovementByToUse { get; }
     }
 
     #endregion Interface
@@ -85,10 +86,10 @@ namespace RedditEmblemAPI.Models.Output.System
         public ItemRangeShape Shape { get; private set; }
 
         /// <summary>
-        /// Flag that indicates when an item can only be used before a unit has moved.
+        /// This item can only be used from tiles with path cost less than or equal to <c>UnitMaxMovement - ReduceMovementByToUse</c>.
         /// </summary>
         [JsonIgnore]
-        public bool CanOnlyUseBeforeMovement { get; private set; }
+        public int ReduceMovementByToUse {  get; private set; }
 
         #endregion Attributes
 
@@ -108,7 +109,12 @@ namespace RedditEmblemAPI.Models.Output.System
                 throw new MinimumGreaterThanMaximumException("Minimum Range", "Maximum Range");
 
             this.Shape = GetItemRangeShape(DataParser.OptionalString(data, config.Shape, "Range Shape"));
-            this.CanOnlyUseBeforeMovement = DataParser.OptionalBoolean_YesNo(data, config.CanOnlyUseBeforeMovement, "Can Only Use Before Movement");
+
+            //CanOnlyUseBeforeMovement is obsolete and being replaced by ReduceMovementByToUse
+            //If CanOnlyUseBeforeMovement is still configured, accomplish its effect by setting ReduceMovementByToUse to 99
+            this.ReduceMovementByToUse = DataParser.OptionalInt_Positive(data, config.ReduceMovementByToUse, "Reduce Movement By To Use");
+            if (config.CanOnlyUseBeforeMovement.IsConfigured() && DataParser.OptionalBoolean_YesNo(data, config.CanOnlyUseBeforeMovement, "Can Only Use Before Movement"))
+                this.ReduceMovementByToUse = 99;
         }
 
         private int RangeValueHandler_Minimum(IEnumerable<IEnumerable<string>> data, (int, int) indices)

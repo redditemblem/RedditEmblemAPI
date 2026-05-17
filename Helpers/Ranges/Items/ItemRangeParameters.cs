@@ -10,14 +10,14 @@ namespace RedditEmblemAPI.Helpers.Ranges.Items
     public readonly struct ItemRangeParameters
     {
         public ICoordinate StartingCoordinate { get; }
-        public IEnumerable<ICoordinate> IgnoreTiles { get; }
+        public IReadOnlyCollection<ICoordinate> IgnoreTiles { get; }
         public IEnumerable<UnitItemRange> Ranges { get; }
         public IReadOnlyDictionary<ItemRangeShape, bool> ContainsRangeShape { get; }
         public int LargestRange { get; }
         public OrdinalDirection RangeDirection { get; }
         public int AffiliationGrouping { get; }
 
-        public ItemRangeParameters(ICoordinate startCoord, IEnumerable<ICoordinate> ignoreTiles, IEnumerable<UnitItemRange> ranges, OrdinalDirection direction, int affiliationGrouping)
+        public ItemRangeParameters(ICoordinate startCoord, IReadOnlyCollection<ICoordinate> ignoreTiles, IEnumerable<UnitItemRange> ranges, OrdinalDirection direction, int affiliationGrouping)
         {
             StartingCoordinate = startCoord;
             IgnoreTiles = ignoreTiles;

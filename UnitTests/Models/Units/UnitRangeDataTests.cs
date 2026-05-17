@@ -10,7 +10,7 @@ namespace UnitTests.Models.Units
             IUnitRangeData ranges = new UnitRangeData();
 
             Assert.That(ranges, Is.Not.Null);
-            Assert.That(ranges.Movement, Is.Empty);
+            Assert.That(ranges.MovementWithMinimumCost, Is.Empty);
             Assert.That(ranges.Attack, Is.Empty);
             Assert.That(ranges.Utility, Is.Empty);
         }

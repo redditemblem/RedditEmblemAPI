@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Models.Exceptions.Processing;
+﻿using RedditEmblemAPI.Helpers.Ranges.Movement;
+using RedditEmblemAPI.Models.Exceptions.Processing;
 using RedditEmblemAPI.Models.Output.Map;
 using RedditEmblemAPI.Models.Output.Map.Tiles;
 using RedditEmblemAPI.Models.Output.System;
@@ -60,13 +61,15 @@ namespace RedditEmblemAPI.Helpers.Ranges.Items
                     IList<ICoordinate> utilRange = new List<ICoordinate>();
 
                     //Transpose item data into the struct we're using for recursion
-                    List<UnitItemRange> ranges = new List<UnitItemRange> { new UnitItemRange(tileObjInst.TileObject.Range.Minimum, tileObjInst.TileObject.Range.Maximum, ItemRangeShape.Standard, false, true, false) };
+                    List<UnitItemRange> ranges = new List<UnitItemRange> { new UnitItemRange(tileObjInst.TileObject.Range.Minimum, tileObjInst.TileObject.Range.Maximum, ItemRangeShape.Standard, 0, true, false) };
+                    
+                    IReadOnlyCollection<ICoordinate> fullOriginCoords = tileObjInst.OriginTiles.Select(ot => ot.Coordinate).ToFrozenSet();
 
                     foreach (ITile originTile in tileObjInst.OriginTiles)
                     {
                         foreach (OrdinalDirection direction in RANGE_DIRECTIONS.Keys)
                         {
-                            ItemRangeParameters rangeParms = new ItemRangeParameters(originTile.Coordinate, tileObjInst.OriginTiles.Select(ot => ot.Coordinate), ranges, direction, 0);
+                            ItemRangeParameters rangeParms = new ItemRangeParameters(originTile.Coordinate, fullOriginCoords, ranges, direction, 0);
                             RecurseItemRange(rangeParms,
                                              originTile,
                                              rangeParms.LargestRange,
@@ -121,28 +124,38 @@ namespace RedditEmblemAPI.Helpers.Ranges.Items
             utilityRange = new List<ICoordinate>();
 
             //Transpose item data into the struct we're using for recursion
-            IEnumerable<UnitItemRange> itemRanges = SelectEligibleUnitInventoryItems(unit.Inventory.GetAllItems());
+            int unitMaxMovement = MovementRangeCalculator.GetUnitMovementFinalValue(this.Map.Constants.UnitMovementStatName, unit);
+            IEnumerable<UnitItemRange> itemRanges = SelectEligibleUnitInventoryItems(unit.Inventory.GetAllItems(), unitMaxMovement);
 
             //If unit is engaged with an emblem, include its items in the range as well
             if (unit.Emblem is not null && unit.Emblem.IsEngaged)
-                itemRanges = itemRanges.Union(SelectEligibleUnitInventoryItems(unit.Emblem.EngageWeapons));
+                itemRanges = itemRanges.Union(SelectEligibleUnitInventoryItems(unit.Emblem.EngageWeapons, unitMaxMovement));
 
             //Check for special case ranges
             ApplyWholeMapItemRanges(unit, ref itemRanges, ref attackRange, ref utilityRange);
-            ApplyNoUnitMovementItemRanges(unit, ref itemRanges, ref attackRange, ref utilityRange);
 
             //If we've got no ranges to process, leave.
             if (!itemRanges.Any())
                 return;
 
             //Calculate any remaining ranges
-            foreach (ICoordinate coord in unit.Ranges.Movement)
+            IReadOnlyCollection<ICoordinate> fullMovementCoords = unit.Ranges.MovementWithMinimumCost.Select(c => c.Key).ToFrozenSet();
+
+            foreach (KeyValuePair<ICoordinate, int> coord in unit.Ranges.MovementWithMinimumCost)
             {
-                ITile tile = Map.GetTileByCoord(coord);
+                ITile tile = Map.GetTileByCoord(coord.Key);
+
+                IEnumerable<UnitItemRange> itemsAccessibleAtPathLength = itemRanges.Where(i => i.MaxPathCostBeforeUse >= coord.Value);
+                if (!itemsAccessibleAtPathLength.Any())
+                    continue;
 
                 foreach (OrdinalDirection direction in RANGE_DIRECTIONS.Keys)
                 {
-                    ItemRangeParameters rangeParms = new ItemRangeParameters(coord, unit.Ranges.Movement, itemRanges, direction, unit.Affiliation.Grouping);
+                    ItemRangeParameters rangeParms = new ItemRangeParameters(coord.Key,
+                                                                             fullMovementCoords,
+                                                                             itemsAccessibleAtPathLength, 
+                                                                             direction, 
+                                                                             unit.Affiliation.Grouping);
                     RecurseItemRange(rangeParms, tile, rangeParms.LargestRange, ref attackRange, ref utilityRange);
                 }
             }
@@ -151,7 +164,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Items
         /// <summary>
         /// Returns item range parameter structs for all <paramref name="items"/> that qualify to have a range calculated.
         /// </summary>
-        private IEnumerable<UnitItemRange> SelectEligibleUnitInventoryItems(IEnumerable<IUnitInventoryItem> items)
+        private IEnumerable<UnitItemRange> SelectEligibleUnitInventoryItems(IEnumerable<IUnitInventoryItem> items, int unitMaxMovement)
         {
             return items.Where(i => i.CanEquip
                                 && !i.IsUsePrevented
@@ -160,7 +173,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Items
                         .Select(i => new UnitItemRange(i.MinRange.FinalValue,
                                                        i.MaxRange.FinalValue,
                                                        i.Item.Range.Shape,
-                                                       i.Item.Range.CanOnlyUseBeforeMovement,
+                                                       Math.Max(unitMaxMovement - i.Item.Range.ReduceMovementByToUse, 0),
                                                        i.Item.DealsDamage,
                                                        i.AllowMeleeRange));
         }
@@ -268,7 +281,7 @@ namespace RedditEmblemAPI.Helpers.Ranges.Items
                 foreach (ITile tile in row)
                 {
                     //Only exclude tiles that the unit can move to or block items
-                    if (!unit.Ranges.Movement.Contains(tile.Coordinate) && !tile.TerrainType.BlocksItems)
+                    if (!unit.Ranges.MovementWithMinimumCost.ContainsKey(tile.Coordinate) && !tile.TerrainType.BlocksItems)
                     {
                         if (applyAtk) attackRange.Add(tile.Coordinate);
                         if (applyUtil) utilityRange.Add(tile.Coordinate);
@@ -282,30 +295,5 @@ namespace RedditEmblemAPI.Helpers.Ranges.Items
             if (applyUtil) itemRanges = itemRanges.Where(r => r.DealsDamage);
         }
 
-        private void ApplyNoUnitMovementItemRanges(IUnit unit, ref IEnumerable<UnitItemRange> itemRanges, ref IList<ICoordinate> attackRange, ref IList<ICoordinate> utilityRange)
-        {
-            //Only continue if we have at least one item that can only be used before movement
-            IEnumerable<UnitItemRange> noMovementItemRanges = itemRanges.Where(r => r.CanOnlyUseBeforeMovement);
-            if (noMovementItemRanges.Count() < 1)
-                return;
-
-            //Only calculate the item ranges for these items from the unit's origin tiles, not their whole movement range
-            foreach (ITile tile in unit.Location.OriginTiles)
-            {
-                foreach (OrdinalDirection direction in RANGE_DIRECTIONS.Keys)
-                {
-                    ItemRangeParameters rangeParms = new ItemRangeParameters(tile.Coordinate, unit.Ranges.Movement, noMovementItemRanges, direction, unit.Affiliation.Grouping);
-                    RecurseItemRange(rangeParms,
-                                     tile,
-                                     rangeParms.LargestRange,
-                                     ref attackRange,
-                                     ref utilityRange
-                                    );
-                }
-            }
-
-            //Remove all items from the list so they aren't processed again
-            itemRanges = itemRanges.Where(r => !r.CanOnlyUseBeforeMovement);
-        }
     }
 }

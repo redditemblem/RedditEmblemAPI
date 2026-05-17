@@ -29,6 +29,6 @@ namespace RedditEmblemAPI.Models.Configuration.System
         /// </summary>
         public bool IncludeSpace { get; set; } = false;
 
-        #endregion
+        #endregion Optional Fields
     }
 }
