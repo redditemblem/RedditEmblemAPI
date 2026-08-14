@@ -16,12 +16,12 @@
     <None Remove="UnitTests\**" />
   </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="CoreCLR-NCalc" Version="3.1.253" />
         <PackageReference Include="Google.Apis.Sheets.v4" Version="1.75.0.4178" />
         <PackageReference Include="AWSSDK.S3" Version="4.0.102.1" />
         <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.100.8" />
         <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="10.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.11" />
+        <PackageReference Include="NCalc" Version="7.1.0" />
         <PackageReference Include="SkiaSharp" Version="4.151.1">
             <ExcludeAssets>native</ExcludeAssets>
         </PackageReference>
