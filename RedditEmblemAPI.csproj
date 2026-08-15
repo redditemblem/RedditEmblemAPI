@@ -22,9 +22,7 @@
         <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="10.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.11" />
         <PackageReference Include="NCalc" Version="7.1.0" />
-        <PackageReference Include="SkiaSharp" Version="4.151.1">
-            <ExcludeAssets>native</ExcludeAssets>
-        </PackageReference>
+        <PackageReference Include="SkiaSharp" Version="4.151.1" />
         <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.151.1" />
     </ItemGroup>
   <ItemGroup>
