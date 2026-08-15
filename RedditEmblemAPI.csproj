@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <AWSProjectType>Lambda</AWSProjectType>
-    <OutputType>Exe</OutputType>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="report\**" />
-    <Compile Remove="UnitTests\**" />
-    <Content Remove="report\**" />
-    <Content Remove="UnitTests\**" />
-    <EmbeddedResource Remove="report\**" />
-    <EmbeddedResource Remove="UnitTests\**" />
-    <None Remove="report\**" />
-    <None Remove="UnitTests\**" />
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+        <AWSProjectType>Lambda</AWSProjectType>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Remove="report\**" />
+        <Compile Remove="UnitTests\**" />
+        <Content Remove="report\**" />
+        <Content Remove="UnitTests\**" />
+        <EmbeddedResource Remove="report\**" />
+        <EmbeddedResource Remove="UnitTests\**" />
+        <None Remove="report\**" />
+        <None Remove="UnitTests\**" />
+    </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Google.Apis.Sheets.v4" Version="1.75.0.4178" />
         <PackageReference Include="AWSSDK.S3" Version="4.0.102.1" />
@@ -25,9 +25,9 @@
         <PackageReference Include="SkiaSharp" Version="4.151.1" />
         <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.151.1" />
     </ItemGroup>
-  <ItemGroup>
-    <Content Update="JSON\TeamConfigs\Active\Hidden\TeamExample.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+    <ItemGroup>
+        <Content Update="JSON\TeamConfigs\Active\Hidden\TeamExample.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 </Project>
