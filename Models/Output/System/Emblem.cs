@@ -49,7 +49,6 @@ namespace RedditEmblemAPI.Models.Output.System
         /// <summary>
         /// The aura color applied to units engaged with the emblem.
         /// </summary>
-        [JsonIgnore]
         public string EngagedUnitAura { get; set; }
 
         /// <summary>

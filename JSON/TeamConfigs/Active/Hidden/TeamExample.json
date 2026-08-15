@@ -239,7 +239,8 @@
       "Name": 0,
       "Tags": [ 1 ],
       "MovementType": 2,
-      "TextFields": [ 3 ]
+      "BattleStyle": 3,
+      "TextFields": [ 4 ]
     },
     "Affiliations": {
       "Queries": [
@@ -529,6 +530,178 @@
       "Name": 0,
       "SpriteURL": 1,
       "TextFields": [ 2 ]
+    },
+    "CombatArts": {
+      "Queries": [
+        {
+          "Sheet": "Combat Arts",
+          "Selection": "B2:N",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 1,
+      "WeaponRank": 2,
+      "Category": 3,
+      "UtilizedStats": [ 4 ],
+      "Range": {
+        "Minimum": 9,
+        "Maximum": 10
+      },
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 5
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 6
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 7
+        }
+      ],
+      "DurabilityCost": 8,
+      "Tags": [ 11 ],
+      "TextFields": [ 12 ]
+    },
+    "Adjutants": {
+      "Queries": [
+        {
+          "Sheet": "Adjutants",
+          "Selection": "B2:P",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 1,
+      "CombatStatModifiers": [
+        {
+          "SourceName": "Atk",
+          "Value": 2
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 3
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 4
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 5
+        }
+      ],
+      "StatModifiers": [
+        {
+          "SourceName": "Str",
+          "Value": 6
+        },
+        {
+          "SourceName": "Mag",
+          "Value": 7
+        },
+        {
+          "SourceName": "Skl",
+          "Value": 8
+        },
+        {
+          "SourceName": "Spd",
+          "Value": 9
+        },
+        {
+          "SourceName": "Lck",
+          "Value": 10
+        },
+        {
+          "SourceName": "Def",
+          "Value": 11
+        },
+        {
+          "SourceName": "Res",
+          "Value": 12
+        },
+        {
+          "SourceName": "Mov",
+          "Value": 13
+        }
+      ],
+      "TextFields": [ 14 ]
+    },
+    "BattleStyles": {
+      "Queries": [
+        {
+          "Sheet": "Battle Styles",
+          "Selection": "B2:D",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 1,
+      "TextFields": [ 2 ]
+    },
+    "Battalions": {
+      "Queries": [
+        {
+          "Sheet": "Battalions",
+          "Selection": "B2:K",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 1,
+      "Gambit": 2,
+      "MaxEndurance": 3,
+      "Rank": 4,
+      "Stats": [
+        {
+          "SourceName": "Atk",
+          "Value": 5
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 6
+        },
+        {
+          "SourceName": "Crit",
+          "Value": 7
+        },
+        {
+          "SourceName": "Avo",
+          "Value": 8
+        }
+      ],
+      "TextFields": [ 9 ]
+    },
+    "Gambits": {
+      "Queries": [
+        {
+          "Sheet": "Gambits",
+          "Selection": "B2:J",
+          "Orientation": 1
+        }
+      ],
+      "Name": 0,
+      "SpriteURL": 1,
+      "MaxUses": 3,
+      "UtilizedStats": [ 2 ],
+      "Range": {
+        "Minimum": 4,
+        "Maximum": 5
+      },
+      "Stats": [
+        {
+          "SourceName": "Mt",
+          "Value": 6
+        },
+        {
+          "SourceName": "Hit",
+          "Value": 7
+        }
+      ],
+      "TextFields": [ 8 ]
     }
   },
   "Units": {
@@ -536,29 +709,31 @@
       {
         "Sheet": "Units",
         "Selection": "B1:ZZ",
-        "Orientation": 2
+        "Orientation": 2,
+        "NumberOfSetsPerObject": 2
       }
     ],
     "Name": 0,
     "Player": 1,
-    "CharacterApplicationURL": 6,
     "SpriteURL": 2,
-    "PortraitURL": 5,
     "TextFields": [ 4 ],
-    "Level": 12,
+    "PortraitURL": 5,
+    "CharacterApplicationURL": 6,
     "Classes": [ 7, 8 ],
-    "Affiliation": 15,
-    "Coordinate": 9,
-    "HasMoved": 10,
-    "UnitSize": 11,
-    "Experience": 13,
-    "HeldCurrency": 14,
+    "Adjutants": [ 9 ],
+    "Coordinate": 10,
+    "HasMoved": 11,
+    "UnitSize": 12,
+    "Level": 13,
+    "Experience": 14,
+    "HeldCurrency": 15,
+    "Affiliation": 16,
+    "Tags": [ 17 ],
+    "Behavior": 18,
     "HP": {
-      "Current": 18,
-      "Maximum": 19
+      "Current": 19,
+      "Maximum": 20
     },
-    "Tags": [ 16 ],
-    "Behavior": 17,
     "CombatStats": [
       {
         "SourceName": "Atk",
@@ -611,67 +786,7 @@
     "Stats": [
       {
         "SourceName": "Str",
-        "BaseValue": 20,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 78
-          }
-        ]
-      },
-      {
-        "SourceName": "Def",
-        "BaseValue": 25,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 83
-          }
-        ]
-      },
-      {
-        "SourceName": "Mag",
         "BaseValue": 21,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 79
-          }
-        ]
-      },
-      {
-        "SourceName": "Res",
-        "BaseValue": 26,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 84
-          }
-        ]
-      },
-      {
-        "SourceName": "Lck",
-        "BaseValue": 24,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 82
-          }
-        ]
-      },
-      {
-        "SourceName": "Spd",
-        "BaseValue": 23,
-        "Modifiers": [
-          {
-            "SourceName": "Buff",
-            "Value": 81
-          }
-        ]
-      },
-      {
-        "SourceName": "Skl",
-        "BaseValue": 22,
         "Modifiers": [
           {
             "SourceName": "Buff",
@@ -680,67 +795,134 @@
         ]
       },
       {
-        "SourceName": "Mov",
-        "BaseValue": 27,
+        "SourceName": "Def",
+        "BaseValue": 26,
         "Modifiers": [
           {
             "SourceName": "Buff",
             "Value": 85
           }
         ]
+      },
+      {
+        "SourceName": "Mag",
+        "BaseValue": 22,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 81
+          }
+        ]
+      },
+      {
+        "SourceName": "Res",
+        "BaseValue": 27,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 86
+          }
+        ]
+      },
+      {
+        "SourceName": "Lck",
+        "BaseValue": 25,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 84
+          }
+        ]
+      },
+      {
+        "SourceName": "Spd",
+        "BaseValue": 24,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 83
+          }
+        ]
+      },
+      {
+        "SourceName": "Skl",
+        "BaseValue": 23,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 82
+          }
+        ]
+      },
+      {
+        "SourceName": "Mov",
+        "BaseValue": 28,
+        "Modifiers": [
+          {
+            "SourceName": "Buff",
+            "Value": 87
+          }
+        ]
       }
     ],
     "WeaponRanks": [
       {
-        "Type": 29,
-        "Rank": 30
+        "Type": 30,
+        "Rank": [ 1, 30 ]
       },
       {
         "Type": 31,
-        "Rank": 32
+        "Rank": [ 1, 31 ]
       },
       {
-        "Type": 33,
-        "Rank": 34
+        "Type": 32,
+        "Rank": [ 1, 32 ]
       }
     ],
     "Inventory": {
-      "PrimaryEquippedItem": 35,
+      "PrimaryEquippedItem": 33,
       "Subsections": [
         {
           "Slots": [
             {
+              "Name": 34,
+              "Uses": [ 1, 34 ],
+              "Engravings": [ 35 ]
+            },
+            {
               "Name": 36,
+              "Uses": [ 1, 36 ],
               "Engravings": [ 37 ]
             },
             {
               "Name": 38,
+              "Uses": [ 1, 38 ],
               "Engravings": [ 39 ]
             },
             {
               "Name": 40,
+              "Uses": [ 1, 40 ],
               "Engravings": [ 41 ]
             },
             {
               "Name": 42,
+              "Uses": [ 1, 42 ],
               "Engravings": [ 43 ]
-            },
-            {
-              "Name": 44,
-              "Engravings": [ 45 ]
             }
           ]
         },
         {
           "Slots": [
             {
-              "Name": 46,
-              "Engravings": [ 47 ]
+              "Name": 44,
+              "Uses": [ 1, 44 ],
+              "Engravings": [ 45 ]
             }
           ]
         }
       ]
     },
+    "CombatArts": [ 54, 55 ],
     "SkillSubsections": [
       {
         "Skills": [
@@ -775,20 +957,49 @@
         ]
       }
     ],
+    "Battalion": {
+      "Battalion": 64,
+      "Endurance": [ 1, 64 ],
+      "GambitUses": 65
+    },
+    "Emblem": {
+      "Name": 66,
+      "BondLevel": 67,
+      "EngageMeterCount": 68,
+      "IsEngaged": 69,
+      "SyncSkills": [
+        {
+          "Name": 70
+        },
+        {
+          "Name": 71
+        },
+        {
+          "Name": 72
+        }
+      ],
+      "EngageSkills": [
+        {
+          "Name": 73
+        }
+      ],
+      "EngageWeapons": [ 74, 75, 76 ],
+      "EngageAttacks": [ 77, 78 ]
+    },
     "StatusConditions": [
       {
-        "Name": 87,
-        "RemainingTurns": 88,
+        "Name": 89,
+        "RemainingTurns": [1, 89],
         "AdditionalStats": [
           {
             "SourceName": "Intensity",
-            "Value": 89
+            "Value": 90
           }
         ]
       },
       {
-        "Name": 90,
-        "RemainingTurns": 91,
+        "Name": 91,
+        "RemainingTurns": [1, 91],
         "AdditionalStats": [
           {
             "SourceName": "Intensity",
@@ -798,39 +1009,15 @@
       },
       {
         "Name": 93,
-        "RemainingTurns": 94,
+        "RemainingTurns": [1, 93],
         "AdditionalStats": [
           {
             "SourceName": "Intensity",
-            "Value": 95
+            "Value": 94
           }
         ]
       }
-    ],
-    "Emblem": {
-      "Name": 64,
-      "BondLevel": 65,
-      "EngageMeterCount": 66,
-      "IsEngaged": 67,
-      "SyncSkills": [
-        {
-          "Name": 68
-        },
-        {
-          "Name": 69
-        },
-        {
-          "Name": 70
-        }
-      ],
-      "EngageSkills": [
-        {
-          "Name": 71
-        }
-      ],
-      "EngageWeapons": [ 72, 73, 74 ],
-      "EngageAttacks": [ 75, 76 ]
-    }
+    ]
   },
   "Convoy": {
     "Query": {
