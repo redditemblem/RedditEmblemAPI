@@ -162,12 +162,13 @@
       "Queries": [
         {
           "Sheet": "Types",
-          "Selection": "A2:C",
+          "Selection": "A2:D",
           "Orientation": 1
         }
       ],
       "Name": 0,
-      "SpriteURL": 2
+      "SpriteURL": 2,
+      "UnitAura": 3
     },
     "TerrainTypes": {
       "Queries": [
@@ -241,13 +242,13 @@
       }
     ],
     "Name": 0,
-    "SpriteURL": 107,
-    "PortraitURL": 108,
+    "SpriteURL": 109,
+    "PortraitURL": 110,
     "Level": 5,
     "Experience": 6,
     "Classes": [ 2 ],
-    "MovementType": 89,
-    "Affiliation": 88,
+    "MovementType": 91,
+    "Affiliation": 90,
     "Coordinate": 7,
     "HasMoved": 8,
     "HP": {
@@ -264,23 +265,23 @@
     "Stats": [
       {
         "SourceName": "Attack",
-        "BaseValue": 25
-      },
-      {
-        "SourceName": "Defense",
-        "BaseValue": 26
-      },
-      {
-        "SourceName": "Sp. Attack",
         "BaseValue": 27
       },
       {
-        "SourceName": "Sp. Defense",
+        "SourceName": "Defense",
         "BaseValue": 28
       },
       {
-        "SourceName": "Movement",
+        "SourceName": "Sp. Attack",
         "BaseValue": 29
+      },
+      {
+        "SourceName": "Sp. Defense",
+        "BaseValue": 30
+      },
+      {
+        "SourceName": "Movement",
+        "BaseValue": 31
       }
     ],
     "WeaponRanks": [
@@ -295,18 +296,10 @@
       }
     ],
     "Inventory": {
-      "PrimaryEquippedItem": 38,
+      "PrimaryEquippedItem": 40,
       "Subsections": [
         {
           "Slots": [
-            {
-              "Name": 39,
-              "Uses": 43
-            },
-            {
-              "Name": 40,
-              "Uses": 44
-            },
             {
               "Name": 41,
               "Uses": 45
@@ -314,17 +307,19 @@
             {
               "Name": 42,
               "Uses": 46
+            },
+            {
+              "Name": 43,
+              "Uses": 47
+            },
+            {
+              "Name": 44,
+              "Uses": 48
             }
           ]
         },
         {
           "Slots": [
-            {
-              "Name": 52
-            },
-            {
-              "Name": 53
-            },
             {
               "Name": 54
             },
@@ -354,45 +349,51 @@
             },
             {
               "Name": 63
+            },
+            {
+              "Name": 64
+            },
+            {
+              "Name": 65
             }
           ]
         }
       ]
     },
     "Player": 1,
-    "UnitSize": 109,
-    "HeldCurrency": 51,
+    "UnitSize": 111,
+    "HeldCurrency": 53,
     "Tags": [ 9, 10, 11 ],
     "SkillSubsections": [
       {
         "Skills": [
           {
-            "Name": 30
-          },
-          {
-            "Name": 31
-          },
-          {
             "Name": 32
           },
           {
             "Name": 33
+          },
+          {
+            "Name": 34
+          },
+          {
+            "Name": 35
           }
         ]
       },
       {
         "Skills": [
           {
-            "Name": 34
-          },
-          {
-            "Name": 35
-          },
-          {
             "Name": 36
           },
           {
             "Name": 37
+          },
+          {
+            "Name": 38
+          },
+          {
+            "Name": 39
           }
         ]
       }
@@ -417,6 +418,10 @@
       {
         "Name": 23,
         "RemainingTurns": 24
+      },
+      {
+        "Name": 25,
+        "RemainingTurns": 26
       }
     ]
   },
