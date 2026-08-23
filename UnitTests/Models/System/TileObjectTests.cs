@@ -538,6 +538,87 @@ namespace UnitTests.Models.System
 
         #endregion OptionalField_StatModifiers
 
+        #region OptionalField_MovementCostOverride
+
+        [Test]
+        public void Constructor_OptionalField_MovementCostOverride_EmptyString()
+        {
+            TileObjectsConfig config = new TileObjectsConfig()
+            {
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                MovementCostOverride = (0, 2)
+            };
+
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    string.Empty
+                }
+            };
+
+            ITileObject tileObj = new TileObject(config, data);
+
+            Assert.That(tileObj.MovementCostOverride, Is.Null);
+        }
+
+        [TestCase("abc")]
+        [TestCase("-1")]
+        [TestCase("0")]
+        [TestCase("0.5")]
+        public void Constructor_OptionalField_MovementCostOverride_InvalidValues(string value)
+        {
+            TileObjectsConfig config = new TileObjectsConfig()
+            {
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                MovementCostOverride = (0, 2)
+            };
+
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    value
+                }
+            };
+
+            Assert.Throws<NonZeroPositiveIntegerException>(() => new TileObject(config, data));
+        }
+
+        [Test]
+        public void Constructor_OptionalField_MovementCostOverride()
+        {
+            TileObjectsConfig config = new TileObjectsConfig()
+            {
+                Name = (0, 0),
+                SpriteURL = (0, 1),
+                MovementCostOverride = (0, 2)
+            };
+
+            IEnumerable<IEnumerable<string>> data = new string[][]
+            {
+                new string[]
+                {
+                    INPUT_NAME,
+                    UnitTestConsts.IMAGE_URL,
+                    "1"
+                }
+            };
+
+            ITileObject tileObj = new TileObject(config, data);
+
+            Assert.That(tileObj.MovementCostOverride, Is.Not.Null);
+            Assert.That(tileObj.MovementCostOverride, Is.EqualTo(1));
+        }
+
+        #endregion OptionalField_MovementCostOverride
+
         #region FlagAsMatched
 
         [Test]

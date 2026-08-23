@@ -253,14 +253,14 @@
       "Queries": [
         {
           "Sheet": "Tile Object Templates",
-          "Selection": "A2:M",
+          "Selection": "A2:L",
           "Orientation": 1
         }
       ],
       "Name": 0,
       "SpriteURL": 1,
-      "Size": 4,
       "Layer": 3,
+      "Size": 4,
       "Range": {
         "Minimum": 8,
         "Maximum": 9
@@ -286,7 +286,8 @@
           "Value": 6
         }
       ],
-      "TextFields": [ 10 ]
+      "TextFields": [ 10 ],
+      "MovementCostOverride": 11
     }
   },
   "Units": {

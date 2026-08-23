@@ -1,4 +1,5 @@
-﻿using RedditEmblemAPI.Helpers;
+﻿using Newtonsoft.Json;
+using RedditEmblemAPI.Helpers;
 using RedditEmblemAPI.Models.Configuration.Common;
 using RedditEmblemAPI.Models.Configuration.System.TileObjects;
 using RedditEmblemAPI.Models.Exceptions.Processing;
@@ -37,6 +38,9 @@ namespace RedditEmblemAPI.Models.Output.System
 
         /// <inheritdoc cref="TileObject.StatModifiers"/>
         IDictionary<string, int> StatModifiers { get; set; }
+
+        /// <inheritdoc cref="TileObject.MovementCostOverride"/>
+        int? MovementCostOverride { get; set; }
 
         /// <inheritdoc cref="TileObject.TextFields"/>
         List<string> TextFields { get; set; }
@@ -84,6 +88,12 @@ namespace RedditEmblemAPI.Models.Output.System
         public IDictionary<string, int> StatModifiers { get; set; }
 
         /// <summary>
+        /// The tile object's movement cost override.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public int? MovementCostOverride { get; set; }
+
+        /// <summary>
         /// List of text fields for the tile object.
         /// </summary>
         public List<string> TextFields { get; set; }
@@ -100,6 +110,9 @@ namespace RedditEmblemAPI.Models.Output.System
 
             if (config.Range != null) this.Range = new TileObjectRange(config.Range, data);
             else this.Range = new TileObjectRange();
+
+            int moveCostOverride = DataParser.OptionalInt_NonZeroPositive(data, config.MovementCostOverride, "Movement Cost Override", 0);
+            if (moveCostOverride > 0) this.MovementCostOverride = moveCostOverride;
 
             this.HPModifier = DataParser.OptionalInt_Any(data, config.HPModifier, "HP Modifier");
             this.CombatStatModifiers = DataParser.NamedStatDictionary_OptionalInt_Any(config.CombatStatModifiers, data, false, "{0} Modifier");

@@ -181,6 +181,15 @@ namespace RedditEmblemAPI.Helpers.Ranges.Movement
                 return 99;
             }
 
+            // If there are tile object(s) on this tile that are capable of overriding the terrain's movement cost,
+            // return the highest overridden cost value.
+            if (tile.TileObjects.Any())
+            {
+                int tileObjOverride = tile.TileObjects.Max(t => t.TileObject.MovementCostOverride ?? 0);
+                if (tileObjOverride > 0)
+                    return tileObjOverride;
+            }
+
             ITerrainTypeStats terrainStats = tile.TerrainType.GetTerrainTypeStatsByAffiliation(parms.Unit.Affiliation);
 
             //Get the default movement cost from the terrain type
