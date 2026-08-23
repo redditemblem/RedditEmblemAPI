@@ -383,41 +383,42 @@
       "Size": 2,
       "Layer": 3,
       "Range": {
-        "Minimum": 5,
-        "Maximum": 6
+        "Minimum": 4,
+        "Maximum": 5
       },
-      "TextFields": [ 15 ],
-      "HPModifier": 7,
+      "HPModifier": 6,
       "StatModifiers": [
         {
           "SourceName": "Str",
-          "Value": 8
+          "Value": 7
         },
         {
           "SourceName": "Mag",
-          "Value": 9
+          "Value": 8
         },
         {
           "SourceName": "Skl",
-          "Value": 10
+          "Value": 9
         },
         {
           "SourceName": "Spd",
-          "Value": 11
+          "Value": 10
         },
         {
           "SourceName": "Lck",
-          "Value": 12
+          "Value": 11
         },
         {
           "SourceName": "Def",
-          "Value": 13
+          "Value": 12
         },
         {
           "SourceName": "Res",
-          "Value": 14
+          "Value": 13
         }
-      ]
+      ],
+      "MovementCostOverride": 14,
+      "TextFields": [ 15 ]
     },
     "Tags": {
       "Queries": [
