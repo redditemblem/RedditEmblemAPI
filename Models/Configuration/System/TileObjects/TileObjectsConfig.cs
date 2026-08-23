@@ -17,7 +17,7 @@ namespace RedditEmblemAPI.Models.Configuration.System.TileObjects
         [JsonRequired]
         public (int, int) SpriteURL { get; set; }
 
-        #endregion
+        #endregion Required Fields
 
         #region Optional Fields
 
@@ -50,6 +50,11 @@ namespace RedditEmblemAPI.Models.Configuration.System.TileObjects
         /// Optional. Collection of a tile object's combat stat modifiers.
         /// </summary>
         public NamedStatConfig[] StatModifiers { get; set; } = Array.Empty<NamedStatConfig>();
+
+        /// <summary>
+        /// Optional. Location of a tile object's movement cost override value.
+        /// </summary>
+        public (int, int) MovementCostOverride { get; set; } = (-1, -1);
 
         /// <summary>
         /// Optional. Collection of locations of a tile object's text fields.

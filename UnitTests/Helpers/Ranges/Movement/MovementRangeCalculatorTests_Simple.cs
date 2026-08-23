@@ -66,6 +66,7 @@ namespace UnitTests.Helpers.Ranges.Movement
                     tile.UnitData.Unit = null;
                     tile.UnitData.UnitsAffectingMovementCosts.Returns(new List<IUnit>());
                     tile.UnitData.UnitsObstructingMovement.Returns(new List<IUnit>());
+                    tile.TileObjects.Returns(new List<ITileObjectInstance>());
 
                     tiles[r][c] = tile;
                 }
