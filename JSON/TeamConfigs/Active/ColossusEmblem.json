@@ -85,7 +85,7 @@
       "Queries": [
         {
           "Sheet": "Items",
-          "Selection": "A2:AQ",
+          "Selection": "A2:AR",
           "Orientation": 1
         }
       ],
@@ -167,7 +167,8 @@
       ],
       "Range": {
         "Minimum": 10,
-        "Maximum": 11
+        "Maximum": 11,
+        "Shape": 43
       },
       "Tags": [ 38, 39 ],
       "TextFields": [ 1, 2 ]
