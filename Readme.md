@@ -1,4 +1,6 @@
-# Reddit Emblem Maps
+<p align="center">
+  <img src="https://github.com/redditemblem/redditemblem.github.io/blob/master/public/img/logo.png" />
+</p>
 <p align="center">
     <a href="https://visualstudio.microsoft.com/"><img src="https://custom-icon-badges.demolab.com/badge/Visual%20Studio-5C2D91.svg?&logo=visualstudio&logoColor=white" alt="Visual Studio"></a>
     <a href="https://insomnia.rest/"><img src="https://img.shields.io/badge/Insomnia-4000BF?logo=insomnia&logoColor=white" alt="Insomnia"></a>
